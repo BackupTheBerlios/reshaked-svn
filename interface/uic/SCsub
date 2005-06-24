@@ -1,0 +1,6 @@
+Import('env_interface');
+
+#env_interface.make_targets(env.interface_targets)
+
+env_interface.target_list += ['uic/main_window_base.ui'];
+

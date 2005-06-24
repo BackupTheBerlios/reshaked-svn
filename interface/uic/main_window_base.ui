@@ -1,0 +1,418 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>MainWindowBase</class>
+<widget class="QMainWindow">
+    <property name="name">
+        <cstring>MainWindowBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>600</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form2</string>
+    </property>
+</widget>
+<menubar>
+    <property name="name">
+        <cstring>MenuBarEditor</cstring>
+    </property>
+    <item text="Song" name="Song">
+        <action name="menuNew_SongAction"/>
+        <separator/>
+        <action name="menuOpen_SongAction"/>
+        <action name="menuSaveAction"/>
+        <action name="menuSave_As_Action"/>
+        <separator/>
+        <action name="menuExitAction"/>
+    </item>
+    <item text="Track" name="Track">
+        <action name="tracknew_itemAction"/>
+        <item text="Add" name="popupMenu_21" accel="">
+            <action name="tracknew_itemPatternAction"/>
+            <action name="tracknew_itemAudioAction"/>
+            <action name="tracknew_itemBusAction"/>
+        </item>
+        <action name="trackRemoveAction"/>
+        <separator/>
+        <action name="trackAction"/>
+        <action name="trackMuteAction"/>
+        <action name="trackSoloAction"/>
+    </item>
+    <item text="Edit" name="Edit">
+        <action name="editUndoAction"/>
+        <action name="editRedoAction"/>
+        <separator/>
+        <action name="editCopyAction"/>
+        <action name="editCopy_SpecialAction"/>
+        <item text="Copy Special" name="popupMenu_18" accel="">
+            <action name="editCopy_SpecialCopy_BlockAction"/>
+            <action name="editCopy_SpecialCopy_LoopAction"/>
+        </item>
+        <action name="editCutAction"/>
+        <action name="editPasteAction"/>
+        <action name="editOverwriteAction"/>
+        <item text="Paste Special" name="popupMenu_14" accel="">
+            <action name="editOverwriteOverwriteAction"/>
+            <action name="editOverwriteMixAction"/>
+        </item>
+    </item>
+    <item text="Playback" name="Playback">
+        <action name="playbackPlayAction"/>
+        <action name="playbackPlay_MarkAction"/>
+        <action name="playbackPlay_LoopAction"/>
+        <action name="playbackPlay_BlockAction"/>
+        <separator/>
+        <action name="playbackStopAction"/>
+    </item>
+</menubar>
+<toolbars>
+</toolbars>
+<actions>
+    <action>
+        <property name="name">
+            <cstring>menuNew_SongAction</cstring>
+        </property>
+        <property name="text">
+            <string>New Song</string>
+        </property>
+        <property name="menuText">
+            <string>New Song</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>menuOpen_SongAction</cstring>
+        </property>
+        <property name="text">
+            <string>Open</string>
+        </property>
+        <property name="menuText">
+            <string>Open</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>menuSaveAction</cstring>
+        </property>
+        <property name="text">
+            <string>Save</string>
+        </property>
+        <property name="menuText">
+            <string>Save</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>menuSave_As_Action</cstring>
+        </property>
+        <property name="text">
+            <string>Save As ...</string>
+        </property>
+        <property name="menuText">
+            <string>Save As ...</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>menuExitAction</cstring>
+        </property>
+        <property name="text">
+            <string>Exit</string>
+        </property>
+        <property name="menuText">
+            <string>Exit</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editUndoAction</cstring>
+        </property>
+        <property name="text">
+            <string>Undo</string>
+        </property>
+        <property name="menuText">
+            <string>Undo</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editRedoAction</cstring>
+        </property>
+        <property name="text">
+            <string>Redo</string>
+        </property>
+        <property name="menuText">
+            <string>Redo</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editCopyAction</cstring>
+        </property>
+        <property name="text">
+            <string>Copy</string>
+        </property>
+        <property name="menuText">
+            <string>Copy</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editCutAction</cstring>
+        </property>
+        <property name="text">
+            <string>Cut</string>
+        </property>
+        <property name="menuText">
+            <string>Cut</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editPasteAction</cstring>
+        </property>
+        <property name="text">
+            <string>Paste</string>
+        </property>
+        <property name="menuText">
+            <string>Paste</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editOverwriteAction</cstring>
+        </property>
+        <property name="text">
+            <string>Paste Special</string>
+        </property>
+        <property name="menuText">
+            <string>Paste Special</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editMix_PasteAction</cstring>
+        </property>
+        <property name="text">
+            <string>Mix Paste</string>
+        </property>
+        <property name="menuText">
+            <string>Mix Paste</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editOverwriteOverwriteAction</cstring>
+        </property>
+        <property name="text">
+            <string>Overwrite</string>
+        </property>
+        <property name="menuText">
+            <string>Overwrite</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editOverwriteMixAction</cstring>
+        </property>
+        <property name="text">
+            <string>Mix</string>
+        </property>
+        <property name="menuText">
+            <string>Mix</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editCopy_SpecialAction</cstring>
+        </property>
+        <property name="text">
+            <string>Copy Special</string>
+        </property>
+        <property name="menuText">
+            <string>Copy Special</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editCopy_SpecialCopy_BlockAction</cstring>
+        </property>
+        <property name="text">
+            <string>Copy Block</string>
+        </property>
+        <property name="menuText">
+            <string>Copy Block</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>editCopy_SpecialCopy_LoopAction</cstring>
+        </property>
+        <property name="text">
+            <string>Copy Loop</string>
+        </property>
+        <property name="menuText">
+            <string>Copy Loop</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>tracknew_itemAction</cstring>
+        </property>
+        <property name="text">
+            <string>Add</string>
+        </property>
+        <property name="menuText">
+            <string>Add</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>tracknew_itemPatternAction</cstring>
+        </property>
+        <property name="text">
+            <string>Pattern</string>
+        </property>
+        <property name="menuText">
+            <string>Pattern</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>tracknew_itemAudioAction</cstring>
+        </property>
+        <property name="text">
+            <string>Audio</string>
+        </property>
+        <property name="menuText">
+            <string>Audio</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>tracknew_itemBusAction</cstring>
+        </property>
+        <property name="text">
+            <string>Bus</string>
+        </property>
+        <property name="menuText">
+            <string>Bus</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>trackRemoveAction</cstring>
+        </property>
+        <property name="text">
+            <string>Remove</string>
+        </property>
+        <property name="menuText">
+            <string>Remove</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>tracknew_itemAction_2</cstring>
+        </property>
+        <property name="text">
+            <string>new item</string>
+        </property>
+        <property name="menuText">
+            <string>new item</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>trackAction</cstring>
+        </property>
+        <property name="text">
+            <string></string>
+        </property>
+        <property name="menuText">
+            <string></string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>playbackPlayAction</cstring>
+        </property>
+        <property name="text">
+            <string>Play</string>
+        </property>
+        <property name="menuText">
+            <string>Play</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>playbackPlay_BlockAction</cstring>
+        </property>
+        <property name="text">
+            <string>Play Block</string>
+        </property>
+        <property name="menuText">
+            <string>Play Block</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>playbackPlay_LoopAction</cstring>
+        </property>
+        <property name="text">
+            <string>Play Loop</string>
+        </property>
+        <property name="menuText">
+            <string>Play Loop</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>playbackPlay_MarkAction</cstring>
+        </property>
+        <property name="text">
+            <string>Play Cursor</string>
+        </property>
+        <property name="menuText">
+            <string>Play Cursor</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>playbackStopAction</cstring>
+        </property>
+        <property name="text">
+            <string>Stop</string>
+        </property>
+        <property name="menuText">
+            <string>Stop</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>trackMuteAction</cstring>
+        </property>
+        <property name="text">
+            <string>Mute</string>
+        </property>
+        <property name="menuText">
+            <string>Mute</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>trackSoloAction</cstring>
+        </property>
+        <property name="text">
+            <string>Solo</string>
+        </property>
+        <property name="menuText">
+            <string>Solo</string>
+        </property>
+    </action>
+</actions>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
