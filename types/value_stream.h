@@ -87,11 +87,11 @@ void ValueStream<T,V>::insert(T p_pos,V p_value) {
 		return; /* invalid pos? what? */
 	if (!exact) { /* no exact position found, make room */
 	
-		automation_list.resize(automation_list.size()+1);
-		memmove(&automation_list[pos+1],&automation_list[pos],sizeof(Value)*(automation_list.size()-pos));
+		stream.resize(stream.size()+1);
+		memmove(&stream[pos+1],&stream[pos],sizeof(Value)*(stream.size()-pos));
 	}
 
-	automation_list[pos].value=p_value; /* Assign */
+	stream[pos].value=p_value; /* Assign */
 
 }
 
@@ -102,7 +102,7 @@ V ValueStream<T,V>::get_value(T p_pos) {
 	int pos=find_pos(p_pos,exact);	
 	if (pos==-1)
 		return 0; /* invalid pos? what? */
-	return automation_list[pos].val; /* no interpolation for now */
+	return stream[pos].val; /* no interpolation for now */
 }
 
 template<class T, class V>

@@ -6,13 +6,18 @@
 
 
 class UndoRedoOp;
+class UndoStream;
 
 class UndoRedoOwner {
 
+	UndoStream *undo_stream;
+protected:	
+	UndoStream *get_undo_stream();
 public:
 
 	virtual void undo(UndoRedoOp *p_item)=0;
 	virtual void redo(UndoRedoOp *p_item)=0;
+	UndoRedoOwner(UndoStream *p_undo_stream);
         virtual ~UndoRedoOwner()=0;
 };
 

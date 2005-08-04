@@ -1,5 +1,14 @@
  #include "undo_stream.h"
 
+UndoStream *UndoRedoOwner::get_undo_stream() {
+
+	return undo_stream;
+}
+
+UndoRedoOwner::UndoRedoOwner(UndoStream *p_undo_stream) {
+
+	undo_stream=p_undo_stream;
+}
 
 UndoRedoOwner *UndoRedoOp::get_owner() {
 

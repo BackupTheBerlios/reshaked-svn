@@ -14,7 +14,7 @@ void EventBuffer::clear() {
 EventBuffer::EventBuffer(int p_max_size) {
 	
 	events = new Event[p_max_size];
-	event_ptrs = new (Event*)[p_max_size];
+	event_ptrs = new Event*[p_max_size];
 	max_size=p_max_size;
 
 }

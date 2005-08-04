@@ -1,5 +1,5 @@
-}q(Ulibediting.aq(cSCons.Node.FS
+}q(Ucursor.oq(cSCons.Node.FS
 BuildInfo
-qoq}q(UbsigqU 7eb5ff871066fbb018015f6504231c88qU	bimplicitq]q	Ubdependsq
-]qUbdependsigsq]qUbactsigqU 25514b8a9b5e37859531e86f28208c2fqUbimplicitsigsq]qUbactqU2ar r libediting.a undo_stream.oranlib libediting.aqUbsourcesq]qUediting/undo_stream.oqaUbsourcesigsq]qU b803b14a3aa803235f537466c9c95e93qaubUundo_stream.oq(hoq}q(hhh]qUediting/undo_stream.hqah
-]qh]q hU 27bcdf3831f01eaa2e52a671ea514b62q!h]q"U 1b0065f04abe38cfabbe6292db0ade2cq#ahU>g++ -Wall -g3 -I. -Itypes/ -c -o undo_stream.o undo_stream.cppq$h]q%Uediting/undo_stream.cppq&ah]q'U 6fc980350ec69844a7b71217c92aebd2q(aubu.
+qoq}q(UbsigqU 6899a76f8df42132eae1954d3fb855f2qU	bimplicitq]q	Uediting/cursor.hq
+aUbdependsq]qUbdependsigsq]qUbactsigqU ac0aa522a8b404a8dd3f5b28516c7956qUbimplicitsigsq]qU 2b4cb491aaaab817a100f02bd461fb7aqaUbactqU4g++ -Wall -g3 -I. -Itypes/ -c -o cursor.o cursor.cppqUbsourcesq]qUediting/cursor.cppqaUbsourcesigsq]qU 763dd0cb343ada77e23fd3a60996b30dqaubUlibediting.aq(hoq}q(UbsigqU c40390cf896d57b9a5e49551af380dd3q U	bimplicitq!]q"Ubdependsq#]q$Ubdependsigsq%]q&Ubactsigq'U 8aad29c13a4de8b17b5b62daf322aa4aq(Ubimplicitsigsq)]q*Ubactq+U;ar r libediting.a undo_stream.o cursor.oranlib libediting.aq,Ubsourcesq-]q.(Uediting/undo_stream.oq/Uediting/cursor.oq0eUbsourcesigsq1]q2(U f08e55c08f3a846e6d2beebb92d5bbf6q3heubUundo_stream.oq4(hoq5}q6(hh3h!]q7Uediting/undo_stream.hq8ah#]q9h%]q:h'U 27bcdf3831f01eaa2e52a671ea514b62q;h)]q<U a706859921d23ba0940392a10d513677q=ah+U>g++ -Wall -g3 -I. -Itypes/ -c -o undo_stream.o undo_stream.cppq>h-]q?Uediting/undo_stream.cppq@ah1]qAU e9ae099aae7d2395d66dbd80d8048843qBaubU
+cursor.cppqC(hoqD}qE(U	timestampqFJ1c»BUcsigqGhubu.
