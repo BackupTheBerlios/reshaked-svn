@@ -20,11 +20,21 @@
 		return;	 \
 	} }	\
 
+#define ERR_FAIL_COND_V(m_cond,m_retval) \
+	{ if ( m_cond ) {	\
+		std::cout << " ## m_cond ## failed." << std::endl;	\
+		return m_retval;	 \
+	} }	\
+
 #define ERR_PRINT(m_string) \
 	{ \
 			std::cout << m_string << std::endl;	\
 	} \
 
+#define WARN_PRINT(m_string) \
+	{ \
+			std::cout << m_string << std::endl;	\
+	} \
 
 
 

@@ -1,0 +1,5 @@
+}q(Ulibediting.aq(cSCons.Node.FS
+BuildInfo
+qoq}q(UbsigqU 7eb5ff871066fbb018015f6504231c88qU	bimplicitq]q	Ubdependsq
+]qUbdependsigsq]qUbactsigqU 25514b8a9b5e37859531e86f28208c2fqUbimplicitsigsq]qUbactqU2ar r libediting.a undo_stream.oranlib libediting.aqUbsourcesq]qUediting/undo_stream.oqaUbsourcesigsq]qU b803b14a3aa803235f537466c9c95e93qaubUundo_stream.oq(hoq}q(hhh]qUediting/undo_stream.hqah
+]qh]q hU 27bcdf3831f01eaa2e52a671ea514b62q!h]q"U 1b0065f04abe38cfabbe6292db0ade2cq#ahU>g++ -Wall -g3 -I. -Itypes/ -c -o undo_stream.o undo_stream.cppq$h]q%Uediting/undo_stream.cppq&ah]q'U 6fc980350ec69844a7b71217c92aebd2q(aubu.

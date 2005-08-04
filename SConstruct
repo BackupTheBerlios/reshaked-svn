@@ -27,8 +27,9 @@ Export('env');
 
 SConscript('types/SCsub');
 SConscript('engine/SCsub');
+SConscript('editing/SCsub');
 SConscript('interface/SCsub');
 
-reshaked_libs = ['#interface/libinterface.a','#engine/libengine.a'];
+reshaked_libs = ['#interface/libinterface.a','#editing/libediting.a','#engine/libengine.a'];
 
 env.Program('program/reshaked',['program/reshaked.cpp'] + reshaked_libs);
