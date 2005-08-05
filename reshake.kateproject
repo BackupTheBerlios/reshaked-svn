@@ -1,0 +1,27 @@
+[Dir editing]
+Dirs=
+Files=cursor.cpp/cursor.h/track_edit.h/undo_stream.cpp/undo_stream.h/edit_commands.h/song_edit.h
+
+[Dir engine]
+Dirs=
+Files=audio_buffer.cpp/audio_buffer.h/audio_control.cpp/audio_control.h/audio_graph.cpp/audio_graph.h/audio_graph_process.cpp/audio_graph_process.h/audio_node.cpp/audio_node.h/audio_plug.cpp/audio_plug.h/automation.cpp/automation.h/event_buffer.cpp/event_buffer.h/pattern.cpp/pattern.h/pattern_track.cpp/pattern_track.h/song.h/track.cpp/track.h/transport.cpp/transport.h
+
+[Dir interface]
+Dirs=
+Files=main_window.cpp/main_window.h
+
+[Dir program]
+Dirs=
+Files=reshaked.cpp
+
+[Dir types]
+Dirs=
+Files=error_macros.h/typedefs.h/value_stream.h
+
+[Project Dir]
+Dirs=editing/engine/interface/program/types
+Files=detect.py/SConstruct
+
+[Project File]
+Name=reshaked
+Type=Default

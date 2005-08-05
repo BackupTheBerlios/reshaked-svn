@@ -12,11 +12,11 @@ class Song {
 	AudioGraph track_graph;
 
 public:
-	
+
 	void add_track(Track *p_track);
 	int get_track_count();
 	Track* get_track(int p_idx);
-	void erase_track(int p_idx);
+	void remove_track(int p_idx); /* remove but dont delete */
 
 };
 

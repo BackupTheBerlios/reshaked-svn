@@ -18,7 +18,9 @@ class Cursor {
 	int current_track;
 	TrackEditTarget edit_target;
 	int current_automation;
+	Tick snap; /* tick snap */
 public:
+
 
 	Tick get_cursor_tick();
 	void set_cursor_tick(Tick p_tick);
@@ -26,6 +28,8 @@ public:
 	void set_edited_track(int p_track);
 	int get_edited_track_automation();
 	void set_edited_track_automation(int p_track_automation);
+	void set_cursor_snap(Tick p_snap);
+	Tick get_cursor_snap();
 
         Cursor();
 

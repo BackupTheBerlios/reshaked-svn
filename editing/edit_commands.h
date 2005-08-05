@@ -10,6 +10,7 @@ struct EditCommand {
 		NOTE_COMMAND
 		AUTOMATION_EDIT_COMMAND,
 		AUDIO_EDIT_COMMAND,
+		NUMBER_INPUT_COMMAND,
 	};
 
 	Type type;
@@ -59,6 +60,7 @@ struct PatternEditCommand : public EditCommand {
 		CMD_EXPAND_X2
 		CMD_SHRINK_X2,
 		CMD_QUANTIZE,
+
 	};
 
 	Command command;
@@ -68,6 +70,11 @@ struct NoteCommand : public EditCommand {
 
 	Note note;
 	bool off;
+};
+
+struct NumberInputCommand : public EditCommand {
+
+	int number;
 };
 
 #endif
