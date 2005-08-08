@@ -27,7 +27,8 @@ class SongEdit : public UndoRedoOwner {
  	void undo(UndoRedoOp *p_item);
 	void redo(UndoRedoOp *p_item);
 public:
-
+	int get_track_count();
+	TrackEdit* get_track_edit(int p_index);
 	void add_audio_track(int p_channels);
 	void add_pattern_track(int p_channels);
 	void add_bus_track(int p_channels);

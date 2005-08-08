@@ -14,12 +14,24 @@ void SongEdit::redo(UndoRedoOp *p_item) {
 
 
 }
+int SongEdit::get_track_count() {
+
+	return track_editors.size();
+}
+TrackEdit* SongEdit::get_track_edit(int p_index) {
+
+	ERR_FAIL_INDEX_V(p_index,track_editors.size(),NULL);
+	return track_editors[p_index];
+
+}
 
 void SongEdit::add_audio_track(int p_channels) {
 
 
 
 }
+
+
 void SongEdit::add_pattern_track(int p_channels) {
 
 	UndoRedoTrackAdd * op = new UndoRedoTrackAdd(this);

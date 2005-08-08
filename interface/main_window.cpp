@@ -9,21 +9,24 @@
 namespace ReShaked {
 
 void MainWindow::add_pattern_track() {
-
+	printf("adding track\n");
 	engine.song_edit->add_pattern_track(2);
-
+	track_list->update_track_views();
 }
 
 class ExpScrollView : public QScrollView {
 
 	QWidget *child;
 	
-	void resizeEvent ( QResizeEvent * p_resevebt) {
+	/*void resizeEvent ( QResizeEvent * p_resevebt) {
 		if (child==NULL)
 			return;
-
-		child->resize(child->width(),viewport()->height());
-	}
+		printf("resizeThing\n");
+		
+		child->resize(2,2);
+		printf("viewportheight is %i\n",viewport()->height());
+		
+} */
 
 	
 
@@ -31,7 +34,11 @@ public:
 
 	void add_child(QWidget *p_child) { child =p_child; addChild(p_child,0,0); }
 
-	ExpScrollView(QWidget *p_parent) : QScrollView(p_parent) { child = NULL; }
+	ExpScrollView(QWidget *p_parent) : QScrollView(p_parent) {
+		 child = NULL;
+		 setResizePolicy(QScrollView::AutoOneFit);
+		// viewport()->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	}
 };
 
 MainWindow::MainWindow() {
@@ -46,9 +53,14 @@ MainWindow::MainWindow() {
 	QHBox * top_hbox = new QHBox(track_options_splitter);
 	
 	track_scroll = new ExpScrollView(top_hbox);
-	track_list = new TrackList(track_scroll);
+	track_list = new TrackList(engine.song_edit,track_scroll->viewport());
 	((ExpScrollView*)track_scroll)->add_child(track_list);
+	track_list->show();
+	track_list->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	
+
+
+
 	v_scroll = new QScrollBar(top_hbox);
 	bottom_stack = new QWidgetStack(track_options_splitter);
 

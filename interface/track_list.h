@@ -14,9 +14,11 @@
 #define TRACK_LIST_H
 
 #include <qvbox.h>
+#include <qhbox.h>
 #include <vector>
 
 #include "interface/track_edit_ui.h"
+#include "editing/song_edit.h"
 
 namespace ReShaked {
 
@@ -24,14 +26,15 @@ namespace ReShaked {
 class TrackList : public QHBox {
 	
 
-
+	SongEdit *song_edit;
 	std::vector<TrackEditUI*> track_edits; /* track views */
-
+	QHBox *shrunk_hbox;
 	
 public:	
 
+
 	void update_track_views();	
-	TrackList(QWidget *p_parent);	
+	TrackList(SongEdit *p_song_edit,QWidget *p_parent);
 };
 
 

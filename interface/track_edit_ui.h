@@ -3,6 +3,7 @@
 
 
 #include <qhbox.h>
+#include <qlabel.h>
 #include "editing/track_edit.h"
 #include "interface/track_view.h"
 
@@ -12,6 +13,7 @@ namespace ReShaked {
 class TrackEditUI : public QHBox {
 
 	Q_OBJECT
+
 	
 	Track *track;
 	TrackEdit *track_edit;

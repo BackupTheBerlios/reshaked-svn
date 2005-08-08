@@ -24,10 +24,10 @@ class TrackViewPattern : public TrackView {
 
 
 	
-	public:
+public:
 
 
-		TrackViewPattern(QWidget *p_parent,PatternEdit* p_edit);
+	TrackViewPattern(QWidget *p_parent,PatternEdit* p_edit);
 };
 
 

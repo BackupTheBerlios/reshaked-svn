@@ -31,8 +31,8 @@ TrackEditUI::TrackEditUI(QWidget *p_parent,TrackEdit *p_track_edit) : QHBox(p_pa
 	} else {
 		ERR_PRINT("No match for p_track_edit!");
 	}
-		
-	
+
+
 }
 
 
