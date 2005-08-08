@@ -1,6 +1,7 @@
 
 #include "track_view_pattern.h"
 #include <qpainter.h>
+#include "pattern_font.h"
 
 namespace ReShaked {
 
@@ -16,7 +17,9 @@ void TrackViewPattern::paintEvent(QPaintEvent *e) {
 
 TrackViewPattern::TrackViewPattern(QWidget *p_parent,PatternEdit* p_edit) :TrackView(p_parent,p_edit) {
 
-	setFixedWidth(200);
+	QFontMetrics metrics(PatternFont::get_singleton()->get_font());
+	setFixedWidth(metrics.maxWidth()*3+BORDER_MARGIN*2);
+	
 
 	
 	pattern_edit=p_edit;
