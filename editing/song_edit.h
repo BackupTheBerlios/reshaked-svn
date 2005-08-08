@@ -4,11 +4,21 @@
 #include "engine/song.h"
 #include "editing/undo_stream.h"
 #include "editing/cursor.h"
+#include "editing/track_edit.h"
 
 namespace ReShaked {
 
 class SongEdit : public UndoRedoOwner {
 
+
+	struct UndoRedoTrackAdd : public UndoRedoOp {
+
+	        Track * track;
+		TrackEdit *track_edit;
+
+		UndoRedoTrackAdd(UndoRedoOwner *p_owner) : UndoRedoOp(p_owner) {};
+	};
+	
 	Song *song;
 	Cursor cursor;
 
@@ -18,9 +28,9 @@ class SongEdit : public UndoRedoOwner {
 	void redo(UndoRedoOp *p_item);
 public:
 
-	void add_audio_track();
-	void add_pattern_track();
-	void add_bus_track();
+	void add_audio_track(int p_channels);
+	void add_pattern_track(int p_channels);
+	void add_bus_track(int p_channels);
 
 	SongEdit(UndoStream *p_undo_stream,Song *p_song);
 

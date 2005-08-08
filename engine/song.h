@@ -1,8 +1,10 @@
+
 #ifndef SONG_H
 #define SONG_H
 
 #include <vector>
-
+#include "engine/track.h"
+#include "audio_graph.h"
 
 namespace ReShaked {
 
@@ -24,3 +26,4 @@ public:
 };
 
 #endif /* song_h */
+

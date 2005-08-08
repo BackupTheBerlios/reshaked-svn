@@ -15,8 +15,9 @@
 
 #include <vector>
 
-template<class T, class V>
+#define INVALID_STREAM_INDEX -1
 
+template<class T, class V>
 class ValueStream {
 private:
 	struct Value {
@@ -28,28 +29,30 @@ private:
 
 	std::vector<Value> stream;
 
-	int find_pos(T p_pos,bool &p_exact);
+    int find_pos(T p_pos,bool &p_exact);
 public:	
 
-	void insert(T p_pos,V p_value);	
-	V get_value(T p_pos);
-	int get_index(T p_pos);
-	
-	void erase(T p_pos); 
-	void erase(T p_from, T t_to); 
+    void insert(T p_pos,V p_value);
+    int get_exact_index(T p_pos); /* return INVALID_STREAM_INDEX if pos is not exact */
+    int get_prev_index(T p_pos); /* get index to pos previous or equal to value */
+    int get_next_index(T p_pos); /* get index to pos next or equal to value, if greater than last element, then stream_size+1 is returned */
+    const V& get_index_value(int p_idx); /* return a const reference to null if index is invalid! */
+
+    int get_stream_size();
+
+    void erase_index(int p_index);
+    void erase_index_range(int p_from_index, int p_to_index);
 };
 
 
 template<class T, class V>
-int valuestream_binary_search(T p_pos,bool &p_exact) {
-
-	
-}
-
-template<class T, class V>
 int ValueStream<T,V>::find_pos(T p_pos,bool &p_exact) {
 
-	/* The core of this class, the binary search */
+    /* The core of this class, the binary search */
+
+    if (stream.empty())
+	return INVALID_STREAM_INDEX;
+
 	
 	int low = 0;
 	int high = stream.size() -1;
@@ -83,43 +86,81 @@ void ValueStream<T,V>::insert(T p_pos,V p_value) {
 
 	bool exact;
 	int pos=find_pos(p_pos,exact);	
-	if (pos==-1)
-		return; /* invalid pos? what? */
-	if (!exact) { /* no exact position found, make room */
+	if (pos==INVALID_STREAM_INDEX) { //it's empty!
+	    stream.resize(1);
+            pos=0;
+	} else if (!exact) { /* no exact position found, make room */
 	
-		stream.resize(stream.size()+1);
+	    stream.resize(stream.size()+1);
+	    if (pos<stream.size()) //if it's not adding at the last element
 		memmove(&stream[pos+1],&stream[pos],sizeof(Value)*(stream.size()-pos));
 	}
 
-	stream[pos].value=p_value; /* Assign */
+	stream[pos].val=p_value; /* Assign */
 
 }
 
 template<class T, class V>
-V ValueStream<T,V>::get_value(T p_pos) {
+const V& ValueStream<T,V>::get_index_value(int p_index) {
+
+    ERR_FAIL_INDEX_V(p_index,stream.size(), *((V*)(NULL)));
+    return stream[p_index].val;
+}
+
+template<class T, class V>
+int ValueStream<T,V>::get_exact_index(T p_pos) {
 
 	bool exact;
-	int pos=find_pos(p_pos,exact);	
+	int pos=find_pos(p_pos,exact);
+	if (!exact)
+	    return INVALID_STREAM_INDEX;
+        return pos;
+}
+
+template<class T, class V>
+int ValueStream<T,V>::get_prev_index(T p_pos) {
+
+	bool exact;
+	int pos=find_pos(p_pos,exact);
+	if (pos==INVALID_STREAM_INDEX)
+	    return INVALID_STREAM_INDEX;
+	if (exact)
+	    return pos;
+	pos--;
 	if (pos==-1)
-		return 0; /* invalid pos? what? */
-	return stream[pos].val; /* no interpolation for now */
+	    return INVALID_STREAM_INDEX; /* smaller than first or empty stream */
+
+	return pos;
+
 }
 
 template<class T, class V>
-int ValueStream<T,V>::get_index(T p_pos) {
+int ValueStream<T,V>::get_next_index(T p_pos) {
 
 	bool exact;
-	return find_pos(p_pos,exact);	
-}
+	int pos=find_pos(p_pos,exact);
 
-template<class T, class V>
-void ValueStream<T,V>::erase(T p_pos) {
-
+        return pos;
 
 }
 
 template<class T, class V>
-void ValueStream<T,V>::erase(T p_pos, T p_to_pos) {
+int ValueStream<T,V>::get_stream_size() {
+
+    return stream.size();
+}
+
+
+template<class T, class V>
+void ValueStream<T,V>::erase_index(int p_index) {
+
+    ERR_FAIL_INDEX(p_index,stream.size());
+    stream.erase( stream.begin() + p_index );
+
+}
+
+template<class T, class V>
+void ValueStream<T,V>::erase_index_range(int p_from_idx,int p_to_idx) {
 
 
 }

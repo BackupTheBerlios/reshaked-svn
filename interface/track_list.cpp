@@ -9,3 +9,21 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+
+#include "track_list.h"
+
+namespace ReShaked {
+
+
+void TrackList::update_track_views() {
+
+
+}
+
+TrackList::TrackList(QWidget *p_parent) : QHBox(p_parent) {
+
+	
+
+}
+
+}

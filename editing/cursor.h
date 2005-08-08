@@ -21,15 +21,14 @@ class Cursor {
 	Tick snap; /* tick snap */
 public:
 
-
-	Tick get_cursor_tick();
-	void set_cursor_tick(Tick p_tick);
-	int get_edited_track();
-	void set_edited_track(int p_track);
-	int get_edited_track_automation();
+	Tick get_tick();
+	void set_tick(Tick p_tick);
+	int get_track();
+	void set_track(int p_track);
+	int get_track_automation();
 	void set_edited_track_automation(int p_track_automation);
-	void set_cursor_snap(Tick p_snap);
-	Tick get_cursor_snap();
+	void set_snap(Tick p_snap);
+	Tick get_snap();
 
         Cursor();
 

@@ -3,11 +3,10 @@
 #define EDIT_COMMANDS_H
 
 struct EditCommand {
-
-	class Type {
+	enum Type {
 		CURSOR_COMMAND,
 		PATTERN_EDIT_COMMAND,
-		NOTE_COMMAND
+		NOTE_COMMAND,
 		AUTOMATION_EDIT_COMMAND,
 		AUDIO_EDIT_COMMAND,
 		NUMBER_INPUT_COMMAND,
@@ -15,7 +14,7 @@ struct EditCommand {
 
 	Type type;
 
-	~EditCommand() {};
+	virtual ~EditCommand() {};
 };
 
 
@@ -57,14 +56,14 @@ struct PatternEditCommand : public EditCommand {
 		CMD_SET_VOLUME,
 		CMD_RAMP_VOLUME,
 		CMD_ZAP,
-		CMD_EXPAND_X2
+		CMD_EXPAND_X2,
 		CMD_SHRINK_X2,
 		CMD_QUANTIZE,
 
 	};
 
 	Command command;
-}
+};
 
 struct NoteCommand : public EditCommand {
 

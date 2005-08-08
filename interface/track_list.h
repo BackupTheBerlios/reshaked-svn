@@ -14,6 +14,9 @@
 #define TRACK_LIST_H
 
 #include <qvbox.h>
+#include <vector>
+
+#include "interface/track_edit_ui.h"
 
 namespace ReShaked {
 
@@ -21,10 +24,14 @@ namespace ReShaked {
 class TrackList : public QHBox {
 	
 
-		
-public:	
-		
+
+	std::vector<TrackEditUI*> track_edits; /* track views */
+
 	
+public:	
+
+	void update_track_views();	
+	TrackList(QWidget *p_parent);	
 };
 
 

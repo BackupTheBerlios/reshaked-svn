@@ -14,6 +14,8 @@
 namespace ReShaked {
 
 
+int Track::static_id = 0;
+
 
 void Track::set_sequencer_event_buffer(const EventBuffer *p_seq) {
 	
@@ -38,14 +40,59 @@ Automation *Track::get_automation(int p_index) {
 	return base_private.automations[p_index];
 }
 
-Track::Track() {
+int Track::get_input_plug_count() {
+
+    return 1;
+}
+int Track::get_output_plug_count() {
+
+
+    return 1;
+}
+
+AudioPlug *Track::get_input_plug(int p_index) {
+
+    if (p_index!=0)
+	return NULL;
+    return base_private.input_plug;
+}
+
+AudioPlug *Track::get_output_plug(int p_index) {
+
+
+    if (p_index!=0)
+	return NULL;
+    return base_private.output_plug;
+
+}
+
+void Track::process(int p_frames) {
+
+
+	process_track(base_private.input_plug->get_buffer(),base_private.output_plug->get_buffer(),p_frames);
+}
+
+int Track::get_ID() {
+
+
+	return base_private.id;
+}
+
+Track::Track(int p_channels) {
 	
 	base_private.seq_events=NULL;
+	base_private.input_plug=new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
+	base_private.output_plug=new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
+	base_private.id=static_id++;
 }
 
 
 Track::~Track()
 {
+
+	
+	delete base_private.input_plug;
+	delete base_private.output_plug;
 }
 
 

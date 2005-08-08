@@ -17,7 +17,7 @@ public:
 	virtual AudioPlug *get_output_plug(int p_index)=0;
 	
 	virtual void process(int p_frames)=0;
-	virtual ~AudioNode()=0; /* here, have your virtual destructor, gcc */
+	virtual ~AudioNode() {}; /* here, have your virtual destructor, gcc */
 };
 
 

@@ -1,6 +1,6 @@
 [Dir editing]
 Dirs=
-Files=cursor.cpp/cursor.h/track_edit.h/undo_stream.cpp/undo_stream.h/edit_commands.h/song_edit.h
+Files=cursor.cpp/cursor.h/track_edit.h/undo_stream.cpp/undo_stream.h/edit_commands.h/song_edit.h/pattern_edit.cpp/pattern_edit.h/song_edit.cpp
 
 [Dir engine]
 Dirs=
