@@ -11,7 +11,7 @@
 #include "editing/song_edit.h"
 
 #include "interface/track_list.h"
-#include "interface/pattern_font.h"
+#include "interface/pattern_settings.h"
 
 namespace ReShaked {
 
@@ -21,7 +21,7 @@ class MainWindow : public MainWindowBase {
 
 	Q_OBJECT
 
-        PatternFont pattern_font;
+        PatternSettings pattern_settings;
 
 	QSplitter *track_options_splitter;
 	QScrollView *track_scroll;

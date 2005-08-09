@@ -14,7 +14,7 @@ class TrackViewPattern : public TrackView {
 
 	enum {
 
-		BORDER_MARGIN=5
+		BORDER_MARGIN=10
 	};
 
 	PatternEdit* pattern_edit;

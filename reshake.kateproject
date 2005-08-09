@@ -8,7 +8,7 @@ Files=audio_buffer.cpp/audio_buffer.h/audio_control.cpp/audio_control.h/audio_gr
 
 [Dir interface]
 Dirs=
-Files=main_window.cpp/main_window.h/track_edit_ui.cpp/track_edit_ui.h/track_list.cpp/track_list.h/track_view.cpp/track_view.h/track_view_pattern.cpp/track_view_pattern.h
+Files=main_window.cpp/main_window.h/track_edit_ui.cpp/track_edit_ui.h/track_list.cpp/track_list.h/track_view.cpp/track_view.h/track_view_pattern.cpp/track_view_pattern.h/pattern_settings.cpp/pattern_settings.h
 
 [Dir program]
 Dirs=
