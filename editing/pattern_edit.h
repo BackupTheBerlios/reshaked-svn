@@ -4,11 +4,23 @@
 
 #include "editing/track_edit.h"
 #include "engine/pattern_track.h"
+#include <list>
 
 namespace ReShaked {
 
 
 class PatternEdit : public TrackEdit {
+public:
+
+	struct EdNote {
+		PatternPosition pos;
+		PatternNote note;
+	};
+
+	typedef std::list<EdNote> NoteList;
+
+
+private:
 
 	struct UndoRedoNote : public UndoRedoOp {
 
@@ -18,7 +30,7 @@ class PatternEdit : public TrackEdit {
 		UndoRedoNote(PatternEdit *p_owner);
 	};
 
-	
+
 	enum NoteEditMode {
 		MODE_NOTE,
 		MODE_VOLUME,
@@ -31,12 +43,12 @@ class PatternEdit : public TrackEdit {
 	};
 
 	PatternTrack *pattern_track;
-	
+
 	NoteEditMode note_edit_mode;
 	int subcolumn;
 
 	UndoRedoNote *get_undo_redo_current_note();
-	
+
 	bool receives_edit_command_type(EditCommand::Type p_type);
 	void edit_command(const EditCommand &p_command);
 
@@ -45,6 +57,8 @@ class PatternEdit : public TrackEdit {
 	Track * get_track();
 
 public:
+
+	NoteList get_notes_in_row(int p_row);
 
 	PatternEdit(UndoStream *p_undo_stream, Cursor *p_cursor,PatternTrack *p_track);
 

@@ -19,11 +19,13 @@ class TrackViewPattern : public TrackView {
 
 	PatternEdit* pattern_edit;
 
+	int columns_visible;
+
 
 	void paintEvent(QPaintEvent *e);
 
 
-	
+
 public:
 
 

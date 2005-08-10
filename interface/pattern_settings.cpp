@@ -1,4 +1,5 @@
 #include "pattern_settings.h"
+#include <qfontmetrics.h>
 
 namespace ReShaked {
 
@@ -31,7 +32,12 @@ QColor PatternSettings::get_color(Color p_color) {
 		return QColor(0,0,0);
 
 	return colors[p_color];
+}
 
+int PatternSettings::get_row_size() {
+
+	QFontMetrics metrics(font);
+	return metrics.height()+LINE_SPACING;
 }
 PatternSettings::PatternSettings() {
 
@@ -39,7 +45,6 @@ PatternSettings::PatternSettings() {
     font.setFamily("Fixed");
     singleton=this;
     pattern_margin=DEFAULT_PATTERN_MARGIN;
-
 
     colors[COLOR_PATTERN_BG]=QColor(3,45,20);
     colors[COLOR_PATTERN_FONT]=QColor(137,236,177);

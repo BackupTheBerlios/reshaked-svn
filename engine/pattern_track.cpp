@@ -1,7 +1,7 @@
 //
 // C++ Implementation: pattern_track
 //
-// Description: 
+// Description:
 //
 //
 // Author: Juan Linietsky <coding@reduz.com.ar>, (C) 2005
@@ -32,13 +32,17 @@ void PatternTrack::set_note(Tick p_tick,int p_column,const PatternNote &p_note) 
 	if (tick_idx==INVALID_STREAM_INDEX)
 	    return; /* nothing to erase */
         pattern.erase_index(tick_idx);
-	
+
     } else { /* just insert-overwrite wathever you can find */
 	pattern.insert(PatternPosition(p_tick,p_column),p_note);
     }
-    
+
 }
 
+Pattern& PatternTrack::get_pattern() {
+
+	return pattern;
+}
 
 void PatternTrack::process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames) {
 

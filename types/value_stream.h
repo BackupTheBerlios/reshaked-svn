@@ -1,7 +1,7 @@
 //
 // C++ Interface: value_stream
 //
-// Description: 
+// Description:
 //
 //
 // Author: Juan Linietsky <coding@reduz.com.ar>, (C) 2005
@@ -23,20 +23,21 @@ private:
 	struct Value {
 
 		T pos;
-		V val;	
+		V val;
 	};
 
 
 	std::vector<Value> stream;
 
     int find_pos(T p_pos,bool &p_exact);
-public:	
+public:
 
     void insert(T p_pos,V p_value);
     int get_exact_index(T p_pos); /* return INVALID_STREAM_INDEX if pos is not exact */
     int get_prev_index(T p_pos); /* get index to pos previous or equal to value */
     int get_next_index(T p_pos); /* get index to pos next or equal to value, if greater than last element, then stream_size+1 is returned */
-    const V& get_index_value(int p_idx); /* return a const reference to null if index is invalid! */
+    const V& get_index_value(int p_idx); /* return a const reference to     const V& get_index_value(int p_idx); /* return a const reference to null if index is invalid! */
+    const T& get_index_pos(int p_idx); /* return a const reference to     const T& get_index_pos(int p_idx); /* return a const reference to null if index is invalid! */
 
     int get_stream_size();
 
@@ -53,7 +54,7 @@ int ValueStream<T,V>::find_pos(T p_pos,bool &p_exact) {
     if (stream.empty())
 	return INVALID_STREAM_INDEX;
 
-	
+
 	int low = 0;
 	int high = stream.size() -1;
 	int middle;
@@ -63,7 +64,7 @@ int ValueStream<T,V>::find_pos(T p_pos,bool &p_exact) {
 	while( low <= high )
 	{
 		middle = ( low  + high ) / 2;
-	
+
 		if( p_pos == a[  middle ].pos ) { //match
 			p_exact=true;
 			return middle;
@@ -72,9 +73,9 @@ int ValueStream<T,V>::find_pos(T p_pos,bool &p_exact) {
 		else
 			low = middle + 1; //search high end of array
 	}
-	
+
 	/* adapt so we are behind 2 */
-	
+
 	if (a[middle].pos<p_pos)
 		middle++;
 	return middle;
@@ -85,12 +86,12 @@ template<class T, class V>
 void ValueStream<T,V>::insert(T p_pos,V p_value) {
 
 	bool exact;
-	int pos=find_pos(p_pos,exact);	
+	int pos=find_pos(p_pos,exact);
 	if (pos==INVALID_STREAM_INDEX) { //it's empty!
 	    stream.resize(1);
             pos=0;
 	} else if (!exact) { /* no exact position found, make room */
-	
+
 	    stream.resize(stream.size()+1);
 	    if (pos<stream.size()) //if it's not adding at the last element
 		memmove(&stream[pos+1],&stream[pos],sizeof(Value)*(stream.size()-pos));
@@ -105,6 +106,13 @@ const V& ValueStream<T,V>::get_index_value(int p_index) {
 
     ERR_FAIL_INDEX_V(p_index,stream.size(), *((V*)(NULL)));
     return stream[p_index].val;
+}
+
+template<class T, class V>
+const T& ValueStream<T,V>::get_index_pos(int p_index) {
+
+	ERR_FAIL_INDEX_V(p_index,stream.size(), *((T*)(NULL)));
+	return stream[p_index].pos;
 }
 
 template<class T, class V>
@@ -171,5 +179,5 @@ void ValueStream<T,V>::erase_index_range(int p_from_idx,int p_to_idx) {
 
 
 #endif
-	
-	
+
+

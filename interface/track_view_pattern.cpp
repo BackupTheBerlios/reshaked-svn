@@ -18,12 +18,12 @@ void TrackViewPattern::paintEvent(QPaintEvent *e) {
 
 	/* paint left borders */
 	int margin=PatternSettings::get_singleton()->get_pattern_margin();
-	
+	QColor light=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_LIGHT);
+	QColor bg=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_BG);
+	QColor shadow=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_SHADOW);
+
 	for (int i=0;i<margin;i++) {
 
-		QColor light=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_LIGHT);
-		QColor bg=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_BG);
-		QColor shadow=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_SHADOW);
 
 		QColor actual_light=INTERP_COLOR(light,bg,i,margin);
 		QColor actual_dark=INTERP_COLOR(shadow,bg,i,margin);
@@ -37,7 +37,31 @@ void TrackViewPattern::paintEvent(QPaintEvent *e) {
 		p.setPen(actual_light);
 		p.drawLine(i,i,width()-i*2,i);
 		p.drawLine(i,i,i,height()-1-i);
-				
+
+	}
+
+
+	int rowsize=PatternSettings::get_singleton()->get_row_size();
+	int lines_fit=(height()-margin*2)/rowsize;
+	//update cursor, small hack to make code simpler
+	pattern_edit->get_cursor().set_window_size(lines_fit);
+
+	for (int i=0;i<lines_fit;i++) {
+
+		p.setPen(shadow);
+		p.drawLine(0,margin+(i+1)*rowsize-1,width(),margin+(i+1)*rowsize-1);
+		p.setPen(light);
+		p.drawLine(0,margin+(i+1)*rowsize,width(),margin+(i+1)*rowsize);
+
+		PatternEdit::NoteList nl = pattern_edit->get_notes_in_row(i);
+		if (nl.empty())
+			continue;
+
+		for (PatternEdit::NoteList::iterator I = nl.begin() ; I!=nl.end();I++) {
+
+
+		}
+
 	}
 }
 
@@ -47,9 +71,8 @@ TrackViewPattern::TrackViewPattern(QWidget *p_parent,PatternEdit* p_edit) :Track
 
 	QFontMetrics metrics(PatternSettings::get_singleton()->get_font());
 	setFixedWidth(metrics.maxWidth()*3+BORDER_MARGIN*2);
-	
+	columns_visible=1;
 
-	
 	pattern_edit=p_edit;
 	printf("initia\n");
 

@@ -8,6 +8,11 @@ namespace ReShaked {
 class PatternSettings {
 public:
 
+	enum {
+		HEADER_LINES=2,
+		LINE_SPACING=2
+	};
+
 	enum Color {
 
                 COLOR_PATTERN_BG,
@@ -17,33 +22,33 @@ public:
 		COLOR_PATTERN_CURSOR,
 		COLOR_MAX
 	};
-		
-		
-	QColor colors[COLOR_MAX];
+
 
 private:
 	enum {
 		DEFAULT_PATTERN_MARGIN=10
-	}; 
+	};
 
 
 	int pattern_margin;
-	
+
 	static PatternSettings *singleton;
-	
+
 	QFont font;
+	QColor colors[COLOR_MAX];
 
 	QColor pattern_bg;
 	QColor pattern_font;
 	QColor pattern_light;
 	QColor pattern_shadow;
 	QColor pattern_cursor;
-	
+
 public:
 
-	
+
 	static PatternSettings *get_singleton();
-	
+
+	int get_row_size();
 	QFont get_font();
 	void set_font(const QFont &p_font);
 	int get_pattern_margin();

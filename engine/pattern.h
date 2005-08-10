@@ -63,6 +63,13 @@ struct PatternPosition {
 
 	inline bool operator>(const PatternPosition& eq) { if (tick<eq.tick) return false; else if (tick>eq.tick) return true; else return (column>eq.column); }
 
+	inline bool operator<=(const PatternPosition& eq) {
+		return (*this==eq || *this<eq);
+	}
+	inline bool operator>=(const PatternPosition& eq) {
+		return (*this==eq || *this>eq);
+	}
+
 	PatternPosition(Tick p_tick=0,int p_column=0) { tick=p_tick; column=p_column; }
 
 };

@@ -8,7 +8,9 @@
 
 typedef std::string String;
 
-#define TICKS_PER_BEAT 128
+//this number helps for high accuracy on beat divisors
+#define TICKS_PER_BEAT 3072
+
 typedef long long Tick;
 
 typedef signed char Note;

@@ -11,13 +11,11 @@ namespace ReShaked {
 class TrackEdit : public UndoRedoOwner {
 
 	Cursor *cursor;
-protected:
 
-	Cursor &get_cursor();
 
 public:
 
-
+	Cursor &get_cursor();
 	virtual bool receives_edit_command_type(EditCommand::Type p_type)=0;
 
 	virtual void edit_command(const EditCommand &p_command)=0;
