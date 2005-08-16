@@ -25,7 +25,7 @@ void TrackList::update_track_views() {
 	printf("adding %i tracks\n",song_edit->get_track_count());
 	for (int i=0;i<song_edit->get_track_count();i++) {
 
-		track_edits.push_back( new TrackEditUI( shrunk_hbox ,  song_edit->get_track_edit(i) ) );
+		track_edits.push_back( new TrackEditUI( shrunk_hbox , song_edit, i ) );
 		track_edits[track_edits.size()-1]->show();
 
 	}

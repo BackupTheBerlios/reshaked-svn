@@ -41,12 +41,16 @@ int PatternSettings::get_row_size() {
 }
 PatternSettings::PatternSettings() {
 
-    font.setPointSize(20);
-    font.setFamily("Fixed");
+    font.setPointSize(11);
+    font.setFamily("fixed");
+    font.setBold(true);
+    font.setStyleHint(QFont::Courier,QFont::NoAntialias);
+
     singleton=this;
     pattern_margin=DEFAULT_PATTERN_MARGIN;
-
+                                                                 
     colors[COLOR_PATTERN_BG]=QColor(3,45,20);
+    colors[COLOR_PATTERN_BG_FOCUS]=QColor(33,75,50);
     colors[COLOR_PATTERN_FONT]=QColor(137,236,177);
     colors[COLOR_PATTERN_LIGHT]=QColor(29,154,79);
     colors[COLOR_PATTERN_SHADOW]=QColor(0,10,0);

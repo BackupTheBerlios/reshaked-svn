@@ -23,11 +23,17 @@ namespace ReShaked {
 class PatternTrack : public Track {
 	
 	
-    Pattern pattern;
+	Pattern pattern;
 
         void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames);
+
+	int columns;
+	
 public:
 	/* pone a brilar la nota cuando estas arriba */
+
+	int get_columns();
+	void set_columns(int p_columns);
 	
 	Pattern& get_pattern();
 	PatternNote get_note(Tick p_tick,int p_column);

@@ -26,6 +26,8 @@ struct CursorCommand : public EditCommand {
 
 		CMD_MOVE_UP,
 		CMD_MOVE_DOWN,
+		CMD_MOVE_LEFT,
+		CMD_MOVE_RIGHT,
 		CMD_MOVE_PAGE_UP,
 		CMD_MOVE_PAGE_DOWN,
 		CMD_NEXT_PATTERN,
@@ -41,7 +43,12 @@ struct CursorCommand : public EditCommand {
 
 	Command command;
 	bool selection_mode;
-
+	
+	CursorCommand(Command p_command=CMD_MOVE_UP,bool p_selection=false) {
+		command=p_command;
+		selection_mode=p_selection;
+		type=CURSOR_COMMAND;
+	}
 };
 
 struct PatternEditCommand : public EditCommand {
@@ -63,17 +70,22 @@ struct PatternEditCommand : public EditCommand {
 	};
 
 	Command command;
+
+	PatternEditCommand() { type=PATTERN_EDIT_COMMAND;}
 };
 
 struct NoteCommand : public EditCommand {
 
 	Note note;
 	bool off;
+	NoteCommand() { type=NOTE_COMMAND; }
 };
 
 struct NumberInputCommand : public EditCommand {
 
 	int number;
+
+	NumberInputCommand() { number=NUMBER_INPUT_COMMAND; }
 };
 
 #endif

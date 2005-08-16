@@ -10,12 +10,13 @@ public:
 
 	enum {
 		HEADER_LINES=2,
-		LINE_SPACING=2
+		LINE_SPACING=4
 	};
 
 	enum Color {
 
                 COLOR_PATTERN_BG,
+		COLOR_PATTERN_BG_FOCUS,
 		COLOR_PATTERN_FONT,
 		COLOR_PATTERN_LIGHT,
 		COLOR_PATTERN_SHADOW,
@@ -38,6 +39,7 @@ private:
 	QColor colors[COLOR_MAX];
 
 	QColor pattern_bg;
+	QColor pattern_focus;
 	QColor pattern_font;
 	QColor pattern_light;
 	QColor pattern_shadow;

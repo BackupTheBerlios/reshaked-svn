@@ -13,23 +13,34 @@ int Cursor::ticks_to_snap(Tick p_ticks) {
 
 Tick Cursor::snap_to_ticks(int p_snap) {
 
+	//printf("snap %i - ",p_snap);
 	Tick tick_beats=(Tick)(p_snap/snap)*(Tick)TICKS_PER_BEAT;
 	Tick beat_snaps=p_snap%snap;
 	Tick tick_snaps=beat_snaps*TICKS_PER_BEAT/(Tick)snap;
-	return tick_beats+tick_snaps;
+	Tick res=tick_beats+tick_snaps;
+	//printf("tick %i\n",(int)res);
+	return res;
 
 }
 
-Tick Cursor::get_tick() {
+int Cursor::get_pos() {
 
-	return cursor_tick;
-
+	return cursor_pos;
 }
-void Cursor::set_tick(Tick p_tick) {
 
-	cursor_tick=p_tick;
+void Cursor::set_pos(int p_pos) {
 
+	if (p_pos<0)
+		p_pos=0;
+	cursor_pos=p_pos;	
 }
+
+Tick Cursor::get_tick_pos() {
+
+	return snap_to_ticks(cursor_pos);
+}
+
+
 int Cursor::get_track() {
 
 	return current_track;
@@ -52,8 +63,10 @@ void Cursor::set_edited_track_automation(int p_track_automation) {
 void Cursor::set_snap(Tick p_snap) {
 
 	Tick old_window_offset_snap=snap_to_ticks(window_offset);
+	Tick old_cursor_snap=snap_to_ticks(cursor_pos);
 	snap=p_snap;
 	window_offset=ticks_to_snap(old_window_offset_snap);
+	cursor_pos=ticks_to_snap(old_cursor_snap);
 }
 
 Tick Cursor::get_snap() {
@@ -87,9 +100,15 @@ Tick Cursor::get_snapped_window_tick_pos(int p_pos) {
 	return snap_to_ticks(window_offset+p_pos);
 }
 
+Cursor::TrackEditTarget Cursor::get_edit_target() {
+
+
+	return edit_target;
+}
+
 Cursor::Cursor() {
 
-    cursor_tick=0;
+    cursor_pos=0;
     current_track=0;
     current_automation=0;
     edit_target=EDIT_TRACK;

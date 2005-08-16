@@ -9,6 +9,7 @@
 
 #include "engine/song.h"
 #include "editing/song_edit.h"
+#include "editing/keyboard_input.h"
 
 #include "interface/track_list.h"
 #include "interface/pattern_settings.h"
@@ -31,12 +32,13 @@ class MainWindow : public MainWindowBase {
 	TrackList *track_list;
 	struct Engine {
 
+		Keyboard_Input key_input;
 		UndoStream undoredo_stream;
 		SongEdit *song_edit;
 		Song *song;
 	} engine;
 
-	
+	void add_default_key_binds();
 protected slots:
 
 	void add_pattern_track();

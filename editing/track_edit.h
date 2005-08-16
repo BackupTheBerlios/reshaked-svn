@@ -11,7 +11,8 @@ namespace ReShaked {
 class TrackEdit : public UndoRedoOwner {
 
 	Cursor *cursor;
-
+	
+	
 
 public:
 

@@ -98,6 +98,7 @@ void ValueStream<T,V>::insert(T p_pos,V p_value) {
 	}
 
 	stream[pos].val=p_value; /* Assign */
+	stream[pos].pos=p_pos; /* Assign */
 
 }
 

@@ -1,6 +1,6 @@
 [Dir editing]
 Dirs=
-Files=cursor.cpp/cursor.h/track_edit.h/undo_stream.cpp/undo_stream.h/edit_commands.h/song_edit.h/pattern_edit.cpp/pattern_edit.h/song_edit.cpp
+Files=cursor.cpp/cursor.h/track_edit.h/undo_stream.cpp/undo_stream.h/edit_commands.h/song_edit.h/pattern_edit.cpp/pattern_edit.h/song_edit.cpp/keyboard_input.cpp/keyboard_input.h
 
 [Dir engine]
 Dirs=
@@ -8,7 +8,7 @@ Files=audio_buffer.cpp/audio_buffer.h/audio_control.cpp/audio_control.h/audio_gr
 
 [Dir interface]
 Dirs=
-Files=main_window.cpp/main_window.h/track_edit_ui.cpp/track_edit_ui.h/track_list.cpp/track_list.h/track_view.cpp/track_view.h/track_view_pattern.cpp/track_view_pattern.h/pattern_settings.cpp/pattern_settings.h
+Files=main_window.cpp/main_window.h/track_edit_ui.cpp/track_edit_ui.h/track_list.cpp/track_list.h/track_view.cpp/track_view.h/track_view_pattern.cpp/track_view_pattern.h/pattern_settings.cpp/pattern_settings.h/main_window_keybinds.cpp
 
 [Dir program]
 Dirs=

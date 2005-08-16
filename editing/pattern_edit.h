@@ -8,10 +8,11 @@
 
 namespace ReShaked {
 
+class SongEdit;
 
 class PatternEdit : public TrackEdit {
 public:
-
+                
 	struct EdNote {
 		PatternPosition pos;
 		PatternNote note;
@@ -19,6 +20,11 @@ public:
 
 	typedef std::list<EdNote> NoteList;
 
+	enum NoteEditMode {
+		MODE_NOTE,
+		MODE_VOLUME,
+		MODE_PORTA,
+	};
 
 private:
 
@@ -31,26 +37,22 @@ private:
 	};
 
 
-	enum NoteEditMode {
-		MODE_NOTE,
-		MODE_VOLUME,
-		MODE_PORTA,
-	};
 
 	enum {
 
-		MAX_SUBCOLUMNS=2
+		MAX_FIELDS=2
 	};
 
+	SongEdit *song_edit;
+	
 	PatternTrack *pattern_track;
 
 	NoteEditMode note_edit_mode;
-	int subcolumn;
+	int column;
+	int field;
 
 	UndoRedoNote *get_undo_redo_current_note();
 
-	bool receives_edit_command_type(EditCommand::Type p_type);
-	void edit_command(const EditCommand &p_command);
 
  	void undo(UndoRedoOp *p_item);
 	void redo(UndoRedoOp *p_item);
@@ -58,9 +60,19 @@ private:
 
 public:
 
+	int get_columns();
+	void set_columns(int p_columns);
+	int get_cursor_column();
+	int get_cursor_field();
+
+	bool key_press_event(int p_event);
+	
+	bool receives_edit_command_type(EditCommand::Type p_type);
+	void edit_command(const EditCommand &p_command);
+	NoteEditMode get_note_edit_mode();
 	NoteList get_notes_in_row(int p_row);
 
-	PatternEdit(UndoStream *p_undo_stream, Cursor *p_cursor,PatternTrack *p_track);
+	PatternEdit(UndoStream *p_undo_stream, Cursor *p_cursor,PatternTrack *p_track,SongEdit *p_song_edit);
 
 
 };

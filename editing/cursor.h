@@ -6,15 +6,15 @@
 namespace ReShaked {
 
 class Cursor {
-
+public:
 	enum TrackEditTarget {
 		EDIT_TRACK,
 		EDIT_AUTOMATION
 	};
 
+private:
 
-
-	Tick cursor_tick;
+	int cursor_pos;
 	int current_track;
 	TrackEditTarget edit_target;
 	int current_automation;
@@ -27,8 +27,10 @@ class Cursor {
 
 public:
 
-	Tick get_tick();
-	void set_tick(Tick p_tick);
+	int get_pos();
+	void set_pos(int p_pos);
+	Tick get_tick_pos();
+	
 	int get_track();
 	void set_track(int p_track);
 	int get_track_automation();
@@ -40,7 +42,7 @@ public:
 	void set_window_size(int p_size);
 	int get_window_size();
 	Tick get_snapped_window_tick_pos(int p_pos);
-
+	TrackEditTarget get_edit_target();
 
         Cursor();
 

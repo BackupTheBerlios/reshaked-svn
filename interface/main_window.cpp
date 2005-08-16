@@ -41,8 +41,13 @@ public:
 	}
 };
 
+
+
+
 MainWindow::MainWindow() {
 
+	add_default_key_binds();
+	
 	engine.song = new Song;
 	engine.song_edit = new SongEdit( &engine.undoredo_stream , engine.song );
 	

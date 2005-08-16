@@ -30,7 +30,6 @@ struct PatternNote {
 		MAX_VOLUME=99,
 		PREVIOUS_PORTAMENTO=0,
 		NO_PORTAMENTO=100,
-		NO_VOLUME=100,
 		NO_AUTO_OFF=0,
 		NO_NOTE=254,
 	};
@@ -48,7 +47,7 @@ struct PatternNote {
 		auto_off=NO_AUTO_OFF;
 	}
 
-	bool is_empty() const { return (note==NO_NOTE) && (volume==NO_VOLUME) && (portamento==NO_PORTAMENTO); }
+	bool is_empty() const { return (note==NO_NOTE) && (volume==MAX_VOLUME) && (portamento==NO_PORTAMENTO); }
 	void set_octave(unsigned char p_octave) { if (note<MAX_NOTES) note=(note%12)+p_octave*12; }
 };
 
@@ -78,7 +77,6 @@ class Pattern : public ValueStream<PatternPosition,PatternNote> {
 
 
 public:
-
 
 
 };

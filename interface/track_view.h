@@ -12,9 +12,11 @@ class TrackView : public QWidget {
 	TrackEdit *track_edit;		
 
 
+	int track_idx;
 public:
 
-	TrackView(QWidget *p_parent,TrackEdit *p_track);
+	int get_track_index();
+	TrackView(QWidget *p_parent,TrackEdit *p_track,int p_track_idx);
 
 };
 

@@ -4,7 +4,6 @@
 namespace ReShaked {
 
 
-
 Cursor& TrackEdit::get_cursor() {
 
 	return *cursor;

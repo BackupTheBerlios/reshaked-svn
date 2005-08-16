@@ -50,9 +50,19 @@ void PatternTrack::process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,in
 
 }
 
+int PatternTrack::get_columns() {
+
+	return columns;
+}
+void PatternTrack::set_columns(int p_columns) {
+
+	columns=p_columns;
+
+}
+
 PatternTrack::PatternTrack(int p_channels) : Track(p_channels) {
 
-
+	columns=2;
 }
 
 };
