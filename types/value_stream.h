@@ -94,7 +94,7 @@ void ValueStream<T,V>::insert(T p_pos,V p_value) {
 
 	    stream.resize(stream.size()+1);
 	    if (pos<stream.size()) //if it's not adding at the last element
-		memmove(&stream[pos+1],&stream[pos],sizeof(Value)*(stream.size()-pos));
+		memmove(&stream[pos+1],&stream[pos],sizeof(Value)*(stream.size()-pos-1));
 	}
 
 	stream[pos].val=p_value; /* Assign */

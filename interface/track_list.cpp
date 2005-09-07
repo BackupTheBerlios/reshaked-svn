@@ -32,6 +32,12 @@ void TrackList::update_track_views() {
 	
 }
 
+void TrackList::repaint_track_views() {
+	
+	for(int i=0;i<track_edits.size();i++) 
+		track_edits[i]->repaint_track();
+	
+}
 TrackList::TrackList(SongEdit *p_song_edit,QWidget *p_parent) : QHBox(p_parent) {
 
 	song_edit=p_song_edit;

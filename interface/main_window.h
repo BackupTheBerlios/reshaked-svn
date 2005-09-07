@@ -14,6 +14,8 @@
 #include "interface/track_list.h"
 #include "interface/pattern_settings.h"
 
+#include "interface/edit_toolbar.h"
+
 namespace ReShaked {
 
 
@@ -30,6 +32,9 @@ class MainWindow : public MainWindowBase {
 	QWidgetStack *bottom_stack;
 
 	TrackList *track_list;
+	
+	EditToolbar *edit_toolbar;
+	
 	struct Engine {
 
 		Keyboard_Input key_input;
@@ -39,9 +44,12 @@ class MainWindow : public MainWindowBase {
 	} engine;
 
 	void add_default_key_binds();
+	
+	
 protected slots:
 
 	void add_pattern_track();
+	void snap_selected_change(int p_to_new);
 	
 public:
 

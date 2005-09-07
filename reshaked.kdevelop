@@ -7,15 +7,15 @@
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <ignoreparts>
-      <part>kdevopenwith</part>
       <part>kdevbookmarks</part>
-      <part>kdevctags2</part>
       <part>kdevclassview</part>
       <part>kdevsnippet</part>
+      <part>kdevctags2</part>
       <part>kdevdebugger</part>
       <part>kdevfilegroups</part>
       <part>kdevfileselector</part>
       <part>kdevdistpart</part>
+      <part>kdevopenwith</part>
       <part>kdevscripting</part>
       <part>kdevtexttools</part>
     </ignoreparts>
@@ -162,4 +162,13 @@
     </creategettersetter>
     <references/>
   </kdevcppsupport>
+  <kdevvisualadvance>
+    <emulator>VisualBoyAdvance</emulator>
+    <binary></binary>
+    <addOptions></addOptions>
+    <terminal>false</terminal>
+    <fullscreen>false</fullscreen>
+    <graphicFilter>-f0</graphicFilter>
+    <scaling>-1</scaling>
+  </kdevvisualadvance>
 </kdevelop>

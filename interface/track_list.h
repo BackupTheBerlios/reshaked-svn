@@ -34,6 +34,7 @@ public:
 
 
 	void update_track_views();	
+	void repaint_track_views();
 	TrackList(SongEdit *p_song_edit,QWidget *p_parent);
 };
 

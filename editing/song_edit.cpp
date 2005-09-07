@@ -4,6 +4,12 @@
 
 namespace ReShaked {
 
+
+Cursor& SongEdit::get_cursor() {
+	
+	return cursor;	
+	
+}
 void SongEdit::undo(UndoRedoOp *p_item) {
 
 

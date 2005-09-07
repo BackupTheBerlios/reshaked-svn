@@ -3,9 +3,9 @@
 #include <qpainter.h>
 #include "pattern_settings.h"
 
-// make insert note
-// make toggle volume/note/porta
-// make insert/change vol/note/porta
+// *make insert note
+// *make toggle volume/note/porta
+// *make insert/change vol/note/porta
 // make snap menu
 // make patterns/highlight
 // make sidebar

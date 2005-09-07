@@ -125,7 +125,7 @@ bool PatternEdit::key_press_event(int p_event) {
 			switch (note_edit_mode) {
 
 				case MODE_NOTE: note_edit_mode=MODE_VOLUME; break;
-				case MODE_VOLUME: note_edit_mode=MODE_PORTA; break;
+				case MODE_VOLUME: note_edit_mode=MODE_NOTE; break;
 				case MODE_PORTA: note_edit_mode=MODE_NOTE; break;
 			}
 
@@ -161,8 +161,17 @@ bool PatternEdit::key_press_event(int p_event) {
 
 		pattern_track->set_note(tick,column,note);
 
-	};
+	} else if (note_edit_mode==MODE_NOTE && field==1 && Keyboard_Input::get_singleton_instance()->is_number(p_event)) {
 
+		int octave=Keyboard_Input::get_singleton_instance()->get_number(p_event);
+		Tick tick=get_cursor().get_tick_pos(); //@TODO make in many notes
+		PatternNote note = pattern_track->get_note(tick,column);
+		if (note.is_empty())
+			return false;
+		//set octave
+		note.note=note.note%12+octave*12;
+		pattern_track->set_note(tick,column,note);
+	};
 
 	return true;
 

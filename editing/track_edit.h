@@ -21,6 +21,7 @@ public:
 
 	virtual void edit_command(const EditCommand &p_command)=0;
 	virtual Track* get_track()=0;
+	
 
 	TrackEdit(UndoStream *p_undo_stream, Cursor *p_cursor);
 

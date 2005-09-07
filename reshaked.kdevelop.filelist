@@ -1,5 +1,4 @@
 # KDevelop Custom Project File List
-Makefile
 types/error_macros.h
 types/pianokeys.h
 types/typedefs.h
@@ -10,6 +9,7 @@ interface/main_window.h
 interface/main_window_keybinds.cpp
 interface/moc_main_window.cc
 interface/moc_track_edit_ui.cc
+interface/moc_track_view.cc
 interface/pattern_settings.cpp
 interface/pattern_settings.h
 interface/row_list.h
@@ -54,6 +54,8 @@ engine/transport.h
 editing/cursor.cpp
 editing/cursor.h
 editing/edit_commands.h
+editing/global_edit.cpp
+editing/global_edit.h
 editing/keyboard_input.cpp
 editing/keyboard_input.h
 editing/pattern_edit.cpp
@@ -64,5 +66,6 @@ editing/track_edit.cpp
 editing/track_edit.h
 editing/undo_stream.cpp
 editing/undo_stream.h
-editing/global_edit.h
-editing/global_edit.cpp
+interface/snap_toolbar.h
+interface/snap_toolbar.cpp
+

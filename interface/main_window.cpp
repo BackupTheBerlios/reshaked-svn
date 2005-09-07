@@ -41,7 +41,12 @@ public:
 	}
 };
 
-
+void MainWindow::snap_selected_change(int p_to_new) {
+	
+	
+	engine.song_edit->get_cursor().set_snap(p_to_new);
+	track_list->repaint_track_views();	
+}
 
 
 MainWindow::MainWindow() {
@@ -70,6 +75,11 @@ MainWindow::MainWindow() {
 	bottom_stack = new QWidgetStack(track_options_splitter);
 
 	connect(this->tracknew_itemPatternAction,SIGNAL(activated()),this,SLOT(add_pattern_track()));
+	
+	
+	edit_toolbar = new EditToolbar(this);
+	connect(this->edit_toolbar,SIGNAL(snapSelectedSignal(int)),this,SLOT(snap_selected_change(int )));
+	
 }
 
 

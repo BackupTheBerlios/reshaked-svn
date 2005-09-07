@@ -29,6 +29,8 @@ class SongEdit : public UndoRedoOwner {
 	void redo(UndoRedoOp *p_item);
 public:
 
+	Cursor& get_cursor();
+
 	
 	int get_track_count();
 	TrackEdit* get_track_edit(int p_index);

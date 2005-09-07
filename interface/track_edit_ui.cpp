@@ -17,7 +17,11 @@ int TrackEditUI::get_track_ID() {
 
 }
 
-
+void TrackEditUI::repaint_track() {
+	
+	track_view->update();
+	
+}
 TrackEditUI::TrackEditUI(QWidget *p_parent,SongEdit *p_song_edit,int p_track) : QHBox(p_parent) {
 
 	TrackEdit *track_edit=p_song_edit->get_track_edit(p_track);

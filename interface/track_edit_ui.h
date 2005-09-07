@@ -25,6 +25,7 @@ class TrackEditUI : public QHBox {
 
 public:
 
+	void repaint_track();
 	Track *get_track();
 	int get_track_ID();
 	TrackEditUI(QWidget *p_parent,SongEdit *p_song_Edit,int p_track);
