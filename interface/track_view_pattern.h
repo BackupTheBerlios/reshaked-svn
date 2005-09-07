@@ -23,14 +23,16 @@ class TrackViewPattern : public TrackView {
 
 	void paintEvent(QPaintEvent *e);
 	void paint_note_event( QPainter& p, int p_row, PatternEdit::EdNote & p_note );
-	
+
 	void paint_multiple_note_events( QPainter& p, int p_row , const PatternEdit::NoteList& p_list );
+	void paint_multiple_nonvisible_events( QPainter& p, int p_row, const PatternEdit::NoteList& p_list);
+
 
 	void paint_cursor(QPainter& p, int p_row);
 
 	void keyPressEvent (QKeyEvent *e);
 	void keyReleaseEvent (QKeyEvent *e);
-	
+
 public:
 
 

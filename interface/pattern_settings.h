@@ -3,6 +3,7 @@
 
 #include <qfont.h>
 #include <qcolor.h>
+
 namespace ReShaked {
 
 class PatternSettings {
@@ -21,6 +22,8 @@ public:
 		COLOR_PATTERN_LIGHT,
 		COLOR_PATTERN_SHADOW,
 		COLOR_PATTERN_CURSOR,
+		COLOR_PATTERN_NOTEOFF,
+		COLOR_PATTERN_VOLUME,
 		COLOR_MAX
 	};
 
@@ -45,10 +48,15 @@ private:
 	QColor pattern_shadow;
 	QColor pattern_cursor;
 
+	int editing_octave;
+
 public:
 
 
 	static PatternSettings *get_singleton();
+
+	int get_editing_octave();
+	void set_editing_octave(int p_octave);
 
 	int get_row_size();
 	QFont get_font();

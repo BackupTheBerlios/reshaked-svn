@@ -2,18 +2,30 @@
 <kdevelop>
   <general>
     <author>Juan Linietsky</author>
-    <email>coding@reduz.com.ar</email>
+    <email>reduzio@gmail.com</email>
     <version>$VERSION$</version>
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
-    <ignoreparts/>
+    <ignoreparts>
+      <part>kdevopenwith</part>
+      <part>kdevbookmarks</part>
+      <part>kdevctags2</part>
+      <part>kdevclassview</part>
+      <part>kdevsnippet</part>
+      <part>kdevdebugger</part>
+      <part>kdevfilegroups</part>
+      <part>kdevfileselector</part>
+      <part>kdevdistpart</part>
+      <part>kdevscripting</part>
+      <part>kdevtexttools</part>
+    </ignoreparts>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <description></description>
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>reshaked</mainprogram>
+      <mainprogram>program/reshaked</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs></programargs>
@@ -21,9 +33,6 @@
       <autocompile>true</autocompile>
       <envvars/>
     </run>
-    <general>
-      <activedir></activedir>
-    </general>
     <build>
       <buildtool>make</buildtool>
       <builddir></builddir>
@@ -33,7 +42,7 @@
       <numberofjobs>1</numberofjobs>
       <prio>0</prio>
       <dontact>false</dontact>
-      <makebin>scons</makebin>
+      <makebin></makebin>
       <defaulttarget></defaulttarget>
       <makeoptions></makeoptions>
       <selectedenvironment>default</selectedenvironment>
@@ -44,12 +53,12 @@
   </kdevcustomproject>
   <kdevdebugger>
     <general>
-      <dbgshell></dbgshell>
-      <programargs></programargs>
-      <gdbpath></gdbpath>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <dbgshell/>
+      <programargs/>
+      <gdbpath/>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -114,8 +123,23 @@
       <type ext="h" />
     </useglobaltypes>
   </kdevfilecreate>
+  <kdevfileview>
+    <groups>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidenonlocation>false</hidenonlocation>
+    </groups>
+    <tree>
+      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+    </tree>
+  </kdevfileview>
+  <cppsupportpart>
+    <filetemplates>
+      <interfacesuffix>.h</interfacesuffix>
+      <implementationsuffix>.cpp</implementationsuffix>
+    </filetemplates>
+  </cppsupportpart>
   <kdevcppsupport>
-    <references/>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>
@@ -136,30 +160,6 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
+    <references/>
   </kdevcppsupport>
-  <kdevfileview>
-    <groups>
-      <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidenonlocation>false</hidenonlocation>
-    </groups>
-    <tree>
-      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
-      <hidenonprojectfiles>false</hidenonprojectfiles>
-    </tree>
-  </kdevfileview>
-  <cppsupportpart>
-    <filetemplates>
-      <interfacesuffix>.h</interfacesuffix>
-      <implementationsuffix>.cpp</implementationsuffix>
-    </filetemplates>
-  </cppsupportpart>
-  <kdevvisualadvance>
-    <emulator>VisualBoyAdvance</emulator>
-    <binary></binary>
-    <addOptions></addOptions>
-    <terminal>false</terminal>
-    <fullscreen>false</fullscreen>
-    <graphicFilter>-f0</graphicFilter>
-    <scaling>-1</scaling>
-  </kdevvisualadvance>
 </kdevelop>

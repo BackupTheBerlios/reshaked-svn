@@ -56,7 +56,10 @@ def check_qtdir():
 			return os.environ["QTDIR"]; #QTDIR has been set, use itself
 
 			
-	possible_paths=['/usr/share/qt3','/usr/','/usr/local'];
+	possible_paths=[];
+	possible_paths+=['/usr/share/qt3']; # debian
+	possible_paths+=['/usr/X11R6']; # FreeBSD
+	possible_paths+=['/usr/','/usr/local']; # Standard
 
 	for x in possible_paths:
 		if (try_qtdir(x)):

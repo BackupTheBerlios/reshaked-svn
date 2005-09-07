@@ -39,6 +39,9 @@
 
 #define KEYBIND(m_str) Keyboard_Input::get_singleton_instance()->get_key_bind_by_name(m_str)
 
+#define IS_KEYBIND(m_str,m_key) \
+	(Keyboard_Input::get_singleton_instance()->get_key_bind_by_name(m_str)==m_key)
+
 class Keyboard_Input {
 
 	static Keyboard_Input *singleton_instance;
@@ -53,7 +56,7 @@ class Keyboard_Input {
 	};
 
 	int number_key[10];
-	
+
         vector<Bind> bind_list;
 
 public:

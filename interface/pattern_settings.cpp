@@ -39,6 +39,17 @@ int PatternSettings::get_row_size() {
 	QFontMetrics metrics(font);
 	return metrics.height()+LINE_SPACING;
 }
+
+int PatternSettings::get_editing_octave() {
+
+	return editing_octave;
+}
+void PatternSettings::set_editing_octave(int p_octave) {
+
+	editing_octave=p_octave;
+
+}
+
 PatternSettings::PatternSettings() {
 
     font.setPointSize(11);
@@ -46,15 +57,20 @@ PatternSettings::PatternSettings() {
     font.setBold(true);
     font.setStyleHint(QFont::Courier,QFont::NoAntialias);
 
+    editing_octave=4;
+
     singleton=this;
     pattern_margin=DEFAULT_PATTERN_MARGIN;
-                                                                 
-    colors[COLOR_PATTERN_BG]=QColor(3,45,20);
-    colors[COLOR_PATTERN_BG_FOCUS]=QColor(33,75,50);
-    colors[COLOR_PATTERN_FONT]=QColor(137,236,177);
-    colors[COLOR_PATTERN_LIGHT]=QColor(29,154,79);
-    colors[COLOR_PATTERN_SHADOW]=QColor(0,10,0);
-    colors[COLOR_PATTERN_CURSOR]=QColor(210,255,228);
+
+    colors[COLOR_PATTERN_BG]=QColor(63,79,44);
+    colors[COLOR_PATTERN_BG_FOCUS]=QColor(81,100,59);
+    colors[COLOR_PATTERN_FONT]=QColor(255,255,255);
+    colors[COLOR_PATTERN_LIGHT]=QColor(41,51,27);
+    colors[COLOR_PATTERN_SHADOW]=QColor(176,200,142);
+    colors[COLOR_PATTERN_CURSOR]=QColor(255,0,0);
+    colors[COLOR_PATTERN_VOLUME]=QColor(255,255,0);
+
+    colors[COLOR_PATTERN_NOTEOFF]=QColor(255,140,100);
 }
 
 

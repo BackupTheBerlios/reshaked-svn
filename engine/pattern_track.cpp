@@ -35,6 +35,7 @@ void PatternTrack::set_note(Tick p_tick,int p_column,const PatternNote &p_note) 
 
     } else { /* just insert-overwrite wathever you can find */
 	pattern.insert(PatternPosition(p_tick,p_column),p_note);
+	printf("inserting %i at %i\n",p_note.note,(int)p_tick);
     }
 
 }

@@ -135,13 +135,13 @@ int Keyboard_Input::get_number(int p_key) {
 
 	for (int i=0;i<10;i++)
 		if (number_key[i]==p_key)
-			return number_key[i];
+			return i;
 	return -1;
 }
 
 void Keyboard_Input::set_number(int p_number,int p_key) {
 
-	if (p_number<9 || p_number>=10)
+	if (p_number<0 || p_number>=10)
 		return;
 	number_key[p_number]=p_key;
 }
