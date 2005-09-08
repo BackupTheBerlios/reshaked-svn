@@ -50,7 +50,7 @@ struct PatternNote {
 
 	bool is_note() { return note<MAX_NOTES; }
 	bool is_note_off() { return note==NOTE_OFF; }
-	bool is_empty() const { return (note==NO_NOTE) && (volume==NO_VOLUME); }
+	bool is_empty() const { return (note==NO_NOTE) ; }
 	void set_octave(unsigned char p_octave) { if (note<MAX_NOTES) note=(note%12)+p_octave*12; }
 };
 

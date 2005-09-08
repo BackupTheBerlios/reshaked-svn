@@ -29,8 +29,10 @@ void PatternTrack::set_note(Tick p_tick,int p_column,const PatternNote &p_note) 
 
     if (p_note.is_empty()) { //sets an empty note, delete it */
 	int tick_idx = pattern.get_exact_index(PatternPosition(p_tick,p_column));
-	if (tick_idx==INVALID_STREAM_INDEX)
-	    return; /* nothing to erase */
+	if (tick_idx==INVALID_STREAM_INDEX) {
+		return; /* nothing to erase */
+	}   
+	
         pattern.erase_index(tick_idx);
 
     } else { /* just insert-overwrite wathever you can find */

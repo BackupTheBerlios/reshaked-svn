@@ -69,3 +69,5 @@ editing/undo_stream.h
 interface/snap_toolbar.h
 interface/snap_toolbar.cpp
 
+engine/pattern_list.h
+engine/pattern_list.cpp

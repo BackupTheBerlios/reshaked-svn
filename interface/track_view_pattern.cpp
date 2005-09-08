@@ -180,6 +180,9 @@ void TrackViewPattern::paint_multiple_nonvisible_events( QPainter& p, int p_row,
 		} else if (note.note.is_note_off()) {
 			QColor col=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_NOTEOFF);
 			p.fillRect(xofs,eventofs+from,notewidth,eheight,col);
+		} else { 
+			
+			printf("WTF!!\n");
 		}
 	}
 }
