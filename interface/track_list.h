@@ -24,17 +24,22 @@ namespace ReShaked {
 
 
 class TrackList : public QHBox {
-	
+
+	Q_OBJECT	
 
 	SongEdit *song_edit;
 	std::vector<TrackEditUI*> track_edits; /* track views */
 	QHBox *shrunk_hbox;
 	
+public slots:	
+
+	void repaint_track_views();
+		
 public:	
 
 
 	void update_track_views();	
-	void repaint_track_views();
+
 	TrackList(SongEdit *p_song_edit,QWidget *p_parent);
 };
 

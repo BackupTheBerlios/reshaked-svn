@@ -64,6 +64,7 @@ public:
 	void set_columns(int p_columns);
 	int get_cursor_column();
 	int get_cursor_field();
+	void set_cursor_column_and_field(int p_column,int p_field);
 
 	bool key_press_event(int p_event);
 	

@@ -40,16 +40,11 @@ int PatternSettings::get_row_size() {
 	return metrics.height()+LINE_SPACING;
 }
 
-int PatternSettings::get_editing_octave() {
+int PatternSettings::get_border_margin() {
 
-	return editing_octave;
+	return 5;	
+	
 }
-void PatternSettings::set_editing_octave(int p_octave) {
-
-	editing_octave=p_octave;
-
-}
-
 PatternSettings::PatternSettings() {
 
     font.setPointSize(11);
@@ -57,7 +52,7 @@ PatternSettings::PatternSettings() {
     font.setBold(true);
     font.setStyleHint(QFont::Courier,QFont::NoAntialias);
 
-    editing_octave=4;
+
 
     singleton=this;
     pattern_margin=DEFAULT_PATTERN_MARGIN;
@@ -69,6 +64,7 @@ PatternSettings::PatternSettings() {
     colors[COLOR_PATTERN_SHADOW]=QColor(176,200,142);
     colors[COLOR_PATTERN_CURSOR]=QColor(255,0,0);
     colors[COLOR_PATTERN_VOLUME]=QColor(255,255,0);
+    colors[COLOR_PATTERN_BEAT_HILITE]=QColor(95,110,69);
 
     colors[COLOR_PATTERN_NOTEOFF]=QColor(255,140,100);
 }

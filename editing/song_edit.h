@@ -20,7 +20,7 @@ class SongEdit : public UndoRedoOwner {
 	};
 	
 	Song *song;
-	Cursor cursor;
+	Cursor *cursor;
 	int editing_octave;
 	
 	std::vector<TrackEdit*> track_editors;
@@ -46,13 +46,16 @@ public:
 	void cursor_move_pattern_down();
 	void cursor_move_home();
 	void cursor_move_end();
+	void cursor_set_pos(int p_row);
+	
+	void track_select(int p_index);
 
 	void move_editing_left();
 	void move_editing_right();
 
 	int get_editing_octave();
 	
-	SongEdit(UndoStream *p_undo_stream,Song *p_song);
+	SongEdit(Cursor* p_cursor,UndoStream *p_undo_stream,Song *p_song);
 
 };
 

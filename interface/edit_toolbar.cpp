@@ -67,6 +67,7 @@ EditToolbar::EditToolbar(QMainWindow *p_parent) : QToolBar(p_parent) {
 	new QLabel("Octave: ",this);
 	octave_spin = new QSpinBox(0,9,1,this);
 	octave_spin->setValue(4);
+	octave_spin->setFocusPolicy(NoFocus);
 	new QLabel("  Snap: ",this);
 	snap_combo = new QComboBox(true,this);
 	for (int i=0;i<ITEM_CUSTOM;i++) {
@@ -80,6 +81,8 @@ EditToolbar::EditToolbar(QMainWindow *p_parent) : QToolBar(p_parent) {
 	QObject::connect(snap_combo,SIGNAL(activated(int)),this,SLOT(snapSelectedSlot(int)));
 	
 	current_snap=4;
+	snap_combo->setFocusPolicy(NoFocus);
+	snap_combo->lineEdit()->setFocusPolicy(NoFocus);
 	
 }
 

@@ -37,6 +37,7 @@ public:
     int get_prev_index(T p_pos); /* get index to pos previous or equal to value */
     int get_next_index(T p_pos); /* get index to pos next or equal to value, if greater than last element, then stream_size+1 is returned */
     const V& get_index_value(int p_idx); /* return a const reference to     const V& get_index_value(int p_idx); /* return a const reference to null if index is invalid! */
+    V& get_index_value_w(int p_idx); /* return a reference to     const V& get_index_value(int p_idx); /* return a const reference to null if index is invalid! */
     const T& get_index_pos(int p_idx); /* return a const reference to     const T& get_index_pos(int p_idx); /* return a const reference to null if index is invalid! */
 
     int get_stream_size();
@@ -107,6 +108,13 @@ const V& ValueStream<T,V>::get_index_value(int p_index) {
 
     ERR_FAIL_INDEX_V(p_index,stream.size(), *((V*)(NULL)));
     return stream[p_index].val;
+}
+
+template<class T, class V>
+V& ValueStream<T,V>::get_index_value_w(int p_index) {
+
+	ERR_FAIL_INDEX_V(p_index,stream.size(), *((V*)(NULL)));
+	return stream[p_index].val;
 }
 
 template<class T, class V>

@@ -71,3 +71,5 @@ interface/snap_toolbar.cpp
 
 engine/pattern_list.h
 engine/pattern_list.cpp
+/cursor_qt.h
+/cursor_qt.cpp

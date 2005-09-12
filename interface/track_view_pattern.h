@@ -13,11 +13,6 @@ namespace ReShaked {
 
 class TrackViewPattern : public TrackView {
 
-	enum {
-
-		BORDER_MARGIN=8
-	};
-
 	PatternEdit* pattern_edit;
 	SongEdit* song_edit;
 
@@ -32,7 +27,7 @@ class TrackViewPattern : public TrackView {
 
 	void keyPressEvent (QKeyEvent *e);
 	void keyReleaseEvent (QKeyEvent *e);
-
+	void mousePressEvent ( QMouseEvent * e );
 public:
 
 

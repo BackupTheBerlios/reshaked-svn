@@ -7,7 +7,7 @@ namespace ReShaked {
 
 Cursor& SongEdit::get_cursor() {
 	
-	return cursor;	
+	return *cursor;	
 	
 }
 void SongEdit::undo(UndoRedoOp *p_item) {
@@ -45,7 +45,7 @@ void SongEdit::add_pattern_track(int p_channels) {
         PatternTrack *pattern_track = new PatternTrack(p_channels);
 	op->track = pattern_track;
 	song->add_track(op->track);
-	op->track_edit = new PatternEdit(get_undo_stream(),&cursor, pattern_track,this);
+	op->track_edit = new PatternEdit(get_undo_stream(),cursor, pattern_track,this);
 	track_editors.push_back(op->track_edit);
 
 	get_undo_stream()->new_block("Add Pattern Track");
@@ -60,12 +60,12 @@ void SongEdit::add_bus_track(int p_channels) {
 
 void SongEdit::cursor_move_up() {
 
-	cursor.set_pos(cursor.get_pos()-1);
+	cursor->set_pos(cursor->get_pos()-1);
 
 }
 void SongEdit::cursor_move_down() {
 
-	cursor.set_pos(cursor.get_pos()+1);
+	cursor->set_pos(cursor->get_pos()+1);
 
 }
 void SongEdit::cursor_move_page_up() {
@@ -94,6 +94,13 @@ void SongEdit::cursor_move_end() {
 
 }
 
+void SongEdit::cursor_set_pos(int p_row) {
+	
+	
+	cursor->set_pos( cursor->get_window_offset() + p_row );
+	
+}
+
 void SongEdit::move_editing_left() {
 
 	
@@ -105,8 +112,14 @@ void SongEdit::move_editing_right() {
 
 }
 
-
-SongEdit::SongEdit(UndoStream *p_undo_stream,Song *p_song) : UndoRedoOwner(p_undo_stream) {
+void SongEdit::track_select(int p_index) {
+	
+	cursor->set_track(p_index);
+	cursor->set_edit_target(Cursor::EDIT_TRACK);
+	
+}
+SongEdit::SongEdit(Cursor* p_cursor,UndoStream *p_undo_stream,Song *p_song) : UndoRedoOwner(p_undo_stream) {
+	cursor=p_cursor;
 
 	song=p_song;
 	editing_octave=4;

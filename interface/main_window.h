@@ -15,6 +15,8 @@
 #include "interface/pattern_settings.h"
 
 #include "interface/edit_toolbar.h"
+#include "interface/row_list.h"
+#include "interface/cursor_qt.h"
 
 namespace ReShaked {
 
@@ -30,6 +32,8 @@ class MainWindow : public MainWindowBase {
 	QScrollView *track_scroll;
 	QScrollBar *v_scroll;
 	QWidgetStack *bottom_stack;
+	RowList *row_list;
+	CursorQt *cursor;
 
 	TrackList *track_list;
 	

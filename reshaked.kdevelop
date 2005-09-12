@@ -22,6 +22,7 @@
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <description></description>
+    <versioncontrol></versioncontrol>
   </general>
   <kdevcustomproject>
     <run>
@@ -50,6 +51,9 @@
         <default/>
       </environments>
     </make>
+    <general>
+      <activedir></activedir>
+    </general>
   </kdevcustomproject>
   <kdevdebugger>
     <general>
@@ -171,4 +175,11 @@
     <graphicFilter>-f0</graphicFilter>
     <scaling>-1</scaling>
   </kdevvisualadvance>
+  <kdevdocumentation>
+    <projectdoc>
+      <docsystem></docsystem>
+      <docurl></docurl>
+      <usermanualurl></usermanualurl>
+    </projectdoc>
+  </kdevdocumentation>
 </kdevelop>

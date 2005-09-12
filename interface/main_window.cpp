@@ -37,6 +37,7 @@ public:
 	ExpScrollView(QWidget *p_parent) : QScrollView(p_parent) {
 		 child = NULL;
 		 setResizePolicy(QScrollView::AutoOneFit);
+		 setFrameStyle(NoFrame);		 
 		// viewport()->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	}
 };
@@ -52,24 +53,24 @@ void MainWindow::snap_selected_change(int p_to_new) {
 MainWindow::MainWindow() {
 
 	add_default_key_binds();
+	cursor = new CursorQt(this);
 	
 	engine.song = new Song;
-	engine.song_edit = new SongEdit( &engine.undoredo_stream , engine.song );
+	engine.song_edit = new SongEdit(cursor, &engine.undoredo_stream , engine.song );
 	
 	
 	track_options_splitter = new QSplitter(Qt::Vertical,this);
 	setCentralWidget(track_options_splitter);
 
 	QHBox * top_hbox = new QHBox(track_options_splitter);
-	
+	row_list = new RowList(top_hbox,&engine.song_edit->get_cursor());
 	track_scroll = new ExpScrollView(top_hbox);
+	
 	track_list = new TrackList(engine.song_edit,track_scroll->viewport());
+	
 	((ExpScrollView*)track_scroll)->add_child(track_list);
 	track_list->show();
 	track_list->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	
-
-
 
 	v_scroll = new QScrollBar(top_hbox);
 	bottom_stack = new QWidgetStack(track_options_splitter);
@@ -79,6 +80,11 @@ MainWindow::MainWindow() {
 	
 	edit_toolbar = new EditToolbar(this);
 	connect(this->edit_toolbar,SIGNAL(snapSelectedSignal(int)),this,SLOT(snap_selected_change(int )));
+	
+	//if cursor moves, call update
+	QObject::connect(cursor,SIGNAL(window_moved()),row_list,SLOT(update()));
+	QObject::connect(cursor,SIGNAL(track_changed()),track_list,SLOT(repaint_track_views()));
+	QObject::connect(cursor,SIGNAL(window_moved()),track_list,SLOT(repaint_track_views()));
 	
 }
 

@@ -6,9 +6,9 @@
 // *make insert note
 // *make toggle volume/note/porta
 // *make insert/change vol/note/porta
-// make snap menu
+// *make snap menu
 // make patterns/highlight
-// make sidebar
+// *make sidebar
 // make home/end navigation menus
 // make remaining editing
 // make selection
@@ -52,11 +52,11 @@ void TrackViewPattern::paint_note_event( QPainter& p, int p_row, PatternEdit::Ed
 	int rowsize=PatternSettings::get_singleton()->get_row_size();
 	int fontwidth=metrics.maxWidth();
 	int fontofs=metrics.ascent()+3;
-	int textofs=BORDER_MARGIN+p_row*rowsize+fontofs;
-	int volofs=BORDER_MARGIN+(p_row+1)*rowsize-2;
+	int textofs=PatternSettings::get_singleton()->get_border_margin()+p_row*rowsize+fontofs;
+	int volofs=PatternSettings::get_singleton()->get_border_margin()+(p_row+1)*rowsize-2;
 	int notewidth=fontwidth*3;
 	int columnwidth=fontwidth*4;
-	int fontxofs=BORDER_MARGIN+p_note.pos.column*columnwidth;
+	int fontxofs=PatternSettings::get_singleton()->get_border_margin()+p_note.pos.column*columnwidth;
 
 
 
@@ -121,14 +121,40 @@ void TrackViewPattern::paint_note_event( QPainter& p, int p_row, PatternEdit::Ed
 
 }
 
+void TrackViewPattern::mousePressEvent ( QMouseEvent * e ) {
+
+	QFontMetrics metrics(PatternSettings::get_singleton()->get_font());
+	int fontwidth=metrics.maxWidth();
+	int columnwidth=fontwidth*4;	
+		
+	int evy=e->y();	
+	int evx=e->x();	
+	evy-=PatternSettings::get_singleton()->get_border_margin();
+	evx-=PatternSettings::get_singleton()->get_border_margin();
+	evx+=fontwidth/2; //this makes clicking easier
+	if (evy<0)
+		evy=0;
+	if (evx<0)
+		evx=0;
+	int row=evy/PatternSettings::get_singleton()->get_row_size();
+	
+	int column=evx/columnwidth;
+	int field=((evx%columnwidth)/fontwidth)/2;
+	song_edit->cursor_set_pos(row);
+	song_edit->track_select(get_track_index());
+	pattern_edit->set_cursor_column_and_field(column,field);
+	update();
+	
+}
+
 void TrackViewPattern::paint_multiple_nonvisible_events( QPainter& p, int p_row, const PatternEdit::NoteList& p_list) {
 
 	QFontMetrics metrics(PatternSettings::get_singleton()->get_font());
 	int rowsize=PatternSettings::get_singleton()->get_row_size();
 	int fontwidth=metrics.maxWidth();
 	int fontofs=metrics.ascent()+3;
-	int textofs=BORDER_MARGIN+p_row*rowsize+fontofs;
-	int eventofs=BORDER_MARGIN+p_row*rowsize+3;
+	int textofs=PatternSettings::get_singleton()->get_border_margin()+p_row*rowsize+fontofs;
+	int eventofs=PatternSettings::get_singleton()->get_border_margin()+p_row*rowsize+3;
 	int notewidth=fontwidth*3;
 	int columnwidth=fontwidth*4;
 
@@ -143,7 +169,7 @@ void TrackViewPattern::paint_multiple_nonvisible_events( QPainter& p, int p_row,
 	for (int i=0;i<howmany;I++,i++) {
 
 		PatternEdit::EdNote note = *I;
-		int xofs=BORDER_MARGIN+note.pos.column*columnwidth;
+		int xofs=PatternSettings::get_singleton()->get_border_margin()+note.pos.column*columnwidth;
 
 		int from=i*maxsize/howmany;
 		int to=((i+1)*maxsize/howmany);
@@ -220,7 +246,7 @@ void TrackViewPattern::paint_multiple_note_events( QPainter& p, int p_row , cons
 
 void TrackViewPattern::paint_cursor(QPainter &p,int p_row) {
 
-
+	
 	if (
 		   (pattern_edit->get_cursor().get_pos()==(pattern_edit->get_cursor().get_window_offset()+p_row)) && //match row
 		   (get_track_index()==pattern_edit->get_cursor().get_track() && pattern_edit->get_cursor().get_edit_target()==Cursor::EDIT_TRACK)
@@ -230,10 +256,10 @@ void TrackViewPattern::paint_cursor(QPainter &p,int p_row) {
 		QFontMetrics metrics(PatternSettings::get_singleton()->get_font());
 		int rowsize=PatternSettings::get_singleton()->get_row_size();
 		int fontwidth=metrics.maxWidth();
-		int yofs=BORDER_MARGIN+p_row*rowsize;
-		int volofs=BORDER_MARGIN+(p_row+1)*rowsize-2;
+		int yofs=PatternSettings::get_singleton()->get_border_margin()+p_row*rowsize;
+		int volofs=PatternSettings::get_singleton()->get_border_margin()+(p_row+1)*rowsize-2;
 		int columnwidth=fontwidth*4;
-		int xofs=BORDER_MARGIN+pattern_edit->get_cursor_column()*columnwidth;
+		int xofs=PatternSettings::get_singleton()->get_border_margin()+pattern_edit->get_cursor_column()*columnwidth;
 		int fontheight=metrics.height();
 
 		int cursor_x;
@@ -299,8 +325,8 @@ void TrackViewPattern::paintEvent(QPaintEvent *e) {
 
 	for (int i=1;i<pattern_edit->get_columns();i++) {
 
-		int w = width()-BORDER_MARGIN*2;
-		int from=BORDER_MARGIN+i*w/pattern_edit->get_columns();
+		int w = width()-PatternSettings::get_singleton()->get_border_margin()*2;
+		int from=PatternSettings::get_singleton()->get_border_margin()+i*w/pattern_edit->get_columns();
 
 		p.setPen(light);
 		p.drawLine(from-1,0,from-1,height());
@@ -315,13 +341,26 @@ void TrackViewPattern::paintEvent(QPaintEvent *e) {
 
 	for (int i=0;i<lines_fit;i++) {
 
+		
+		int subsnap=pattern_edit->get_cursor().get_snapped_window_subsnap(i);
+		
+		if (subsnap==0) { //beat 
+			
+			int bm=PatternSettings::get_singleton()->get_border_margin();
+			int x=bm;
+			int y=bm+i*rowsize;
+			
+			p.fillRect(x,y,width()-bm*2,rowsize,PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_BEAT_HILITE));
+			
+		}
+	
 		p.setPen(shadow);
-		p.drawLine(width()-BORDER_MARGIN,margin+(i+1)*rowsize-1,width(),margin+(i+1)*rowsize-1);
-		p.drawLine(0,margin+(i+1)*rowsize-1,BORDER_MARGIN-1,margin+(i+1)*rowsize-1);
+		p.drawLine(width()-PatternSettings::get_singleton()->get_border_margin(),margin+(i+1)*rowsize-1,width(),margin+(i+1)*rowsize-1);
+		p.drawLine(0,margin+(i+1)*rowsize-1,PatternSettings::get_singleton()->get_border_margin()-1,margin+(i+1)*rowsize-1);
 		p.setPen(light);
-		p.drawLine(0,margin+(i+1)*rowsize,width()-BORDER_MARGIN,margin+(i+1)*rowsize);
+		p.drawLine(0,margin+(i+1)*rowsize,width()-PatternSettings::get_singleton()->get_border_margin(),margin+(i+1)*rowsize);
 		p.setPen(bg);
-		p.drawLine(width()-BORDER_MARGIN,margin+(i+1)*rowsize,width(),margin+(i+1)*rowsize);
+		p.drawLine(width()-PatternSettings::get_singleton()->get_border_margin(),margin+(i+1)*rowsize,width(),margin+(i+1)*rowsize);
 
 
 		PatternEdit::NoteList nl = pattern_edit->get_notes_in_row(i);
@@ -361,9 +400,9 @@ TrackViewPattern::TrackViewPattern(QWidget *p_parent,PatternEdit* p_edit,SongEdi
 	QFontMetrics metrics(PatternSettings::get_singleton()->get_font());
 	int cols=p_edit->get_columns();
 	if (cols==1)
-		setFixedWidth(metrics.maxWidth()*3+BORDER_MARGIN*2);
+		setFixedWidth(metrics.maxWidth()*3+PatternSettings::get_singleton()->get_border_margin()*2);
 	else
-		setFixedWidth(metrics.maxWidth()*3*cols+metrics.maxWidth()*(cols-1)+BORDER_MARGIN*2);
+		setFixedWidth(metrics.maxWidth()*3*cols+metrics.maxWidth()*(cols-1)+PatternSettings::get_singleton()->get_border_margin()*2);
 
 		song_edit=p_song_edit;
 	pattern_edit=p_edit;

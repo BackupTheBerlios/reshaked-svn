@@ -245,6 +245,22 @@ void PatternEdit::set_columns(int p_columns) {
 }
 
 
+void PatternEdit::set_cursor_column_and_field(int p_column,int p_field) {
+	
+	column=p_column;
+	if (column<0)
+		column=0;
+	if (column>=pattern_track->get_columns())
+		column=pattern_track->get_columns();
+	
+	field=p_field;
+	if (field<0)
+		field=0;
+	if (field>1)
+		field=1;
+	
+}
+
 PatternEdit::NoteEditMode PatternEdit::get_note_edit_mode() {
 
 

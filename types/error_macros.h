@@ -22,13 +22,13 @@
 
 #define ERR_FAIL_COND_V(m_cond,m_retval) \
 	{ if ( m_cond ) {	\
-		std::cout << __FILE__ << ":" << __LINE__ << " - " << " ## m_cond ## failed." << std::endl;	\
+		std::cout << __FILE__ << ":" << __LINE__ << " - " << #m_cond " failed." << std::endl;	\
 		return m_retval;	 \
 	} }	\
 
 #define ERR_CONTINUE(m_cond) \
 	{ if ( m_cond ) {	\
-		std::cout << __FILE__ << ":" << __LINE__ << " - " << " ## m_cond ## failed." << std::endl;	\
+		std::cout << __FILE__ << ":" << __LINE__ << " - " << #m_cond " failed." << std::endl;	\
 		continue;	 \
 	} }	\
 

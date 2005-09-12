@@ -24,6 +24,7 @@ public:
 		COLOR_PATTERN_CURSOR,
 		COLOR_PATTERN_NOTEOFF,
 		COLOR_PATTERN_VOLUME,
+		COLOR_PATTERN_BEAT_HILITE,
 		COLOR_MAX
 	};
 
@@ -48,21 +49,21 @@ private:
 	QColor pattern_shadow;
 	QColor pattern_cursor;
 
-	int editing_octave;
+
 
 public:
 
 
 	static PatternSettings *get_singleton();
 
-	int get_editing_octave();
-	void set_editing_octave(int p_octave);
 
 	int get_row_size();
 	QFont get_font();
 	void set_font(const QFont &p_font);
 	int get_pattern_margin();
 	QColor get_color(Color p_color);
+	
+	int get_border_margin();
 	PatternSettings();
 
 };
