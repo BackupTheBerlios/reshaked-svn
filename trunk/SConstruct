@@ -1,0 +1,38 @@
+
+EnsureSConsVersion(0,96);
+
+import detect;
+import sys;
+import os;
+
+# PRE-detect Qt3 QTDIR
+
+QT_VERSION_MAJOR_NEEDED = 4
+QT_VERSION_MINOR_NEEDED = 0
+
+qtdir=detect.check_qtdir(QT_VERSION_MAJOR_NEEDED,QT_VERSION_MINOR_NEEDED);
+os.environ["QTDIR"]=qtdir;
+
+env = Environment(CCFLAGS=['-Wall','-g3','-I.','-Itypes/','-Wno-sign-compare'], tools=['default','qt']);
+
+env.Append(LIBS=['QtGui','QtCore']);
+env.Append(LIBS=['pthread']);
+env["QT_LIB"]="";
+#Enable the make_targets helper
+#env.__class__.make_targets = detect.make_targets
+env.build_dir = None
+
+env.__class__.find_source_files = detect.find_source_files
+detect.check_pkg_config();
+
+#detect.check_pkg(env,"qt-mt","3.2");
+#detect.check_pkg(env,"alsa","0.9");
+
+Export('env');
+
+#SConscript('types/SCsub');
+SConscript('engine/SCsub');
+#SConscript('editing/SCsub');
+SConscript('interface/SCsub');
+SConscript('program/SCsub');
+

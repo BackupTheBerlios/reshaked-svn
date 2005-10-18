@@ -1,0 +1,14 @@
+Import('env');
+
+env_interface = env.Copy();
+env_interface.target_list=[];
+
+#env.make_targets(env.interface_targets)
+
+Export('env_interface');
+
+#SConscript("uic/SCsub");
+
+env_interface.find_source_files(env_interface.target_list,"*.cpp");
+
+env.Library('interface', env_interface.target_list)

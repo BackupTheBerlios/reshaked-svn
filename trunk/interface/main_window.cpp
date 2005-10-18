@@ -1,0 +1,120 @@
+//
+// C++ Implementation: main_window
+//
+// Description: 
+//
+//
+// Author: Juan Linietsky <reduzio@gmail.com>, (C) 2005
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+#include "main_window.h"
+#include <Qt/qicon.h>
+#include <Qt/qmenu.h>
+#include <Qt/qtoolbar.h>
+#include <Qt/qmenubar.h>
+#include  "indexed_action.h"
+#include "typedefs.h"
+
+
+
+namespace ReShaked {
+
+void MainWindow::menu_action_callback(int p_action) {
+
+
+	switch (p_action) {
+		
+		case ITEM_TRACK_ADD_PATTERN: {
+			
+			data.song.add_track(TRACK_TYPE_PATTERN,2);
+			global_view->update();
+			
+		} break;
+		
+	}
+
+}	
+	
+void MainWindow::create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QToolBar *p_toolbar,const char **p_xpm) {
+	
+	ERR_FAIL_COND( action_map.find(p_item)!=action_map.end() );
+	
+	
+	IndexedAction *q;
+	
+	if (!p_xpm) 
+		
+		q = new IndexedAction(p_item,p_text,this);
+	
+	else 
+		q = new IndexedAction(p_item,p_text,QPixmap(p_xpm),this);
+	
+	QObject::connect(q,SIGNAL(selected_index_signal(int)),this,SLOT(menu_action_callback(int)));
+		
+	action_map[p_item]=q;
+	if (p_menu)
+		p_menu->addAction(q);
+	if (p_toolbar)
+		p_toolbar->addAction(q);
+	
+
+}
+
+QAction *MainWindow::get_action(MenuItems p_item) {
+	
+	std::map<int,QAction*>::iterator I=action_map.find(p_item);
+	if (I==action_map.end())
+		return NULL;
+	
+	return I->second;
+}
+
+	
+void MainWindow::add_menus() {
+	
+	
+	
+		
+	QMenu * file = menuBar()->addMenu("File");
+	QMenu * edit = menuBar()->addMenu("Edit");
+	QMenu * track = menuBar()->addMenu("Track");
+
+	create_action(ITEM_SONG_NEW,"New",file,NULL);
+	create_action(ITEM_SONG_OPEN,"Open",file,NULL);
+	create_action(ITEM_SONG_SAVE,"Save",file,NULL);
+	create_action(ITEM_SONG_SAVE_AS,"Save As..",file,NULL);
+	file->addSeparator();
+	create_action(ITEM_SONG_EXIT,"Quit",file,NULL);
+	
+	create_action(ITEM_EDIT_UNDO,"Undo",edit,NULL);
+	create_action(ITEM_EDIT_REDO,"Redo",edit,NULL);
+	
+	create_action(ITEM_TRACK_ADD_PATTERN,"Add Pattern Track",track,NULL);
+	create_action(ITEM_TRACK_ADD_AUDIO,"Add Audio Track",track,NULL);
+	create_action(ITEM_TRACK_REMOVE,"Remove Current Track",track,NULL);
+	track->addSeparator();
+	create_action(ITEM_TRACK_MOVE_LEFT,"Move Curent Track Left",track,NULL);
+	create_action(ITEM_TRACK_MOVE_RIGHT,"Move Curent Track Right",track,NULL);
+	
+}
+	
+MainWindow::MainWindow()
+{
+
+	splitter = new QSplitter(Qt::Vertical,this);
+	global_view = new GlobalView(splitter,&data.song);
+	splitter->addWidget(global_view);
+	setCentralWidget(splitter);
+	
+	add_menus();
+}
+
+
+MainWindow::~MainWindow()
+{
+}
+
+
+}
