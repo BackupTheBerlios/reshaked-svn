@@ -167,6 +167,12 @@ int Cursor::get_snapped_window_subsnap(int p_pos) {
 	
 }
 
+int Cursor::get_beat() {
+	
+	
+	return cursor_pos/snap;
+}
+
 void Cursor::set_edit_target(TrackEditTarget p_target) {
 	
 	edit_target=p_target;	

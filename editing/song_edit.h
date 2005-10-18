@@ -29,6 +29,7 @@ class SongEdit : public UndoRedoOwner {
 	void redo(UndoRedoOp *p_item);
 public:
 
+	Song * get_song();
 	Cursor& get_cursor();
 
 	
@@ -47,6 +48,8 @@ public:
 	void cursor_move_home();
 	void cursor_move_end();
 	void cursor_set_pos(int p_row);
+
+	void pattern_make_at_cursor(String p_string);
 	
 	void track_select(int p_index);
 

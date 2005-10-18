@@ -73,3 +73,5 @@ engine/pattern_list.h
 engine/pattern_list.cpp
 /cursor_qt.h
 /cursor_qt.cpp
+/order_list_editor.h
+/order_list_editor.cpp

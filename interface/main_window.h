@@ -47,14 +47,28 @@ class MainWindow : public MainWindowBase {
 		Song *song;
 	} engine;
 
+	
+	struct Cache {
+		
+		int current_pattern;		
+		
+		
+	} cache;
+	
 	void add_default_key_binds();
 	
 	
 protected slots:
 
+	void cursor_pos_changed_slot(bool p_force_update = false);
+	
 	void add_pattern_track();
 	void snap_selected_change(int p_to_new);
-	
+
+	void pattern_add_slot();
+	void pattern_insert_slot();
+	void pattern_erase_slot();
+	void pattern_change_slot();
 public:
 
 

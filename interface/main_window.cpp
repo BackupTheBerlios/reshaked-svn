@@ -5,6 +5,7 @@
 #include <qpushbutton.h>
 #include <qlabel.h>
 #include <qaction.h>
+#include <qinputdialog.h>
 
 namespace ReShaked {
 
@@ -49,8 +50,53 @@ void MainWindow::snap_selected_change(int p_to_new) {
 	track_list->repaint_track_views();	
 }
 
+void MainWindow::pattern_add_slot() {
+	
+	bool ok;
+	QString text = QInputDialog::getText("Pattern Name?", "Enter Pattern Name:", QLineEdit::Normal,
+	QString::null, &ok, this );
+	if ( ok ) {
+        	
+		engine.song_edit->pattern_make_at_cursor(text.ascii()); //must change that immediately
+	} 
+	
+	track_list->repaint_track_views();
+	cursor_pos_changed_slot(true);
+}	
+void MainWindow::pattern_insert_slot() {
+	
+	
+	
+}
+void MainWindow::pattern_erase_slot() {
+	
+	
+	
+}
+void MainWindow::pattern_change_slot() {
+	
+	
+	
+}
+
+
+void MainWindow::cursor_pos_changed_slot(bool p_force_update) {
+	
+	
+	int beat=cursor->get_beat();
+	int pattern=engine.song->get_pattern_list().get_pattern_from_global_beat(beat);
+	if (pattern==cache.current_pattern && !p_force_update)
+		return;
+	pattern_current_line_edit->setText( QString::number(pattern) );
+	cache.current_pattern=pattern;
+	
+}
+
 
 MainWindow::MainWindow() {
+
+	
+	cache.current_pattern=-1;	
 
 	add_default_key_binds();
 	cursor = new CursorQt(this);
@@ -75,7 +121,7 @@ MainWindow::MainWindow() {
 	v_scroll = new QScrollBar(top_hbox);
 	bottom_stack = new QWidgetStack(track_options_splitter);
 
-	connect(this->tracknew_itemPatternAction,SIGNAL(activated()),this,SLOT(add_pattern_track()));
+	QObject::connect(this->tracknew_itemPatternAction,SIGNAL(activated()),this,SLOT(add_pattern_track()));
 	
 	
 	edit_toolbar = new EditToolbar(this);
@@ -85,6 +131,11 @@ MainWindow::MainWindow() {
 	QObject::connect(cursor,SIGNAL(window_moved()),row_list,SLOT(update()));
 	QObject::connect(cursor,SIGNAL(track_changed()),track_list,SLOT(repaint_track_views()));
 	QObject::connect(cursor,SIGNAL(window_moved()),track_list,SLOT(repaint_track_views()));
+	QObject::connect(cursor,SIGNAL(cursor_moved()),this,SLOT(cursor_pos_changed_slot()));
+
+	QObject::connect(patternCreateAction,SIGNAL(activated()),this,SLOT(pattern_add_slot()));
+	QObject::connect(patternModifyAction,SIGNAL(activated()),this,SLOT(pattern_change_slot()));
+	QObject::connect(patternDeleteAction,SIGNAL(activated()),this,SLOT(pattern_erase_slot()));
 	
 }
 

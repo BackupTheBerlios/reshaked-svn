@@ -112,6 +112,17 @@ void SongEdit::move_editing_right() {
 
 }
 
+void SongEdit::pattern_make_at_cursor(String p_string) {
+	
+	int beat = cursor->get_beat();
+	song->get_pattern_list().insert_pattern(p_string,beat);
+}
+
+
+Song * SongEdit::get_song() {
+	
+	return song;
+}
 void SongEdit::track_select(int p_index) {
 	
 	cursor->set_track(p_index);

@@ -26,12 +26,7 @@ String PatternList::get_pattern_name(int p_idx) {
 	return pattern_list.get_index_value(p_idx).name;
 	
 }
-int PatternList::get_pattern_repeats(int p_idx) {
 
-	ERR_FAIL_INDEX_V(p_idx,pattern_list.get_stream_size(),-1);
-	return pattern_list.get_index_value(p_idx).repeats;
-
-}
 void PatternList::set_pattern_name(int p_idx,String p_name) {
 
 	ERR_FAIL_INDEX(p_idx,pattern_list.get_stream_size());
@@ -39,18 +34,12 @@ void PatternList::set_pattern_name(int p_idx,String p_name) {
 
 
 }
-void PatternList::set_pattern_repeats(int p_idx,int p_repeats) {
-
-	ERR_FAIL_INDEX(p_idx,pattern_list.get_stream_size());
-	pattern_list.get_index_value_w(p_idx).repeats=p_repeats;
-
-
-}
 
 bool PatternList::insert_pattern(String p_name,int p_beat) {
 	
 	
-	ERR_FAIL_COND_V(  pattern_list.get_exact_index( p_beat ) == INVALID_STREAM_INDEX/* beat already exists */,true );	
+	ERR_FAIL_COND_V(  pattern_list.get_exact_index( p_beat ) != INVALID_STREAM_INDEX ,true );	
+	
 	ERR_FAIL_COND_V(p_beat<0,true);
 	
 	pattern_list.insert(p_beat,PatternData(p_name));
@@ -59,13 +48,27 @@ bool PatternList::insert_pattern(String p_name,int p_beat) {
 	
 }
 
-int PatternList::get_pattern_beat(int p_beat) {
+int PatternList::get_pattern_beat_from_global_beat(int p_beat) {
 
 	int prev_idx=pattern_list.get_prev_index(p_beat);
+	//printf("p_beat is %i, prev_idx is %i\n",p_beat,prev_idx);
+	ERR_FAIL_COND_V(prev_idx==INVALID_STREAM_INDEX,-1);
+	ERR_FAIL_INDEX_V(prev_idx,pattern_list.get_stream_size(),-1);
+	int pos = p_beat-pattern_list.get_index_pos(prev_idx);
+	//printf("pos for beat %i is %i\n",p_beat,pos);
+	return pos;
+
+}
+
+int PatternList::get_pattern_from_global_beat(int p_beat) {
+	
+	
+	int prev_idx=pattern_list.get_prev_index(p_beat);
+	//printf("p_beat is %i, prev_idx is %i\n",p_beat,prev_idx);
 	ERR_FAIL_COND_V(prev_idx==INVALID_STREAM_INDEX,-1);
 	ERR_FAIL_INDEX_V(prev_idx,pattern_list.get_stream_size(),-1);
 	
-	return p_beat-pattern_list.get_index_pos(prev_idx);
+	return prev_idx;
 
 }
 

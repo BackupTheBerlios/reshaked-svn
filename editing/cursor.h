@@ -3,6 +3,9 @@
 
 #include "typedefs.h"
 
+
+//@TODO Make an object for pattern changed notify or something
+
 namespace ReShaked {
 
 class Cursor {
@@ -37,6 +40,7 @@ public:
 	void set_edited_track_automation(int p_track_automation);
 	void set_snap(Tick p_snap);
 	Tick get_snap();
+	int get_beat();
 	void set_window_offset(int p_offset);
 	int get_window_offset();
 	void set_window_size(int p_size);
@@ -49,8 +53,8 @@ public:
 
 	
 	/* reimplement these for your UI */
-	virtual void window_moved();;
-	virtual void cursor_moved();;
+	virtual void window_moved();
+	virtual void cursor_moved();
 	virtual void cursor_changed_track();
 	
         Cursor();

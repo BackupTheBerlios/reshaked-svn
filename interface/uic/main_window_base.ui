@@ -31,7 +31,7 @@
     </item>
     <item text="Track" name="Track">
         <action name="tracknew_itemAction"/>
-        <item text="Add" name="popupMenu_8" accel="">
+        <item text="Add" name="PopupMenuEditor_8" accel="">
             <action name="tracknew_itemPatternAction"/>
             <action name="tracknew_itemAudioAction"/>
             <action name="tracknew_itemBusAction"/>
@@ -47,14 +47,14 @@
         <separator/>
         <action name="editCopyAction"/>
         <action name="editCopy_SpecialAction"/>
-        <item text="Copy Special" name="popupMenu_20" accel="">
+        <item text="Copy Special" name="PopupMenuEditor_20" accel="">
             <action name="editCopy_SpecialCopy_BlockAction"/>
             <action name="editCopy_SpecialCopy_LoopAction"/>
         </item>
         <action name="editCutAction"/>
         <action name="editPasteAction"/>
         <action name="editOverwriteAction"/>
-        <item text="Paste Special" name="popupMenu_25" accel="">
+        <item text="Paste Special" name="PopupMenuEditor_25" accel="">
             <action name="editOverwriteOverwriteAction"/>
             <action name="editOverwriteMixAction"/>
         </item>
@@ -85,8 +85,27 @@
         <action name="patternCreateAction"/>
         <action name="patternModifyAction"/>
         <action name="patternDeleteAction"/>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string> Patttern: </string>
+            </property>
+        </widget>
+        <widget class="QLineEdit">
+            <property name="name">
+                <cstring>pattern_current_line_edit</cstring>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>48</width>
+                    <height>32767</height>
+                </size>
+            </property>
+        </widget>
     </toolbar>
-    <toolbar dock="2">
+    <toolbar dock="3">
         <property name="name">
             <cstring>Toolbar_2</cstring>
         </property>
