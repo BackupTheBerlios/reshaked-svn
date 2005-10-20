@@ -80,6 +80,25 @@ Tick BlockList::get_block_pos(int p_index) {
 	
 }
 
+int BlockList::get_block_idx_at_pos(Tick p_pos) { // NULL for no block
+
+
+	if (p_pos<0)
+		return -1;
+	
+	int prev_idx = bl_private.block_list.get_prev_index( p_pos );
+
+	if (prev_idx==-1)
+		return -1; //nuthin
+		
+	
+	Block * b = get_block(prev_idx);
+	
+	if (( get_block_pos(prev_idx) + b->get_length() ) < p_pos )
+		return -1;
+	
+	return prev_idx;
+}
 
 BlockList::BlockList() {
 	

@@ -7,9 +7,36 @@
 #include "global_view.h"
 #include "engine/track_pattern.h"
 #include <Qt/qpainter.h>
-
+#include <Qt/qevent.h>
 namespace ReShaked {
 
+	
+/******************* HELPERS *********************/
+	
+bool GlobalView::is_block_selected(int p_list_index,int p_block) {
+	
+	int id=p_list_index+p_block*MAX_LISTS;
+	std::set<int>::iterator I = selection.find(id);
+	return (I!=selection.end());
+}
+	
+void GlobalView::add_block_to_selection(int p_list_index,int p_block) {
+	
+	int id=p_list_index+p_block*MAX_LISTS;
+	std::set<int>::iterator I = selection.find(id);
+	if (I==selection.end())
+		selection.insert(id);
+	else {
+		selection.erase(I);
+	}
+	
+	update();
+}
+void GlobalView::clear_selection() {
+	
+	selection.clear();
+	update();
+}
 	
 BlockList* GlobalView::get_block_list(int p_idx) {
 	
@@ -89,13 +116,107 @@ QColor GlobalView::get_block_list_color(BlockList *p_block) {
 		return QColor(255,55,78);
 	
 }
+
+
+bool GlobalView::get_screen_to_blocklist_and_tick( int p_x, int p_y, int *p_blocklist, Tick *p_tick ) {
+
+
+	/******* FIND BLOCKLISt ********/
+	int which_blocklist=-1;
+	int blcount=get_block_list_count();
+	float ofs=0;
+	for (int i=0;i<blcount;i++) {
+	
+		BlockList *blocklist=get_block_list(i);
+	
+		float f_from_x=ofs-display.ofs_x*display.zoom_width;
+		float block_width=get_block_list_width(blocklist)*display.zoom_width;
+		
+		printf("comparing %i to %i\n",(int)(f_from_x+block_width),p_x);
+		if ((int)(f_from_x+block_width)>p_x) {
+			which_blocklist=i;
+			break;
+		}
+		
+		ofs+=block_width;
+	}
+
+
+	if (which_blocklist==-1)
+		return true; //not fund
+
+	/******* FIND TICK ********/
+	
+	double tick=p_y/display.zoom_height-display.ofs_y;
+	tick*=(double)TICKS_PER_BEAT;
+
+//	printf("coords %i,%i, got block %i, beat %.2f\n",p_x,p_y,which_blocklist,(float)tick/(float)TICKS_PER_BEAT);	
+		
+	if (tick<0)
+		return true;
+		
+	*p_blocklist=which_blocklist;
+	*p_tick=(Tick)tick;
+		
+	return false;
+}
+
+bool GlobalView::get_click_location( int p_x, int p_y, int *p_blocklist, int *p_block ) {
+	
+	int blocklist;
+	Tick tick;
+
+	if (get_screen_to_blocklist_and_tick(p_x,p_y,&blocklist,&tick))
+		return true;
+		
+	/* find right block */
+	BlockList *bl = get_block_list( blocklist );
+	ERR_FAIL_COND_V(bl==NULL,true);
+
+	int block_idx = bl->get_block_idx_at_pos( tick );
+	
+	if (block_idx<0)
+		return true;
+
+	printf("block %i, tick %.2f - blocks idx %i\n",blocklist,(float)tick/(float)TICKS_PER_BEAT,block_idx);
+		
+	*p_blocklist=blocklist;
+	*p_block=block_idx;
+	
+	return false;	
+	
+}
+
+/***************** MOUSE *********************/
+
+void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
+	
+		
+}
+void GlobalView::mousePressEvent ( QMouseEvent * e ) {
+	
+	int blocklist=-1,block=-1;
+	if (get_click_location(e->x(),e->y(),&blocklist,&block))
+		return; //no location
+	
+	add_block_to_selection(blocklist,block);
+}
+void GlobalView::mouseReleaseEvent ( QMouseEvent * e ) {
+	
+	
+	
+}
+
+/****************** PAINTING ********************/
+
 void GlobalView::paintEvent(QPaintEvent *pe) {
 	
 	QPainter p(this);
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));	
 	
 	float ofs=0;
-	for (int i=0;i<get_block_list_count();i++) {
+	int blocklist_count=get_block_list_count();
+	for (int i=0;i<blocklist_count;i++) {
 		
 		BlockList *blocklist=get_block_list(i);
 		float f_from_x=ofs-display.ofs_x*display.zoom_width;
@@ -110,8 +231,11 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 			
 			float f_from_y=((float)blocklist->get_block_pos(j)/(float)(TICKS_PER_BEAT))*display.zoom_height-display.ofs_y*display.zoom_height;
 			float f_height=((float)blocklist->get_block(j)->get_length()/(float)(TICKS_PER_BEAT))*display.zoom_height;
-			
-			p.fillRect((int)f_from_x,(int)f_from_y,(int)f_width,(int)f_height,get_block_list_color(blocklist));	
+	
+			QColor col=get_block_list_color(blocklist);
+			if (is_block_selected(i,j))
+				col=QColor(255,0,0);
+			p.fillRect((int)f_from_x,(int)f_from_y,(int)f_width,(int)f_height,col);	
 
 		}
 		

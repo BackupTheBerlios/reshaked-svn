@@ -32,17 +32,41 @@ def try_qtdir(p_dir,version_major,version_minor):
 
 	if (not os.path.isfile(p_dir + "/bin/moc")):
 		return False;
-	if (not os.path.isfile(p_dir + "/include/Qt/qglobal.h")):
+	qglobal_file="qglobal.h";
+	if (version_major>=4):
+		qglobal_file="Qt/qglobal.h"
+
+	if (not os.path.isfile(p_dir + "/include/"+qglobal_file)):
 		return False;
 		
-	file_to_check=p_dir + "/include/Qt/qglobal.h"
+	file_to_check=p_dir + "/include/"+qglobal_file;
 
-	version=os.popen("cat " + file_to_check + " | grep \"QT_VERSION_STR \"                ").readlines();
-	if not len(version):
+	print "trying" + file_to_check;
+#	version=os.popen("cat " + file_to_check + " | grep \"QT_VERSION_STR \"                ").readlines();
+	try:
+		f = open(file_to_check,"r");
+	except:
+		return False; # couldnt open file
+
+	lines = f.readlines();	
+
+#	print "has " + str(len(lines)) + " lines";
+
+	if (not len(lines)):
 		return False;
 
+	ver_str="";
+
+	for line in lines:
+		if (line.find("QT_VERSION_STR") == -1):
+			continue;
 		
-	ver_str=version[0];
+		ver_str=line;
+		break;
+
+	if (ver_str == ""):
+		return False;		
+
 	ver_str=ver_str[ver_str.find("\"")+1:len(ver_str)];
 	ver_str=ver_str[0:ver_str.find("\"")];
 	version_numbers=ver_str.split(".");
@@ -71,6 +95,7 @@ def check_qtdir(version_major,version_minor):
 			
 	possible_paths=[];
 	possible_paths+=['/usr/share/qt4']; # debian
+	possible_paths+=['/usr/qt4']; # hackish
 	possible_paths+=['/usr/X11R6']; # FreeBSD
 	possible_paths+=['/usr/','/usr/local','/opt/qt4/']; # Standard
 
@@ -78,7 +103,7 @@ def check_qtdir(version_major,version_minor):
 		if (try_qtdir(x,version_major,version_minor)):
 			return x;
 
-	print "Error: QT version at least: " + version_major + "." + version_minor + " not found.";
+	print "Error: QT version at least: " + str(version_major) + "." + str(version_minor) + ".0 not found.";
 	print "Please set the QTDIR environment variable pointing tot he place where it is located";
 	sys.exit(1);
 	
