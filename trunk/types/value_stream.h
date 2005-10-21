@@ -51,6 +51,7 @@ template<class T, class V>
 int ValueStream<T,V>::find_pos(T p_pos,bool &p_exact) {
 
     /* The core of this class, the binary search */
+    p_exact=false;
 
     if (stream.empty())
 	return INVALID_STREAM_INDEX;
@@ -60,7 +61,6 @@ int ValueStream<T,V>::find_pos(T p_pos,bool &p_exact) {
 	int high = stream.size() -1;
 	int middle;
 	Value *a=&stream[0];
-	p_exact=false;
 
 	while( low <= high )
 	{

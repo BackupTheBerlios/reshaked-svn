@@ -101,7 +101,6 @@ class Track_Pattern : public Track {
 		Pattern *get_pattern();
 		Tick get_length();
 		void set_length(Tick p_length);
-		bool pos_snaps_to_beat();
 		bool is_shared();
 		PatternBlock(Pattern*);
 	};		
@@ -114,6 +113,8 @@ class Track_Pattern : public Track {
 	void erase_block(int p_which);
 	
 	std::vector<Pattern*> pattern_array;
+	
+	String get_type_name();
 public:
 	
 	

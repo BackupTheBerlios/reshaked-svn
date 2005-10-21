@@ -71,7 +71,7 @@ Automation::AutomationData *Automation::AutomationBlock::get_data() {
 Automation::AutomationData::AutomationData() {
 
 	refcount=0;	
-	length=1;
+	length=5;
 }
 
 
@@ -90,21 +90,21 @@ void Automation::AutomationBlock::set_length(Tick p_length) {
 	
 	data->length=p_length/TICKS_PER_BEAT;
 }
-bool Automation::AutomationBlock::pos_snaps_to_beat() {
-	
-	return true;
-}
+
 bool Automation::AutomationBlock::is_shared() {
 	
 	return data->refcount>1;
 }
-
+String Automation::get_type_name() {
+	
+	return "automation";	
+}
 Automation::AutomationBlock::AutomationBlock(AutomationData *p_data) {
 	
 	data=p_data;
 	p_data->refcount++;
 }
-Automation::Automation() {
+Automation::Automation() : BlockList(BLOCK_TYPE_FREE_MOVING) {
 	
 
 }

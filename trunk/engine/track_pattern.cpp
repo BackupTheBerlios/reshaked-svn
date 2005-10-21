@@ -119,10 +119,6 @@ void Track_Pattern::PatternBlock::set_length(Tick p_length) {
 	
 }
 
-bool Track_Pattern::PatternBlock::pos_snaps_to_beat() {
-	
-	return true;
-}
 
 bool Track_Pattern::PatternBlock::is_shared() {
 	
@@ -137,8 +133,11 @@ Track_Pattern::PatternBlock::PatternBlock(Pattern* p) {
 	
 }
 
-
-Track_Pattern::Track_Pattern(int p_channels) : Track(p_channels)
+String Track_Pattern::get_type_name() {
+	
+	return "pattern";
+}
+Track_Pattern::Track_Pattern(int p_channels) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT)
 {
 }
 

@@ -45,7 +45,6 @@ public:
 	public:
 		Tick get_length();
 		void set_length(Tick p_length);
-		bool pos_snaps_to_beat();
 		bool is_shared();
 	
 		AutomationData *get_data();
@@ -53,7 +52,7 @@ public:
 	};
 
 private:
-
+	String get_type_name();
 	std::vector<AutomationData*> automation_array;
 public:	
 	void create_block(Tick p_pos,BlockCreationData *p_creation_data=NULL);

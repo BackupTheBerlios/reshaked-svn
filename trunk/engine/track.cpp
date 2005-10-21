@@ -80,7 +80,7 @@ void Track::process(int p_frames) {
 	process_track(base_private.input_plug->get_buffer(),base_private.output_plug->get_buffer(),p_frames);
 }
 
-Track::Track(int p_channels) {
+Track::Track(int p_channels,BlockType p_type) : BlockList(p_type) {
 	
 	base_private.seq_events=NULL;
 	base_private.input_plug=new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);

@@ -24,14 +24,26 @@ void GlobalView::add_block_to_selection(int p_list_index,int p_block) {
 	
 	int id=p_list_index+p_block*MAX_LISTS;
 	std::set<int>::iterator I = selection.find(id);
-	if (I==selection.end())
-		selection.insert(id);
-	else {
-		selection.erase(I);
-	}
 	
 	update();
+
+	if (I==selection.end())
+		selection.insert(id);
+	
 }
+
+void GlobalView::remove_block_from_selection(int p_list_index,int p_block) {
+	
+	int id=p_list_index+p_block*MAX_LISTS;
+	std::set<int>::iterator I = selection.find(id);
+	
+	update();
+
+	if (I!=selection.end())
+		selection.erase(I);
+	
+}
+
 void GlobalView::clear_selection() {
 	
 	selection.clear();
@@ -72,6 +84,34 @@ int GlobalView::get_block_list_count() {
 	}
 	
 	return blocks;
+}
+int GlobalView::get_block_list_at_offset(float p_offset) {
+	
+	float offset=0;
+	int block=0;
+	for (int i=0;i<song->get_track_count();i++) {
+		Track * t = song->get_track(i);
+		
+		offset+=1;
+		
+		if (offset>=p_offset)
+			return block;
+
+		block++;
+					
+		for (int j=0;j<t->get_automation_count();j++) {
+		
+			offset+=0.5;
+			if (offset>=p_offset)
+				return block;
+
+			block++;
+			
+		}
+	}
+
+	
+	return -1;
 }
 float GlobalView::get_block_list_offset(int p_index) {
 	
@@ -147,7 +187,7 @@ bool GlobalView::get_screen_to_blocklist_and_tick( int p_x, int p_y, int *p_bloc
 
 	/******* FIND TICK ********/
 	
-	double tick=p_y/display.zoom_height-display.ofs_y;
+	double tick=p_y/display.zoom_height+display.ofs_y;
 	tick*=(double)TICKS_PER_BEAT;
 
 //	printf("coords %i,%i, got block %i, beat %.2f\n",p_x,p_y,which_blocklist,(float)tick/(float)TICKS_PER_BEAT);	
@@ -187,27 +227,305 @@ bool GlobalView::get_click_location( int p_x, int p_y, int *p_blocklist, int *p_
 	
 }
 
+GlobalView::MouseData::BlockPositionAction GlobalView::get_block_position_action(int p_blocklist,Tick p_pos) {
+
+	BlockList *bl = get_block_list( p_blocklist );
+	if (!bl)
+		return MouseData::POS_NOBLOCK;
+		
+	
+	for (int i=0;i<bl->get_block_count();i++) {
+	
+		Tick begin= bl->get_block_pos( i );
+		Tick end= begin+bl->get_block( i )->get_length();
+
+		if ( p_pos>=begin && p_pos<end) {
+			//the block we are looking for! now determine what to do..
+		
+
+				
+			double dpixelpos_beg=(double)(p_pos-begin)/(double)TICKS_PER_BEAT;
+			dpixelpos_beg*=display.zoom_height;
+			int pixelpos_beg=(int)dpixelpos_beg;
+			
+			double dpixelpos_end=(double)(end-p_pos)/(double)TICKS_PER_BEAT;
+			dpixelpos_end*=display.zoom_height;
+			int pixelpos_end=(int)dpixelpos_end;
+			
+			if (pixelpos_end<=mouse_data.border_resize_grab_pixels)
+				return MouseData::POS_RESIZE_END;
+			else if (pixelpos_beg<=mouse_data.border_resize_grab_pixels)
+				return MouseData::POS_RESIZE_BEG;
+			else 
+				return MouseData::POS_OVER;
+		
+		} 
+	}
+	
+	
+	return MouseData::POS_NOBLOCK;
+
+}
+
+
+void GlobalView::compute_moving_block_list() {
+
+	std::set<int>::iterator I=selection.begin();
+	int last_list;
+	moving_block.moving_element_list.clear();
+	moving_block.snap_to_beat=false;
+	for (;I!=selection.end();I++) {
+		
+		int list=*I%MAX_LISTS;
+		int block=*I/MAX_LISTS;
+		
+		last_list=list;
+		if (get_block_list( list )->get_block_type()==BlockList::BLOCK_TYPE_FIXED_TO_BEAT)
+			moving_block.snap_to_beat=true;
+			
+		
+		MovingBlock::Element e;
+		e.block=block;
+		e.list=list;
+		moving_block.moving_element_list.push_back(e);		
+		printf("adding %i,%i\n",block,list);
+	}
+	
+	moving_block.moving=true;
+}
+
+
+bool GlobalView::get_moving_block_pos_and_status(int p_list,int p_block,int &p_dst_list,Tick &p_dst_tick, float &p_free_x, bool &p_allowed) {
+	
+	BlockList *bl = get_block_list( p_list);
+	if (!bl)
+		return true;
+	BlockList::Block *b=bl->get_block( p_block );
+	if (!b)
+		return true;
+	
+	/* Find offsets */
+	
+	float xofs=moving_block.current_x-mouse_data.click_x_from;
+	float yofs=moving_block.current_y-mouse_data.click_y_from;
+	
+	/* find tick */
+	Tick tick =(Tick)(yofs*TICKS_PER_BEAT)+bl->get_block_pos( p_block );
+	if (moving_block.snap_to_beat)
+		tick=tick-(tick%TICKS_PER_BEAT);
+	
+	/* find track under */
+	float under_find_x=get_block_list_offset(p_list)+xofs+get_block_list_width(bl)/2;
+	int list_under=get_block_list_at_offset(under_find_x);
+	BlockList *bl_under=NULL;
+	bool can_move_to=false;
+	
+	if (list_under!=-1)
+		bl_under=get_block_list( list_under );
+	if (bl_under && bl_under->get_type_name()==bl->get_type_name()) {
+		
+		
+		p_free_x=get_block_list_offset(list_under)*display.zoom_width-display.ofs_x;
+		
+		if (bl->get_block_type()==BlockList::BLOCK_TYPE_FIXED_TO_BEAT) {
+			int current=-1;
+			if (list_under==p_list)
+				current=p_block;
+			
+			if (bl_under->block_fits( tick, b->get_length(), current )  )
+				can_move_to=true;
+		} else
+			can_move_to=true;
+				  
+  
+	} else {
+		
+		p_free_x=(get_block_list_offset(p_list)+xofs)*display.zoom_width-display.ofs_x;
+		
+	}
+	
+		
+	p_allowed=can_move_to;
+	p_dst_list=p_list;
+	p_dst_tick=tick;
+	
+	return false;
+}
+
 /***************** MOUSE *********************/
 
 void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
 	
+	if (e->buttons()&Qt::LeftButton) { //draggingGlobalView( 
+	
+		if (!mouse_data.selecting)
+			return;
 		
+		if (moving_block.moving==false && mouse_data.resizing==false) {
+			//being block moving
+			mouse_data.deselecting=false; //when moving, you cant deselect!
+			
+			switch (mouse_data.action_at_selecting) {
+				
+				case MouseData::POS_NOBLOCK: {
+					
+					//dont bother
+					mouse_data.selecting=false;
+					return;
+				} break;
+				case MouseData::POS_OVER: {
+					
+					if (selection.empty()) { //
+						mouse_data.selecting=false;
+						return;
+				
+					}
+					compute_moving_block_list();	
+				} break;
+				case MouseData::POS_RESIZE_END:
+				case MouseData::POS_RESIZE_BEG: {
+					
+				
+				} break;
+			}			
+		} 
+
+		moving_block.current_x=(float)e->x()/display.zoom_width+display.ofs_x;
+		moving_block.current_y=(float)e->y()/display.zoom_height+display.ofs_y;
+			
+		update();
+	
+	} else { //just moving overGlobalView( 
+	
+		int blocklist=-1;
+		Tick tick=-1;
+		
+		if (get_screen_to_blocklist_and_tick( e->x(), e->y(),&blocklist,&tick))
+			return;
+		printf("travelling block %i, tick %.2f\n",blocklist,(float)tick/(float)TICKS_PER_BEAT);	
+		MouseData::BlockPositionAction a=get_block_position_action( blocklist,tick);
+		
+		switch (a) {
+		
+			case MouseData::POS_NOBLOCK:
+			case MouseData::POS_OVER: {
+				
+				setCursor(Qt::ArrowCursor);
+				
+			} break;
+			case MouseData::POS_RESIZE_END:
+			case MouseData::POS_RESIZE_BEG: {
+				
+				setCursor(Qt::SizeVerCursor);
+			} break;
+			
+		};		
+	
+	}
+			
 }
+
 void GlobalView::mousePressEvent ( QMouseEvent * e ) {
 	
+	if (e->button()!=Qt::LeftButton)
+		return;
+
 	int blocklist=-1,block=-1;
 	if (get_click_location(e->x(),e->y(),&blocklist,&block))
 		return; //no location
+	if (! (e->modifiers()&Qt::ShiftModifier))
+		clear_selection();
 	
-	add_block_to_selection(blocklist,block);
+	if (is_block_selected(blocklist,block)) {
+	
+		mouse_data.deselecting=true;
+		mouse_data.deselecting_block=block;
+		mouse_data.deselecting_list=blocklist;
+	} else {
+	
+		add_block_to_selection(blocklist,block);
+		
+
+	}
+
+	/* process the selecting stuff */
+	int ablocklist=-1;
+	Tick atick=-1;
+		
+	if (get_screen_to_blocklist_and_tick( e->x(), e->y(),&ablocklist,&atick))
+		return;
+	MouseData::BlockPositionAction a=get_block_position_action( blocklist,atick);
+		
+	mouse_data.selecting=true;
+	mouse_data.action_at_selecting=a;
+	mouse_data.click_x_from=(float)e->x()/display.zoom_width+display.ofs_x;
+	mouse_data.click_y_from=(float)e->y()/display.zoom_height+display.ofs_y;
+	
 }
 void GlobalView::mouseReleaseEvent ( QMouseEvent * e ) {
 	
+	if (e->button()!=Qt::LeftButton)
+		return;
+
+	if (mouse_data.deselecting) {
+	
+		remove_block_from_selection( mouse_data.deselecting_list, mouse_data.deselecting_block  );
+	}
+	
+	//clear status!
+	mouse_data.deselecting=false;
+	mouse_data.selecting=false;
+	mouse_data.resizing=false;
+	moving_block.moving=false;
+	moving_block.moving_element_list.clear();
+	update();	
+	
+//	if (get_click_location(e->x(),e->y(),&blocklist,&block))
+//		return; //no location
 	
 	
 }
 
+bool GlobalView::is_block_being_moved(int p_list,int p_block) {
+	
+	
+	std::list<MovingBlock::Element>::iterator I=moving_block.moving_element_list.begin();
+	for(;I!=moving_block.moving_element_list.end();I++) {
+		if ( I->block == p_block && I->list == p_list )
+			return true;
+		
+	}
+	
+	
+	return false;
+}
+
 /****************** PAINTING ********************/
+
+void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover,bool p_notpossible) {
+	
+	int alpha=p_drawover?150:255;
+	BlockList *blocklist=get_block_list(p_list);
+	BlockList::Block *block=blocklist->get_block(p_block);
+			
+	float	 f_height=((float)blocklist->get_block(p_block)->get_length()/(float)(TICKS_PER_BEAT))*display.zoom_height;
+	float f_width=get_block_list_width(blocklist)*display.zoom_width;
+
+	
+	QColor col=get_block_list_color(blocklist);
+	if (is_block_selected(p_list,p_block))
+		col=QColor(255,0,0,alpha);
+	p.fillRect(p_x,p_y,(int)f_width,(int)f_height,col);
+	p.setPen(QColor(255,255,255,alpha));
+	p.drawRect(p_x,p_y,(int)f_width,(int)f_height);
+
+	if (p_notpossible) {
+		
+		QBrush b(QColor(255,255,255),Qt::DiagCrossPattern);
+		p.fillRect(p_x,p_y,(int)f_width,(int)f_height,b);				
+	}	
+	
+}
 
 void GlobalView::paintEvent(QPaintEvent *pe) {
 	
@@ -227,21 +545,37 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 		p.drawLine(f_from_x+f_width,0,f_from_x+f_width,height());
 		for (int j=0;j<blocklist->get_block_count();j++) {
 			
-			BlockList::Block *block=blocklist->get_block(j);
 			
+			if (is_block_being_moved(i,j))
+				continue;
 			float f_from_y=((float)blocklist->get_block_pos(j)/(float)(TICKS_PER_BEAT))*display.zoom_height-display.ofs_y*display.zoom_height;
-			float f_height=((float)blocklist->get_block(j)->get_length()/(float)(TICKS_PER_BEAT))*display.zoom_height;
-	
-			QColor col=get_block_list_color(blocklist);
-			if (is_block_selected(i,j))
-				col=QColor(255,0,0);
-			p.fillRect((int)f_from_x,(int)f_from_y,(int)f_width,(int)f_height,col);	
-
+			
+			paint_block(p,(int)f_from_x,(int)f_from_y,i,j,false);
 		}
 		
 		ofs+=f_width;
 		
 	}
+	
+	
+	std::list<MovingBlock::Element>::iterator I=moving_block.moving_element_list.begin();
+	
+	for(;I!=moving_block.moving_element_list.end();I++) {
+	
+		int dst_list;
+		Tick dst_tick;
+		float free_x;
+		bool allowed;
+		
+		if (get_moving_block_pos_and_status(I->list,I->block,dst_list,dst_tick,free_x,allowed))
+			continue;
+		
+		float free_y=((double)dst_tick/(double)TICKS_PER_BEAT)*display.zoom_height-display.ofs_y;
+		
+		paint_block(p,(int)free_x,(int)free_y,I->list,I->block,true,!allowed);
+								
+	}
+	
 }
 
 GlobalView::GlobalView(QWidget *p_widget,Song *p_song) : QWidget(p_widget)
@@ -253,10 +587,17 @@ GlobalView::GlobalView(QWidget *p_widget,Song *p_song) : QWidget(p_widget)
 	song=p_song;
 
 	display.zoom_width=40;
-	display.zoom_height=5;
+	display.zoom_height=10;
 	display.ofs_x=0;
 	display.ofs_y=0;
 
+	mouse_data.border_resize_grab_pixels=2;
+	mouse_data.deselecting=false;
+	mouse_data.selecting=false;
+	mouse_data.resizing=false;
+	setMouseTracking(true);
+	
+	moving_block.moving=false;
 }
 
 

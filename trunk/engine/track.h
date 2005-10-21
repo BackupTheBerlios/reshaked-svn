@@ -77,7 +77,7 @@ public:
 	Automation *get_automation(int p_index);
 	
 
-	Track(int p_channels);
+	Track(int p_channels,BlockType p_type);
 	~Track();
 
 };
