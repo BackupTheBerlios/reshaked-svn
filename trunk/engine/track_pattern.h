@@ -1,7 +1,7 @@
 //
 // C++ Interface: track_pattern
 //
-// Description: 
+// Description:
 //
 //
 // Author: Juan Linietsky <reduzio@gmail.com>, (C) 2005
@@ -25,7 +25,7 @@ namespace ReShaked {
 class PatternPool;
 
 class Track_Pattern : public Track {
-	
+
 	struct Note {
 
 		enum {
@@ -80,24 +80,24 @@ class Track_Pattern : public Track {
 		Position(Tick p_tick=0,int p_column=0) { tick=p_tick; column=p_column; }
 
 	};
-	
+
 
 	struct Pattern : public DataPool::Data {
 
 		int length; //length in beats
-	
+
 		ValueStream<Position,Note> data;
 
 		int refcount;
-		
-		
+
+
 		Pattern() { length=1 ; refcount = 0; }
-	};		
+	};
 
 	class  PatternBlock : public Block {
 
 		Pattern *pattern;
-	
+
 		public:
 
 		Pattern *get_pattern();
@@ -105,22 +105,22 @@ class Track_Pattern : public Track {
 		void set_length(Tick p_length);
 		bool is_shared();
 		PatternBlock(Pattern*);
-	};		
-			
+	};
+
 	void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames);
-	
+
 	void create_block(Tick p_pos,BlockCreationData *p_creation_data);
 	Block *create_duplicate_block(Block *p_block);
 	Block *create_link_block(Block *p_block);
 	void erase_block(int p_which);
-	
+	BlockCreationBehavior get_block_creation_behavior();
 	DataPool *pool;
-		
+
 	String get_type_name();
 	bool can_resize_from_begining();
 public:
-	
-	
+
+
 	Track_Pattern(int p_channels,DataPool *p_pool);
 	~Track_Pattern();
 

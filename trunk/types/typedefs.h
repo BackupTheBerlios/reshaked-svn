@@ -10,6 +10,7 @@ typedef std::string String;
 
 //this number helps for high accuracy on beat divisors
 #define TICKS_PER_BEAT 3072
+#define SNAP_TICK_TO_BEAT(m_tick) ( (m_tick) - ((m_tick)%TICKS_PER_BEAT) )
 
 typedef long long Tick;
 
@@ -25,7 +26,7 @@ enum NoteConstants {
 #define SWITCH(m_v) { typeof(m_v) __m=m_v; if (0) {
 #define CASE(m_v) } else if ((m_v)==__m) {
 #define COND(m_c) } else if (m_c) {
-#define DEFAULT	  } else {		
+#define DEFAULT	  } else {
 #define END_SWITCH }}
 
 enum TrackType {
@@ -35,5 +36,5 @@ enum TrackType {
 };
 
 
-	
+
 #endif

@@ -13,10 +13,11 @@ QT_VERSION_MINOR_NEEDED = 0
 qtdir=detect.check_qtdir(QT_VERSION_MAJOR_NEEDED,QT_VERSION_MINOR_NEEDED);
 os.environ["QTDIR"]=qtdir;
 
-env = Environment(CCFLAGS=['-Wall','-g3','-I.','-Itypes/','-Wno-sign-compare'], tools=['default','qt']);
+env = Environment(CCFLAGS=['-Wall','-g3','-I.','-Wno-sign-compare'], tools=['default','qt']);
 
 env.Append(LIBS=['QtGui','QtCore']);
 env.Append(LIBS=['pthread']);
+env.Append(CPPPATH=['#types/']);
 env["QT_LIB"]="";
 #Enable the make_targets helper
 #env.__class__.make_targets = detect.make_targets
@@ -30,7 +31,8 @@ detect.check_pkg_config();
 
 Export('env');
 
-#SConscript('types/SCsub');
+
+SConscript('types/SCsub');
 SConscript('engine/SCsub');
 #SConscript('editing/SCsub');
 SConscript('interface/SCsub');
