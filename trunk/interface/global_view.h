@@ -42,6 +42,7 @@ class GlobalView : public QWidget {
 		bool deselecting; ///< Deslecting flag, gets cleared on mouse motion 
 		int deselecting_block;
 		int deselecting_list;
+		bool shift_when_deselecting;
 		bool selecting;
 		int border_resize_grab_pixels;	
 		BlockPositionAction action_at_selecting;
@@ -57,19 +58,25 @@ class GlobalView : public QWidget {
 		struct Element {
 			int list;
 			int block;		
+			BlockList::Block *block_ptr; //litle hack for ease of code
 		};
 		
-		enum SelectionType {
-			TYPE_MANY_OBJECTS, ///< Many objects
-			TYPE_NEW_OBJECT, ///<placing a new object on a track
+		
+		enum Operation {
+			OP_CREATE_NEW,
+			OP_MOVE,
+			OP_COPY,
+			OP_COPY_LINK,
 		};
 			
-		SelectionType selection_type;
+		
+		Operation operation;
 		std::list<Element> moving_element_list;
 		bool snap_to_beat;
 		bool moving;
 		float current_x;
 		float current_y;
+		
 		
 			
 	} moving_block;
@@ -97,6 +104,7 @@ class GlobalView : public QWidget {
 	bool get_screen_to_blocklist_and_tick( int p_x, int p_y, int *p_blocklist, Tick *p_tick );
 	bool get_click_location( int p_x, int p_y, int *p_blocklist, int *p_block );
 	void compute_moving_block_list();
+	void commit_moving_block_list();
 	bool is_block_being_moved(int p_list,int p_block);
 	bool get_moving_block_pos_and_status(int p_list,int p_block,int &p_dst_list,Tick &p_dst_tick, float &p_free_x, bool &p_allowed); //if true invalid
 	

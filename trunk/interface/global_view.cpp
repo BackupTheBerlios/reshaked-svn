@@ -10,7 +10,11 @@
 #include <Qt/qevent.h>
 namespace ReShaked {
 
-	
+//TODO FIX WHEN BLOCKS ARE OUT OF THE AREA
+//TODO FIX AUTOMATION (audio actualy)
+//TODO MAKE RESIZING
+//TOODO MAKE TRACK TYPE CREATION
+
 /******************* HELPERS *********************/
 	
 bool GlobalView::is_block_selected(int p_list_index,int p_block) {
@@ -172,7 +176,7 @@ bool GlobalView::get_screen_to_blocklist_and_tick( int p_x, int p_y, int *p_bloc
 		float f_from_x=ofs-display.ofs_x*display.zoom_width;
 		float block_width=get_block_list_width(blocklist)*display.zoom_width;
 		
-		printf("comparing %i to %i\n",(int)(f_from_x+block_width),p_x);
+		//printf("comparing %i to %i\n",(int)(f_from_x+block_width),p_x);
 		if ((int)(f_from_x+block_width)>p_x) {
 			which_blocklist=i;
 			break;
@@ -280,13 +284,15 @@ void GlobalView::compute_moving_block_list() {
 		int block=*I/MAX_LISTS;
 		
 		last_list=list;
-		if (get_block_list( list )->get_block_type()==BlockList::BLOCK_TYPE_FIXED_TO_BEAT)
+		BlockList *bl=get_block_list( list );
+		if (bl->get_block_type()==BlockList::BLOCK_TYPE_FIXED_TO_BEAT)
 			moving_block.snap_to_beat=true;
 			
 		
 		MovingBlock::Element e;
 		e.block=block;
 		e.list=list;
+		e.block_ptr=bl->get_block( block );
 		moving_block.moving_element_list.push_back(e);		
 		printf("adding %i,%i\n",block,list);
 	}
@@ -329,7 +335,7 @@ bool GlobalView::get_moving_block_pos_and_status(int p_list,int p_block,int &p_d
 		
 		if (bl->get_block_type()==BlockList::BLOCK_TYPE_FIXED_TO_BEAT) {
 			int current=-1;
-			if (list_under==p_list)
+			if (list_under==p_list && moving_block.operation==MovingBlock::OP_MOVE)
 				current=p_block;
 			
 			if (bl_under->block_fits( tick, b->get_length(), current )  )
@@ -346,10 +352,80 @@ bool GlobalView::get_moving_block_pos_and_status(int p_list,int p_block,int &p_d
 	
 		
 	p_allowed=can_move_to;
-	p_dst_list=p_list;
+	p_dst_list=list_under;
 	p_dst_tick=tick;
 	
 	return false;
+}
+
+void GlobalView::commit_moving_block_list() {
+	
+	/* check that everything is movable */
+	std::list<MovingBlock::Element>::iterator I=moving_block.moving_element_list.begin();
+	
+	for(;I!=moving_block.moving_element_list.end();I++) {
+	
+		int dst_list;
+		Tick dst_tick;
+		float free_x;
+		bool allowed;
+		
+		if (get_moving_block_pos_and_status(I->list,I->block,dst_list,dst_tick,free_x,allowed))
+			return; // Something invalid about this block
+		if (!allowed)
+			return; // Cant commit changes if a block is not allowed to move
+		
+	}
+	
+	/* If everythign is valid and movable, then go for it */
+	
+	I=moving_block.moving_element_list.begin();
+	
+	
+	for(;I!=moving_block.moving_element_list.end();I++) {
+	
+		int dst_list;
+		Tick dst_tick;
+		float free_x;
+		bool allowed;
+		BlockList *src_bl=get_block_list( I->list );
+		//search again as it may have moved!
+		int src_block_index=src_bl->get_block_index(I->block_ptr);
+		ERR_CONTINUE(src_block_index==-1);
+		//would be very fucked up if it fails again
+		ERR_FAIL_COND( get_moving_block_pos_and_status(I->list,src_block_index,dst_list,dst_tick,free_x,allowed) );
+		
+				
+
+		switch (moving_block.operation) {		
+		
+			case MovingBlock::OP_COPY: {
+				
+				int current=(I->list==dst_list)?src_block_index:-1;
+
+				BlockList::Block *bl=src_bl->get_block( src_block_index );
+				BlockList *dst_bl=get_block_list( dst_list );
+				dst_bl->copy_block( bl, dst_tick, current);
+				
+			} break;	
+			
+			case MovingBlock::OP_COPY_LINK: {
+				
+				int current=(I->list==dst_list)?src_block_index:-1;
+				BlockList::Block *bl=src_bl->get_block( src_block_index );
+				BlockList *dst_bl=get_block_list( dst_list );
+				dst_bl->copy_block_link( bl, dst_tick, current);				
+				
+			} break;	
+			case MovingBlock::OP_MOVE: {
+				
+				BlockList *dst_bl=get_block_list( dst_list );
+				dst_bl->move_block( src_bl, src_block_index, dst_tick );
+				
+			} break;				
+		};
+	}
+	
 }
 
 /***************** MOUSE *********************/
@@ -381,9 +457,18 @@ void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
 				
 					}
 					compute_moving_block_list();	
+					if (e->modifiers()&Qt::ShiftModifier) { //copy
+						
+						if (e->modifiers()&Qt::ControlModifier)
+							moving_block.operation=MovingBlock::OP_COPY_LINK;
+						else
+							moving_block.operation=MovingBlock::OP_COPY;
+								
+					} else 
+						moving_block.operation=MovingBlock::OP_MOVE;
 				} break;
-				case MouseData::POS_RESIZE_END:
-				case MouseData::POS_RESIZE_BEG: {
+				case MouseData::POS_RESIZE_BEG:
+				case MouseData::POS_RESIZE_END: {
 					
 				
 				} break;
@@ -402,7 +487,7 @@ void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
 		
 		if (get_screen_to_blocklist_and_tick( e->x(), e->y(),&blocklist,&tick))
 			return;
-		printf("travelling block %i, tick %.2f\n",blocklist,(float)tick/(float)TICKS_PER_BEAT);	
+//		printf("travelling block %i, tick %.2f\n",blocklist,(float)tick/(float)TICKS_PER_BEAT);	
 		MouseData::BlockPositionAction a=get_block_position_action( blocklist,tick);
 		
 		switch (a) {
@@ -413,8 +498,12 @@ void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
 				setCursor(Qt::ArrowCursor);
 				
 			} break;
-			case MouseData::POS_RESIZE_END:
-			case MouseData::POS_RESIZE_BEG: {
+			case MouseData::POS_RESIZE_BEG: 
+				if (!get_block_list(blocklist)->can_resize_from_begining()) {
+					setCursor(Qt::ArrowCursor);
+					break;
+				}
+			case MouseData::POS_RESIZE_END: {
 				
 				setCursor(Qt::SizeVerCursor);
 			} break;
@@ -427,22 +516,37 @@ void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
 
 void GlobalView::mousePressEvent ( QMouseEvent * e ) {
 	
+	if (e->button()==Qt::RightButton) { //cancel any moving stuffGlobalView( 
+		
+	//clear status!
+		mouse_data.deselecting=false;
+		mouse_data.selecting=false;
+		mouse_data.resizing=false;
+		moving_block.moving=false;
+		moving_block.moving_element_list.clear();
+		update();	
+			
+		return;
+	}
+	
+	
 	if (e->button()!=Qt::LeftButton)
 		return;
 
 	int blocklist=-1,block=-1;
 	if (get_click_location(e->x(),e->y(),&blocklist,&block))
 		return; //no location
-	if (! (e->modifiers()&Qt::ShiftModifier))
-		clear_selection();
 	
 	if (is_block_selected(blocklist,block)) {
 	
 		mouse_data.deselecting=true;
 		mouse_data.deselecting_block=block;
 		mouse_data.deselecting_list=blocklist;
+		mouse_data.shift_when_deselecting=e->modifiers()&Qt::ShiftModifier;
 	} else {
 	
+		if (! (e->modifiers()&Qt::ShiftModifier))
+			clear_selection();
 		add_block_to_selection(blocklist,block);
 		
 
@@ -469,9 +573,19 @@ void GlobalView::mouseReleaseEvent ( QMouseEvent * e ) {
 
 	if (mouse_data.deselecting) {
 	
-		remove_block_from_selection( mouse_data.deselecting_list, mouse_data.deselecting_block  );
+		if (mouse_data.shift_when_deselecting) //actual deselect
+			remove_block_from_selection( mouse_data.deselecting_list, mouse_data.deselecting_block  );
+		else { //select only otherwise! 
+			clear_selection();
+			add_block_to_selection(mouse_data.deselecting_list,mouse_data.deselecting_block);
+		
+		}	
 	}
-	
+	if (moving_block.moving) { //apply changes
+		
+		commit_moving_block_list();
+		
+	}
 	//clear status!
 	mouse_data.deselecting=false;
 	mouse_data.selecting=false;
@@ -546,7 +660,7 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 		for (int j=0;j<blocklist->get_block_count();j++) {
 			
 			
-			if (is_block_being_moved(i,j))
+			if (is_block_being_moved(i,j) && moving_block.operation==MovingBlock::OP_MOVE)
 				continue;
 			float f_from_y=((float)blocklist->get_block_pos(j)/(float)(TICKS_PER_BEAT))*display.zoom_height-display.ofs_y*display.zoom_height;
 			
@@ -595,6 +709,7 @@ GlobalView::GlobalView(QWidget *p_widget,Song *p_song) : QWidget(p_widget)
 	mouse_data.deselecting=false;
 	mouse_data.selecting=false;
 	mouse_data.resizing=false;
+	mouse_data.shift_when_deselecting=false;
 	setMouseTracking(true);
 	
 	moving_block.moving=false;

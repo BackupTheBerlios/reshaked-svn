@@ -32,63 +32,52 @@ void Track_Pattern::create_block(Tick p_pos,BlockCreationData *p_creation_data) 
 	}
 		
 
-	pattern_array.push_back(p);	
+	pool->add_data(p);	
 	
 }
 
-void Track_Pattern::copy_block(int p_from_which,Tick p_to_where) {
+BlockList::Block *Track_Pattern::create_duplicate_block(Block *p_block) {
 
+	PatternBlock *b = dynamic_cast<PatternBlock*>( p_block );
+	ERR_FAIL_COND_V( b==NULL , NULL );
 
-	/* not ref yet! */	
-	PatternBlock *b = dynamic_cast<PatternBlock*>( get_block(p_from_which) );
-	
-	ERR_FAIL_COND( b==NULL );
+	//new pattern
+	Pattern *np = new Pattern;
+	*np=*b->get_pattern(); //copy 
+	np->refcount=0; //refcount to zero
 			
-		
-	if (!block_fits(p_to_where,b->get_length()))
-		return; //cant add thing
+	//new block
+	pool->add_data(np);
+	PatternBlock *nb = new PatternBlock(np);
 	
-	Pattern *p = b->get_pattern();
-	PatternBlock *pb = new PatternBlock(b->get_pattern());
-	
-	if (add_block(pb,p_to_where)) { //no add? fuck must be a bug!?
-		
-		p->refcount--; //WICKED SHIT!!
-		delete pb;
-		ERR_PRINT("Failed adding pattern after previous check? WTF? BUG! BUG! BUG!!!!");
-		return;
-	}
-}
-
-void Track_Pattern::copy_block_ref(int p_from_which,Tick p_to_where) {
-
-	PatternBlock *b = dynamic_cast<PatternBlock*>( get_block(p_from_which) );
-	
-	ERR_FAIL_COND( b==NULL );
-
-		
-	if (!block_fits(p_to_where,b->get_length()))
-		return; //cant add thing
-	
-	Pattern *p = b->get_pattern();
-	PatternBlock *pb = new PatternBlock(b->get_pattern());
-	
-	if (add_block(pb,p_to_where)) { //no add? fuck must be a bug!?
-		
-		p->refcount--; //WICKED SHIT!!
-		delete pb;
-		ERR_PRINT("Failed adding pattern after previous check? WTF? BUG! BUG! BUG!!!!");
-		return;
-	}
+	return nb;
 		
 	
 }
+
+BlockList::Block *Track_Pattern::create_link_block(Block *p_block) {
+	
+	PatternBlock *b = dynamic_cast<PatternBlock*>( p_block );
+	ERR_FAIL_COND_V( b==NULL , NULL );
+		
+	//new block
+	PatternBlock *nb = new PatternBlock(b->get_pattern());
+	
+	return nb;
+	
+}
+
+
 void Track_Pattern::erase_block(int p_which) {
 	
 	
 	
 }
 
+bool Track_Pattern::can_resize_from_begining() {
+	
+	return false;	
+}
 void Track_Pattern::process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames) {
 	
 	
@@ -137,8 +126,9 @@ String Track_Pattern::get_type_name() {
 	
 	return "pattern";
 }
-Track_Pattern::Track_Pattern(int p_channels) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT)
-{
+Track_Pattern::Track_Pattern(int p_channels,DataPool *p_pool) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT) {
+	
+	pool=p_pool;
 }
 
 

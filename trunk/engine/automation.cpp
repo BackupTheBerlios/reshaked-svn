@@ -24,38 +24,42 @@ void Automation::create_block(Tick p_pos,BlockCreationData *p_creation_data) {
 		return;
 	}
 		
-
-	automation_array.push_back(a);	
+	pool->add_data(a);
 	
 }
 
-void Automation::copy_block(int p_from_which,Tick p_to_where) {
+BlockList::Block *Automation::create_duplicate_block(Block *p_block) {
 
-	copy_block(p_from_which,p_to_where);
-}
+	AutomationBlock *b = dynamic_cast<AutomationBlock*>( p_block );
+	ERR_FAIL_COND_V( b==NULL , NULL );
 
-void Automation::copy_block_ref(int p_from_which,Tick p_to_where) {
-
-	AutomationBlock *b = dynamic_cast<AutomationBlock*>( get_block(p_from_which) );
+	//new data
+	AutomationData *nd = new AutomationData;
+	*nd=*b->get_data(); //copy 
+	nd->refcount=0; //refcount to zero
+			
+	//new block
+	pool->add_data(nd);
+	AutomationBlock *nb = new AutomationBlock(nd);
 	
-	ERR_FAIL_COND( b==NULL );
-
-		
-	if (!block_fits(p_to_where,b->get_length()))
-		return; //cant add thing
-	
-	AutomationBlock *pb = new AutomationBlock(b->get_data());
-	
-	if (add_block(pb,p_to_where)) { //no add? fuck must be a bug!?
-		
-		b->get_data()->refcount--; //WICKED SHIT!!
-		delete pb;
-		ERR_PRINT("Failed adding pattern after previous check? WTF? BUG! BUG! BUG!!!!");
-		return;
-	}
+	return nb;
 		
 	
 }
+
+BlockList::Block *Automation::create_link_block(Block *p_block) {
+	
+	AutomationBlock *b = dynamic_cast<AutomationBlock*>( p_block );
+	ERR_FAIL_COND_V( b==NULL , NULL );
+		
+	//new block
+	AutomationBlock *nb = new AutomationBlock(b->get_data());
+	
+	return nb;
+	
+	
+}
+
 void Automation::erase_block(int p_which) {
 	
 	
@@ -72,6 +76,11 @@ Automation::AutomationData::AutomationData() {
 
 	refcount=0;	
 	length=5;
+}
+
+bool Automation::can_resize_from_begining() {
+	
+	return true;
 }
 
 
@@ -104,9 +113,9 @@ Automation::AutomationBlock::AutomationBlock(AutomationData *p_data) {
 	data=p_data;
 	p_data->refcount++;
 }
-Automation::Automation() : BlockList(BLOCK_TYPE_FREE_MOVING) {
+Automation::Automation(DataPool *p_pool) : BlockList(BLOCK_TYPE_FREE_MOVING) {
 	
-
+	pool=p_pool;
 }
 
 

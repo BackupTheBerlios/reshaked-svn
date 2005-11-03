@@ -31,7 +31,7 @@ public:
 	friend class Track;	// will add more stuff later
 		void *private_data;
 		String param_string;
-		
+		TrackAutomation(DataPool *p_pool) : Automation(p_pool) { private_data=NULL; }
 	};
 	
 
@@ -59,7 +59,7 @@ public:
 
 protected:
 
-
+	DataPool *automation_pool;
 	const EventBuffer& get_seq_event_buffer();
 
 	virtual void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames)=0;
@@ -76,7 +76,7 @@ public:
 	int get_automation_count();
 	Automation *get_automation(int p_index);
 	
-
+	void set_automation_pool(DataPool *p_pool);
 	Track(int p_channels,BlockType p_type);
 	~Track();
 

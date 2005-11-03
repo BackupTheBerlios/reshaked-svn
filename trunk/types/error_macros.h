@@ -16,7 +16,7 @@
 
 #define ERR_FAIL_COND(m_cond) \
 	{ if ( m_cond ) {	\
-		std::cout << __FILE__ << ":" << __LINE__ << " - " << " ## m_cond ## failed." << std::endl;	\
+		std::cout << __FILE__ << ":" << __LINE__ << " - " <<  #m_cond " failed." << std::endl;	\
 		return;	 \
 	} }	\
 

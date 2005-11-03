@@ -14,12 +14,16 @@
 
 
 #include "engine/track.h"
+#include "engine/data_pool.h"
 
 namespace ReShaked {
 
 /**
 @author Juan Linietsky
 */
+
+class PatternPool;
+
 class Track_Pattern : public Track {
 	
 	struct Note {
@@ -78,9 +82,7 @@ class Track_Pattern : public Track {
 	};
 	
 
-	
-
-	struct Pattern {
+	struct Pattern : public DataPool::Data {
 
 		int length; //length in beats
 	
@@ -108,17 +110,18 @@ class Track_Pattern : public Track {
 	void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames);
 	
 	void create_block(Tick p_pos,BlockCreationData *p_creation_data);
-	void copy_block(int p_from_which,Tick p_to_where);
-	void copy_block_ref(int p_from_which,Tick p_to_where);
+	Block *create_duplicate_block(Block *p_block);
+	Block *create_link_block(Block *p_block);
 	void erase_block(int p_which);
 	
-	std::vector<Pattern*> pattern_array;
-	
+	DataPool *pool;
+		
 	String get_type_name();
+	bool can_resize_from_begining();
 public:
 	
 	
-	Track_Pattern(int p_channels);
+	Track_Pattern(int p_channels,DataPool *p_pool);
 	~Track_Pattern();
 
 };

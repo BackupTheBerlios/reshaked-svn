@@ -5,6 +5,7 @@
 #include "types/value_stream.h"
 #include "types/typedefs.h"
 #include "engine/block_list.h"
+#include "engine/data_pool.h"
 namespace ReShaked {
 
 
@@ -26,7 +27,7 @@ public:
 	};
 
 
-	struct AutomationData : public ValueStream<Tick,AutomationValue> {
+	struct AutomationData : public ValueStream<Tick,AutomationValue> , public DataPool::Data {
 	friend class AutomationBlock;
 	friend class Automation;
 		int length; //in beats
@@ -52,15 +53,18 @@ public:
 	};
 
 private:
+	DataPool *pool;
 	String get_type_name();
-	std::vector<AutomationData*> automation_array;
+	Block *create_duplicate_block(Block *p_block);
+	Block *create_link_block(Block *p_block);
+	
+	bool can_resize_from_begining();
+	
 public:	
 	void create_block(Tick p_pos,BlockCreationData *p_creation_data=NULL);
-	void copy_block(int p_from_which,Tick p_to_where);
-	void copy_block_ref(int p_from_which,Tick p_to_where);
 	void erase_block(int p_which);
 
-	Automation();	
+	Automation(DataPool *p_pool);	
 };
 
 }; /* end of namespace */

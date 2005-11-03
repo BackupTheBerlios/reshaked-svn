@@ -32,8 +32,49 @@ bool BlockList::add_block(Block *p_block,Tick p_pos) {
 	
 	return false;
 }
+
+
+void BlockList::copy_block(Block *p_from,Tick p_to_where,int p_existing) {
+	
+	ERR_FAIL_COND( p_from==NULL );
+
+	ERR_FAIL_COND( !block_fits(p_to_where,p_from->get_length(),p_existing) );
+	
+			
+	Block *b = create_duplicate_block(p_from);
+	
+	add_block( b, p_to_where );
+	
+}
+void BlockList::copy_block_link(Block *p_from,Tick p_to_where,int p_existing) {
+	
+	
+	ERR_FAIL_COND( p_from==NULL );
+
+	ERR_FAIL_COND( !block_fits(p_to_where,p_from->get_length(),p_existing) );
+	
+			
+	Block *b = create_link_block(p_from);
+	
+	add_block( b, p_to_where );	
+}
+
+void BlockList::move_block(BlockList *p_from_track,int p_which,Tick p_to_pos) {
+	
+	Block * block = p_from_track->get_block( p_which );
+	int current=(p_from_track==this)?p_which:-1;
+	ERR_FAIL_COND( !block_fits(p_to_pos, block->get_length(), current) );
+	
+	p_from_track->remove_block(p_which); //remove first so index doenst change
+	add_block( block, p_to_pos);
+	//move it
+}
+
 void BlockList::remove_block(int p_index) {
 	
+	ERR_FAIL_INDEX( p_index , get_block_count() );
+	
+	bl_private.block_list.erase_index( p_index );
 	
 }
 bool BlockList::block_fits(Tick p_pos,Tick p_size,int p_current) {
@@ -57,21 +98,6 @@ bool BlockList::block_fits(Tick p_pos,Tick p_size,int p_current) {
 	
 }
 
-void BlockList::move_block(int p_which,Tick p_to_new_pos) {
-	
-	if (!is_move_block_allowed(p_which,p_to_new_pos))
-		return; //not allowed
-	
-	if (p_to_new_pos==get_block_pos( p_to_new_pos ))
-		return; //pointless to do anything
-	
-	Block *b = bl_private.block_list.get_index_value_w(p_which);
-	bl_private.block_list.erase_index(p_which);
-	//if blocks can overlap, there is a chance they may get the same pos, so give them the next contiguous pos, for non overlapping blocks or snapped to beat this wont happen
-	p_to_new_pos=get_next_empty_pos( p_to_new_pos ); 
-	bl_private.block_list.insert(p_to_new_pos,b);
-	
-}
 bool BlockList::is_move_block_allowed(int p_which,Tick p_to_new_pos) {
 	
 	
@@ -83,6 +109,18 @@ bool BlockList::is_move_block_allowed(int p_which,Tick p_to_new_pos) {
 	Tick current_size=bl_private.block_list.get_index_value_w(p_which)->get_length();
 	
 	return block_fits(p_to_new_pos,current_size,p_which);
+}
+
+int BlockList::get_block_index(Block* p_block) {
+	
+	int bcount=get_block_count();
+	for (int i=0;i<bcount;i++) 
+		if (get_block( i ) == p_block )
+			return i;
+	
+	
+	return -1;
+	
 }
 
 int BlockList::get_block_count() {

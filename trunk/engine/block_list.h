@@ -55,15 +55,16 @@ protected:
 	bool add_block(Block *p_block,Tick p_pos);
 	void remove_block(int p_index);
 	
-	
+	virtual Block *create_duplicate_block(Block *p_block)=0;
+	virtual Block *create_link_block(Block *p_block)=0;
 	
 	
 public:
 	
 	virtual void create_block(Tick p_pos,BlockCreationData *p_creation_data=NULL)=0;
-	virtual void copy_block(int p_from_which,Tick p_to_where)=0;
-	virtual void copy_block_ref(int p_from_which,Tick p_to_where)=0;
-	virtual void move_block(int p_which,Tick p_to_new_pos);
+	virtual void copy_block(Block *p_from,Tick p_to_where,int p_existing=-1);
+	virtual void copy_block_link(Block *p_from,Tick p_to_where,int p_existing=-1);
+	virtual void move_block(BlockList *p_from_track,int p_which,Tick p_to_pos);
 	virtual bool is_move_block_allowed(int p_which,Tick p_to_new_pos);
 	virtual void erase_block(int p_which)=0;
 
@@ -71,12 +72,14 @@ public:
 		
 	int get_block_count();
 	Block* get_block(int p_index);
+	int get_block_index(Block* p_block);
 
 	Tick get_block_pos(int p_index);
 	int get_block_idx_at_pos(Tick p_pos); ///< val<0 for no block, return first find in overlap
 	
 	virtual String get_type_name()=0;
 	BlockType get_block_type();		 
+	virtual bool can_resize_from_begining()=0;
 	/* properties */
 	
 	BlockList(BlockType p_type);

@@ -5,14 +5,17 @@
 #include <vector>
 #include "engine/track.h"
 #include "audio_graph.h"
-
+#include "engine/data_pool.h"
 
 namespace ReShaked {
+
 
 class Song {
 
 	std::vector<Track*> track_list;
 	AudioGraph track_graph;
+	DataPool *pattern_pool;
+	DataPool *automation_pool;
 
 public:
 
@@ -21,6 +24,9 @@ public:
 	Track* get_track(int p_idx);
 	void remove_track(int p_idx); 
 
+	
+	Song();
+	~Song();
 };
 
 

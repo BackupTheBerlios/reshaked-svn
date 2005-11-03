@@ -35,7 +35,7 @@ const EventBuffer& Track::get_seq_event_buffer() {
 void Track::add_automation(String p_path) {
 
 	//path for later
-	base_private.automations.push_back( new TrackAutomation );
+	base_private.automations.push_back( new TrackAutomation(automation_pool) );
 }
 
 int Track::get_automation_count() {
@@ -78,6 +78,11 @@ void Track::process(int p_frames) {
 
 
 	process_track(base_private.input_plug->get_buffer(),base_private.output_plug->get_buffer(),p_frames);
+}
+
+void Track::set_automation_pool(DataPool *p_pool) {
+	
+	automation_pool=p_pool;	
 }
 
 Track::Track(int p_channels,BlockType p_type) : BlockList(p_type) {
