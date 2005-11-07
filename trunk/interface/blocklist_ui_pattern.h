@@ -28,7 +28,9 @@ class BlockListUI_Pattern : public BlockListUI_Base {
 	
 	
 	void paint_frames(QPainter& p);
+	void paint_row_lines(QPainter &p);
 	void paintEvent(QPaintEvent *e);
+	
 public:
 	
 	BlockListUI_Pattern(QWidget *p_parent,Song *p_song, int p_track);

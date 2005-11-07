@@ -171,6 +171,57 @@ int BlockList::get_block_idx_at_pos(Tick p_pos) { // NULL for no block
 	return prev_idx;
 }
 
+bool BlockList::get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) {
+	
+	*p_from_res=-1;
+	*p_to_res=-1;
+	
+	int from_idx = bl_private.block_list.get_prev_index( p_from );
+	
+	int first_fit=-1;
+	int last_fit=-1;
+	
+	while (true) {
+		
+		//got -1 as first block
+		if (from_idx==-1) {
+			
+			from_idx++;
+			continue;
+		}
+		
+		//got to last block
+		if (from_idx>=get_block_count())
+			break;
+		
+		//compute pos and len for block
+		Tick pos=get_block_pos(from_idx);
+		Tick len=get_block(from_idx)->get_length();
+		bool fits=(pos<=p_to) && ((pos+len)>p_from);
+		//if fits, add to range
+		if (fits) {
+			
+			if (first_fit==-1)
+				first_fit=from_idx;
+			last_fit=from_idx;
+		}
+		
+		//if we are over the blocklist
+		if (((pos+len)>p_to))
+			break;
+		
+		from_idx++;
+	}
+
+	if (first_fit==-1) //no fits
+		return true;
+	
+	*p_from_res=first_fit;
+	*p_to_res=last_fit;
+	
+	return false;
+	
+}
 BlockList::BlockType BlockList::get_block_type() {
 
 	return block_type;

@@ -29,21 +29,24 @@ private:
 
 	std::vector<Value> stream;
 
-    int find_pos(T p_pos,bool &p_exact);
+	int find_pos(T p_pos,bool &p_exact);
 public:
 
-    void insert(T p_pos,V p_value);
-    int get_exact_index(T p_pos); /* return INVALID_STREAM_INDEX if pos is not exact */
-    int get_prev_index(T p_pos); /* get index to pos previous or equal to value, if nothing less than it, return -1 */
-    int get_next_index(T p_pos); /* get index to pos next or equal to value, if greater than last element, then stream_size+1 is returned */
-    const V& get_index_value(int p_idx); /* return a const reference to     const V& get_index_value(int p_idx);  return a const reference to null if index is invalid! */
-    V& get_index_value_w(int p_idx); /* return a reference to     const V& get_index_value(int p_idx); return a const reference to null if index is invalid! */
-    const T& get_index_pos(int p_idx); /* return a const reference to     const T& get_index_pos(int p_idx);  return a const reference to null if index is invalid! */
+	void insert(T p_pos,V p_value);
+	int get_exact_index(T p_pos); /* return INVALID_STREAM_INDEX if pos is not exact */
+	int get_prev_index(T p_pos); /* get index to pos previous or equal to value, if nothing less than it, return -1 */
+	int get_next_index(T p_pos); /* get index to pos next or equal to value, if greater than last element, then stream_size+1 is returned */
+	const V& get_index_value(int p_idx); /* return a const reference to     const V& get_index_value(int p_idx);  return a const reference to null if index is invalid! */
+	V& get_index_value_w(int p_idx); /* return a reference to     const V& get_index_value(int p_idx); return a const reference to null if index is invalid! */
+	const T& get_index_pos(int p_idx); /* return a const reference to     const T& get_index_pos(int p_idx);  return a const reference to null if index is invalid! */
+	
+	int get_stream_size();
+	
+	void erase_index(int p_index);
+	void erase_index_range(int p_from_index, int p_to_index);
+	
+	bool find_values_in_range(T p_begin, T p_end, int *p_from_idx, int *p_to_idx); ///< return values inside a certain range
 
-    int get_stream_size();
-
-    void erase_index(int p_index);
-    void erase_index_range(int p_from_index, int p_to_index);
 };
 
 
@@ -187,9 +190,44 @@ void ValueStream<T,V>::erase_index_range(int p_from_idx,int p_to_idx) {
 
 }
 
+template<class T, class V>
+bool ValueStream<T,V>::find_values_in_range(T p_begin, T p_end, int *p_from_idx, int *p_to_idx) {
+	
+	//initialzie to invalid
+	*p_from_idx=-1;
+	*p_to_idx=-1;
+	
+	int from_idx = get_next_index( p_begin );
+	
+	int first_fit=-1;
+	int last_fit=-1;
+	
+	while (from_idx<stream.size()) {
+		
+		
+		T pos=stream[from_idx].pos;
+		bool fits=(pos>=p_begin) && (pos<=p_end);
+		if (fits) {
+			
+			if (first_fit==-1)
+				first_fit=from_idx;
+			last_fit=from_idx;
+		}
+		
+		if (pos>p_end)
+			break;
+		
+		from_idx++;
+	}
+	
+	if (first_fit==-1) //no fits
+		return true;
+	
+	*p_from_idx=first_fit;
+	*p_to_idx=last_fit;
 
+	return false;
 
-
-
+}
 
 #endif

@@ -22,7 +22,7 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 	int visible_rows=song->get_cursor().get_window_size();
 
 			
-	for (int i=0;i<(visible_rows+1);i++) {
+	for (int i=0;i<(visible_rows+3);i++) {
 		Tick tick=song->get_cursor().get_snapped_window_tick_pos(i);
 		int block_idx=track->get_block_idx_at_pos(tick);
 
@@ -36,7 +36,7 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 		if (i==0)
 			old_block_idx=block_idx;
 		
-		bool end=((old_block_idx!=block_idx || i==visible_rows) && old_block_idx!=-1);
+		bool end=((old_block_idx!=block_idx || i==(visible_rows+2)) && old_block_idx!=-1);
 		old_block_idx=block_idx;
 		
 		if (end) {
@@ -57,6 +57,28 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 	
 }
 
+void BlockListUI_Pattern::paint_row_lines(QPainter &p) {
+
+	int visible_rows=song->get_cursor().get_window_size();
+	int row_size=VisualSettings::get_singleton()->get_editing_row_height();
+
+	for (int i=0;i<visible_rows;i++) {
+		if (i==0) //dont want the first one!
+			continue;
+		Tick tick=song->get_cursor().get_snapped_window_tick_pos(i);
+		
+		if ( (tick % TICKS_PER_BEAT)==0 ) //beat
+			p.fillRect(0,i*row_size,width(),1,QColor(200,255,200,128));
+		else
+			p.fillRect(0,i*row_size,width(),1,QColor(150,200,150,64));
+		
+		//p.drawRect(0,i*row_size,width(),0);
+
+	
+	}
+
+}
+
 void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 	
 	song->get_cursor().set_window_size( height() / VisualSettings::get_singleton()->get_editing_row_height() );
@@ -64,13 +86,12 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 	QPainter p(this);
 	
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));
-
 	
 	paint_frames(p);
 	
 	int visible_rows=song->get_cursor().get_window_size();
 	
-
+	paint_row_lines(p);
 	
 }
 

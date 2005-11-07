@@ -13,7 +13,50 @@
 
 namespace ReShaked {
 
+Track_Pattern::NoteList Track_Pattern::get_notes_in_range(Tick p_from, Tick p_to) {
+	
+	NoteList res;
+	int block_from;
+	int block_to;
+	if (get_blocks_in_rage( p_from, p_to, &block_from, &block_to ))
+		return res; //emty list, nothing fits!
+	
+	for (int i=block_from;i<=block_to;i++) {
+		
+		PatternBlock *b = get_block(i);
+		Tick tick_begin=get_block_pos(i);
+		Tick tick_end=tick_begin+b->get_length()-1;
+		int note_from;
+		int note_to;
+		Tick tick_from=(tick_begin<p_from)?p_from:tick_begin;
+		Tick tick_to=(p_to>tick_end)?tick_end:p_to;
+		
+		if (b->get_notes_in_local_range( tick_begin-tick_from, tick_begin-tick_to, &note_from, &note_to) )
+			continue; //couldnt find any note
+		
+		for (int j=note_from;j<=note_to;j++) {
+			
+			NoteListElement e;
+			e.note=b->get_note( j );
+			e.pos=b->get_note_pos( j );
+			res.push_back(e);
+		}
+	}
+	
+	
+	return res;
+}
 
+
+
+
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
 
 void Track_Pattern::create_block(Tick p_pos,BlockCreationData *p_creation_data) {
 
@@ -120,6 +163,27 @@ bool Track_Pattern::PatternBlock::is_shared() {
 
 	return pattern->refcount>1;
 
+}
+
+bool Track_Pattern::PatternBlock::get_notes_in_local_range(Tick p_from, Tick p_to, int *p_note_from,int *p_note_to) {
+	
+	return pattern->data.find_values_in_range(p_from,p_to,p_note_from,p_note_to);
+}
+
+int Track_Pattern::PatternBlock::get_note_count() {
+	
+	return pattern->data.get_stream_size();
+}
+Track_Pattern::Note Track_Pattern::PatternBlock::get_note(int p_index) {
+	
+	ERR_FAIL_INDEX_V(p_index,pattern->data.get_stream_size(),Note());
+	return pattern->data.get_index_value( p_index );
+	
+}
+Track_Pattern::Position Track_Pattern::PatternBlock::get_note_pos(int p_index) {
+	
+	ERR_FAIL_INDEX_V(p_index,pattern->data.get_stream_size(),Position());
+	return pattern->data.get_index_pos( p_index );
 }
 
 Track_Pattern::PatternBlock::PatternBlock(Pattern* p) {

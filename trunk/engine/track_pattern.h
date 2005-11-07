@@ -15,6 +15,7 @@
 
 #include "engine/track.h"
 #include "engine/data_pool.h"
+#include <list>
 
 namespace ReShaked {
 
@@ -81,7 +82,13 @@ class Track_Pattern : public Track {
 
 	};
 
-
+	struct NoteListElement {
+		Position pos;
+		Note note;
+	};
+	
+	typedef std::list<NoteListElement> NoteList;
+	
 	struct Pattern : public DataPool::Data {
 
 		int length; //length in beats
@@ -100,6 +107,12 @@ class Track_Pattern : public Track {
 
 		public:
 
+		bool get_notes_in_local_range(Tick p_from, Tick p_to, int *p_note_from,int *p_note_to);
+		
+		int get_note_count();
+		Note get_note(int p_index);
+		Position get_note_pos(int p_index);
+			
 		Pattern *get_pattern();
 		Tick get_length();
 		void set_length(Tick p_length);
@@ -130,13 +143,14 @@ public:
 	int get_visible_columns();
 	
 	PatternBlock* get_block(int p_index);
+	NoteList get_notes_in_range(Tick p_from, Tick p_to);
 	
 	
 	Track_Pattern(int p_channels,DataPool *p_pool);
 	~Track_Pattern();
 
 };
-
+ 
 }
 
 #endif

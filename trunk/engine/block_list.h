@@ -73,6 +73,7 @@ public:
 	virtual bool is_move_block_allowed(int p_which,Tick p_to_new_pos);
 	virtual void erase_block(int p_which)=0;
 	virtual BlockCreationBehavior get_block_creation_behavior()=0;
+	
 
 
 	bool block_fits(Tick p_pos,Tick p_size,int p_current=-1);
@@ -85,10 +86,12 @@ public:
 	Tick get_block_pos(int p_index);
 	int get_block_idx_at_pos(Tick p_pos); ///< val<0 for no block, return first find in overlap
 
+	bool get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res); //return true if empty
 	virtual String get_type_name()=0;
 	BlockType get_block_type();
 	virtual bool can_resize_from_begining()=0;
-	/* properties */
+	
+/* properties */
 
 	BlockList(BlockType p_type);
 	virtual ~BlockList();
