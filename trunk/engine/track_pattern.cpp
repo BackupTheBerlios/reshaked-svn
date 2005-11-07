@@ -36,6 +36,8 @@ void Track_Pattern::create_block(Tick p_pos,BlockCreationData *p_creation_data) 
 
 }
 
+
+
 BlockList::BlockCreationBehavior Track_Pattern::get_block_creation_behavior() {
 
 	return BLOCK_CREATE_AND_RESIZE;
@@ -127,6 +129,17 @@ Track_Pattern::PatternBlock::PatternBlock(Pattern* p) {
 
 }
 
+Track_Pattern::PatternBlock* Track_Pattern::get_block(int p_index) {
+
+	PatternBlock *pb=dynamic_cast<PatternBlock*>( BlockList::get_block( p_index ) );
+	return pb;
+	
+}
+int Track_Pattern::get_visible_columns() {
+	
+	return data.visible_columns;	
+}
+
 String Track_Pattern::get_type_name() {
 
 	return "pattern";
@@ -134,6 +147,7 @@ String Track_Pattern::get_type_name() {
 Track_Pattern::Track_Pattern(int p_channels,DataPool *p_pool) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT) {
 
 	pool=p_pool;
+	data.visible_columns=1;
 }
 
 

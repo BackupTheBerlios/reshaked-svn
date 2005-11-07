@@ -14,7 +14,7 @@ qtdir=detect.check_qtdir(QT_VERSION_MAJOR_NEEDED,QT_VERSION_MINOR_NEEDED);
 os.environ["QTDIR"]=qtdir;
 
 env = Environment(CCFLAGS=['-Wall','-g3','-I.','-Wno-sign-compare'], tools=['default','qt']);
-
+print env['TOOLS']
 env.Append(LIBS=['QtGui','QtCore']);
 env.Append(LIBS=['pthread']);
 env.Append(CPPPATH=['#types/']);
@@ -36,5 +36,6 @@ SConscript('types/SCsub');
 SConscript('engine/SCsub');
 #SConscript('editing/SCsub');
 SConscript('interface/SCsub');
+SConscript('ui_blocks/SCsub');
 SConscript('program/SCsub');
 

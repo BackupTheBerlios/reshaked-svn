@@ -4,6 +4,12 @@
 
 namespace ReShaked {
 
+
+Cursor& Song::get_cursor() {
+	
+	return cursor;	
+}
+
 void Song::add_track(TrackType p_type,int p_channels) {
 
 	switch (p_type) {

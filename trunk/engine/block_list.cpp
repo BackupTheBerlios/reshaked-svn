@@ -165,7 +165,7 @@ int BlockList::get_block_idx_at_pos(Tick p_pos) { // NULL for no block
 
 	Block * b = get_block(prev_idx);
 
-	if (( get_block_pos(prev_idx) + b->get_length() ) < p_pos )
+	if (( get_block_pos(prev_idx) + b->get_length() ) <= p_pos )
 		return -1;
 
 	return prev_idx;

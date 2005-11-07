@@ -118,9 +118,20 @@ class Track_Pattern : public Track {
 
 	String get_type_name();
 	bool can_resize_from_begining();
+	
+	struct Data {
+		
+		int visible_columns;	
+		
+	} data;
+	
 public:
 
-
+	int get_visible_columns();
+	
+	PatternBlock* get_block(int p_index);
+	
+	
 	Track_Pattern(int p_channels,DataPool *p_pool);
 	~Track_Pattern();
 

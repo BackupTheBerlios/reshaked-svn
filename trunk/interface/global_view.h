@@ -12,8 +12,10 @@
 #include "engine/song.h"
 #include <set>
 #include <list>
+#include "interface/visual_settings.h"
 
 namespace ReShaked {
+
 
 class GlobalView : public QWidget {
 
@@ -115,6 +117,7 @@ class GlobalView : public QWidget {
 	float get_block_list_width(BlockList *p_block);
 	int get_block_list_at_offset(float p_offset);
 	QColor get_block_list_color(BlockList *p_block);
+	SkinBox *get_block_list_skinbox(BlockList *p_block,bool p_selected=false);
 	void add_block_to_selection(int p_list_index,int p_block);
 	void remove_block_from_selection(int p_list_index,int p_block);
 	void clear_selection();

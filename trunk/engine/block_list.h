@@ -81,6 +81,7 @@ public:
 	Block* get_block(int p_index);
 	int get_block_index(Block* p_block);
 
+	
 	Tick get_block_pos(int p_index);
 	int get_block_idx_at_pos(Tick p_pos); ///< val<0 for no block, return first find in overlap
 

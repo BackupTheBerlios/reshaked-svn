@@ -17,6 +17,9 @@
 #include  "indexed_action.h"
 #include "typedefs.h"
 
+#include "pixmaps/view_global.xpm"
+#include "pixmaps/view_edit.xpm"
+
 
 
 namespace ReShaked {
@@ -30,6 +33,25 @@ void MainWindow::menu_action_callback(int p_action) {
 			
 			data.song.add_track(TRACK_TYPE_PATTERN,2);
 			global_view->update();
+			blui_list->update_track_list();
+			
+		} break;
+		
+		
+		case NAVIGATION_GLOBAL_VIEW: {
+			
+			
+			get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
+			get_action(NAVIGATION_EDIT_VIEW)->setChecked(false);
+			main_stack->setCurrentWidget(global_view);
+			
+		} break;
+		case NAVIGATION_EDIT_VIEW: {
+			
+			get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(false);
+			get_action(NAVIGATION_EDIT_VIEW)->setChecked(true);
+			main_stack->setCurrentWidget(blui_list);
+			
 			
 		} break;
 		
@@ -97,20 +119,33 @@ void MainWindow::add_menus() {
 	track->addSeparator();
 	create_action(ITEM_TRACK_MOVE_LEFT,"Move Curent Track Left",track,NULL);
 	create_action(ITEM_TRACK_MOVE_RIGHT,"Move Curent Track Right",track,NULL);
-	
-}
-	
-MainWindow::MainWindow()
-{
 
+	create_action(NAVIGATION_GLOBAL_VIEW,"Global View",NULL,navigation_toolbar,(const char**)view_global_xpm);
+	get_action(NAVIGATION_GLOBAL_VIEW)->setCheckable(true);
+	get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
+	create_action(NAVIGATION_EDIT_VIEW,"Edit View",NULL,navigation_toolbar,(const char**)view_edit_xpm);
+	get_action(NAVIGATION_EDIT_VIEW)->setCheckable(true);
+		
+}
+	  
+MainWindow::MainWindow() {
+ 
 	splitter = new QSplitter(Qt::Vertical,this);
-	global_view = new GlobalView(splitter,&data.song);
-	splitter->addWidget(global_view);
+	main_stack = new QStackedWidget(splitter);
+	global_view = new GlobalView(main_stack,&data.song);
+	main_stack->addWidget(global_view);
+	blui_list = new BlockListUIList(main_stack,&data.song);
+	main_stack->addWidget(blui_list);
+	main_stack->setCurrentWidget(blui_list);
+	
+	splitter->addWidget(main_stack);
 	setCentralWidget(splitter);
+	
+	navigation_toolbar = addToolBar("Navigation");
 	
 	add_menus();
 }
-
+   
 
 MainWindow::~MainWindow()
 {

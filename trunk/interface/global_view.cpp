@@ -8,10 +8,11 @@
 #include "engine/track_pattern.h"
 #include <Qt/qpainter.h>
 #include <Qt/qevent.h>
+
 namespace ReShaked {
 
 //*TODO FIX WHEN BLOCKS ARE OUT OF THE AREA
-//*TODO FIX AUTOMATION (audio actualy)
+//*TODO FIX PATTERN (audio actualy)
 //*TODO MAKE RESIZING
 //TOODO MAKE TRACK TYPE CREATION
 
@@ -168,7 +169,16 @@ QColor GlobalView::get_block_list_color(BlockList *p_block) {
 
 }
 
-
+SkinBox *GlobalView::get_block_list_skinbox(BlockList *p_block,bool p_selected) {
+	
+	if (dynamic_cast<Automation*>(p_block))
+		return VisualSettings::get_singleton()->get_skin_box( p_selected?SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED:SKINBOX_GLOBALVIEW_AUTOMATION );
+	else if (dynamic_cast<Track_Pattern*>(p_block))
+		return VisualSettings::get_singleton()->get_skin_box( p_selected?SKINBOX_GLOBALVIEW_PATTERN_SELECTED:SKINBOX_GLOBALVIEW_PATTERN );
+	else
+		return VisualSettings::get_singleton()->get_skin_box( p_selected?SKINBOX_GLOBALVIEW_PATTERN_SELECTED:SKINBOX_GLOBALVIEW_PATTERN );
+	
+}
 bool GlobalView::get_screen_to_blocklist_and_tick( int p_x, int p_y, int *p_blocklist, Tick *p_tick ) {
 
 
@@ -780,17 +790,22 @@ void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,
 	else
 		block_len=blocklist->get_block(p_block)->get_length();
 
-	float	 f_height=((float)block_len/(float)(TICKS_PER_BEAT))*display.zoom_height;
+	float f_height=((float)block_len/(float)(TICKS_PER_BEAT))*display.zoom_height;
 	float f_width=get_block_list_width(blocklist)*display.zoom_width;
 
-
-	QColor col=get_block_list_color(blocklist);
+	
+	SkinBox *sb;
+	
 	if (is_block_selected(p_list,p_block))
-		col=QColor(255,0,0,alpha);
-	p.fillRect(p_x,p_y,(int)f_width,(int)f_height,col);
-	p.setPen(QColor(255,255,255,alpha));
-	p.drawRect(p_x,p_y,(int)f_width,(int)f_height);
-
+		sb=get_block_list_skinbox( blocklist, true );
+	else
+		sb=get_block_list_skinbox( blocklist, false );
+		
+	//p.fillRect(p_x,p_y,(int)f_width,(int)f_height,col);
+	//p.setPen(QColor(255,255,255,alpha));
+	//p.drawRect(p_x,p_y,(int)f_width,(int)f_height);
+	
+	sb->paint_into( p,p_x,p_y,(int)f_width,(int)f_height);
 	if (p_notpossible) {
 
 		QBrush b(QColor(255,255,255),Qt::DiagCrossPattern);

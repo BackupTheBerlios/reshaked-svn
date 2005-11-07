@@ -1,0 +1,14 @@
+Import('env');
+
+env_ui_blocks = env.Copy();
+env_ui_blocks.target_list=[];
+
+#env.make_targets(env.ui_blocks_targets)
+
+Export('env_ui_blocks');
+
+#SConscript("uic/SCsub");
+
+env_ui_blocks.find_source_files(env_ui_blocks.target_list,"*.cpp");
+
+env.Library('ui_blocks', env_ui_blocks.target_list)

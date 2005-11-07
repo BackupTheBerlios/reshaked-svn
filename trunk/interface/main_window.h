@@ -17,8 +17,15 @@
 #include <Qt/qsplitter.h>
 #include <Qt/qaction.h>
 #include "interface/global_view.h"
+#include "interface/blocklist_ui_list.h"
 
 #include <map> // std::map
+#include <Qt/qstackedwidget.h>
+
+#include "interface/visual_settings.h"
+#include <Qt/qtoolbar.h>
+
+
 
 namespace ReShaked {
 
@@ -31,7 +38,7 @@ class MainWindow : public QMainWindow {
 	Q_OBJECT
 	
 	enum MenuItems {
-		ITEM_SONG_NEW,
+		ITEM_SONG_NEW,  
 		ITEM_SONG_OPEN,
 		ITEM_SONG_SAVE,
 		ITEM_SONG_SAVE_AS,
@@ -47,6 +54,9 @@ class MainWindow : public QMainWindow {
 		ITEM_TRACK_REMOVE,
 		ITEM_TRACK_MOVE_LEFT,
 		ITEM_TRACK_MOVE_RIGHT,
+		
+		NAVIGATION_GLOBAL_VIEW,
+		NAVIGATION_EDIT_VIEW,
 		
 	};
 	
@@ -65,11 +75,18 @@ class MainWindow : public QMainWindow {
 	
 	GlobalView *global_view;
 	QSplitter *splitter;
+
+	QStackedWidget *main_stack;
+	BlockListUIList *blui_list;
+	
+	QToolBar *navigation_toolbar;
+	
+	VisualSettings visual_settings;
 public slots:	
 	void menu_action_callback(int p_action);
 public:
-	MainWindow();
 	
+	MainWindow();	
 	~MainWindow();
 
 };
