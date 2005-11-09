@@ -5,10 +5,6 @@
 namespace ReShaked {
 
 
-Cursor& Song::get_cursor() {
-	
-	return cursor;	
-}
 
 void Song::add_track(TrackType p_type,int p_channels) {
 
@@ -20,8 +16,8 @@ void Song::add_track(TrackType p_type,int p_channels) {
 			track_list.push_back(new Track_Pattern(p_channels,pattern_pool));
 			track_list[track_list.size()-1]->set_automation_pool(automation_pool);
 			track_list[track_list.size()-1]->create_block(0);
-			track_list[track_list.size()-1]->add_automation("hoe");
-			track_list[track_list.size()-1]->get_automation(0)->create_block(TICKS_PER_BEAT*4);
+			//			track_list[track_list.size()-1]->add_automation("hoe");
+			//track_list[track_list.size()-1]->get_automation(0)->create_block(TICKS_PER_BEAT*4);
 		} break;
 	}
 }
@@ -46,7 +42,7 @@ void Song::remove_track(int p_idx) { /* remove but dont delete */
 };
 
 
-Song::Song() {
+Song::Song()  {
 	
 	pattern_pool = new DataPool;	
 	automation_pool = new DataPool;	

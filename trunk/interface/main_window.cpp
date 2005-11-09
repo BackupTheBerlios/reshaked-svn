@@ -130,11 +130,16 @@ void MainWindow::add_menus() {
 	  
 MainWindow::MainWindow() {
  
+	update_notify = new Qt_UpdateNotify(this);
+	
+	data.editor = new Editor( &data.song, update_notify );
+	
+	
 	splitter = new QSplitter(Qt::Vertical,this);
 	main_stack = new QStackedWidget(splitter);
 	global_view = new GlobalView(main_stack,&data.song);
 	main_stack->addWidget(global_view);
-	blui_list = new BlockListUIList(main_stack,&data.song);
+	blui_list = new BlockListUIList(main_stack,data.editor);
 	main_stack->addWidget(blui_list);
 	main_stack->setCurrentWidget(blui_list);
 	
@@ -144,8 +149,15 @@ MainWindow::MainWindow() {
 	navigation_toolbar = addToolBar("Navigation");
 	
 	add_menus();
-}
-   
+	create_keybindings();
+	
+	QObject::connect(update_notify,SIGNAL(edit_window_changed()),blui_list,SLOT(repaint_track_list()));
+	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),blui_list,SLOT(cursor_changed_blocklist()));
+	QObject::connect(update_notify,SIGNAL(cursor_moved()),blui_list,SLOT(ensure_cursor_visible()));
+	
+	
+	
+}	   
 
 MainWindow::~MainWindow()
 {

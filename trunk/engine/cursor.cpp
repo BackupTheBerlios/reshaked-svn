@@ -7,19 +7,14 @@ namespace ReShaked {
 
 void Cursor::window_moved() {
 	
-	
+	ui_update_notify->edit_window_changed();       
 	
 }
 void Cursor::cursor_moved() {
 	
-	
-	
-}
-void Cursor::cursor_changed_blocklist() {
-	
+	ui_update_notify->cursor_moved();
 	
 }
-
 
 int Cursor::ticks_to_snap(Tick p_ticks) {
 
@@ -81,17 +76,6 @@ Tick Cursor::get_tick_pos() {
 }
 
 
-int Cursor::get_blocklist() {
-
-	return current_blocklist;
-}
-void Cursor::set_blocklist(int p_blocklist) {
-
-	if (current_blocklist==p_blocklist)
-		return;
-	current_blocklist=p_blocklist;
-	cursor_changed_blocklist();
-}
 void Cursor::set_snap(Tick p_snap) {
 
 	if (snap==p_snap)
@@ -167,13 +151,13 @@ Cursor::~Cursor() {
 	
 	
 }
-Cursor::Cursor() {
+Cursor::Cursor(UI_UpdateNotify *p_ui_update_notify) {
 
-    cursor_pos=0;
-    current_blocklist=0;
-    snap=4;
-    window_size=5;
-    window_offset=0;
+	ui_update_notify=p_ui_update_notify;
+	cursor_pos=0;
+	snap=4;
+	window_size=5;
+	window_offset=0;
 }
 
 };

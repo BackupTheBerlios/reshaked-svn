@@ -16,6 +16,7 @@
 #include <Qt/qmainwindow.h>
 #include <Qt/qsplitter.h>
 #include <Qt/qaction.h>
+#include "engine/editor.h"
 #include "interface/global_view.h"
 #include "interface/blocklist_ui_list.h"
 
@@ -24,8 +25,8 @@
 
 #include "interface/visual_settings.h"
 #include <Qt/qtoolbar.h>
-
-
+#include "engine/keyboard_input.h"
+#include "interface/qt_updatenotify.h"
 
 namespace ReShaked {
 
@@ -63,12 +64,15 @@ class MainWindow : public QMainWindow {
 	
 	struct Data {
 		
+		Keyboard_Input keyboard_codes;
 		Song song;
+		Editor *editor;
 		
 	} data;
 	
 	std::map<int,QAction*> action_map;
 
+	void create_keybindings();
 	void create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QToolBar *p_toolbar,const char **p_xpm=NULL);
 	QAction *get_action(MenuItems p_item);
 	void add_menus();
@@ -82,6 +86,9 @@ class MainWindow : public QMainWindow {
 	QToolBar *navigation_toolbar;
 	
 	VisualSettings visual_settings;
+	
+	Qt_UpdateNotify *update_notify;
+	
 public slots:	
 	void menu_action_callback(int p_action);
 public:

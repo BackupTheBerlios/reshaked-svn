@@ -33,9 +33,18 @@ enum SkinBoxList {
 	SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED,
 	SKINBOX_GLOBALVIEW_AUDIO_SELECTED,
 	SKINBOX_EDITING_PATTERN,
+	SKINBOX_EDITING_PATTERN_SELECTED,
 	SKINBOX_EDITING_AUTOMATION,
 };
 				    
+enum ColorList {
+	
+	
+	COLORLIST_PATTERN_EDIT_NOTE,	
+	COLORLIST_PATTERN_EDIT_VOL,
+	COLORLIST_PATTERN_EDIT_FOCUS_RECT,
+		
+};
 				    	    
 				    
 class VisualSettings{
@@ -43,16 +52,26 @@ class VisualSettings{
 	static VisualSettings * singleton;
 			    
 	typedef std::map<SkinBoxList,SkinBox*> SkinBoxMap;
+	typedef std::map<ColorList,QColor> ColorMap;
+	
 	SkinBoxMap skin_box_map;
+	ColorMap color_map;
 	PixmapFont pattern_font;
+	PixmapFont pattern_vol_font;
+	QPixmap pattern_cursor;
 	int editing_row_height;
+	QPoint pattern_cursor_offset;
 public:
 	
+	QPixmap get_pattern_cursor_pixmap();
+	QPoint get_pattern_cursor_offset();
 	int get_editing_row_height();
 	PixmapFont* get_pattern_font();
+	PixmapFont* get_pattern_vol_font();
 	static VisualSettings * get_singleton();
 	
 	SkinBox * get_skin_box(SkinBoxList p_which);
+	QColor get_color(ColorList p_color);
 	
 	VisualSettings();
 	~VisualSettings();

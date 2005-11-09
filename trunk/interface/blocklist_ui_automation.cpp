@@ -13,7 +13,7 @@
 
 namespace ReShaked {
 
-BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Song *p_song, int p_track,int p_automation) : BlockListUI_Base(p_parent) {
+BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, int p_track,int p_automation) : BlockListUI_Base(p_parent) {
 	
 	
 }

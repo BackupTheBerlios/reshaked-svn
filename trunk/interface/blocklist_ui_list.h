@@ -16,7 +16,7 @@
 #include "ui_blocks/helpers.h"
 #include <Qt/qscrollarea.h>
 #include <Qt/qlayout.h>
-#include "engine/song.h"
+#include "engine/editor.h"
 
 
 namespace ReShaked {
@@ -34,12 +34,18 @@ class BlockListUIList : public QWidget {
 	QHBoxLayout *hbox_layout;
 	QScrollArea *scrollarea;
 	
-	Song *song;
+	Editor *editor;
 	
+public slots:	
+	
+
+	void ensure_cursor_visible();
+	void cursor_changed_blocklist();
+	void repaint_track_list();
 public:
 	void update_track_list();
 	
-	BlockListUIList(QWidget *p_parent,Song *p_song);
+	BlockListUIList(QWidget *p_parent,Editor *p_editor);
 	~BlockListUIList();
 
 };

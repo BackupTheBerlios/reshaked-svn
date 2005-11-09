@@ -18,8 +18,12 @@ Track_Pattern::NoteList Track_Pattern::get_notes_in_range(Tick p_from, Tick p_to
 	NoteList res;
 	int block_from;
 	int block_to;
-	if (get_blocks_in_rage( p_from, p_to, &block_from, &block_to ))
+//	printf("get blocks in range %f-%f:",(float)p_from/TICKS_PER_BEAT,(float)p_to/TICKS_PER_BEAT);
+	if (get_blocks_in_rage( p_from, p_to, &block_from, &block_to )) {
+//		printf(" none!\n");
 		return res; //emty list, nothing fits!
+	}
+	//printf(" %i\n",(block_to-block_from)+1);
 	
 	for (int i=block_from;i<=block_to;i++) {
 		
@@ -30,9 +34,12 @@ Track_Pattern::NoteList Track_Pattern::get_notes_in_range(Tick p_from, Tick p_to
 		int note_to;
 		Tick tick_from=(tick_begin<p_from)?p_from:tick_begin;
 		Tick tick_to=(p_to>tick_end)?tick_end:p_to;
+				
+//		printf("scanning block %i, ticks %f-%f\n",i,(float)tick_from/TICKS_PER_BEAT,(float)tick_to/TICKS_PER_BEAT);
 		
-		if (b->get_notes_in_local_range( tick_begin-tick_from, tick_begin-tick_to, &note_from, &note_to) )
+		if (b->get_notes_in_local_range( tick_from-tick_begin, tick_to-tick_begin, &note_from, &note_to) )
 			continue; //couldnt find any note
+		//printf("found %i notes\n",note_to-note_from);
 		
 		for (int j=note_from;j<=note_to;j++) {
 			
@@ -139,6 +146,14 @@ Track_Pattern::Pattern *Track_Pattern::PatternBlock::get_pattern() {
 	return pattern;
 
 }
+
+Track_Pattern::Pattern::Pattern() {
+	length=1;
+	refcount=0;
+	data.insert( 0, Note(36,22) );
+	data.insert( TICKS_PER_BEAT, Note(22,58) );
+	data.insert( TICKS_PER_BEAT*3, Note(77,98) );
+}
 Tick Track_Pattern::PatternBlock::get_length() {
 
 	return pattern->length*TICKS_PER_BEAT;
@@ -202,6 +217,54 @@ Track_Pattern::PatternBlock* Track_Pattern::get_block(int p_index) {
 int Track_Pattern::get_visible_columns() {
 	
 	return data.visible_columns;	
+}
+
+	
+void Track_Pattern::set_note(const Position& p_pos,const Note& p_note) {
+	
+	int pb_idx = get_block_idx_at_pos( p_pos.tick );
+	ERR_FAIL_COND(pb_idx==-1);
+	PatternBlock *bp=get_block(pb_idx);
+	ERR_FAIL_COND(bp==NULL);
+	
+	Position rel_pos( p_pos.tick-get_block_pos(pb_idx) , p_pos.column );
+
+	if (p_note.is_empty()) { //sets an empty note, delete it */
+		int tick_idx = bp->get_pattern()->data.get_exact_index( rel_pos );
+		if (tick_idx==INVALID_STREAM_INDEX) {
+			return; /* nothing to erase */
+		}   
+
+		bp->get_pattern()->data.erase_index(tick_idx);
+
+	} else { /* just insert-overwrite wathever you can find */
+
+		bp->get_pattern()->data.insert( rel_pos, p_note);
+	
+	}
+
+}
+	
+Track_Pattern::Note Track_Pattern::get_note(const Position& p_pos) {
+		
+	int pb_idx = get_block_idx_at_pos( p_pos.tick );
+	ERR_FAIL_COND_V(pb_idx==-1,Note());
+	PatternBlock *bp=get_block(pb_idx);
+	ERR_FAIL_COND_V(bp==NULL,Note());
+	
+	Position rel_pos( p_pos.tick-get_block_pos(pb_idx) , p_pos.column );
+	
+	int tick_idx = bp->get_pattern()->data.get_exact_index(rel_pos);
+	if (tick_idx==INVALID_STREAM_INDEX)
+		return Note(); //return empty note, as pos in tick does not exist */
+	
+	return bp->get_pattern()->data.get_index_value(tick_idx);
+
+}
+
+bool Track_Pattern::is_pos_editable(Tick p_pos) {
+	
+	return (get_block_idx_at_pos( p_pos )!=-1);
 }
 
 String Track_Pattern::get_type_name() {

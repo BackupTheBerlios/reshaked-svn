@@ -4,6 +4,8 @@
 #include "typedefs.h"
 
 
+#include "engine/ui_updatenotify.h"
+
 //@TODO Make an object for pattern changed notify or something
 
 namespace ReShaked {
@@ -14,7 +16,6 @@ public:
 private:
 
 	int cursor_pos;
-	int current_blocklist;
 	Tick snap; /* tick snap,beat divisor */
 	int window_offset; /* offset in snapped_beats */
 	int window_size; /* in snap-amounts beats */
@@ -22,14 +23,15 @@ private:
 	Tick snap_to_ticks(int p_snap);
 	int ticks_to_snap(Tick p_ticks);
 
+	UI_UpdateNotify *ui_update_notify;
+	
+	Cursor();
 public:
 
 	int get_pos();
 	void set_pos(int p_pos);
 	Tick get_tick_pos();
 	
-	int get_blocklist();
-	void set_blocklist(int p_blocklist);
 	void set_snap(Tick p_snap);
 	Tick get_snap();
 	int get_beat();
@@ -43,11 +45,10 @@ public:
 
 	
 	/* reimplement these for your UI */
-	virtual void window_moved();
-	virtual void cursor_moved();
-	virtual void cursor_changed_blocklist();
+	void window_moved();
+	void cursor_moved();
 	
-        Cursor();
+        Cursor(UI_UpdateNotify *p_ui_update_notify);
 	virtual ~Cursor();
 
 };

@@ -26,7 +26,10 @@ namespace ReShaked {
 class PatternPool;
 
 class Track_Pattern : public Track {
-
+	
+ 	class Pattern;
+	
+public:
 	struct Note {
 
 		enum {
@@ -87,7 +90,30 @@ class Track_Pattern : public Track {
 		Note note;
 	};
 	
+	
 	typedef std::list<NoteListElement> NoteList;
+	
+	
+	class  PatternBlock : public Block {
+		
+		Pattern *pattern;
+		
+	public:
+		
+		bool get_notes_in_local_range(Tick p_from, Tick p_to, int *p_note_from,int *p_note_to);
+		
+		int get_note_count();
+		Note get_note(int p_index);
+		Position get_note_pos(int p_index);
+		
+		Pattern *get_pattern();
+		Tick get_length();
+		void set_length(Tick p_length);
+		bool is_shared();
+		PatternBlock(Pattern*);
+	};
+	
+private:
 	
 	struct Pattern : public DataPool::Data {
 
@@ -98,27 +124,9 @@ class Track_Pattern : public Track {
 		int refcount;
 
 
-		Pattern() { length=1 ; refcount = 0; }
+		Pattern();
 	};
 
-	class  PatternBlock : public Block {
-
-		Pattern *pattern;
-
-		public:
-
-		bool get_notes_in_local_range(Tick p_from, Tick p_to, int *p_note_from,int *p_note_to);
-		
-		int get_note_count();
-		Note get_note(int p_index);
-		Position get_note_pos(int p_index);
-			
-		Pattern *get_pattern();
-		Tick get_length();
-		void set_length(Tick p_length);
-		bool is_shared();
-		PatternBlock(Pattern*);
-	};
 
 	void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames);
 
@@ -140,6 +148,12 @@ class Track_Pattern : public Track {
 	
 public:
 
+	void set_note(const Position& p_pos,const Note& p_note);
+	Note get_note(const Position& p_pos);
+	
+	bool is_pos_editable(Tick p_pos);
+	
+	
 	int get_visible_columns();
 	
 	PatternBlock* get_block(int p_index);
