@@ -1,7 +1,7 @@
 //
 // C++ Interface: blocklist_ui_list
 //
-// Description: 
+// Description:
 //
 //
 // Author: red <red@killy>, (C) 2005
@@ -17,6 +17,7 @@
 #include <Qt/qscrollarea.h>
 #include <Qt/qlayout.h>
 #include "engine/editor.h"
+#include "interface/rowlist_display.h"
 
 
 namespace ReShaked {
@@ -25,26 +26,28 @@ namespace ReShaked {
 	@author red <red@killy>
 */
 class BlockListUIList : public QWidget {
-	
-	Q_OBJECT			    
-			    		    
+
+	Q_OBJECT
+
 	std::vector<BlockListUI_Base*> block_list_ui_list;
 	QFrame *spacer;
 	QWidget *hbox;
 	QHBoxLayout *hbox_layout;
 	QScrollArea *scrollarea;
-	
+
+	RowListDisplay *row_display;
 	Editor *editor;
-	
-public slots:	
-	
+
+public slots:
+
 
 	void ensure_cursor_visible();
 	void cursor_changed_blocklist();
 	void repaint_track_list();
+
 public:
 	void update_track_list();
-	
+
 	BlockListUIList(QWidget *p_parent,Editor *p_editor);
 	~BlockListUIList();
 

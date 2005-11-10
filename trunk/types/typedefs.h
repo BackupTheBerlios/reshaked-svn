@@ -12,6 +12,13 @@ typedef std::string String;
 #define TICKS_PER_BEAT 3072
 #define SNAP_TICK_TO_BEAT(m_tick) ( (m_tick) - ((m_tick)%TICKS_PER_BEAT) )
 
+
+
+#define DIGIT_1(m_val) ( (m_val)%10 )
+#define DIGIT_2(m_val) ( (m_val/10)%10 )
+#define DIGIT_3(m_val) ( (m_val/100)%10 )
+#define DIGIT_4(m_val) ( (m_val/1000)%10 )
+
 typedef long long Tick;
 
 typedef signed char Note;
