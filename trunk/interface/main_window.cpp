@@ -24,6 +24,29 @@
 
 namespace ReShaked {
 
+void MainWindow::set_top_screen(TopScreenList p_list) {
+
+	switch (p_list) {
+
+		case TOP_SCREEN_GLOBAL_VIEW: {
+
+			get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
+			get_action(NAVIGATION_EDIT_VIEW)->setChecked(false);
+			main_stack->setCurrentWidget(global_view);
+
+		} break;
+		case TOP_SCREEN_EDIT_VIEW: {
+
+			get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(false);
+			get_action(NAVIGATION_EDIT_VIEW)->setChecked(true);
+			main_stack->setCurrentWidget(blui_list);
+			blui_list->repaint_track_list();
+
+		} break;
+	}
+
+}
+
 void MainWindow::menu_action_callback(int p_action) {
 
 
@@ -40,18 +63,11 @@ void MainWindow::menu_action_callback(int p_action) {
 
 		case NAVIGATION_GLOBAL_VIEW: {
 
-
-			get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
-			get_action(NAVIGATION_EDIT_VIEW)->setChecked(false);
-			main_stack->setCurrentWidget(global_view);
-
+			set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 		} break;
 		case NAVIGATION_EDIT_VIEW: {
 
-			get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(false);
-			get_action(NAVIGATION_EDIT_VIEW)->setChecked(true);
-			main_stack->setCurrentWidget(blui_list);
-
+			set_top_screen(TOP_SCREEN_EDIT_VIEW);
 
 		} break;
 
@@ -157,6 +173,7 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(cursor_moved()),blui_list,SLOT(ensure_cursor_visible()));
 
 
+	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 
 }
 
