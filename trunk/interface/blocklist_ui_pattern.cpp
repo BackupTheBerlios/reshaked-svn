@@ -376,6 +376,30 @@ void BlockListUI_Pattern::focusInEvent ( QFocusEvent * event ) {
 	QWidget::focusInEvent(event);
 }
 
+void BlockListUI_Pattern::mousePressEvent ( QMouseEvent * e ) {
+	
+	PixmapFont * font=VisualSettings::get_singleton()->get_pattern_font();
+	
+	int rowsize=VisualSettings::get_singleton()->get_editing_row_height();
+	int columnwidth=font->get_width()*4;
+	
+	int click_x=e->x();
+	if (editor->get_pattern_note_edit_mode()==Editor::MODE_NOTE)
+		click_x+=font->get_width()/2; //makes clicking easier
+	click_x-=font->get_width();
+	if (click_x<0)
+		click_x=0;
+	
+	int row=e->y()/VisualSettings::get_singleton()->get_editing_row_height();
+	int column= click_x / columnwidth;
+	int col_x=click_x % columnwidth;
+	int field=col_x*2/columnwidth;			
+	editor->set_pattern_edit_field( field );
+	editor->set_pattern_edit_column( column );
+	editor->get_cursor().set_pos( editor->get_cursor().get_window_offset() + row );
+	update();
+	
+}
 void BlockListUI_Pattern::keyPressEvent ( QKeyEvent * e ) {
 	
 	

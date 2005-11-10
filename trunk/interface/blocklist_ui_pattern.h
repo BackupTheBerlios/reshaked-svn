@@ -37,6 +37,7 @@ class BlockListUI_Pattern : public BlockListUI_Base {
 	void paintEvent(QPaintEvent *e);
 	void paint_cursor(QPainter& p, int p_row);
 	void focusInEvent ( QFocusEvent * event );
+	void mousePressEvent ( QMouseEvent * e );
 	
 	void keyPressEvent ( QKeyEvent * e );
 public:
