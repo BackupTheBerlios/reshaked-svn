@@ -404,14 +404,17 @@ void BlockListUI_Pattern::keyPressEvent ( QKeyEvent * e ) {
 
 
 	int key_value=e->key();
-	bool alt=e->modifiers() & Qt::AltModifier;
-	bool shift=e->modifiers() & Qt::ShiftModifier;
-	bool control=e->modifiers() & Qt::ControlModifier;
 
-	key_value|= (alt?Qt::ALT:0);
-	key_value|= (shift?Qt::SHIFT:0);
-	key_value|= (control?Qt::CTRL:0);
-
+	if (key_value!=Qt::Key_Backtab) { //ruins things otherwise
+		
+		bool alt=e->modifiers() & Qt::AltModifier;
+		bool shift=e->modifiers() & Qt::ShiftModifier;
+		bool control=e->modifiers() & Qt::ControlModifier;
+		
+		key_value|= (alt?Qt::ALT:0);
+		key_value|= (shift?Qt::SHIFT:0);
+		key_value|= (control?Qt::CTRL:0);
+	}
 	if (editor->pattern_edit_key_press(key_value))
 		update();
 

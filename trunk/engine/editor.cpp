@@ -128,16 +128,91 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			cursor.set_pos( cursor.get_pos() +1 );
 
 		}
+		CASE( KEYBIND("page_up") ) {
+
+			cursor.set_pos( cursor.get_pos() - cursor.get_window_size()/2 );
+
+		}
+		CASE( KEYBIND("page_down") ) {
+
+			cursor.set_pos( cursor.get_pos() + cursor.get_window_size()/2 );
+
+		}
 		CASE( KEYBIND("note_entry/clear_field") ) {
 
-			//pattern_track->set_note(cursor.get_tick_pos(),column,PatternNote(PatternNote::NO_NOTE));
+			pattern_track->set_note(Track_Pattern::Position(cursor.get_tick_pos(),pattern_edit.column),Track_Pattern::Note(Track_Pattern::Note::NO_NOTE));
+			cursor.set_pos( cursor.get_pos() +1 );
 
 		}
 		CASE( KEYBIND("note_entry/note_off") ) {
 
-			//pattern_track->set_note(cursor.get_tick_pos(),column,PatternNote(PatternNote::NOTE_OFF));
+			pattern_track->set_note(Track_Pattern::Position(cursor.get_tick_pos(),pattern_edit.column),Track_Pattern::Note(Track_Pattern::Note::NOTE_OFF));
+			cursor.set_pos( cursor.get_pos() +1 );
 
 		}
+		CASE( KEYBIND("next_track") ) {
+			
+			if (global_edit.current_blocklist<(get_blocklist_count()-1)) {
+				global_edit.current_blocklist++;
+				enter_blocklist(ENTER_LEFT);
+			}				
+			
+			
+		}
+		CASE( KEYBIND("prev_track") ) {
+			
+			
+			if (global_edit.current_blocklist>0) {
+				global_edit.current_blocklist--;
+				enter_blocklist(ENTER_RIGHT);
+			}				
+			
+		}
+
+		CASE( KEYBIND("home") ) {
+			
+			if (global_edit.current_blocklist==0 && pattern_edit.field==0 && pattern_edit.column==0) {
+				cursor.set_pos( 0 );
+			} else {
+				global_edit.current_blocklist=0;
+				enter_blocklist(ENTER_LEFT);
+			}
+			
+		}
+		CASE( KEYBIND("end") ) {
+			
+			global_edit.current_blocklist=get_blocklist_count()-1;
+			enter_blocklist(ENTER_RIGHT);
+			
+		}
+		
+		CASE( KEYBIND("home_up") ) {
+			
+			// musukashii
+		}
+		CASE( KEYBIND("end_down") ) {
+			
+			// musukashii
+			
+		}
+		
+		CASE( KEYBIND("insert_next") ) {
+		
+			
+		}
+		CASE( KEYBIND("delete_next") ) {
+		
+			
+		}
+		CASE( KEYBIND("insert") ) {
+		
+			
+		}
+		CASE( KEYBIND("delete") ) {
+		
+			
+		}
+		
 		CASE( KEYBIND("note_entry/toggle_note_edit") ) {
 
 
@@ -169,6 +244,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 					int note=global_edit.editing_octave*12+i;
 					Tick tickpos=cursor.get_tick_pos();
 					pattern_track->set_note(Track_Pattern::Position(tickpos,pattern_edit.column),Track_Pattern::Note(note,60));
+					cursor.set_pos( cursor.get_pos() +1 );
 	
 				}
 			}
@@ -184,8 +260,11 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			if (pattern_edit.field==0) {
 				note.volume=(note.volume%10)+10*number;
 				pattern_edit.field=1;
-			} else
+			} else {
 				note.volume=(note.volume/10)*10+number;
+				cursor.set_pos( cursor.get_pos() +1 );
+				pattern_edit.field=0;
+			}
 	
 			pattern_track->set_note(Track_Pattern::Position(tick,pattern_edit.column),note);
 	
@@ -199,6 +278,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			//set octave
 			note.note=note.note%12+octave*12;
 			pattern_track->set_note(Track_Pattern::Position(tick,pattern_edit.column),note);
+			cursor.set_pos( cursor.get_pos() +1 );
 		};
 
 		ui_update_notify->edit_window_changed(); //there may be linked patterns, update all
