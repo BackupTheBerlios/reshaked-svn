@@ -91,6 +91,10 @@ Track::Track(int p_channels,BlockType p_type) : BlockList(p_type) {
 	base_private.input_plug=new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	base_private.output_plug=new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
 	base_private.id=static_id++;
+	base_private.swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "swing","Swing","%");
+	base_private.volume.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "volume","Volume","dB");
+	base_private.balance.set_all( 0, -1.0, 1.0, 0.01, 0, Property::DISPLAY_KNOB,"balance","Balance","");
+	
 }
 
 

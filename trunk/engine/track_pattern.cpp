@@ -201,6 +201,7 @@ Track_Pattern::Position Track_Pattern::PatternBlock::get_note_pos(int p_index) {
 	return pattern->data.get_index_pos( p_index );
 }
 
+
 Track_Pattern::PatternBlock::PatternBlock(Pattern* p) {
 
 	pattern = p;

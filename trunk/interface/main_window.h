@@ -27,6 +27,7 @@
 #include <Qt/qtoolbar.h>
 #include "engine/keyboard_input.h"
 #include "interface/qt_updatenotify.h"
+#include "interface/track_settings.h"
 
 namespace ReShaked {
 
@@ -67,6 +68,7 @@ class MainWindow : public QMainWindow {
 	};
 
 
+
 	struct Data {
 
 		Keyboard_Input keyboard_codes;
@@ -93,6 +95,8 @@ class MainWindow : public QMainWindow {
 	VisualSettings visual_settings;
 
 	Qt_UpdateNotify *update_notify;
+	
+	TrackSettings *track_settings;
 
 	void set_top_screen(TopScreenList p_list);
 

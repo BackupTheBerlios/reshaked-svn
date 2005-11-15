@@ -85,6 +85,8 @@ public:
 	
 	Tick get_block_pos(int p_index);
 	int get_block_idx_at_pos(Tick p_pos); ///< val<0 for no block, return first find in overlap
+	int get_prev_block_from_idx(Tick p_pos); ///< returns -1 if no block found
+	int get_next_block_from_idx(Tick p_pos); ///< returns amount of blocks if no block found
 
 	bool get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res); //return true if empty
 	virtual String get_type_name()=0;

@@ -31,6 +31,10 @@ public:
 	int get_pos();
 	void set_pos(int p_pos);
 	Tick get_tick_pos();
+	void set_from_tick_pos(Tick p_pos); ///< set tick pos and snap it
+	Tick get_tick_from_pos(int p_snap);
+	
+	Tick get_snap_tick_size();
 	
 	void set_snap(Tick p_snap);
 	Tick get_snap();

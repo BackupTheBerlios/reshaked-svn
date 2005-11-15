@@ -14,12 +14,35 @@
 #include <Qt/qlayout.h>
 #include "blocklist_ui_pattern.h"
 #include "blocklist_ui_automation.h"
+#include "track_top.h"
 #include <Qt/qlabel.h>
 #include <Qt/qscrollbar.h>
 
 //@TODO SOFT SCROLL when ensuring cursor visible
 namespace ReShaked {
 
+
+static int get_pos_in_some_parent(QWidget *p_someparent, QWidget *p_widget) {
+	
+	QWidget *from=p_widget;
+	int xmap=0;
+	
+	while (true) {
+		
+		QWidget *parent=from->parentWidget();
+		xmap+=from->pos().x();
+		if (parent==p_someparent) {
+			
+			return xmap;
+		}
+		if (parent==NULL) {
+			
+			return -1;
+		}
+		
+		from=parent;
+	}	
+}
 
 void BlockListUIList::ensure_cursor_visible() {
 
@@ -31,7 +54,8 @@ void BlockListUIList::ensure_cursor_visible() {
 	int hbox_w=hbox->width();
 	int vp_width=scrollarea->viewport()->width();
 	int hbox_ofs=-hbox->pos().x();
-	int blocklist_pos=block_list_ui_list[current_blocklist]->pos().x();
+	int blocklist_pos=get_pos_in_some_parent(hbox,block_list_ui_list[current_blocklist]);
+	ERR_FAIL_COND(blocklist_pos==-1);
 	int blocklist_width=block_list_ui_list[current_blocklist]->width();
 
 	int new_hbox_ofs;
@@ -93,15 +117,33 @@ void BlockListUIList::update_track_list() {
 
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
 
+		QWidget *vb= new QWidget(hbox);
+		hbox_layout->addWidget(vb);	
+		
+		QVBoxLayout *vl=new QVBoxLayout(vb);
+		vb->setLayout(vl);
+		
+		TrackTop *top = new TrackTop(vb,editor,i);
+		vl->addWidget(top);
+		
+		QWidget *hb = new QWidget(vb);
+		QHBoxLayout *hl = new QHBoxLayout(hb);
+		hb->setLayout(hl);
+		vl->addWidget(hb);
+		
+		//hb->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
+		
 
 		SWITCH( editor->get_song()->get_track(i)->get_type_name() )
 
 			CASE("pattern") {
 
-				block_list_ui_list.push_back( new BlockListUI_Pattern(hbox,editor,i) );
-				hbox_layout->addWidget( block_list_ui_list [block_list_ui_list.size() -1] );
-
-
+				block_list_ui_list.push_back( new BlockListUI_Pattern(hb,editor,i) );
+				hl->addWidget(block_list_ui_list [block_list_ui_list.size() -1] );
+				
+			
+		//	hl->addWidget(new QPushButton("heh",hb ));
+				//hbox_layout->addWidget( block_list_ui_list [block_list_ui_list.size() -1] );
 			}
 		END_SWITCH
 
@@ -110,6 +152,12 @@ void BlockListUIList::update_track_list() {
 			block_list_ui_list.push_back( new BlockListUI_Automation(hbox,editor,i,j) );
 
 		}
+		
+		vl->setMargin(0);
+		vl->setSpacing(0);
+		hl->setMargin(0);
+		hl->setSpacing(0);
+		vb->show();
 	}
 
 	spacer = new QFrame(hbox);
@@ -155,6 +203,7 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QWidget (
 	scrollarea->setFocusPolicy(Qt::NoFocus);
 	scrollarea->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
+	
 	l->setSpacing(0);
 }
 

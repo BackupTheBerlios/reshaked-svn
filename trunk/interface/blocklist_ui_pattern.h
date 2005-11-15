@@ -31,6 +31,7 @@ class BlockListUI_Pattern : public BlockListUI_Base {
 	
 	void paint_note_event( QPainter& p, int p_row, Track_Pattern::NoteListElement & p_note );
 	void paint_multiple_note_events( QPainter& p, int p_row , const Track_Pattern::NoteList& p_list );
+	//void paint_multiple_nonvisible_events( QPainter& p, int p_row, const Track_Pattern::NoteList& p_list);
 	
 	void paint_frames(QPainter& p);
 	void paint_row_lines(QPainter &p);

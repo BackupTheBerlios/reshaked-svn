@@ -71,17 +71,17 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("page_up","Page Up",Qt::Key_PageUp,true);
 	data.keyboard_codes.add_key_bind("page_down","Page Down",Qt::Key_PageDown,true);
 
-	data.keyboard_codes.add_key_bind("home","Home",Qt::ALT+Qt::Key_Home,true);
-	data.keyboard_codes.add_key_bind("end","End",Qt::ALT+Qt::Key_End,true);
+//	data.keyboard_codes.add_key_bind("home","Home",Qt::ALT+Qt::Key_Home,true);
+	//data.keyboard_codes.add_key_bind("end","End",Qt::ALT+Qt::Key_End,true);
 
-	data.keyboard_codes.add_key_bind("home_up","Home Up",Qt::Key_Home,true);
-	data.keyboard_codes.add_key_bind("end_down","End Down",Qt::Key_End,true);
+	data.keyboard_codes.add_key_bind("page_up_blocksnap","Page Up BlockSnapped",Qt::ALT+Qt::Key_Up,true);
+	data.keyboard_codes.add_key_bind("page_down_blocksnap","Page Down BlockSnapped",Qt::ALT+Qt::Key_Down,true);
 	
 	data.keyboard_codes.add_key_bind("insert","Insert",Qt::Key_Insert,true);
 	data.keyboard_codes.add_key_bind("delete","Delete",Qt::Key_Delete,true);
 
-	data.keyboard_codes.add_key_bind("insert_next","Insert Next",Qt::ALT+Qt::Key_Insert,true);
-	data.keyboard_codes.add_key_bind("delete_next","Delete Next",Qt::ALT+Qt::Key_Delete,true);
+	data.keyboard_codes.add_key_bind("move_note_up","Move Note Up",Qt::CTRL+Qt::Key_Up,true);
+	data.keyboard_codes.add_key_bind("move_note_down","Move Note Down",Qt::CTRL+Qt::Key_Down,true);
 
 	data.keyboard_codes.add_key_bind("navigation/next_pattern","Next Pattern",Qt::Key_Plus);
 

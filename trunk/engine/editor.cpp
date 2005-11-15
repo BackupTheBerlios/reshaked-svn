@@ -186,30 +186,183 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			
 		}
 		
-		CASE( KEYBIND("home_up") ) {
+		CASE( KEYBIND("page_up_blocksnap") ) {
 			
-			// musukashii
+			Tick cursor_pos=cursor.get_tick_pos();
+
+			int idx=pattern_track->get_prev_block_from_idx( cursor.get_tick_pos() );
+			if (idx==-1)
+				return false;
+			
+			Tick begin=pattern_track->get_block_pos(idx);
+			Tick end=begin+pattern_track->get_block(idx)->get_length();
+			
+			if (cursor_pos<end) { /* inside */
+				
+				if (cursor_pos==begin) { /* at top */
+					//goto end of next block 
+					if (idx>0) { //have somewhere to go?				
+						cursor_pos = pattern_track->get_block_pos(idx-1);
+						cursor_pos+=pattern_track->get_block(idx-1)->get_length();					
+						cursor_pos-=(TICKS_PER_BEAT/cursor.get_snap());						
+					}
+				} else {
+					
+					cursor_pos=begin;	
+				}
+			} else {
+				
+				cursor_pos=end-(TICKS_PER_BEAT/cursor.get_snap());
+			}
+			
+			
+			cursor.set_from_tick_pos( cursor_pos );
 		}
-		CASE( KEYBIND("end_down") ) {
+		CASE( KEYBIND("page_down_blocksnap") ) {
 			
-			// musukashii
+			Tick cursor_pos=cursor.get_tick_pos();
+
+			int idx=pattern_track->get_block_idx_at_pos( cursor_pos );
+			if (idx<0)
+				idx=pattern_track->get_next_block_from_idx( cursor.get_tick_pos() );
+			if (idx==pattern_track->get_block_count())
+				return false;
+			
+			Tick begin=pattern_track->get_block_pos(idx);
+			Tick end=begin+pattern_track->get_block(idx)->get_length();
+			end-=(TICKS_PER_BEAT/cursor.get_snap());
+			
+			if (cursor_pos>=begin) { /* inside */
+				
+				if (cursor_pos==end) { /* at top */
+					//goto end of next block 
+					if (idx<(pattern_track->get_block_count()-1)) { //have somewhere to go?				
+						cursor_pos = pattern_track->get_block_pos(idx+1);
+						
+					}
+				} else {
+					
+					cursor_pos=end;	
+				}
+			} else {
+				
+				cursor_pos=begin;
+			}
+			
+			
+			cursor.set_from_tick_pos( cursor_pos );
+		}
+		
+		CASE( KEYBIND("move_note_down") ) {
+		
+			Tick cursor_pos=cursor.get_tick_pos();
+			Tick next_pos=cursor.get_tick_pos()+cursor.get_snap_tick_size();
+			if (!pattern_track->is_pos_editable( cursor_pos ) ||
+						  !pattern_track->is_pos_editable( next_pos ) )
+				return false;
+			Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( cursor_pos, pattern_edit.column ) );
+			if (note.is_empty())
+				return false;
+			
+			if (!pattern_track->get_note( Track_Pattern::Position( next_pos, pattern_edit.column ) ).is_empty() )
+				return false; //cant move here
+			
+			pattern_track->set_note( Track_Pattern::Position( next_pos, pattern_edit.column) , note );
+			pattern_track->set_note( Track_Pattern::Position( cursor_pos, pattern_edit.column) ,Track_Pattern::Note()  );
+			cursor.set_pos( cursor.get_pos() +1 );
+			
+		}
+		CASE( KEYBIND("move_note_up") ) {
+		
+			Tick cursor_pos=cursor.get_tick_pos();
+			Tick prev_pos=cursor.get_tick_pos()-cursor.get_snap_tick_size();
+			if (!pattern_track->is_pos_editable( cursor_pos ) ||
+						  !pattern_track->is_pos_editable( prev_pos ) )
+				return false;
+			Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( cursor_pos, pattern_edit.column ) );
+			if (note.is_empty())
+				return false;
+			
+			if (!pattern_track->get_note( Track_Pattern::Position( prev_pos, pattern_edit.column ) ).is_empty() )
+				return false; //cant move here
+			
+			pattern_track->set_note( Track_Pattern::Position( prev_pos, pattern_edit.column) , note );
+			pattern_track->set_note( Track_Pattern::Position( cursor_pos, pattern_edit.column) ,Track_Pattern::Note()  );
+			cursor.set_pos( cursor.get_pos() -1 );
 			
 		}
 		
-		CASE( KEYBIND("insert_next") ) {
-		
-			
-		}
-		CASE( KEYBIND("delete_next") ) {
-		
-			
-		}
 		CASE( KEYBIND("insert") ) {
 		
 			
+			Tick cursor_pos=cursor.get_tick_pos();
+
+			int idx=pattern_track->get_block_idx_at_pos( cursor_pos );
+			if (idx==-1)
+				return false;
+			
+			Tick block_pos=pattern_track->get_block_pos( idx );
+			Tick cursor_block_pos=cursor_pos-block_pos;
+			
+			Track_Pattern::PatternBlock *p = pattern_track->get_block(idx);
+			
+			for (int i=(p->get_note_count()-1);i>=0;i--) {
+				
+				Track_Pattern::Position pos=p->get_note_pos(i);
+				if (pos.tick<cursor_block_pos)
+					continue;
+				if (pos.column!=pattern_edit.column)
+					continue;
+				
+				Track_Pattern::Note note=p->get_note(i);
+				
+				//erase
+				pattern_track->set_note( Track_Pattern::Position( pos.tick+block_pos, pos.column), Track_Pattern::Note() );
+				//set again above
+				Tick new_pos=pos.tick+block_pos+cursor.get_snap_tick_size();
+				if (pattern_track->is_pos_editable( new_pos ))
+					pattern_track->set_note( Track_Pattern::Position( new_pos, pos.column), note );
+				
+				
+			}
+						
 		}
 		CASE( KEYBIND("delete") ) {
 		
+			Tick cursor_pos=cursor.get_tick_pos();
+
+			int idx=pattern_track->get_block_idx_at_pos( cursor_pos );
+			if (idx==-1)
+				return false;
+			
+			Tick block_pos=pattern_track->get_block_pos( idx );
+			Tick cursor_block_pos=cursor_pos-block_pos;
+			
+			Track_Pattern::PatternBlock *p = pattern_track->get_block(idx);
+			
+			for (int i=0;i<p->get_note_count();i++) {
+				
+				Track_Pattern::Position pos=p->get_note_pos(i);
+				if (pos.tick<cursor_block_pos)
+					continue;
+				if (pos.column!=pattern_edit.column)
+					continue;
+				
+				Track_Pattern::Note note=p->get_note(i);
+				
+				//erase
+				pattern_track->set_note( Track_Pattern::Position( pos.tick+block_pos, pos.column), Track_Pattern::Note() );
+				//set again above
+				Tick new_pos=pos.tick+block_pos-cursor.get_snap_tick_size();
+				
+				if (new_pos<cursor_block_pos)
+					continue;
+					
+				if (pattern_track->is_pos_editable( new_pos ))
+					pattern_track->set_note( Track_Pattern::Position( new_pos, pos.column), note );
+				
+				
+			}
 			
 		}
 		

@@ -49,6 +49,17 @@ enum ColorList {
 
 };
 
+enum PixmapList {
+	
+	PIXMAP_TRACK_OPTIONS,
+	PIXMAP_KNOB_BASE,
+	PIXMAP_KNOB_HANDLE,
+	PIXMAP_TRACK_SETTINGS_PATTERN,
+	PIXMAP_TRACK_SETTINGS_CONTROLS,
+	PIXMAP_TRACK_SETTINGS_EFFECTS,
+	PIXMAP_TRACK_SETTINGS_CONNECTIONS,
+	
+};
 
 #define GET_QCOLOR(m_col) VisualSettings::get_singleton()->get_color( m_col )
 
@@ -58,9 +69,12 @@ class VisualSettings{
 
 	typedef std::map<SkinBoxList,SkinBox*> SkinBoxMap;
 	typedef std::map<ColorList,QColor> ColorMap;
+	typedef std::map<PixmapList,QPixmap> PixmapMap;
 
 	SkinBoxMap skin_box_map;
 	ColorMap color_map;
+	PixmapMap pixmap_map;
+			
 	PixmapFont pattern_font;
 	PixmapFont pattern_vol_font;
 	PixmapFont rowcount_font;
@@ -69,6 +83,7 @@ class VisualSettings{
 	QPoint pattern_cursor_offset;
 public:
 
+	
 	QPixmap get_pattern_cursor_pixmap();
 	QPoint get_pattern_cursor_offset();
 	int get_editing_row_height();
@@ -79,6 +94,7 @@ public:
 
 	SkinBox * get_skin_box(SkinBoxList p_which);
 	QColor get_color(ColorList p_color);
+	QPixmap get_pixmap(PixmapList p_pixmap);
 
 	VisualSettings();
 	~VisualSettings();

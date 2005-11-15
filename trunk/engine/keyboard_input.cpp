@@ -25,7 +25,11 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+
+
 #include "keyboard_input.h"
+
+namespace ReShaked {
 
 Keyboard_Input *Keyboard_Input::singleton_instance=NULL;
 
@@ -164,3 +168,4 @@ Keyboard_Input::~Keyboard_Input()
 }
 
 
+}

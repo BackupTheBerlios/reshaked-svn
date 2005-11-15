@@ -1,15 +1,18 @@
 
-#include "error_macros.h"
-#include <iostream>
-#include <string>
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+#include "error_macros.h"
+#include <iostream>
+#include "rstring.h"
 
-typedef std::string String;
 
-//this number helps for high accuracy on beat divisors
-#define TICKS_PER_BEAT 3072
+#define MAX_DIVISORS 12
+static const char divisors[MAX_DIVISORS]={1,2,3,4,6,8,12,16,24,32,48,64};
+//Minimum Common Denominator for the divisors
+//This is done to avoid precision issues and simplify the editing code
+#define TICKS_PER_BEAT 192 
+
 #define SNAP_TICK_TO_BEAT(m_tick) ( (m_tick) - ((m_tick)%TICKS_PER_BEAT) )
 
 

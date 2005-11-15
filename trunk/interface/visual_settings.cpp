@@ -21,6 +21,13 @@
 #include "pixmaps/automation_bg.xpm"
 #include "pixmaps/pattern_bg_sel.xpm"
 #include "pixmaps/pattern_cursor.xpm"
+#include "pixmaps/track_options.xpm"
+#include "pixmaps/knob_base.xpm"
+#include "pixmaps/knob_handle.xpm"
+#include "pixmaps/track_settings_pattern.xpm"
+#include "pixmaps/track_settings_controls.xpm"
+#include "pixmaps/track_settings_effects.xpm"
+#include "pixmaps/track_settings_connections.xpm"
 #include <iostream>
 
 #include "error_macros.h"
@@ -73,6 +80,16 @@ QColor VisualSettings::get_color(ColorList p_color) {
 
 }
 
+QPixmap VisualSettings::get_pixmap(PixmapList p_pixmap) {
+	
+	PixmapMap::iterator I=pixmap_map.find(p_pixmap);
+
+	ERR_FAIL_COND_V( I==pixmap_map.end() ,QPixmap() );
+
+	return I->second;
+	
+}
+
 QPixmap VisualSettings::get_pattern_cursor_pixmap() {
 
 	return pattern_cursor;
@@ -101,6 +118,16 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
 	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,255,200,128);
 	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(150,200,150,64);
+	
+	
+	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);
+	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);
+	pixmap_map[PIXMAP_KNOB_HANDLE]=QPixmap((const char**)knob_handle_xpm);
+	pixmap_map[PIXMAP_TRACK_SETTINGS_PATTERN]=QPixmap((const char**)track_settings_pattern_xpm);
+	pixmap_map[PIXMAP_TRACK_SETTINGS_CONTROLS]=QPixmap((const char**)track_settings_controls_xpm);
+	pixmap_map[PIXMAP_TRACK_SETTINGS_EFFECTS]=QPixmap((const char**)track_settings_effects_xpm);
+	pixmap_map[PIXMAP_TRACK_SETTINGS_CONNECTIONS]=QPixmap((const char**)track_settings_connections_xpm);
+
 
 	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#01234567890-*"); //DAMN, ADDED ZERO TWICE!
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#01234567890-*"); //DAMN, ADDED ZERO TWICE!

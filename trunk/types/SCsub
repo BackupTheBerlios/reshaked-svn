@@ -3,3 +3,7 @@ Import('env');
 env_types = env.Copy();
 env_types.target_list=[];
 
+
+env_types.find_source_files(env_types.target_list,"*.cpp");
+
+env.Library('types', env_types.target_list)

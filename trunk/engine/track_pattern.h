@@ -114,7 +114,7 @@ public:
 	};
 	
 private:
-	
+
 	struct Pattern : public DataPool::Data {
 
 		int length; //length in beats

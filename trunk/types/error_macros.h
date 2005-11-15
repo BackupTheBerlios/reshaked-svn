@@ -2,6 +2,7 @@
 #define ERROR_MACROS_H
 
 #include <signal.h>
+#include <iostream>
 
 #define RAISE_SIGNAL if (getenv("ABORT_ON_ERROR")) ::raise(SIGQUIT);
 

@@ -17,6 +17,8 @@
 #include "engine/automation.h"
 #include "engine/block_list.h"
 
+#include "property.h"
+
 
 namespace ReShaked {
 
@@ -47,6 +49,11 @@ public:
 		AudioPlug *output_plug;
 
 		ValueStream<Tick,Block*> block_list;
+		
+		
+		LocalProperty swing;
+		LocalProperty volume;
+		LocalProperty balance;
 
 	} base_private;
 

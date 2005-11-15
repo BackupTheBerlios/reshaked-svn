@@ -37,6 +37,9 @@
 @author Juan Linietsky
 */
 
+
+namespace ReShaked {
+
 #define KEYBIND(m_str) Keyboard_Input::get_singleton_instance()->get_key_bind_by_name(m_str)
 
 #define IS_KEYBIND(m_str,m_key) \
@@ -86,4 +89,5 @@ public:
 
 };
 
+}
 #endif

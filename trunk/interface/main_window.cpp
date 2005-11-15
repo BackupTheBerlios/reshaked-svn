@@ -161,6 +161,8 @@ MainWindow::MainWindow() {
 
 	splitter->addWidget(main_stack);
 	setCentralWidget(splitter);
+	track_settings = new TrackSettings(splitter);
+	splitter->addWidget(track_settings);
 
 	navigation_toolbar = addToolBar("Navigation");
 

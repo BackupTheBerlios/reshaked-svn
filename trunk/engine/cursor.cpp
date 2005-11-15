@@ -23,6 +23,12 @@ int Cursor::ticks_to_snap(Tick p_ticks) {
 	return snap_beats+snap_in_beat;
 }
 
+Tick Cursor::get_snap_tick_size() {
+	
+	return TICKS_PER_BEAT/snap;
+}
+
+
 Tick Cursor::snap_to_ticks(int p_snap) {
 
 	//printf("snap %i - ",p_snap);
@@ -73,6 +79,16 @@ void Cursor::set_pos(int p_pos) {
 Tick Cursor::get_tick_pos() {
 
 	return snap_to_ticks(cursor_pos);
+}
+
+Tick Cursor::get_tick_from_pos(int p_snap) {
+	
+	return snap_to_ticks( p_snap);	
+}
+void Cursor::set_from_tick_pos(Tick p_pos) {
+	
+	set_pos(ticks_to_snap(p_pos));
+	
 }
 
 

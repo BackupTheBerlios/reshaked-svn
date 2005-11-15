@@ -222,6 +222,18 @@ bool BlockList::get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *
 	return false;
 	
 }
+
+int BlockList::get_prev_block_from_idx(Tick p_pos) {
+	
+	return bl_private.block_list.get_prev_index( p_pos );
+	
+}
+int BlockList::get_next_block_from_idx(Tick p_pos) {
+	
+	return bl_private.block_list.get_next_index( p_pos );
+	
+}
+
 BlockList::BlockType BlockList::get_block_type() {
 
 	return block_type;
