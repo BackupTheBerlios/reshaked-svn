@@ -300,7 +300,7 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 	if(hasFocus()) {
 
 		p.setPen( VisualSettings::get_singleton()->get_color( COLORLIST_PATTERN_EDIT_FOCUS_RECT ) );
-		p.drawRect(1,1,width()-2,height()-2);
+		p.drawRect(0,0,width()-1,height()-1);
 	}
 
 }
@@ -313,13 +313,27 @@ void BlockListUI_Pattern::paint_row_lines(QPainter &p) {
 	for (int i=0;i<visible_rows;i++) {
 		if (i==0) //dont want the first one!
 			continue;
+		
 		Tick tick=editor->get_cursor().get_snapped_window_tick_pos(i);
 
-		if ( (tick % TICKS_PER_BEAT)==0 ) //beat
+		if ( (tick % TICKS_PER_BEAT)==0 ) {//beat
+			
+			int block=track->get_prev_block_from_idx( tick );
+			if ( block!=-1) {
+				
+				if (track->get_block_pos(block)==tick)
+					continue;
+				
+				if (track->get_block_pos(block)+track->get_block(block)->get_length()==tick)
+					continue;
+				
+			}
 			p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
-		else
+		
+		} else
 			p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
 
+		
 		//p.drawRect(0,i*row_size,width(),0);
 
 
@@ -372,8 +386,10 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 
 void BlockListUI_Pattern::focusInEvent ( QFocusEvent * event ) {
 
+	
 	editor->set_current_blocklist( editor->get_track_blocklist( track_idx ) );
 	QWidget::focusInEvent(event);
+	
 }
 
 void BlockListUI_Pattern::mousePressEvent ( QMouseEvent * e ) {

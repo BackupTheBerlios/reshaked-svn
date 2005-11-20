@@ -15,7 +15,7 @@
 #include "ui_blocks/helpers.h"
 #include <Qt/qstackedwidget.h>
 #include <Qt/qpushbutton.h>
-
+#include "track_control_settings.h"
 namespace ReShaked {
 
 /**
@@ -33,11 +33,14 @@ class TrackSettings : public CHBox {
 		TRACK_SETTINGS_CONNECTIONS,	
 		TRACK_SETTINGS_MAX,	
 	};			    
-	QStackedWidget stack;
-	
+	QStackedWidget *stack;
+	TrackControlSettings *control_settings;
+	QWidget *widgets[TRACK_SETTINGS_MAX];
 	QPushButton *buttons[TRACK_SETTINGS_MAX];
 	CVBox *vb;
 			    
+	Editor *editor;
+	
 	void add_button(TrackSettingsPage p_page, QPixmap p_pixmap,const char*);
 	
 protected slots:
@@ -48,10 +51,17 @@ protected slots:
 	void button_3_checked();
 	void button_4_checked();
 	
-public:
+	void automation_add_slot(String p_path);
+	void automation_remove_slot(String p_path);
 	
+public slots:
+			
+	
+	void selected_track_changed_slot();
+public:
+		
 	void set_page(TrackSettingsPage p_page);
-	TrackSettings(QWidget *p_parent);
+	TrackSettings(QWidget *p_parent,Editor *p_editor);
 	~TrackSettings();
 
 };

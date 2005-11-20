@@ -149,7 +149,8 @@ void BlockListUIList::update_track_list() {
 
 		for (int j=0;j<editor->get_song()->get_track(i)->get_automation_count();j++) {
 
-			block_list_ui_list.push_back( new BlockListUI_Automation(hbox,editor,i,j) );
+			block_list_ui_list.push_back( new BlockListUI_Automation(hb,editor,i,j) );
+			hl->addWidget(block_list_ui_list [block_list_ui_list.size() -1] );
 
 		}
 		

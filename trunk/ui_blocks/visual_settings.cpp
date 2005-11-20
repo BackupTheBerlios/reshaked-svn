@@ -19,6 +19,7 @@
 #include "pixmaps/rowcount_font.xpm"
 #include "pixmaps/pattern_bg.xpm"
 #include "pixmaps/automation_bg.xpm"
+#include "pixmaps/automation_bg_sel.xpm"
 #include "pixmaps/pattern_bg_sel.xpm"
 #include "pixmaps/pattern_cursor.xpm"
 #include "pixmaps/track_options.xpm"
@@ -28,6 +29,7 @@
 #include "pixmaps/track_settings_controls.xpm"
 #include "pixmaps/track_settings_effects.xpm"
 #include "pixmaps/track_settings_connections.xpm"
+#include "pixmaps/envelope_point.xpm" 
 #include <iostream>
 
 #include "error_macros.h"
@@ -108,9 +110,10 @@ VisualSettings::VisualSettings() {
 	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION]=new SkinBox((const char**)automation_glob_bg_xpm,2,2,2,2);
 	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]=new SkinBox((const char**)pattern_glob_bg_sel_xpm,2,2,2,2);
 	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_glob_bg_sel_xpm,2,2,2,2);
-	skin_box_map[SKINBOX_EDITING_PATTERN]=new SkinBox((const char**)pattern_bg_xpm,9,9,9,9);
-	skin_box_map[SKINBOX_EDITING_PATTERN_SELECTED]=new SkinBox((const char**)pattern_bg_sel_xpm,9,9,9,9);
-	skin_box_map[SKINBOX_EDITING_AUTOMATION]=new SkinBox((const char**)automation_bg_xpm,9,9,9,9);
+	skin_box_map[SKINBOX_EDITING_PATTERN]=new SkinBox((const char**)pattern_bg_xpm,4,4,4,4);
+	skin_box_map[SKINBOX_EDITING_PATTERN_SELECTED]=new SkinBox((const char**)pattern_bg_sel_xpm,4,4,4,4);
+	skin_box_map[SKINBOX_EDITING_AUTOMATION]=new SkinBox((const char**)automation_bg_xpm,4,4,4,4);
+	skin_box_map[SKINBOX_EDITING_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_bg_sel_xpm,4,4,4,4);
 
 
 	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0x9d,0xda,0x82);
@@ -118,7 +121,7 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
 	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,255,200,128);
 	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(150,200,150,64);
-	
+	color_map[COLORLIST_AUTOMATION_ENVELOPE]=QColor(255,255,200,200);
 	
 	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);
 	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);
@@ -127,6 +130,7 @@ VisualSettings::VisualSettings() {
 	pixmap_map[PIXMAP_TRACK_SETTINGS_CONTROLS]=QPixmap((const char**)track_settings_controls_xpm);
 	pixmap_map[PIXMAP_TRACK_SETTINGS_EFFECTS]=QPixmap((const char**)track_settings_effects_xpm);
 	pixmap_map[PIXMAP_TRACK_SETTINGS_CONNECTIONS]=QPixmap((const char**)track_settings_connections_xpm);
+	pixmap_map[PIXMAP_ENVELOPE_POINT]=QPixmap((const char**)envelope_point_xpm);
 
 
 	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#01234567890-*"); //DAMN, ADDED ZERO TWICE!

@@ -82,10 +82,12 @@ public:
 	int get_track_blocklist(int p_track);
 	int get_current_blocklist();
 	void set_current_blocklist(int p_which);
+	int get_current_track();
 	
 	int get_blocklist_count();
 	BlockList* get_blocklist(int p_idx);
 		
+	void add_automation(String p_path);
 	
 	Song* get_song();
 	

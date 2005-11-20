@@ -14,9 +14,49 @@
 namespace ReShaked {
 
 
-int Track::static_id = 0;
 
+void Track::add_property(String p_path,Property *p_prop) {
+	
+	
+	if (p_path.length()==0 || p_path[0]!='/')
+		p_path="/"+p_path;
+	
+	if (p_path[p_path.length()-1]!='/')
+		p_path+="/";
+	p_path+=p_prop->get_name();
+	
+	for (int i=0;i<base_private.property_list.size();i++) {
+			
+		if (base_private.property_list[i]->path==p_path) {
+			//trying to add the same property twice?
+			ERR_FAIL_COND( p_prop==base_private.property_list[i]->property );
+			//@TODO rename to p_path+(num)
+		}
+		
+	}
+	
+	PropertyRef * p = new PropertyRef;
+	p->path=p_path;
+	p->property=p_prop;
+	p->automated=NULL; //not automated!
+	base_private.property_list.push_back(p);
+	
+}
 
+Property &Track::swing() {
+	
+	return base_private.swing;
+}
+Property &Track::volume() {
+	
+	return base_private.volume;
+	
+}
+Property &Track::balance() {
+	
+	return base_private.balance;
+	
+}
 
 void Track::set_sequencer_event_buffer(const EventBuffer *p_seq) {
 	
@@ -31,11 +71,27 @@ const EventBuffer& Track::get_seq_event_buffer() {
 
 
 /* Automations */
-
+int Track::get_idx_by_path(String p_path) {
+		
+	for (int i=0;i<get_property_count();i++) 
+		if (get_property_path(i)==p_path)
+			return i;
+	 
+	return -1;
+		
+}
 void Track::add_automation(String p_path) {
 
-	//path for later
-	base_private.automations.push_back( new TrackAutomation(automation_pool) );
+	
+	int idx=get_idx_by_path(p_path);
+	if (idx==-1)
+		return;
+			
+	if (has_property_automation(idx))
+		return; // cant really add an automation
+	
+	base_private.automations.push_back(new TrackAutomation(automation_pool,p_path,get_property(idx)));
+	base_private.property_list[idx]->automated=base_private.automations[ base_private.automations.size()-1 ];
 }
 
 int Track::get_automation_count() {
@@ -85,16 +141,47 @@ void Track::set_automation_pool(DataPool *p_pool) {
 	automation_pool=p_pool;	
 }
 
+
+int Track::get_property_count() {
+	
+	return base_private.property_list.size();	
+}
+Property *Track::get_property(int p_idx) {
+	
+	ERR_FAIL_INDEX_V(p_idx,get_property_count(),NULL);
+	
+	return base_private.property_list[p_idx]->property;
+}
+
+bool Track::has_property_automation(int p_idx) {
+	
+	ERR_FAIL_INDEX_V(p_idx,get_property_count(),false);
+	
+	return (base_private.property_list[p_idx]->automated!=NULL);
+	
+}
+	
+String Track::get_property_path(int p_idx) {
+	
+	ERR_FAIL_INDEX_V(p_idx,get_property_count(),"");
+	
+	return base_private.property_list[p_idx]->path;
+	
+}	
+
+
 Track::Track(int p_channels,BlockType p_type) : BlockList(p_type) {
 	
 	base_private.seq_events=NULL;
 	base_private.input_plug=new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	base_private.output_plug=new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
-	base_private.id=static_id++;
-	base_private.swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "swing","Swing","%");
+	base_private.swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "swing","Swing","%","Disabled");
 	base_private.volume.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "volume","Volume","dB");
-	base_private.balance.set_all( 0, -1.0, 1.0, 0.01, 0, Property::DISPLAY_KNOB,"balance","Balance","");
+	base_private.balance.set_all( 0, -1.0, 1.0, 0, 0.01, Property::DISPLAY_KNOB,"balance","Balance","","Left","Right");
 	
+	add_property("track/",&base_private.swing);
+	add_property("track/",&base_private.volume);
+	add_property("track/",&base_private.balance);
 }
 
 

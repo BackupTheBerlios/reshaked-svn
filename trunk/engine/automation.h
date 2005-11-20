@@ -6,6 +6,9 @@
 #include "types/typedefs.h"
 #include "engine/block_list.h"
 #include "engine/data_pool.h"
+#include "property.h"
+
+
 namespace ReShaked {
 
 
@@ -13,17 +16,25 @@ namespace ReShaked {
 class Automation : public BlockList {
 public:
 
+	enum DisplaySize {
+		DISPLAY_SIZE_SMALL,
+		DISPLAY_SIZE_MEDIUM,
+		DISPLAY_SIZE_BIG	
+	};
+	
+	enum BlockInterpolationMethod {
+
+		INTERPOLATION_NONE,
+		INTERPOLATION_LINEAR,
+		INTERPOLATION_SPLINE,
+	};
+	
 	struct AutomationValue {
-
-		enum InterpolationMethod {
-
-			INTERPOLATION_NONE,
-			INTERPOLATION_LINEAR,
-			INTERPOLATION_SPLINE,
-		};
-
+		
 		float value;
-		InterpolationMethod interpolation;
+		float lfo_depth;
+		
+		AutomationValue(float p_value=0.0,float p_lfo_depth=0.0) { value=p_value; lfo_depth=p_lfo_depth; }
 	};
 
 
@@ -34,6 +45,7 @@ public:
 		int refcount;
 	public:
 
+		float get_tick_val(Tick p_tick);
 		void set_default_value(float p_default);
 		float get_default_value(); /* defalult value for the automation */
 		AutomationData();
@@ -60,11 +72,24 @@ private:
 	BlockCreationBehavior get_block_creation_behavior();
 	bool can_resize_from_begining();
 
+	Property *property;	
+	
+	DisplaySize display_size;
+
 public:
+	
+	Property *get_property();
+	
+	AutomationBlock * get_block(int p_block);
+	
+	float get_tick_val(Tick p_tick); // 0.0 - 1.0
+	
 	void create_block(Tick p_pos,BlockCreationData *p_creation_data=NULL);
 	void erase_block(int p_which);
+	
+	DisplaySize get_display_size();
 
-	Automation(DataPool *p_pool);
+	Automation(DataPool *p_pool,Property *property);
 };
 
 }; /* end of namespace */

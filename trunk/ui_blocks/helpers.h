@@ -14,6 +14,7 @@
 
 #include <Qt/qwidget.h>
 #include <Qt/qlayout.h>
+#include "typedefs.h"
 
 namespace ReShaked {
 
@@ -43,6 +44,7 @@ public:
 	CVBox(QWidget *p_parent);	
 };
 
+QString QStrify(const String& p_str);
 
 }
 

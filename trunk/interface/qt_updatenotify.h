@@ -29,6 +29,7 @@ signals:
 	void cursor_moved();
 	void edit_window_changed();
 	void cursor_changed_blocklist();
+	void track_list_changed();
 	
 public:
 	

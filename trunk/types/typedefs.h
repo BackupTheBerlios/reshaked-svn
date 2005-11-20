@@ -22,6 +22,8 @@ static const char divisors[MAX_DIVISORS]={1,2,3,4,6,8,12,16,24,32,48,64};
 #define DIGIT_3(m_val) ( (m_val/100)%10 )
 #define DIGIT_4(m_val) ( (m_val/1000)%10 )
 
+#define POW2( m_p ) ((m_p)*(m_p))
+
 typedef long long Tick;
 
 typedef signed char Note;

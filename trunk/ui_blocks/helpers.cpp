@@ -24,14 +24,14 @@ bool CHBox::event( QEvent * e ) {
 		
 	if (e->type()==QEvent::ChildAdded) {
 
-		printf("event\n");		
+
 		QChildEvent *ce=(QChildEvent*)e;
 		if (ce->child()->isWidgetType())
 			l->addWidget((QWidget*)ce->child());
 		
 	}	
 
-	l->setSpacing(0);
+
 	return res;
 }
 
@@ -51,5 +51,14 @@ CVBox::CVBox(QWidget *p_parent) : CHBox(p_parent,true) {
 
 }
 
+QString QStrify(const String& p_str) {
+	
+	QString q;
+	for (int i=0;i<p_str.length();i++) 
+		q+=QChar(p_str[i]);
+
+	return q;
+
+}
 
 }

@@ -161,7 +161,7 @@ MainWindow::MainWindow() {
 
 	splitter->addWidget(main_stack);
 	setCentralWidget(splitter);
-	track_settings = new TrackSettings(splitter);
+	track_settings = new TrackSettings(splitter,data.editor);
 	splitter->addWidget(track_settings);
 
 	navigation_toolbar = addToolBar("Navigation");
@@ -174,7 +174,11 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),blui_list,SLOT(cursor_changed_blocklist()));
 	QObject::connect(update_notify,SIGNAL(cursor_moved()),blui_list,SLOT(ensure_cursor_visible()));
 
+	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),track_settings,SLOT(selected_track_changed_slot()));
 
+	QObject::connect(update_notify,SIGNAL(track_list_changed()),blui_list,SLOT(update_track_list()));
+	QObject::connect(update_notify,SIGNAL(track_list_changed()),global_view,SLOT(update()));
+	
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 
 }

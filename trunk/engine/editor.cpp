@@ -500,14 +500,46 @@ int Editor::get_current_blocklist() {
 	
 	return global_edit.current_blocklist;
 }
+
+int Editor::get_current_track() {
+	
+	int blocks=0;
+	for (int i=0;i<song->get_track_count();i++) {
+		Track * t = song->get_track(i);
+		if (global_edit.current_blocklist==blocks)
+			return i;
+		blocks++;
+		
+		for (int j=0;j<t->get_automation_count();j++) {
+			
+			if (global_edit.current_blocklist==blocks)
+				return i;
+			
+			blocks++;
+		}
+	}
+	
+	return -1;
+	
+}
 void Editor::set_current_blocklist(int p_which) {
 	
+	if (p_which==global_edit.current_blocklist)
+		return; //nothing happens
 	ERR_FAIL_INDEX(p_which,get_blocklist_count());
 	global_edit.current_blocklist=p_which;
+	ui_update_notify->cursor_changed_blocklist();
 	
 }
 
-
+void Editor::add_automation(String p_path) {
+	
+	int selected_track=get_current_track();
+	Track *t = song->get_track(selected_track);
+	t->add_automation(p_path);
+	ui_update_notify->track_list_changed();
+	
+}
 
 Song* Editor::get_song() {
 	
@@ -517,7 +549,7 @@ Song* Editor::get_song() {
 Editor::Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify) : cursor(p_ui_update_notify) {
 	
 	ui_update_notify=p_ui_update_notify;
-	global_edit.current_blocklist=0;
+	global_edit.current_blocklist=-1;
 	pattern_edit.column=0;
 	pattern_edit.field=0;
 	pattern_edit.note_edit_mode=MODE_NOTE;

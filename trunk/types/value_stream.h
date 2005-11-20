@@ -14,7 +14,7 @@
 #define VALUE_STREAM_H
 
 #include <vector>
-
+#include "error_macros.h"
 #define INVALID_STREAM_INDEX -50
 
 template<class T, class V>

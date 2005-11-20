@@ -23,7 +23,7 @@
 #include <map> // std::map
 #include <Qt/qstackedwidget.h>
 
-#include "interface/visual_settings.h"
+#include "ui_blocks/visual_settings.h"
 #include <Qt/qtoolbar.h>
 #include "engine/keyboard_input.h"
 #include "interface/qt_updatenotify.h"

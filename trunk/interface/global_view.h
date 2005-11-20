@@ -12,7 +12,7 @@
 #include "engine/song.h"
 #include <set>
 #include <list>
-#include "interface/visual_settings.h"
+#include "ui_blocks/visual_settings.h"
 
 namespace ReShaked {
 

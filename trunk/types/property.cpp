@@ -15,8 +15,41 @@
 
 namespace ReShaked {
 
+String Property::get_text_value() {
+	
+	return get_text_value(get());
+}
 
-void LocalProperty::set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String p_postfix) {
+
+float Property::get_coeff_value() {
+	
+	return (get()-get_min())/(get_max()-get_min());
+}
+
+void Property::set_coeff_value(float p_coeff) {
+	
+	set(get_value_from_coeff(p_coeff));
+}
+
+float Property::get_value_from_coeff(float p_coeff) {
+	
+	if (p_coeff==1)
+		return get_max(); //avoid precision issues
+	
+	p_coeff*=get_max()-get_min();		
+	p_coeff+=get_min();
+	
+	if (get_stepping()!=0) {
+		p_coeff-=get_min();
+		p_coeff=p_coeff-fmod(p_coeff,get_stepping());
+		p_coeff+=get_min();
+	}
+
+	return p_coeff;
+	
+}
+
+void LocalProperty::set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String p_postfix,String p_min_label, String p_max_label) {
 	
 	val=p_val;
 	min=p_begin;
@@ -28,6 +61,8 @@ void LocalProperty::set_all(double p_val,double p_begin,double p_end,double p_de
 	caption=p_caption;
 	postfix=p_postfix;
 		
+	min_label=p_min_label;
+	max_label=p_max_label;
 	
 }
 
@@ -76,9 +111,31 @@ String LocalProperty::get_caption() {
 	return caption;
 }
 
-String LocalProperty::get_text_value(int p_for_int) {
+String LocalProperty::get_text_value(double p_for_value) {
 	
-	return String(val) + postfix;
+	if (min_label!="" && p_for_value==min)
+		return min_label;
+	else if (max_label!="" && p_for_value==max)
+		return max_label;
+	
+	int digits=-1;
+	
+	if (interval!=0 || interval!=floorf(interval)) {
+		
+		digits=0;
+		double step_aux=interval;
+		do {
+			step_aux*=10;
+			//step_aux+=1e-10;
+			digits++;
+			if (step_aux-floor(step_aux) < 1e-6 )
+				break;
+			
+		
+		} while (true);
+	} 
+	
+	return String::num(p_for_value,digits) + postfix;
 }
 bool LocalProperty::has_text_value() {
 	
@@ -88,9 +145,7 @@ bool LocalProperty::has_text_value() {
 LocalProperty::DisplayMode LocalProperty::get_display_mode() {
 	
 	return display_mode;	
-}
-
-
+}	
 
 LocalProperty::LocalProperty() {
 	

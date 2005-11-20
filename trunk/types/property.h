@@ -40,10 +40,17 @@ public:
 	virtual String get_name()=0;
 	virtual String get_caption()=0;
 	
-	virtual String get_text_value(int p_for_int)=0;
+	virtual String get_text_value(double p_for_value)=0; //useful for precomputnig ranges
 	virtual bool has_text_value()=0;
 	
 	virtual DisplayMode get_display_mode()=0;
+	
+	/* helpers */	
+	String get_text_value(); 
+	float get_coeff_value(); ///< return value in range 0 .. 1
+	void set_coeff_value(float p_coeff); ///< return value in range 0 .. 1
+	float get_value_from_coeff(float p_coeff);
+	 
 	
 	virtual ~Property(){};
 
@@ -63,10 +70,13 @@ class LocalProperty : public Property {
 	String name;
 	String caption;
 	String postfix;
+	
+	String max_label;
+	String min_label;
 public:
 	
 	
-	void set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String postfix);
+	void set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String postfix="",String p_min_label="", String p_max_label="");
 	
 	
 	double get();
@@ -76,14 +86,14 @@ public:
 	double get_min();
 	double get_default();
 	
+	
 	String get_name();
 	String get_caption();
 	
-	String get_text_value(int p_for_int);
+	String get_text_value(double p_for_value);
 	bool has_text_value();
 	
 	DisplayMode get_display_mode();
-	
 	
 	LocalProperty();
 	~LocalProperty();

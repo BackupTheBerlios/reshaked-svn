@@ -8,6 +8,60 @@ namespace ReShaked {
 
 
 
+float Automation::AutomationData::get_tick_val(Tick p_tick) {
+	
+	int stream_size=get_stream_size();
+	
+	if (stream_size==0)
+		return -1;
+	
+	int prev = get_prev_index( p_tick );
+	int next = get_next_index( p_tick );
+	
+	
+		
+	
+	if (prev==-1) 
+		return -1;
+	
+	if (next==stream_size)
+		return get_index_value( stream_size -1 ).value; //just send the last one, nothing else can be done
+	
+	if (prev==next) //we got an exact index, just return it, no interp. needed
+		return get_index_value(prev).value;
+	
+	Tick prev_tick=get_index_pos( prev);
+	float prev_val=get_index_value( prev).value;
+	
+	Tick next_tick=get_index_pos( next);
+	float next_val=get_index_value( next).value;
+	
+	float val=prev_val+((double)(p_tick-prev_tick)*(next_val-prev_val))/(double)(next_tick-prev_tick); //linear interpolation
+	
+	
+	return val;
+	
+}
+
+float Automation::get_tick_val(Tick p_tick) {
+	
+	int block=get_block_idx_at_pos( p_tick );
+	if (block<0)
+		return -1.0;
+	
+	AutomationBlock *b=(AutomationBlock*)BlockList::get_block(block); //cant use dynamic cast here, too slow, sorry there are other checks :(
+	
+	Tick block_tick=p_tick-get_block_pos(block);
+	
+	float res=b->get_data()->get_tick_val(block_tick);
+	//printf("for tick p_tick %g , val is %g\n",(float)p_tick/(float)TICKS_PER_BEAT,res);
+	return res;
+	
+	
+	
+	
+}
+
 void Automation::create_block(Tick p_pos,BlockCreationData *p_creation_data) {
 
 	if (!block_fits(p_pos,TICKS_PER_BEAT))
@@ -82,6 +136,10 @@ Automation::AutomationData::AutomationData() {
 
 	refcount=0;
 	length=5;
+	
+	insert( TICKS_PER_BEAT, AutomationValue(0.2) );
+	insert( TICKS_PER_BEAT*2, AutomationValue(0.9) );
+	insert( TICKS_PER_BEAT*4, AutomationValue(0.1) );
 }
 
 bool Automation::can_resize_from_begining() {
@@ -114,14 +172,34 @@ String Automation::get_type_name() {
 
 	return "automation";
 }
+
+Automation::AutomationBlock * Automation::get_block(int p_block) {
+	
+	return dynamic_cast<AutomationBlock*>( BlockList::get_block(p_block) );	
+	
+}
+
+Automation::DisplaySize Automation::get_display_size() {
+	
+	return display_size;	
+}
+
+Property *Automation::get_property() {
+	
+	return property;	
+}
+
 Automation::AutomationBlock::AutomationBlock(AutomationData *p_data) {
 
 	data=p_data;
 	p_data->refcount++;
+	
+	
 }
-Automation::Automation(DataPool *p_pool) : BlockList(BLOCK_TYPE_FREE_MOVING) {
-
+Automation::Automation(DataPool *p_pool,Property *p_property) : BlockList(BLOCK_TYPE_FIXED_TO_BEAT) {
 	pool=p_pool;
+	property=p_property;
+	display_size=DISPLAY_SIZE_SMALL;
 }
 
 

@@ -44,9 +44,9 @@ public slots:
 	void ensure_cursor_visible();
 	void cursor_changed_blocklist();
 	void repaint_track_list();
-
-public:
 	void update_track_list();
+	
+public:
 
 	BlockListUIList(QWidget *p_parent,Editor *p_editor);
 	~BlockListUIList();
