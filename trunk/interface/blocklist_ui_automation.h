@@ -39,7 +39,7 @@ class BlockListUI_Automation : public BlockListUI_Base {
 	void paint_frames(QPainter& p,int p_from_row=-1,int p_to_row=-1);
 	void paintEvent(QPaintEvent *pe);
 	void paint_envelopes(QPainter &p,int p_from_row=-1, int p_to_row=-1);
-	void paint_row_lines(QPainter &p);
+	void paint_row_lines(QPainter &p,int p_from_row=-1, int p_to_row=-1);
 	void paint_name(QPainter&p);
 	bool find_closest_point(int p_x,int p_y,int p_radius, int *r_block, int *r_point);
 	bool screen_to_tick_and_val(int p_x,int p_y,Tick *p_tick, float *p_val);
@@ -71,6 +71,14 @@ class BlockListUI_Automation : public BlockListUI_Base {
 		
 		
 	} point_over;
+	
+	/* screen-screen copy helpers */
+	bool paint_name_enabled;
+	void fix_pre_scroll(int p_scroll);
+	bool can_scroll();
+	
+	/* helpers */
+	int get_row_size();
 	
 public:
 	BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, int p_track,int p_automation);

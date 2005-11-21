@@ -45,6 +45,7 @@ public slots:
 	void cursor_changed_blocklist();
 	void repaint_track_list();
 	void update_track_list();
+	void vscroll_track_list();
 	
 public:
 

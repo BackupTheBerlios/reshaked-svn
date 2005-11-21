@@ -21,6 +21,15 @@
 //@TODO SOFT SCROLL when ensuring cursor visible
 namespace ReShaked {
 
+void BlockListUIList::vscroll_track_list() {
+	
+	for (int i=0;i<block_list_ui_list.size();i++) {
+
+		block_list_ui_list[i]->update_viewport_pos( editor->get_cursor().get_window_offset() );
+	}
+	printf("vscrolled\n");
+	
+}
 
 static int get_pos_in_some_parent(QWidget *p_someparent, QWidget *p_widget) {
 	
@@ -43,6 +52,7 @@ static int get_pos_in_some_parent(QWidget *p_someparent, QWidget *p_widget) {
 		from=parent;
 	}	
 }
+
 
 void BlockListUIList::ensure_cursor_visible() {
 
@@ -96,6 +106,8 @@ void BlockListUIList::repaint_track_list() {
 		block_list_ui_list[i]->update();
 	}
 	row_display->update();
+	
+	printf("repainted\n");
 
 }
 void BlockListUIList::update_track_list() {

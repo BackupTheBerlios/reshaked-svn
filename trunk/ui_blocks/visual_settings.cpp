@@ -29,14 +29,24 @@
 #include "pixmaps/track_settings_controls.xpm"
 #include "pixmaps/track_settings_effects.xpm"
 #include "pixmaps/track_settings_connections.xpm"
-#include "pixmaps/envelope_point.xpm" 
+#include "pixmaps/envelope_point.xpm"
+
+#include "pixmaps/track_move_left.xpm"
+#include "pixmaps/track_move_right.xpm"
+#include "pixmaps/track_delete.xpm"
+#include "pixmaps/track_edit.xpm"
+#include "pixmaps/track_move_automation_left.xpm"
+#include "pixmaps/track_move_automation_right.xpm"
+#include "pixmaps/track_column_add.xpm"
+#include "pixmaps/track_column_rem.xpm"
+
 #include <iostream>
 
 #include "error_macros.h"
 namespace ReShaked {
 
 VisualSettings * VisualSettings::singleton=NULL;
-
+ 
 VisualSettings * VisualSettings::get_singleton() {
 
 	return singleton;
@@ -133,6 +143,16 @@ VisualSettings::VisualSettings() {
 	pixmap_map[PIXMAP_ENVELOPE_POINT]=QPixmap((const char**)envelope_point_xpm);
 
 
+	pixmap_map[ICON_TRACK_MOVE_LEFT]=QPixmap((const char**)track_move_left_xpm);
+	pixmap_map[ICON_TRACK_MOVE_RIGHT]=QPixmap((const char**)track_move_right_xpm);
+	pixmap_map[ICON_TRACK_DELETE]=QPixmap((const char**)track_delete_xpm);
+	pixmap_map[ICON_TRACK_EDIT]=QPixmap((const char**)track_edit_xpm);
+	pixmap_map[ICON_AUTOMATION_MOVE_LEFT]=QPixmap((const char**)track_move_automation_left_xpm);
+	pixmap_map[ICON_AUTOMATION_MOVE_RIGHT]=QPixmap((const char**)track_move_automation_right_xpm);
+	pixmap_map[ICON_COLUMN_ADD]=QPixmap((const char**)track_column_add_xpm);
+	pixmap_map[ICON_COLUMN_REMOVE]=QPixmap((const char**)track_column_rem_xpm);
+	
+			
 	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#01234567890-*"); //DAMN, ADDED ZERO TWICE!
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#01234567890-*"); //DAMN, ADDED ZERO TWICE!
 
@@ -152,3 +172,4 @@ VisualSettings::~VisualSettings()
 
 
 }
+  

@@ -30,6 +30,7 @@ signals:
 	void edit_window_changed();
 	void cursor_changed_blocklist();
 	void track_list_changed();
+	void edit_window_moved();
 	
 public:
 	

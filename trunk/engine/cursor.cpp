@@ -7,7 +7,7 @@ namespace ReShaked {
 
 void Cursor::window_moved() {
 	
-	ui_update_notify->edit_window_changed();       
+	ui_update_notify->edit_window_moved();       
 	
 }
 void Cursor::cursor_moved() {

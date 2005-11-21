@@ -15,13 +15,15 @@
 #include "ui_blocks/helpers.h"
 #include <Qt/qstackedwidget.h>
 #include <Qt/qpushbutton.h>
+#include <Qt/qlineedit.h>
 #include "track_control_settings.h"
+
 namespace ReShaked {
 
 /**
 	@author red <red@killy>
 */
-class TrackSettings : public CHBox {
+class TrackSettings : public CVBox {
 
 	Q_OBJECT
 			    
@@ -38,11 +40,22 @@ class TrackSettings : public CHBox {
 	QWidget *widgets[TRACK_SETTINGS_MAX];
 	QPushButton *buttons[TRACK_SETTINGS_MAX];
 	CVBox *vb;
+	CHBox *hbox;
+	CHBox *hbox_top;
 			    
 	Editor *editor;
 	
 	void add_button(TrackSettingsPage p_page, QPixmap p_pixmap,const char*);
 	
+	QLineEdit *track_name;
+	
+	QPushButton *track_edit;
+	QPushButton *track_emove_automation_left;
+	QPushButton *track_emove_automation_right;
+	QPushButton *track_column_add;
+	QPushButton *track_column_remove;
+	
+	QPushButton *setup_button(QPushButton *p_button,QPixmap p_pixmap,const char *p_slot=NULL);
 protected slots:
 			
 	/* Qt doesnt support signal binding */
@@ -50,6 +63,16 @@ protected slots:
 	void button_2_checked();
 	void button_3_checked();
 	void button_4_checked();
+	
+	void track_move_left_slot();
+	void track_move_right_slot();
+	void track_delete_slot();
+	void track_edit_slot(bool p_on);
+	void track_move_automation_left_slot();
+	void track_move_automation_right_slot();
+	void track_column_add_slot();
+	void track_column_remove_slot();
+	
 	
 	void automation_add_slot(String p_path);
 	void automation_remove_slot(String p_path);

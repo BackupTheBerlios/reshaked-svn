@@ -17,6 +17,11 @@
 #include "ui_blocks/helpers.h"
 namespace ReShaked {
 
+int BlockListUI_Automation::get_row_size() {
+	
+	return VisualSettings::get_singleton()->get_editing_row_height();
+}
+
 
 void BlockListUI_Automation::paint_name(QPainter &p) {
 	
@@ -78,14 +83,20 @@ void BlockListUI_Automation::paint_value_text(QPainter &p,int p_x,int p_y,float 
 	
 }
 
-void BlockListUI_Automation::paint_row_lines(QPainter &p) {
+void BlockListUI_Automation::paint_row_lines(QPainter &p,int p_from_row, int p_to_row) {
 
+	if (p_from_row==-1)
+		p_from_row=0;
+
+	if (p_to_row==-1)
+		p_to_row=editor->get_cursor().get_window_size();
+	
 	int visible_rows=editor->get_cursor().get_window_size();
-	int row_size=VisualSettings::get_singleton()->get_editing_row_height();
+	int row_size=get_row_size();
 
-	for (int i=0;i<visible_rows;i++) {
-		if (i==0) //dont want the first one!
-			continue;
+	for (int i=p_from_row;i<=p_to_row;i++) {
+		//if (i==0) cant implement this either, sadly
+		//	continue;
 		
 		Tick tick=editor->get_cursor().get_snapped_window_tick_pos(i);
 
@@ -127,7 +138,7 @@ void BlockListUI_Automation::paint_frames(QPainter& p,int p_from_row,int p_to_ro
 		p_to_row=editor->get_cursor().get_window_size();
 	
 	p.setClipping(true);
-	int row_size=VisualSettings::get_singleton()->get_editing_row_height();
+	int row_size=get_row_size();
 	p.setClipRect ( 0,p_from_row*row_size,width(),(p_to_row+1)*row_size );
 	
 	int visible_rows=(p_to_row-p_from_row)+1;
@@ -190,7 +201,7 @@ void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_t
 	
 	int font_width=	VisualSettings::get_singleton()->get_pattern_font()->get_width();
 	
-	int row_height=VisualSettings::get_singleton()->get_editing_row_height();
+	int row_height=get_row_size();
 	int rows=p_to_row-p_from_row;
 	int lines=rows*row_height;
 	int line_from=p_from_row*row_height;
@@ -280,19 +291,53 @@ void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_t
 	
 		
 	
-	
-	
-
 }
+
+void BlockListUI_Automation::fix_pre_scroll(int p_scroll) {
+	
+	/* repaint name */  // REMOVED there was really no way to implement this	
+//	int rows=get_name_len_in_rows();
+	//repaint(0,0,width(),rows*get_row_size());
+	
+}
+
 void BlockListUI_Automation::paintEvent(QPaintEvent *pe) {
 	
 	
+	/*  check if we moved */
+	
+	int row_size=get_row_size();
+	/*
+	if (get_current_line()!=editor->get_cursor().get_window_offset()) {
+		
+		int diff=editor->get_cursor().get_window_offset()-get_current_line();
+		
+		if (row_size*abs(diff) < (height()/2) ) { //only scroll if it's worth doing itBlockListUI_Automation( 
+			
+			scroll( 0, -row_size*diff );
+			set_current_line(editor->get_cursor().get_window_offset());
+			
+			return;
+		}
+	}
+	
+	*/
 	QPainter p(this);
-	p.fillRect(0,0,width(),height(),QColor(0,0,0));
-	paint_frames(p); //paint all by default
-	paint_envelopes( p );
-	paint_row_lines( p );
-	paint_name( p);
+	
+	int row_from=pe->rect().y()/row_size;
+	if (row_from>0)
+		row_from--; //permits proper update on screen-screen copying
+	int row_to=(pe->rect().y()+pe->rect().height())/row_size+1;
+	printf("paint from %i to %i\n",row_from,row_to);
+
+	p.fillRect(0,row_size*row_from,width(),(row_to-row_from)*row_size,QColor(0,0,0));
+	paint_frames(p,row_from,row_to); //paint all by default
+	paint_envelopes( p,row_from,row_to );
+	paint_row_lines( p,row_from,row_to );
+	//if (paint_name_enabled)
+		//paint_name( p); - no name painting goes here :(
+	
+	
 	
 }
 
@@ -314,7 +359,7 @@ bool BlockListUI_Automation::find_closest_point(int p_x,int p_y,int p_radius, in
 	if (automation->get_blocks_in_rage( from_tick, to_tick, &from_block, &to_block))
 		return true;
 	
-	int row_height=VisualSettings::get_singleton()->get_editing_row_height();
+	int row_height=get_row_size();
 	int rows=editor->get_cursor().get_window_size();
 	int theight=rows*row_height;
 	int font_width=	VisualSettings::get_singleton()->get_pattern_font()->get_width();
@@ -369,7 +414,7 @@ bool BlockListUI_Automation::screen_to_tick_and_val(int p_x,int p_y,Tick *p_tick
 	int window_len=editor->get_cursor().get_window_size();
 	Tick tick_begin=editor->get_cursor().get_snapped_window_tick_pos( 0);
 	Tick window_len_ticks= editor->get_cursor().get_snapped_window_tick_pos( window_len ) -  tick_begin ;
-	int row_size=VisualSettings::get_singleton()->get_editing_row_height();
+	int row_size=get_row_size();
 
 	//I suppose this should be the most accurate way?
 	*p_tick=(Tick)p_y*(window_len_ticks)/(Tick)(row_size*window_len);
@@ -567,7 +612,10 @@ void BlockListUI_Automation::mouseReleaseEvent ( QMouseEvent * e ) {
 	
 }
 
-
+bool BlockListUI_Automation::can_scroll() {
+	
+	return true;
+}
 
 BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, int p_track,int p_automation) : BlockListUI_Base(p_parent) {
 	
@@ -604,6 +652,7 @@ BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_edit
 	setMouseTracking(true);
 	point_over.block=-1;
 	point_over.point=-1;
+	paint_name_enabled=true;
 	
 	
 }

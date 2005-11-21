@@ -22,6 +22,7 @@ public:
 	
 	virtual void cursor_moved()=0;
 	virtual void edit_window_changed()=0;
+	virtual void edit_window_moved()=0;
 	virtual void cursor_changed_blocklist()=0;
 	virtual void track_list_changed()=0;
 	virtual ~UI_UpdateNotify(){}

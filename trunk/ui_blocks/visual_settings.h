@@ -53,6 +53,8 @@ enum ColorList {
 
 enum PixmapList {
 	
+	/* Pixmaps */
+	
 	PIXMAP_TRACK_OPTIONS,
 	PIXMAP_KNOB_BASE,
 	PIXMAP_KNOB_HANDLE,
@@ -62,9 +64,23 @@ enum PixmapList {
 	PIXMAP_TRACK_SETTINGS_CONNECTIONS,
 	PIXMAP_ENVELOPE_POINT,
 	
+	
+	
+	/* Icons */
+	
+	ICON_TRACK_MOVE_LEFT,
+	ICON_TRACK_MOVE_RIGHT,
+	ICON_TRACK_DELETE,
+	ICON_TRACK_EDIT,
+	ICON_AUTOMATION_MOVE_LEFT,
+	ICON_AUTOMATION_MOVE_RIGHT,
+	ICON_COLUMN_ADD,
+	ICON_COLUMN_REMOVE
+	
 };
 
 #define GET_QCOLOR(m_col) VisualSettings::get_singleton()->get_color( m_col )
+#define GET_QPIXMAP(m_pix) VisualSettings::get_singleton()->get_pixmap( m_pix )
 
 class VisualSettings{
 
