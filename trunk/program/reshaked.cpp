@@ -5,11 +5,11 @@
 
 int main(int argc, char *argv[]) {
 
-	QApplication q(argc,argv);
-	ReShaked::MainWindow w;
+	QApplication *q = new QApplication(argc,argv);
+	ReShaked::MainWindow *w = new ReShaked::MainWindow;
 	//q.setMainWidget(&w);
-	w.show();
+	w->show();
 	
-	return q.exec();
+	return q->exec();
 
 }

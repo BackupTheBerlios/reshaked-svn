@@ -10,7 +10,7 @@
 //
 //
 #include "track_top.h"
-#include "visual_settings.h"
+#include "ui_blocks/visual_settings.h"
 #include <Qt/qpainter.h>
 
 namespace ReShaked {

@@ -2,6 +2,15 @@ import os;
 import string;
 import sys;
 
+moc_path='/bin/moc';
+qglobal_path='/include/Qt/qglobal.h'
+q3global_path='/include/qglobal.h'
+
+if (os.name=='nt'):
+        #I just use this for myself
+        moc_path='\\bin\\moc.exe';
+        qglobal_path='\\src\\corelib\\global\\qglobal.h'
+        q3global_path='\\include\\qglobal.h'
 
 def check_pkg_config():
     
@@ -30,27 +39,32 @@ def check_pkg( p_env, p_pkg_name, p_pkg_version):
 
 def try_qtdir(p_dir,version_major,version_minor):
 
-	if (not os.path.isfile(p_dir + "/bin/moc")):
+        print "trying" + p_dir
+
+        if (not os.path.isfile(p_dir + moc_path)):
 		return False;
-	qglobal_file="qglobal.h";
+        print "found moc"
+        qglobal_file=q3global_path;
 	if (version_major>=4):
-		qglobal_file="Qt/qglobal.h"
+                qglobal_file=qglobal_path;
 
-	if (not os.path.isfile(p_dir + "/include/"+qglobal_file)):
+        if (not os.path.isfile(p_dir + qglobal_file)):
 		return False;
-		
-	file_to_check=p_dir + "/include/"+qglobal_file;
 
-	print "trying" + file_to_check;
+        print 'found qglobal';
+        file_to_check=p_dir + qglobal_file;
+
+        print "trying " + file_to_check;
 #	version=os.popen("cat " + file_to_check + " | grep \"QT_VERSION_STR \"                ").readlines();
 	try:
-		f = open(file_to_check,"r");
+                f = open(file_to_check,"rb");
 	except:
+                print "not found"
 		return False; # couldnt open file
 
 	lines = f.readlines();	
 
-#	print "has " + str(len(lines)) + " lines";
+        print "has " + str(len(lines)) + " lines";
 
 	if (not len(lines)):
 		return False;
@@ -89,7 +103,7 @@ def try_qtdir(p_dir,version_major,version_minor):
 def check_qtdir(version_major,version_minor):
 
 	if ("QTDIR" in os.environ.keys()):
-		if (try_qtdir(os.environ["QTDIR"])):
+                if (try_qtdir(os.environ["QTDIR"],version_major,version_minor)):
 			return os.environ["QTDIR"]; #QTDIR has been set, use itself
 
 			

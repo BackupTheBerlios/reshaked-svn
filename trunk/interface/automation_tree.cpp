@@ -10,8 +10,8 @@
 //
 //
 #include "automation_tree.h"
-#include <Qt/QHash>
-#include <Qt/QHeaderView>
+#include <Qt/qhash.h>
+#include <Qt/qheaderview.h>
 namespace ReShaked {
 
 

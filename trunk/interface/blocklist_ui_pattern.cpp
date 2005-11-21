@@ -10,7 +10,7 @@
 //
 //
 #include "blocklist_ui_pattern.h"
-#include "visual_settings.h"
+#include "ui_blocks/visual_settings.h"
 #include <Qt/qevent.h>
 
 namespace ReShaked {

@@ -11,8 +11,8 @@
 //
 #include "blocklist_ui_automation.h"
 #include "ui_blocks/visual_settings.h"
-#include <Qt/QPainter>
-#include <Qt/QMouseEvent>
+#include <Qt/qpainter.h>
+#include <Qt/qevent.h>
 #include <math.h>
 #include "ui_blocks/helpers.h"
 namespace ReShaked {

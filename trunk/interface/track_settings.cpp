@@ -10,7 +10,7 @@
 //
 //
 #include "track_settings.h"
-#include "visual_settings.h"
+#include "ui_blocks/visual_settings.h"
 #include "error_macros.h"
 
 namespace ReShaked {
