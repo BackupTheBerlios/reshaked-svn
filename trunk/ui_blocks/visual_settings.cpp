@@ -1,6 +1,6 @@
 //
 // C++ Implementation: visual_settings
-//
+//  
 // Description:
 //
 //
@@ -153,13 +153,13 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_COLUMN_REMOVE]=QPixmap((const char**)track_column_rem_xpm);
 	
 			
-	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#01234567890-*"); //DAMN, ADDED ZERO TWICE!
-	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#01234567890-*"); //DAMN, ADDED ZERO TWICE!
+	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#01234567890-*");
+	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#01234567890-*"); 
 
-	rowcount_font.set_font( QPixmap((const char**)rowcount_font_xpm), "ABCDEFG#01234567890-*"); //DAMN, ADDED ZERO TWICE!
+	rowcount_font.set_font( QPixmap((const char**)rowcount_font_xpm), "ABCDEFG#01234567890-*"); 
 	editing_row_height=pattern_font.get_height()+8;
 	pattern_cursor=QPixmap(pattern_cursor_xpm);
-	pattern_cursor_offset=QPoint(-3,-3);
+	pattern_cursor_offset=QPoint(-3,-3); 
 
 
 

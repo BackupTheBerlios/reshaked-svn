@@ -14,9 +14,9 @@
 #include <Qt/qlayout.h>
 #include "blocklist_ui_pattern.h"
 #include "blocklist_ui_automation.h"
-#include "track_top.h"
 #include <Qt/qlabel.h>
 #include <Qt/qscrollbar.h>
+#include "interface/blocklist_separator.h"
 
 //@TODO SOFT SCROLL when ensuring cursor visible
 namespace ReShaked {
@@ -28,6 +28,14 @@ void BlockListUIList::vscroll_track_list() {
 		block_list_ui_list[i]->update_viewport_pos( editor->get_cursor().get_window_offset() );
 	}
 	printf("vscrolled\n");
+	
+}
+
+void BlockListUIList::repaint_names() {
+	
+	for (int i=0;i<track_tops.size();i++) 
+		track_tops[i]->update();
+		
 	
 }
 
@@ -126,6 +134,7 @@ void BlockListUIList::update_track_list() {
 	hbox->show();
 
 	block_list_ui_list.clear();
+	track_tops.clear();
 
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
 
@@ -135,7 +144,8 @@ void BlockListUIList::update_track_list() {
 		QVBoxLayout *vl=new QVBoxLayout(vb);
 		vb->setLayout(vl);
 		
-		TrackTop *top = new TrackTop(vb,editor,i);
+		TrackTop *top = new TrackTop(vb,editor->get_song()->get_track(i));
+		track_tops.push_back(top);
 		vl->addWidget(top);
 		
 		QWidget *hb = new QWidget(vb);
@@ -163,6 +173,10 @@ void BlockListUIList::update_track_list() {
 
 			block_list_ui_list.push_back( new BlockListUI_Automation(hb,editor,i,j) );
 			hl->addWidget(block_list_ui_list [block_list_ui_list.size() -1] );
+			
+			Automation *a=editor->get_song()->get_track(i)->get_automation(j);
+			BlockList_Separator *s = new BlockList_Separator(hb,QStrify(a->get_property()->get_caption()));
+			hl->addWidget(s);
 
 		}
 		
@@ -193,8 +207,12 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QWidget (
 
 	editor=p_editor;
 	QHBoxLayout *l = new QHBoxLayout(this);
-	row_display = new RowListDisplay(this,&editor->get_cursor());
-	l->addWidget(row_display);
+	CVBox *cvb = new CVBox(this);
+	new TrackTop(cvb,NULL); //this is only remporary
+	row_display = new RowListDisplay(cvb ,&editor->get_cursor());
+	cvb->layout()->setMargin(0);
+	cvb->layout()->setSpacing(0);
+	l->addWidget(cvb);
 
 	scrollarea = new QScrollArea(this);
 	l->addWidget(scrollarea);;

@@ -62,6 +62,7 @@ public:
 		
 		std::vector<PropertyRef*> property_list;
 		
+		String name;
 
 	} base_private;
 
@@ -105,6 +106,10 @@ public:
 	bool has_property_automation(int p_index);
 	
 	void set_automation_pool(DataPool *p_pool);
+	
+	void set_name(String p_name);
+	String get_name();
+	
 	Track(int p_channels,BlockType p_type);
 	~Track();
 

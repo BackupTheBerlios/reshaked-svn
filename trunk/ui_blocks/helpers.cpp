@@ -61,4 +61,15 @@ QString QStrify(const String& p_str) {
 
 }
 
+String DeQStrify(const QString& p_str) {
+	
+	String s;
+	for (int i=0;i<p_str.length();i++) 
+		s+=p_str[i].unicode();
+
+	return s;
+	
+	
+}
+
 }

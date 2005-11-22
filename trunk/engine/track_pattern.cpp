@@ -215,6 +215,16 @@ Track_Pattern::PatternBlock* Track_Pattern::get_block(int p_index) {
 	return pb;
 	
 }
+
+void Track_Pattern::set_visible_columns(int p_columns) {
+	
+	if (p_columns<1)
+		return;
+	data.visible_columns=p_columns;	
+	
+}
+
+
 int Track_Pattern::get_visible_columns() {
 	
 	return data.visible_columns;	
@@ -246,6 +256,7 @@ void Track_Pattern::set_note(const Position& p_pos,const Note& p_note) {
 
 }
 	
+
 Track_Pattern::Note Track_Pattern::get_note(const Position& p_pos) {
 		
 	int pb_idx = get_block_idx_at_pos( p_pos.tick );
@@ -272,6 +283,9 @@ String Track_Pattern::get_type_name() {
 
 	return "pattern";
 }
+
+
+
 Track_Pattern::Track_Pattern(int p_channels,DataPool *p_pool) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT) {
 
 	pool=p_pool;

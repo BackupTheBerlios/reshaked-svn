@@ -169,6 +169,14 @@ String Track::get_property_path(int p_idx) {
 	
 }	
 
+void Track::set_name(String p_name) {
+	
+	base_private.name=p_name;
+}
+String Track::get_name() {
+	
+	return base_private.name;
+}
 
 Track::Track(int p_channels,BlockType p_type) : BlockList(p_type) {
 	

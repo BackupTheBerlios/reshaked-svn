@@ -36,7 +36,7 @@ int PixmapFont::get_width() {
 }
 int PixmapFont::get_height() {
 	
-	return width;
+	return height;
 }
 void PixmapFont::set_font(const QPixmap& p_base,const char* p_chars) {
 	

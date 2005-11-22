@@ -45,6 +45,7 @@ public:
 };
 
 QString QStrify(const String& p_str);
+String DeQStrify(const QString& p_str);
 
 }
 

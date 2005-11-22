@@ -6,20 +6,20 @@ namespace ReShaked {
 
 
 
-void Song::add_track(TrackType p_type,int p_channels) {
-
-	switch (p_type) {
-		
-		case TRACK_TYPE_PATTERN: {
-			
-			
-			track_list.push_back(new Track_Pattern(p_channels,pattern_pool));
-			track_list[track_list.size()-1]->set_automation_pool(automation_pool);
-			track_list[track_list.size()-1]->create_block(0);
-			//			track_list[track_list.size()-1]->add_automation("hoe");
-			//track_list[track_list.size()-1]->get_automation(0)->create_block(TICKS_PER_BEAT*4);
-		} break;
-	}
+void Song::add_track(Track* p_track) {
+	
+	track_list.push_back(p_track);
+	p_track->set_automation_pool(automation_pool);
+	
+}
+DataPool *Song::get_pattern_pool() {
+	
+	return pattern_pool;
+}
+DataPool *Song::get_automation_pool() {
+	
+	return automation_pool;
+	
 }
 
 int Song::get_track_count() {

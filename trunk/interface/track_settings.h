@@ -50,12 +50,15 @@ class TrackSettings : public CVBox {
 	QLineEdit *track_name;
 	
 	QPushButton *track_edit;
-	QPushButton *track_emove_automation_left;
-	QPushButton *track_emove_automation_right;
+	QPushButton *track_move_automation_left;
+	QPushButton *track_move_automation_right;
 	QPushButton *track_column_add;
 	QPushButton *track_column_remove;
 	
 	QPushButton *setup_button(QPushButton *p_button,QPixmap p_pixmap,const char *p_slot=NULL);
+	
+	bool stack_visible;
+	bool updating;
 protected slots:
 			
 	/* Qt doesnt support signal binding */
@@ -77,10 +80,16 @@ protected slots:
 	void automation_add_slot(String p_path);
 	void automation_remove_slot(String p_path);
 	
+	void track_name_changed(const QString &p_new_name);
+	
 public slots:
 			
 	
 	void selected_track_changed_slot();
+	
+signals:
+	void update_track_names_signal();	
+	
 public:
 		
 	void set_page(TrackSettingsPage p_page);

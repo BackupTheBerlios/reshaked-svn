@@ -16,7 +16,7 @@
 #include <Qt/qmenubar.h>
 #include  "indexed_action.h"
 #include "typedefs.h"
-
+#include "interface/new_track_dialog.h"
 #include "pixmaps/view_global.xpm"
 #include "pixmaps/view_edit.xpm"
 
@@ -54,9 +54,15 @@ void MainWindow::menu_action_callback(int p_action) {
 
 		case ITEM_TRACK_ADD_PATTERN: {
 
-			data.song.add_track(TRACK_TYPE_PATTERN,2);
+			NewTrackDialog *new_dialog = new NewTrackDialog;
+			if (new_dialog->exec()!=QDialog::Accepted) {
+				delete new_dialog;
+				return; //not accepted!
+			}
+			data.editor->add_track(TRACK_TYPE_PATTERN,new_dialog->get_channels(),DeQStrify(new_dialog->get_name()));
 			global_view->update();
 			blui_list->update_track_list();
+			delete new_dialog;
 
 		} break;
 
@@ -151,19 +157,22 @@ MainWindow::MainWindow() {
 	data.editor = new Editor( &data.song, update_notify );
 
 
-	splitter = new QSplitter(Qt::Vertical,this);
-	main_stack = new QStackedWidget(splitter);
-	global_view = new GlobalView(main_stack,&data.song);
+	main_stack = new QStackedWidget(this);
+	global_view = new GlobalView(main_stack,data.editor);
 	main_stack->addWidget(global_view);
 	blui_list = new BlockListUIList(main_stack,data.editor);
 	main_stack->addWidget(blui_list);
 	main_stack->setCurrentWidget(blui_list);
 
-	splitter->addWidget(main_stack);
-	setCentralWidget(splitter);
-	track_settings = new TrackSettings(splitter,data.editor);
-	splitter->addWidget(track_settings);
-
+	setCentralWidget(main_stack);
+	settings_dock = new QDockWidget("Track Properties",this);
+	settings_dock->setAllowedAreas(Qt::TopDockWidgetArea|Qt::BottomDockWidgetArea);
+	settings_dock->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable);
+	addDockWidget(Qt::BottomDockWidgetArea,settings_dock);
+	
+	//settings_dock->setLayout(new QHBoxLayout(settings_dock));
+	track_settings = new TrackSettings(settings_dock,data.editor);
+	settings_dock->layout()->addWidget(track_settings);
 	navigation_toolbar = addToolBar("Navigation");
 
 	add_menus();
@@ -180,6 +189,9 @@ MainWindow::MainWindow() {
 
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),blui_list,SLOT(update_track_list()));
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),global_view,SLOT(update()));
+	
+	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),global_view,SLOT(update()));
+	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),blui_list,SLOT(repaint_names()));
 	
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 

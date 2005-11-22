@@ -80,6 +80,7 @@ public:
 	
 	/* global abstraction to a blocklist array */
 	int get_track_blocklist(int p_track);
+	int get_blocklist_track(int p_blocklist);
 	int get_current_blocklist();
 	void set_current_blocklist(int p_which);
 	int get_current_track();
@@ -91,6 +92,10 @@ public:
 	
 	Song* get_song();
 	
+	void track_pattern_add_column();
+	void track_pattern_remove_column();
+	
+	void add_track(TrackType p_type,int p_channels,String p_name);
 	
 	Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify);
 	

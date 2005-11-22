@@ -18,7 +18,7 @@
 #include <Qt/qlayout.h>
 #include "engine/editor.h"
 #include "interface/rowlist_display.h"
-
+#include "interface/track_top.h"
 
 namespace ReShaked {
 
@@ -30,6 +30,7 @@ class BlockListUIList : public QWidget {
 	Q_OBJECT
 
 	std::vector<BlockListUI_Base*> block_list_ui_list;
+	std::vector<TrackTop*> track_tops;
 	QFrame *spacer;
 	QWidget *hbox;
 	QHBoxLayout *hbox_layout;
@@ -46,7 +47,7 @@ public slots:
 	void repaint_track_list();
 	void update_track_list();
 	void vscroll_track_list();
-	
+	void repaint_names();
 public:
 
 	BlockListUIList(QWidget *p_parent,Editor *p_editor);

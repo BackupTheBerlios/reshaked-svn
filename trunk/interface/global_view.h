@@ -9,7 +9,7 @@
 #define _GLOBALVIEW_H_
 
 #include <Qt/qwidget.h>
-#include "engine/song.h"
+#include "engine/editor.h"
 #include <set>
 #include <list>
 #include "ui_blocks/visual_settings.h"
@@ -20,6 +20,7 @@ namespace ReShaked {
 class GlobalView : public QWidget {
 
 	Song *song;
+	Editor *editor;
 	void paintEvent(QPaintEvent *p);
 
 	enum {
@@ -132,11 +133,12 @@ class GlobalView : public QWidget {
         void get_resizing_block_data(Tick* p_new_len,bool *allowed);
         void commit_resizing_block();
 
+	void paint_name(QPainter &p,int p_blocklist,int p_ofs);
 	void paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover=false,bool p_notpossible=false,Tick p_len_othersize=-1);
 
 
 public:
-	GlobalView(QWidget *p_widget,Song *p_song);
+	GlobalView(QWidget *p_widget,Editor *p_editor);
 	~GlobalView();
 
 

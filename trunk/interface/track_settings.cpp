@@ -10,7 +10,7 @@
 //
 //
 #include "track_settings.h"
-#include "ui_blocks/visual_settings.h"
+#include "visual_settings.h"
 #include "error_macros.h"
 #include <Qt/qframe.h>
 #include <Qt/qlabel.h>
@@ -66,13 +66,29 @@ void TrackSettings::set_page(TrackSettingsPage p_page) {
 void TrackSettings::selected_track_changed_slot() {
 	
 	int track_idx=editor->get_current_track();
-	printf("track idx %i\n",track_idx);
 	if (track_idx==-1)
 		return;
+	updating=true;
+	
 	Track * track = editor->get_song()->get_track( track_idx );
 	control_settings->set_track( track );
 	
+	bool is_track=(track==editor->get_blocklist( editor->get_current_blocklist() ));
+	
+	track_move_automation_left->setVisible(!is_track);
+	track_move_automation_right->setVisible(!is_track);
+	track_column_add->setVisible(is_track);
+	track_column_remove->setVisible(is_track);
+	
+	track_name->setText(QStrify(track->get_name()));
+	updating=false;
+	
+	show();
+	
+		
+	
 }
+
 
 void TrackSettings::automation_add_slot(String p_path) {
 	
@@ -109,7 +125,8 @@ void TrackSettings::track_delete_slot(){
 }
 void TrackSettings::track_edit_slot(bool p_on){
 	
-	
+	stack_visible=p_on;
+	stack->setVisible(p_on);
 }
 void TrackSettings::track_move_automation_left_slot(){
 	
@@ -122,13 +139,29 @@ void TrackSettings::track_move_automation_right_slot(){
 void TrackSettings::track_column_add_slot(){
 	
 	
+	editor->track_pattern_add_column();
 }
 void TrackSettings::track_column_remove_slot(){
 	
+	editor->track_pattern_remove_column();
 	
 }
 
-
+void TrackSettings::track_name_changed(const QString& p_new_name) {
+	
+	if (updating)
+		return;
+	
+	int track_idx=editor->get_current_track();
+	if (track_idx==-1)
+		return;
+	Track * track = editor->get_song()->get_track( track_idx );
+	if (!track)
+		return;
+	track->set_name(DeQStrify(p_new_name));
+	update_track_names_signal();
+	
+}
 TrackSettings::TrackSettings(QWidget *p_parent,Editor * p_editor) :CVBox(p_parent) {
 	
 	
@@ -140,14 +173,18 @@ TrackSettings::TrackSettings(QWidget *p_parent,Editor * p_editor) :CVBox(p_paren
 	setup_button(new QPushButton(hbox_top),GET_QPIXMAP(ICON_TRACK_DELETE),SLOT(track_delete_slot()));
 	track_edit=setup_button(new QPushButton(hbox_top),GET_QPIXMAP(ICON_TRACK_EDIT));
 	track_edit->setCheckable(true);
+	track_edit->hide();
+	QObject::connect(track_edit,SIGNAL(toggled(bool)),this,SLOT(track_edit_slot( bool )));
 	
 	new QLabel(" Track: ",hbox_top);
 	
 	track_name = new QLineEdit( hbox_top );
 	track_name->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	track_name->setMinimumWidth(100);
+	QObject::connect(track_name,SIGNAL(textChanged(const QString&)), this, SLOT(track_name_changed(const QString& )));
 		
-	track_emove_automation_left=setup_button(new QPushButton(hbox_top),GET_QPIXMAP(ICON_AUTOMATION_MOVE_LEFT),SLOT(track_move_automation_left_slot()));
-	track_emove_automation_right=setup_button(new QPushButton(hbox_top),GET_QPIXMAP(ICON_AUTOMATION_MOVE_RIGHT),SLOT(track_move_automation_right_slot()));
+	track_move_automation_left=setup_button(new QPushButton(hbox_top),GET_QPIXMAP(ICON_AUTOMATION_MOVE_LEFT),SLOT(track_move_automation_left_slot()));
+	track_move_automation_right=setup_button(new QPushButton(hbox_top),GET_QPIXMAP(ICON_AUTOMATION_MOVE_RIGHT),SLOT(track_move_automation_right_slot()));
 		
 	track_column_add=setup_button( new QPushButton(hbox_top), GET_QPIXMAP(ICON_COLUMN_ADD), SLOT(track_column_add_slot()));
 	track_column_remove=setup_button( new QPushButton(hbox_top), GET_QPIXMAP(ICON_COLUMN_REMOVE), SLOT(track_column_remove_slot()));
@@ -180,6 +217,11 @@ TrackSettings::TrackSettings(QWidget *p_parent,Editor * p_editor) :CVBox(p_paren
 	
 	QObject::connect(control_settings->get_automation_tree(),SIGNAL(attempt_automation_remove_signal( String )),this,SLOT(automation_remove_slot( String )));
 	
+	updating=false;
+	//stack->hide();
+	//stack_visible=false;
+	
+	hide();
 }
 
 

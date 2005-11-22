@@ -8,7 +8,7 @@
 #include "engine/track_pattern.h"
 #include <Qt/qpainter.h>
 #include <Qt/qevent.h>
-
+#include "ui_blocks/helpers.h"
 namespace ReShaked {
 
 //*TODO FIX WHEN BLOCKS ARE OUT OF THE AREA
@@ -633,18 +633,18 @@ void GlobalView::mousePressEvent ( QMouseEvent * e ) {
 
 	if (e->modifiers()&Qt::AltModifier) {
 
-		printf("one\n");
+		//printf("one\n");
 		if (!get_click_location(e->x(),e->y(),&blocklist,&block))
 			return; //no location, in this case this is good
 		Tick tick;
-		printf("two\n");
+		//printf("two\n");
 		if (get_screen_to_blocklist_and_tick( e->x(), e->y(), &blocklist,&tick))
 			return;
-		printf("three\n");
+		//printf("three\n");
 		BlockList *bl=get_block_list(blocklist);
 		if (!bl)
 			return;
-		printf("four\n");
+		//printf("four\n");
 
 		switch (bl->get_block_creation_behavior()) {
 
@@ -779,6 +779,53 @@ bool GlobalView::is_block_being_resized(int p_list,int p_block) {
 
 /****************** PAINTING ********************/
 
+
+void GlobalView::paint_name(QPainter&p, int p_blocklist,int p_ofs) {
+	
+	
+	QString name;
+	
+	BlockList *b=editor->get_blocklist( p_blocklist);
+	ERR_FAIL_COND(b==NULL);
+	float des_width;
+
+	if (dynamic_cast<Track*>(b)) {
+		Track *t=dynamic_cast<Track*>(b);
+		name=QStrify(t->get_name());		
+		des_width=0.45;
+	} else if (dynamic_cast<Automation*>(b)) {
+		
+		Automation * a=dynamic_cast<Automation*>(b);
+		name=QStrify( a->get_property()->get_caption() );
+		des_width=0.35;
+	} else return; // ??
+	
+	int h=(int)(des_width*display.zoom_width);
+	if (h>24)
+		h=24; //dont let it be THAT big
+	
+	p.save(); //push painter data and matrix
+	
+	QFont f;
+	f.setPixelSize(h); //will be vertical so..
+	f.setBold(true);
+	p.setFont(f);
+	QFontMetrics m(p.font());
+	
+	p.rotate(90);
+	p.setPen(QColor(0,0,0,200));
+	p.drawText(6,-(p_ofs+m.descent()+1),name);
+	if (p_blocklist==editor->get_current_blocklist())
+		p.setPen(QColor(255,222,222,240));
+	else
+		p.setPen(QColor(255,255,255,240));
+	p.drawText(5,-(p_ofs+m.descent()),name);
+	p.restore();
+
+	
+	
+}
+
 void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover,bool p_notpossible,Tick p_len_othersize) {
 
 	int alpha=p_drawover?150:255;
@@ -842,6 +889,14 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 			paint_block(p,(int)f_from_x,(int)f_from_y,i,j,false);
 		}
 
+		if (editor->get_current_track()==editor->get_blocklist_track( i) ) {
+			/* selected, display it */
+			
+			p.setPen(QColor(255,0,0));
+			p.drawRect((int)f_from_x,0,(int)f_width,height());
+		}
+		
+		paint_name(p,i,ofs);
 		ofs+=f_width;
 
 	}
@@ -882,13 +937,14 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 
 }
 
-GlobalView::GlobalView(QWidget *p_widget,Song *p_song) : QWidget(p_widget)
+GlobalView::GlobalView(QWidget *p_widget,Editor *p_editor) : QWidget(p_widget)
 {
 	// TODO: put constructor code here
 
 	setBackgroundRole(QPalette::NoRole);
 	setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	song=p_song;
+	song=p_editor->get_song();
+	editor=p_editor;
 
 	display.zoom_width=40;
 	display.zoom_height=10;

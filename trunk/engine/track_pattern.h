@@ -153,7 +153,7 @@ public:
 	
 	bool is_pos_editable(Tick p_pos);
 	
-	
+	void set_visible_columns(int p_columns);
 	int get_visible_columns();
 	
 	PatternBlock* get_block(int p_index);

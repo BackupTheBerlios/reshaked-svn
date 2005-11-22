@@ -478,6 +478,31 @@ int Editor::get_blocklist_count() {
 	return blocks;
 }
 
+
+void Editor::track_pattern_add_column() {
+	
+	Track_Pattern * p = dynamic_cast<Track_Pattern*>(song->get_track(get_current_track()));	
+	if (!p)
+		return;
+	
+	p->set_visible_columns( p->get_visible_columns() +1 );
+	ui_update_notify->track_list_changed();
+
+}
+
+
+void Editor::track_pattern_remove_column() {
+	
+	Track_Pattern * p = dynamic_cast<Track_Pattern*>(song->get_track(get_current_track()));	
+	if (!p)
+		return;
+	
+	p->set_visible_columns( p->get_visible_columns() -1 );
+	ui_update_notify->track_list_changed();
+	
+}
+
+
 int Editor::get_track_blocklist(int p_track) {
 	
 	ERR_FAIL_INDEX_V(p_track,song->get_track_count(),-1);
@@ -496,6 +521,29 @@ int Editor::get_track_blocklist(int p_track) {
 	}
 	
 }
+
+int Editor::get_blocklist_track(int p_blocklist) {
+	
+	int blocks=0;
+	for (int i=0;i<song->get_track_count();i++) {
+		Track * t = song->get_track(i);
+		if (blocks==p_blocklist)
+			return i;
+		
+		blocks++;
+		
+		for (int j=0;j<t->get_automation_count();j++) {
+			
+			if (blocks==p_blocklist)
+				return i;
+			blocks++;
+		}
+	}
+	
+	return -1;
+}
+
+
 int Editor::get_current_blocklist() {
 	
 	return global_edit.current_blocklist;
@@ -545,6 +593,36 @@ Song* Editor::get_song() {
 	
 	return song;
 }
+
+void Editor::add_track(TrackType p_type,int p_channels,String p_name) {
+
+	
+	Track *track;
+	switch (p_type) {
+		
+		case TRACK_TYPE_PATTERN: {
+			
+			
+			track =  new Track_Pattern(p_channels,song->get_pattern_pool());
+			track->set_name(p_name);
+			track->set_automation_pool( song->get_automation_pool() );
+
+		} break;
+	}
+	
+	song->add_track(track);
+	
+	for (int i=0;i<song->get_track_count();i++) {
+		
+		if (song->get_track(i)!=track)
+			continue;
+		int blocklist=get_track_blocklist( i );
+		ERR_FAIL_COND(blocklist==-1);
+		global_edit.current_blocklist=blocklist;
+		enter_blocklist( ENTER_LEFT );
+	}
+}
+
 
 Editor::Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify) : cursor(p_ui_update_notify) {
 	

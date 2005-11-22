@@ -25,12 +25,13 @@ namespace ReShaked {
 				    
 class TrackTop : public QWidget {
 			    
-	Editor *editor;
-	int track_idx;
+	Track *track;
+
+	
 	void paintEvent(QPaintEvent *e);
 	
 public:
-	TrackTop(QWidget *p_parent,Editor *p_editor,int p_track_idx);
+	TrackTop(QWidget *p_parent,Track *p_track);
 	~TrackTop();
 
 };

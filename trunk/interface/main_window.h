@@ -22,6 +22,7 @@
 
 #include <map> // std::map
 #include <Qt/qstackedwidget.h>
+#include <Qt/qdockwidget.h>
 
 #include "ui_blocks/visual_settings.h"
 #include <Qt/qtoolbar.h>
@@ -85,7 +86,7 @@ class MainWindow : public QMainWindow {
 	void add_menus();
 
 	GlobalView *global_view;
-	QSplitter *splitter;
+	QDockWidget *settings_dock;
 
 	QStackedWidget *main_stack;
 	BlockListUIList *blui_list;

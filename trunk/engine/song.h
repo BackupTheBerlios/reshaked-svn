@@ -20,8 +20,10 @@ class Song {
 
 public:
 
+	DataPool *get_pattern_pool();
+	DataPool *get_automation_pool();
 	
-	void add_track(TrackType p_type,int p_channels);
+	void add_track(Track* p_track);
 	int get_track_count();
 	Track* get_track(int p_idx);
 	void remove_track(int p_idx); 
