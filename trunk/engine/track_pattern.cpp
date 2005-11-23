@@ -150,9 +150,6 @@ Track_Pattern::Pattern *Track_Pattern::PatternBlock::get_pattern() {
 Track_Pattern::Pattern::Pattern() {
 	length=1;
 	refcount=0;
-	data.insert( 0, Note(36,22) );
-	data.insert( TICKS_PER_BEAT, Note(22,58) );
-	data.insert( TICKS_PER_BEAT*3, Note(77,98) );
 }
 Tick Track_Pattern::PatternBlock::get_length() {
 

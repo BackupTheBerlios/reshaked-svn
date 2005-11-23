@@ -136,10 +136,6 @@ Automation::AutomationData::AutomationData() {
 
 	refcount=0;
 	length=5;
-	
-	insert( TICKS_PER_BEAT, AutomationValue(0.2) );
-	insert( TICKS_PER_BEAT*2, AutomationValue(0.9) );
-	insert( TICKS_PER_BEAT*4, AutomationValue(0.1) );
 }
 
 bool Automation::can_resize_from_begining() {

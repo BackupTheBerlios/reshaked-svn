@@ -631,7 +631,7 @@ void GlobalView::mousePressEvent ( QMouseEvent * e ) {
 	mouse_data.clicked_block=-1;
 	int blocklist=-1,block=-1;
 
-	if (e->modifiers()&Qt::AltModifier) {
+	if (e->modifiers()&Qt::ControlModifier && !(e->modifiers()&Qt::ShiftModifier)) {
 
 		//printf("one\n");
 		if (!get_click_location(e->x(),e->y(),&blocklist,&block))
