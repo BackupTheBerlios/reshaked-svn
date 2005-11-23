@@ -623,7 +623,10 @@ void Editor::add_track(TrackType p_type,int p_channels,String p_name) {
 	}
 }
 
-
+void Editor::set_snap(int p_new_snap) {
+	
+	cursor.set_snap( p_new_snap );	
+}
 Editor::Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify) : cursor(p_ui_update_notify) {
 	
 	ui_update_notify=p_ui_update_notify;

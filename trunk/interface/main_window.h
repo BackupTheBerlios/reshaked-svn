@@ -26,6 +26,8 @@
 
 #include "ui_blocks/visual_settings.h"
 #include <Qt/qtoolbar.h>
+#include <Qt/qspinbox.h>
+#include <Qt/qcombobox.h>
 #include "engine/keyboard_input.h"
 #include "interface/qt_updatenotify.h"
 #include "interface/track_settings.h"
@@ -93,7 +95,11 @@ class MainWindow : public QMainWindow {
 	BlockListUIList *blui_list;
 
 	QToolBar *navigation_toolbar;
-
+	QToolBar *editing_toolbar;
+	
+	QSpinBox *octave;
+	QComboBox *snap;
+	
 	VisualSettings visual_settings;
 
 	Qt_UpdateNotify *update_notify;
@@ -104,6 +110,8 @@ class MainWindow : public QMainWindow {
 
 public slots:
 	void menu_action_callback(int p_action);
+	void snap_changed_slot(int p_to_idx);
+	void octave_changed_slot(int p_to_idx);
 public:
 
 	MainWindow();

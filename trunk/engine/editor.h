@@ -97,6 +97,8 @@ public:
 	
 	void add_track(TrackType p_type,int p_channels,String p_name);
 	
+	void set_snap(int p_new_snap);
+	
 	Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify);
 	
 	~Editor();

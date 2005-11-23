@@ -15,6 +15,7 @@
 #include <Qt/qtoolbar.h>
 #include <Qt/qtoolbutton.h>
 #include <Qt/qmenubar.h>
+#include <Qt/qlabel.h>
 #include  "indexed_action.h"
 #include "typedefs.h"
 #include "interface/new_track_dialog.h"
@@ -25,6 +26,27 @@
 
 
 namespace ReShaked {
+
+class SpinBoxNoFocus : public QSpinBox {
+	
+public:	
+	SpinBoxNoFocus(QWidget *p_parent) : QSpinBox(p_parent) {
+		setFocusPolicy(Qt::NoFocus);
+		lineEdit()->setFocusPolicy(Qt::NoFocus);
+	}
+};
+
+void MainWindow::snap_changed_slot(int p_to_idx) {
+	
+	if (p_to_idx<0 || p_to_idx>=MAX_DIVISORS)
+		return;
+	data.editor->set_snap(divisors[p_to_idx]);
+}
+void MainWindow::octave_changed_slot(int p_to_idx) {
+	
+		
+}
+
 
 void MainWindow::set_top_screen(TopScreenList p_list) {
 
@@ -192,6 +214,25 @@ MainWindow::MainWindow() {
 	settings_dock->layout()->addWidget(track_settings);
 	navigation_toolbar = addToolBar("Navigation");
 
+	editing_toolbar = addToolBar("Editing");
+	editing_toolbar->addWidget(new QLabel(" Octave: ",editing_toolbar));
+	octave = new SpinBoxNoFocus(editing_toolbar);
+	octave->setRange(0,8);
+	octave->setValue(4);
+	octave->setFocusPolicy(Qt::NoFocus);
+	editing_toolbar->addWidget(octave);
+	editing_toolbar->addWidget(new QLabel(" Snap: ",editing_toolbar));
+	
+	snap = new QComboBox(editing_toolbar);
+	for (int i=0;i<MAX_DIVISORS;i++) {
+		
+		snap->addItem(QString::number(divisors[i]));
+	}
+	snap->setFocusPolicy(Qt::NoFocus);
+	QObject::connect(snap,SIGNAL(activated(int)),this,SLOT(snap_changed_slot( int )));
+	editing_toolbar->addWidget(snap);
+	
+	
 	add_menus();
 	create_keybindings();
 
