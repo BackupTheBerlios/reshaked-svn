@@ -108,10 +108,13 @@ class MainWindow : public QMainWindow {
 
 	void set_top_screen(TopScreenList p_list);
 
+	bool updating_octave;
+	
 public slots:
 	void menu_action_callback(int p_action);
 	void snap_changed_slot(int p_to_idx);
 	void octave_changed_slot(int p_to_idx);
+	void octave_changed_external_slot();
 public:
 
 	MainWindow();

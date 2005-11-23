@@ -98,6 +98,8 @@ public:
 	void add_track(TrackType p_type,int p_channels,String p_name);
 	
 	void set_snap(int p_new_snap);
+	void set_editing_octave(int p_octave);
+	int get_editing_octave();
 	
 	Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify);
 	

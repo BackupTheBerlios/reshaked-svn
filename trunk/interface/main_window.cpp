@@ -44,9 +44,15 @@ void MainWindow::snap_changed_slot(int p_to_idx) {
 }
 void MainWindow::octave_changed_slot(int p_to_idx) {
 	
-		
+	updating_octave=true;
+	data.editor->set_editing_octave(p_to_idx);
+	updating_octave=false;
 }
-
+void MainWindow::octave_changed_external_slot() {
+	if (updating_octave)
+		return;
+	octave->setValue(data.editor->get_editing_octave());
+}
 
 void MainWindow::set_top_screen(TopScreenList p_list) {
 
@@ -220,6 +226,8 @@ MainWindow::MainWindow() {
 	octave->setRange(0,8);
 	octave->setValue(4);
 	octave->setFocusPolicy(Qt::NoFocus);
+	QObject::connect(octave,SIGNAL(valueChanged(int)),this,SLOT(octave_changed_slot( int )));
+	updating_octave=false;;	
 	editing_toolbar->addWidget(octave);
 	editing_toolbar->addWidget(new QLabel(" Snap: ",editing_toolbar));
 	
@@ -229,6 +237,7 @@ MainWindow::MainWindow() {
 		snap->addItem(QString::number(divisors[i]));
 	}
 	snap->setFocusPolicy(Qt::NoFocus);
+	snap->setCurrentIndex(3);
 	QObject::connect(snap,SIGNAL(activated(int)),this,SLOT(snap_changed_slot( int )));
 	editing_toolbar->addWidget(snap);
 	
@@ -247,6 +256,7 @@ MainWindow::MainWindow() {
 
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),blui_list,SLOT(update_track_list()));
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),global_view,SLOT(update()));
+	QObject::connect(update_notify,SIGNAL(editing_octave_changed()),this,SLOT(octave_changed_external_slot()));
 	
 	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),global_view,SLOT(update()));
 	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),blui_list,SLOT(repaint_names()));

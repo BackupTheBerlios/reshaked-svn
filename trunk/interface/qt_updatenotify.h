@@ -31,6 +31,7 @@ signals:
 	void cursor_changed_blocklist();
 	void track_list_changed();
 	void edit_window_moved();
+	void editing_octave_changed();
 	
 public:
 	

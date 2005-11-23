@@ -185,7 +185,18 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			enter_blocklist(ENTER_RIGHT);
 			
 		}
-		
+	
+		CASE( KEYBIND("global/raise_octave") ) {
+			
+			set_editing_octave( get_editing_octave() +1 );
+		}
+	
+		CASE( KEYBIND("global/lower_octave") ) {
+			
+			set_editing_octave( get_editing_octave() -1 );
+		}
+	
+
 		CASE( KEYBIND("page_up_blocksnap") ) {
 			
 			Tick cursor_pos=cursor.get_tick_pos();
@@ -621,6 +632,21 @@ void Editor::add_track(TrackType p_type,int p_channels,String p_name) {
 		global_edit.current_blocklist=blocklist;
 		enter_blocklist( ENTER_LEFT );
 	}
+}
+
+void Editor::set_editing_octave(int p_octave) {
+	
+	if (p_octave<0 || p_octave>8)
+		return;
+	
+	if (global_edit.editing_octave==p_octave)
+		return; //pointless otherwise
+	global_edit.editing_octave=p_octave;
+	ui_update_notify->editing_octave_changed();
+}
+int Editor::get_editing_octave() {
+	
+	return global_edit.editing_octave;
 }
 
 void Editor::set_snap(int p_new_snap) {
