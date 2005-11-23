@@ -13,12 +13,14 @@
 #include <Qt/qicon.h>
 #include <Qt/qmenu.h>
 #include <Qt/qtoolbar.h>
+#include <Qt/qtoolbutton.h>
 #include <Qt/qmenubar.h>
 #include  "indexed_action.h"
 #include "typedefs.h"
 #include "interface/new_track_dialog.h"
 #include "pixmaps/view_global.xpm"
 #include "pixmaps/view_edit.xpm"
+#include "pixmaps/view_controls.xpm"
 
 
 
@@ -64,6 +66,9 @@ void MainWindow::menu_action_callback(int p_action) {
 			blui_list->update_track_list();
 			delete new_dialog;
 
+			if (data.song.get_track_count())
+				get_action(NAVIGATION_CONTROLS_VIEW)->setEnabled(true);
+
 		} break;
 
 
@@ -76,9 +81,10 @@ void MainWindow::menu_action_callback(int p_action) {
 			set_top_screen(TOP_SCREEN_EDIT_VIEW);
 
 		} break;
-
+		case NAVIGATION_CONTROLS_VIEW: {
+			settings_dock->setVisible(get_action(NAVIGATION_CONTROLS_VIEW)->isChecked());
+		} break;
 	}
-
 }
 
 void MainWindow::create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QToolBar *p_toolbar,const char **p_xpm) {
@@ -87,21 +93,28 @@ void MainWindow::create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QTo
 
 
 	IndexedAction *q;
-
-	if (!p_xpm)
+	QPixmap px;
+	if (p_xpm) {
+		px=QPixmap(p_xpm);
+		q = new IndexedAction(p_item,p_text,QPixmap(px),this);
+	} else
 
 		q = new IndexedAction(p_item,p_text,this);
-
-	else
-		q = new IndexedAction(p_item,p_text,QPixmap(p_xpm),this);
 
 	QObject::connect(q,SIGNAL(selected_index_signal(int)),this,SLOT(menu_action_callback(int)));
 
 	action_map[p_item]=q;
 	if (p_menu)
 		p_menu->addAction(q);
-	if (p_toolbar)
-		p_toolbar->addAction(q);
+	if (p_toolbar) {
+		
+		QToolButton *tb = new QToolButton(this);
+		tb->setDefaultAction(q);
+		if (p_xpm)
+			tb->setIconSize(px.size());
+		p_toolbar->addWidget(tb);
+		
+	}
 
 
 }
@@ -147,6 +160,9 @@ void MainWindow::add_menus() {
 	get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
 	create_action(NAVIGATION_EDIT_VIEW,"Edit View",NULL,navigation_toolbar,(const char**)view_edit_xpm);
 	get_action(NAVIGATION_EDIT_VIEW)->setCheckable(true);
+	create_action(NAVIGATION_CONTROLS_VIEW,"Edit View",NULL,navigation_toolbar,(const char**)view_controls_xpm);
+	get_action(NAVIGATION_CONTROLS_VIEW)->setCheckable(true);
+	get_action(NAVIGATION_CONTROLS_VIEW)->setEnabled(false);
 
 }
 
@@ -169,6 +185,7 @@ MainWindow::MainWindow() {
 	settings_dock->setAllowedAreas(Qt::TopDockWidgetArea|Qt::BottomDockWidgetArea);
 	settings_dock->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable);
 	addDockWidget(Qt::BottomDockWidgetArea,settings_dock);
+	settings_dock->hide();
 	
 	//settings_dock->setLayout(new QHBoxLayout(settings_dock));
 	track_settings = new TrackSettings(settings_dock,data.editor);

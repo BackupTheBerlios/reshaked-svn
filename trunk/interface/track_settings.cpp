@@ -83,9 +83,6 @@ void TrackSettings::selected_track_changed_slot() {
 	track_name->setText(QStrify(track->get_name()));
 	updating=false;
 	
-	show();
-	
-		
 	
 }
 
@@ -221,7 +218,7 @@ TrackSettings::TrackSettings(QWidget *p_parent,Editor * p_editor) :CVBox(p_paren
 	//stack->hide();
 	//stack_visible=false;
 	
-	hide();
+
 }
 
 

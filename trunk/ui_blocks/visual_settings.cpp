@@ -153,10 +153,10 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_COLUMN_REMOVE]=QPixmap((const char**)track_column_rem_xpm);
 	
 			
-	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#01234567890-*");
-	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#01234567890-*"); 
+	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#0123456789-*");
+	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#0123456789-*"); 
 
-	rowcount_font.set_font( QPixmap((const char**)rowcount_font_xpm), "ABCDEFG#01234567890-*"); 
+	rowcount_font.set_font( QPixmap((const char**)rowcount_font_xpm), "ABCDEFG#0123456789-*"); 
 	editing_row_height=pattern_font.get_height()+8;
 	pattern_cursor=QPixmap(pattern_cursor_xpm);
 	pattern_cursor_offset=QPoint(-3,-3); 

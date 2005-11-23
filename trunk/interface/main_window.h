@@ -65,6 +65,7 @@ class MainWindow : public QMainWindow {
 
 		NAVIGATION_GLOBAL_VIEW,
 		NAVIGATION_EDIT_VIEW,
+		NAVIGATION_CONTROLS_VIEW
 
 	};
 
