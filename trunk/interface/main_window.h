@@ -17,7 +17,7 @@
 #include <Qt/qsplitter.h>
 #include <Qt/qaction.h>
 #include "engine/editor.h"
-#include "interface/global_view.h"
+#include "interface/global_view_frame.h"
 #include "interface/blocklist_ui_list.h"
 
 #include <map> // std::map
@@ -88,7 +88,7 @@ class MainWindow : public QMainWindow {
 	QAction *get_action(MenuItems p_item);
 	void add_menus();
 
-	GlobalView *global_view;
+	GlobalViewFrame *global_view_frame;
 	QDockWidget *settings_dock;
 
 	QStackedWidget *main_stack;

@@ -19,6 +19,8 @@ namespace ReShaked {
 
 class GlobalView : public QWidget {
 
+	Q_OBJECT
+	
 	Song *song;
 	Editor *editor;
 	void paintEvent(QPaintEvent *p);
@@ -101,7 +103,9 @@ class GlobalView : public QWidget {
 
 
 	} resizing_block;
-
+	
+	void resizeEvent ( QResizeEvent * event );
+	void resize_check_consistency();	
 	void mouseMoveEvent ( QMouseEvent * e );
 	void mousePressEvent ( QMouseEvent * e );
 	void mouseReleaseEvent ( QMouseEvent * e );
@@ -136,8 +140,14 @@ class GlobalView : public QWidget {
 	void paint_name(QPainter &p,int p_blocklist,int p_ofs);
 	void paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover=false,bool p_notpossible=false,Tick p_len_othersize=-1);
 
-
+signals:	
+	
+	void resized_signal();
 public:
+	
+	int get_total_pixel_width();
+	int get_pixel_h_offset();
+	void set_pixel_h_offset(int p_ofs);
 	GlobalView(QWidget *p_widget,Editor *p_editor);
 	~GlobalView();
 

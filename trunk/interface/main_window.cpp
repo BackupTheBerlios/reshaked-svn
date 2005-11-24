@@ -62,7 +62,7 @@ void MainWindow::set_top_screen(TopScreenList p_list) {
 
 			get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
 			get_action(NAVIGATION_EDIT_VIEW)->setChecked(false);
-			main_stack->setCurrentWidget(global_view);
+			main_stack->setCurrentWidget(global_view_frame);
 
 		} break;
 		case TOP_SCREEN_EDIT_VIEW: {
@@ -90,7 +90,7 @@ void MainWindow::menu_action_callback(int p_action) {
 				return; //not accepted!
 			}
 			data.editor->add_track(TRACK_TYPE_PATTERN,new_dialog->get_channels(),DeQStrify(new_dialog->get_name()));
-			global_view->update();
+			global_view_frame->update();
 			blui_list->update_track_list();
 			delete new_dialog;
 
@@ -202,8 +202,8 @@ MainWindow::MainWindow() {
 
 
 	main_stack = new QStackedWidget(this);
-	global_view = new GlobalView(main_stack,data.editor);
-	main_stack->addWidget(global_view);
+	global_view_frame = new GlobalViewFrame(main_stack,data.editor);
+	main_stack->addWidget(global_view_frame);
 	blui_list = new BlockListUIList(main_stack,data.editor);
 	main_stack->addWidget(blui_list);
 	main_stack->setCurrentWidget(blui_list);
@@ -255,11 +255,12 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),track_settings,SLOT(selected_track_changed_slot()));
 
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),blui_list,SLOT(update_track_list()));
-	QObject::connect(update_notify,SIGNAL(track_list_changed()),global_view,SLOT(update()));
+	QObject::connect(update_notify,SIGNAL(track_list_changed()),global_view_frame,SLOT(update()));
 	QObject::connect(update_notify,SIGNAL(editing_octave_changed()),this,SLOT(octave_changed_external_slot()));
 	
-	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),global_view,SLOT(update()));
+	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),global_view_frame,SLOT(update()));
 	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),blui_list,SLOT(repaint_names()));
+	
 	
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 

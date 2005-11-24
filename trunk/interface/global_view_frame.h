@@ -12,16 +12,35 @@
 #ifndef RESHAKEDGLOBAL_VIEW_FRAME_H
 #define RESHAKEDGLOBAL_VIEW_FRAME_H
 
+#include "interface/global_view.h"
+#include <Qt/qscrollbar.h>
+#include <Qt/qslider.h>
+
+
+
 namespace ReShaked {
 
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
-class GlobalViewFrame{
-public:
-    GlobalViewFrame();
+class GlobalViewFrame : public QWidget {
 
-    ~GlobalViewFrame();
+	Q_OBJECT
+				       
+			
+	Editor *editor;
+	GlobalView *global_view;
+	QScrollBar *h_scroll;
+	QScrollBar *v_scroll;
+	QSlider *zoom;
+public slots:
+	void update();
+	void block_list_changed_slot();
+	void h_scollbar_changed_slot(int p_new_idx);
+public:
+	GlobalView *get_global_view();
+	GlobalViewFrame(QWidget *p_parent,Editor *p_editor);
+	~GlobalViewFrame();
 
 };
 

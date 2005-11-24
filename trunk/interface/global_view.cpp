@@ -512,6 +512,28 @@ void GlobalView::commit_resizing_block() {
 
 }
 
+/****************** WIDGET SIZE *************/
+
+void GlobalView::resize_check_consistency() {
+	
+	if (get_pixel_h_offset()>(get_total_pixel_width()-width())) {
+		int new_ofs=get_total_pixel_width()-width();
+		if (new_ofs>0)
+			set_pixel_h_offset( new_ofs );
+	}
+	
+	resized_signal();
+}
+
+void GlobalView::resizeEvent( QResizeEvent * event ) {
+	
+	resize_check_consistency();
+	
+	
+}
+
+
+
 /***************** MOUSE *********************/
 
 void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
@@ -935,6 +957,38 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 
 	}
 
+}
+
+
+int GlobalView::get_total_pixel_width() {
+	
+	float width_accum=0;
+	for (int i=0;i<song->get_track_count();i++) {
+		Track * t = song->get_track(i);
+		width_accum+=get_block_list_width( t);
+
+		for (int j=0;j<t->get_automation_count();j++) {
+
+			width_accum+=get_block_list_width(t->get_automation( j ));
+			
+		}
+	}
+	
+	width_accum*=display.zoom_width;
+	return (int)width_accum;
+		
+}
+
+int GlobalView::get_pixel_h_offset() {
+	
+	return (int)(display.ofs_x*display.zoom_width);	
+}
+
+void GlobalView::set_pixel_h_offset(int p_ofs) {
+	
+	display.ofs_x=(float)p_ofs/display.zoom_width;
+	update();
+		
 }
 
 GlobalView::GlobalView(QWidget *p_widget,Editor *p_editor) : QWidget(p_widget)
