@@ -453,6 +453,8 @@ void GlobalView::commit_moving_block_list() {
 		ERR_CONTINUE( bindex<0 );
 		add_block_to_selection( J->blocklist, bindex );
 	}
+	
+	resize_check_consistency();
 
 }
 
@@ -509,6 +511,7 @@ void GlobalView::commit_resizing_block() {
 	} break;
     }
 
+    resize_check_consistency();
 
 }
 
@@ -918,7 +921,7 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 			p.drawRect((int)f_from_x,0,(int)f_width,height());
 		}
 		
-		paint_name(p,i,ofs);
+		paint_name(p,i,(int)f_from_x);
 		ofs+=f_width;
 
 	}
@@ -935,7 +938,7 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 
 		if (get_moving_block_pos_and_status(I->list,I->block,dst_list,dst_tick,free_x,allowed))
 			continue;
-
+		free_x-=display.ofs_x*display.zoom_width;
 		float free_y=((double)dst_tick/(double)TICKS_PER_BEAT)*display.zoom_height-display.ofs_y;
 
 		paint_block(p,(int)free_x,(int)free_y,I->list,I->block,true,!allowed);
@@ -975,8 +978,7 @@ int GlobalView::get_total_pixel_width() {
 	}
 	
 	width_accum*=display.zoom_width;
-	return (int)width_accum;
-		
+	return (int)width_accum;		
 }
 
 int GlobalView::get_pixel_h_offset() {
@@ -989,6 +991,25 @@ void GlobalView::set_pixel_h_offset(int p_ofs) {
 	display.ofs_x=(float)p_ofs/display.zoom_width;
 	update();
 		
+}
+
+int GlobalView::get_total_pixel_height() {
+	
+	int max_len_pixels=((double)editor->get_song_max_len()/(double)TICKS_PER_BEAT)*display.zoom_height;
+	return max_len_pixels;
+	
+}
+
+int GlobalView::get_pixel_v_offset() {
+	
+	return (int)(display.ofs_y*display.zoom_height);	
+}	
+
+void GlobalView::set_pixel_v_offset(int p_ofs) {
+	
+	display.ofs_y=(float)p_ofs/display.zoom_height;
+	update();
+	
 }
 
 GlobalView::GlobalView(QWidget *p_widget,Editor *p_editor) : QWidget(p_widget)

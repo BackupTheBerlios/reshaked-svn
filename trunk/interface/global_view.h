@@ -148,6 +148,9 @@ public:
 	int get_total_pixel_width();
 	int get_pixel_h_offset();
 	void set_pixel_h_offset(int p_ofs);
+	int get_total_pixel_height();
+	int get_pixel_v_offset();
+	void set_pixel_v_offset(int p_ofs);
 	GlobalView(QWidget *p_widget,Editor *p_editor);
 	~GlobalView();
 

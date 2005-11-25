@@ -21,20 +21,38 @@ void GlobalViewFrame::h_scollbar_changed_slot(int p_new_idx) {
 	global_view->set_pixel_h_offset( p_new_idx );
 }
 
+void GlobalViewFrame::v_scollbar_changed_slot(int p_new_idx) {
+	
+	global_view->set_pixel_v_offset( p_new_idx );
+}
 
 void GlobalViewFrame::block_list_changed_slot() {
 	
-	if (global_view->width()>=global_view->get_total_pixel_width()) {
+//	if (global_view->width()>=global_view->get_total_pixel_width()) {
 		
-		h_scroll->hide();
-	} else {
+//		h_scroll->hide();
+//	} else {
 		
 		h_scroll->setRange(0,global_view->get_total_pixel_width()-global_view->width());	
-		h_scroll->show();
+//		h_scroll->show();
 		h_scroll->setValue( global_view->get_pixel_h_offset() );
 		h_scroll->setPageStep(global_view->width());
-	}
+//	}
 			
+//	if (global_view->height()>=global_view->get_total_pixel_width()) {
+		
+//		h_scroll->hide();
+//	} else {
+		int v_range=(global_view->get_total_pixel_height()*2)-global_view->height();
+		if (v_range<(global_view->height()*2))
+			v_range=global_view->height()*2; //hack so there is always space to work with
+		
+		v_scroll->setRange(0,v_range);	
+//		v_scroll->show();
+		v_scroll->setValue( global_view->get_pixel_v_offset() );
+		v_scroll->setPageStep(global_view->height());
+//	}
+	
 }
 
 void GlobalViewFrame::update() {
@@ -74,6 +92,7 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QWidget (
 	
 	QObject::connect(global_view,SIGNAL(resized_signal()),this,SLOT(block_list_changed_slot()));
 	QObject::connect(h_scroll,SIGNAL(valueChanged(int)),this,SLOT(h_scollbar_changed_slot( int )));
+	QObject::connect(v_scroll,SIGNAL(valueChanged(int)),this,SLOT(v_scollbar_changed_slot( int )));
 	
 	l->setMargin(0);
 	h->setMargin(0);

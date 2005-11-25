@@ -653,6 +653,46 @@ void Editor::set_snap(int p_new_snap) {
 	
 	cursor.set_snap( p_new_snap );	
 }
+
+Tick Editor::get_block_list_max_len(BlockList *p_bl) {
+	
+	int block_count=p_bl->get_block_count();
+	if (block_count==0)
+		return 0;
+	Tick len=0;
+	switch (p_bl->get_block_type()) {
+		
+		case BlockList::BLOCK_TYPE_FIXED_TO_BEAT: {		
+			
+			len=p_bl->get_block_pos(block_count-1)+p_bl->get_block(block_count-1)->get_length();
+		} break;
+		case BlockList::BLOCK_TYPE_FREE_MOVING: {		
+			
+		} break;
+	}
+	
+	return len;
+}
+
+Tick Editor::get_song_max_len() {
+	Tick max_len=0;
+	
+	for (int i=0;i<song->get_track_count();i++) {
+		Track * t = song->get_track(i);
+		
+		if (get_block_list_max_len(t)>max_len)
+			max_len=get_block_list_max_len(t);
+		for (int j=0;j<t->get_automation_count();j++) {
+			
+			Automation *a=t->get_automation(j);;
+			if (get_block_list_max_len(a)>max_len)
+				max_len=get_block_list_max_len(a);
+			
+		}
+	}
+	
+	return max_len;
+}
 Editor::Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify) : cursor(p_ui_update_notify) {
 	
 	ui_update_notify=p_ui_update_notify;

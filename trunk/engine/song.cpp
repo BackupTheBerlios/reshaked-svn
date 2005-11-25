@@ -4,7 +4,10 @@
 
 namespace ReShaked {
 
-
+BarMap& Song::get_bar_map() {
+	
+	
+}
 
 void Song::add_track(Track* p_track) {
 	

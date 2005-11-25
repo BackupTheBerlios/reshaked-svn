@@ -101,6 +101,9 @@ public:
 	void set_editing_octave(int p_octave);
 	int get_editing_octave();
 	
+	Tick get_song_max_len();
+	Tick get_block_list_max_len(BlockList *p_bl);
+	
 	Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify);
 	
 	~Editor();
