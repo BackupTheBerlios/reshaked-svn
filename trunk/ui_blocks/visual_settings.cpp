@@ -39,6 +39,8 @@
 #include "pixmaps/track_move_automation_right.xpm"
 #include "pixmaps/track_column_add.xpm"
 #include "pixmaps/track_column_rem.xpm"
+#include "pixmaps/zoom.xpm"
+
 
 #include <iostream>
 
@@ -126,7 +128,7 @@ VisualSettings::VisualSettings() {
 	skin_box_map[SKINBOX_EDITING_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_bg_sel_xpm,4,4,4,4);
 
 
-	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0x9d,0xda,0x82);
+	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0xca,0xfd,0xc0);
 	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(0xda,0x9d,0x82);
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
 	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,255,200,128);
@@ -151,7 +153,7 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_AUTOMATION_MOVE_RIGHT]=QPixmap((const char**)track_move_automation_right_xpm);
 	pixmap_map[ICON_COLUMN_ADD]=QPixmap((const char**)track_column_add_xpm);
 	pixmap_map[ICON_COLUMN_REMOVE]=QPixmap((const char**)track_column_rem_xpm);
-	
+	pixmap_map[ICON_ZOOM_SMALL]=QPixmap((const char**)zoom_xpm);
 			
 	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#0123456789-*");
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#0123456789-*"); 

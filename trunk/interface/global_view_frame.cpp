@@ -11,6 +11,7 @@
 //
 #include "global_view_frame.h"
 #include <Qt/qlayout.h>
+#include <Qt/qlabel.h>
 
 namespace ReShaked {
 
@@ -55,6 +56,13 @@ void GlobalViewFrame::block_list_changed_slot() {
 	
 }
 
+void GlobalViewFrame::zoom_changed_slot(int p_to_val) {
+	
+	float zoom_val=(float)p_to_val/100.0;
+	global_view->set_zoom( zoom_val );
+	
+}
+
 void GlobalViewFrame::update() {
 	
 	block_list_changed_slot();
@@ -86,13 +94,25 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QWidget (
 	h_scroll->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
 	h->addWidget(h_scroll);
 	zoom = new QSlider(Qt::Horizontal,hw);
+	zoom->setRange(0,100);
+	zoom->setValue(0);
+	
 	h->addWidget(zoom);
 	h->setStretchFactor(h_scroll,4);
 	h->setStretchFactor(zoom,1);
+	QLabel *z=new QLabel(this);
+	z->setPixmap(GET_QPIXMAP(ICON_ZOOM_SMALL));
+	l->addWidget(z,2,2);
+	
+	
+	//some default
+	zoom_changed_slot( 35 );
+	zoom->setValue(35); 
 	
 	QObject::connect(global_view,SIGNAL(resized_signal()),this,SLOT(block_list_changed_slot()));
 	QObject::connect(h_scroll,SIGNAL(valueChanged(int)),this,SLOT(h_scollbar_changed_slot( int )));
 	QObject::connect(v_scroll,SIGNAL(valueChanged(int)),this,SLOT(v_scollbar_changed_slot( int )));
+	QObject::connect(zoom,SIGNAL(valueChanged(int)),this,SLOT(zoom_changed_slot( int )));
 	
 	l->setMargin(0);
 	h->setMargin(0);

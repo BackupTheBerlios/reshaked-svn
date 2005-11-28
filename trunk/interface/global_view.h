@@ -138,7 +138,7 @@ class GlobalView : public QWidget {
         void commit_resizing_block();
 
 	void paint_name(QPainter &p,int p_blocklist,int p_ofs);
-	void paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover=false,bool p_notpossible=false,Tick p_len_othersize=-1);
+	void paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover=false,bool p_notpossible=false,Tick p_len_othersize=-1,bool p_no_contents=false);
 
 signals:	
 	
@@ -151,6 +151,8 @@ public:
 	int get_total_pixel_height();
 	int get_pixel_v_offset();
 	void set_pixel_v_offset(int p_ofs);
+	
+	void set_zoom(float p_zoom); ///<from 0 to 1
 	GlobalView(QWidget *p_widget,Editor *p_editor);
 	~GlobalView();
 

@@ -9,6 +9,7 @@
 #include <Qt/qpainter.h>
 #include <Qt/qevent.h>
 #include "ui_blocks/helpers.h"
+#include "global_view_blocks.h"
 namespace ReShaked {
 
 //*TODO FIX WHEN BLOCKS ARE OUT OF THE AREA
@@ -841,9 +842,9 @@ void GlobalView::paint_name(QPainter&p, int p_blocklist,int p_ofs) {
 	p.setPen(QColor(0,0,0,200));
 	p.drawText(6,-(p_ofs+m.descent()+1),name);
 	if (p_blocklist==editor->get_current_blocklist())
-		p.setPen(QColor(255,222,222,240));
+		p.setPen(QColor(255,222,222,100));
 	else
-		p.setPen(QColor(255,255,255,240));
+		p.setPen(QColor(255,255,255,100));
 	p.drawText(5,-(p_ofs+m.descent()),name);
 	p.restore();
 
@@ -851,12 +852,13 @@ void GlobalView::paint_name(QPainter&p, int p_blocklist,int p_ofs) {
 	
 }
 
-void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover,bool p_notpossible,Tick p_len_othersize) {
+void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover,bool p_notpossible,Tick p_len_othersize,bool p_no_contents) {
 
 	int alpha=p_drawover?150:255;
 	BlockList *blocklist=get_block_list(p_list);
 
 	Tick block_len=0;
+	
 	if (p_len_othersize!=-1)
 		block_len=p_len_othersize;
 	else
@@ -878,6 +880,14 @@ void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,
 	//p.drawRect(p_x,p_y,(int)f_width,(int)f_height);
 	
 	sb->paint_into( p,p_x,p_y,(int)f_width,(int)f_height);
+	
+	if (!p_no_contents) {
+		
+		float c_height=((float)blocklist->get_block(p_block)->get_length()/(float)(TICKS_PER_BEAT))*display.zoom_height;
+		GlobalViewBlocks::paint_block_contents( p, p_x,p_y, f_width, c_height, blocklist->get_block(p_block) ,is_block_selected(p_list,p_block),(int)f_height);
+		
+	}
+	
 	if (p_notpossible) {
 
 		QBrush b(QColor(255,255,255),Qt::DiagCrossPattern);
@@ -956,7 +966,8 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 		float f_from_x=ofs-display.ofs_x*display.zoom_width;
 		float 	f_from_y=((float)resizing_block.from/(float)(TICKS_PER_BEAT))*display.zoom_height-display.ofs_y*display.zoom_height;
 
-		paint_block(p,(int)f_from_x,(int)f_from_y,resizing_block.list,resizing_block.block,true,!allowed,new_len);
+		bool dont_paint_contents=resizing_block.operation==ResizingBlock::RESIZE_CREATE_NEW;
+		paint_block(p,(int)f_from_x,(int)f_from_y,resizing_block.list,resizing_block.block,true,!allowed,new_len,dont_paint_contents);
 
 	}
 
@@ -1010,6 +1021,16 @@ void GlobalView::set_pixel_v_offset(int p_ofs) {
 	display.ofs_y=(float)p_ofs/display.zoom_height;
 	update();
 	
+}
+
+void GlobalView::set_zoom(float p_zoom) {
+	
+	
+	display.zoom_width=20+p_zoom*80;
+	display.zoom_height=2+POW2(p_zoom*6);
+	
+	update();
+	resize_check_consistency();
 }
 
 GlobalView::GlobalView(QWidget *p_widget,Editor *p_editor) : QWidget(p_widget)

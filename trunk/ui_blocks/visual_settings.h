@@ -75,12 +75,15 @@ enum PixmapList {
 	ICON_AUTOMATION_MOVE_LEFT,
 	ICON_AUTOMATION_MOVE_RIGHT,
 	ICON_COLUMN_ADD,
-	ICON_COLUMN_REMOVE
+	ICON_COLUMN_REMOVE,
+	ICON_ZOOM_SMALL,
+	 
 	
 };
 
 #define GET_QCOLOR(m_col) VisualSettings::get_singleton()->get_color( m_col )
 #define GET_QPIXMAP(m_pix) VisualSettings::get_singleton()->get_pixmap( m_pix )
+#define GET_SKIN(m_skin) VisualSettings::get_singleton()->get_skin_box( m_skin )
 
 class VisualSettings{
 
