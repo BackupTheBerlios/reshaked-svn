@@ -13,16 +13,22 @@
 #define RESHAKEDGLOBAL_BEATBAR_COLUMN_H
 
 #include <Qt/qwidget.h>
+#include "interface/global_view.h"
 
-namespace Reshaked {
+namespace ReShaked {
 
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
 class GlobalBeatBarColumn : public QWidget {
 				       
+	GlobalView *global_view;
+				       
 	void paintEvent(QPaintEvent *p);
 public:
+	
+	void set_global_view(GlobalView *p_global_view);
+	
 	GlobalBeatBarColumn(QWidget *p_parent);
 	~GlobalBeatBarColumn();
 

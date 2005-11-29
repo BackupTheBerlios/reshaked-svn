@@ -898,6 +898,8 @@ void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,
 
 void GlobalView::paintEvent(QPaintEvent *pe) {
 
+	drawing_signal();
+	
 	QPainter p(this);
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));
 
@@ -1033,6 +1035,13 @@ void GlobalView::set_zoom(float p_zoom) {
 	resize_check_consistency();
 }
 
+int GlobalView::get_bar_at_pixel(int p_pix) {
+	
+	int beat=(int)((((float)p_pix/display.zoom_height)+display.ofs_x));
+	//printf("find barcount for beat %i\n",beat);
+	int bar=song->get_bar_map().get_barcount_at_beat( beat );
+	return bar;
+}
 GlobalView::GlobalView(QWidget *p_widget,Editor *p_editor) : QWidget(p_widget)
 {
 	// TODO: put constructor code here

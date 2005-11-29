@@ -15,7 +15,7 @@
 #include "interface/global_view.h"
 #include <Qt/qscrollbar.h>
 #include <Qt/qslider.h>
-
+#include "interface/global_beatbar_column.h"
 
 
 namespace ReShaked {
@@ -33,6 +33,9 @@ class GlobalViewFrame : public QWidget {
 	QScrollBar *h_scroll;
 	QScrollBar *v_scroll;
 	QSlider *zoom;
+	
+	GlobalBeatBarColumn *beat_bar_column;
+	
 public slots:
 	void update();
 	void block_list_changed_slot();

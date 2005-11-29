@@ -80,7 +80,12 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QWidget (
 	
 	QGridLayout *l = new QGridLayout(this);
 	
+	
+	beat_bar_column = new GlobalBeatBarColumn(this);
+	l->addWidget(beat_bar_column,1,0);
+	
 	global_view = new GlobalView( this, p_editor);
+	beat_bar_column->set_global_view( global_view );
 	l->addWidget(global_view,1,1);
 	v_scroll = new QScrollBar(Qt::Vertical,this);
 	l->addWidget(v_scroll,1,2);
@@ -104,7 +109,6 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QWidget (
 	z->setPixmap(GET_QPIXMAP(ICON_ZOOM_SMALL));
 	l->addWidget(z,2,2);
 	
-	
 	//some default
 	zoom_changed_slot( 35 );
 	zoom->setValue(35); 
@@ -115,6 +119,7 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QWidget (
 	QObject::connect(zoom,SIGNAL(valueChanged(int)),this,SLOT(zoom_changed_slot( int )));
 	
 	l->setMargin(0);
+	l->setSpacing(0);
 	h->setMargin(0);
 	
 }

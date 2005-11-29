@@ -143,6 +143,7 @@ class GlobalView : public QWidget {
 signals:	
 	
 	void resized_signal();
+	void drawing_signal();
 public:
 	
 	int get_total_pixel_width();
@@ -151,6 +152,7 @@ public:
 	int get_total_pixel_height();
 	int get_pixel_v_offset();
 	void set_pixel_v_offset(int p_ofs);
+	int get_bar_at_pixel(int p_pix);
 	
 	void set_zoom(float p_zoom); ///<from 0 to 1
 	GlobalView(QWidget *p_widget,Editor *p_editor);
