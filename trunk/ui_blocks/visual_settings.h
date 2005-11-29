@@ -100,6 +100,7 @@ class VisualSettings{
 	PixmapFont pattern_font;
 	PixmapFont pattern_vol_font;
 	PixmapFont rowcount_font;
+	PixmapFont global_bar_font;
 	QPixmap pattern_cursor;
 	int editing_row_height;
 	QPoint pattern_cursor_offset;
@@ -112,6 +113,7 @@ public:
 	PixmapFont* get_pattern_font();
 	PixmapFont* get_pattern_vol_font();
 	PixmapFont* get_rowcount_font();
+	PixmapFont* get_global_bar_font();
 	static VisualSettings * get_singleton();
 
 	SkinBox * get_skin_box(SkinBoxList p_which);

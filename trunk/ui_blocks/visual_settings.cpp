@@ -31,6 +31,8 @@
 #include "pixmaps/track_settings_connections.xpm"
 #include "pixmaps/envelope_point.xpm"
 
+#include "pixmaps/font_global_bar.xpm"
+
 #include "pixmaps/track_move_left.xpm"
 #include "pixmaps/track_move_right.xpm"
 #include "pixmaps/track_delete.xpm"
@@ -59,6 +61,11 @@ VisualSettings * VisualSettings::get_singleton() {
 int VisualSettings::get_editing_row_height() {
 
 	return editing_row_height;
+}
+
+PixmapFont* VisualSettings::get_global_bar_font() {
+	
+	return &global_bar_font;
 }
 PixmapFont* VisualSettings::get_pattern_font() {
 
@@ -159,6 +166,7 @@ VisualSettings::VisualSettings() {
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#0123456789-*"); 
 
 	rowcount_font.set_font( QPixmap((const char**)rowcount_font_xpm), "ABCDEFG#0123456789-*"); 
+	global_bar_font.set_font( QPixmap((const char**)font_global_bar_xpm), "0123456789BEATR"); 
 	editing_row_height=pattern_font.get_height()+8;
 	pattern_cursor=QPixmap(pattern_cursor_xpm);
 	pattern_cursor_offset=QPoint(-3,-3); 

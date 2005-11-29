@@ -10,11 +10,20 @@
 //
 //
 #include "global_beatbar_column.h"
+#include "visual_settings.h"
+#include <Qt/qpainter.h>
 
 namespace Reshaked {
 
-GlobalBeatBarColumn::GlobalBeatBarColumn()
-{
+void GlobalBeatBarColumn::paintEvent(QPaintEvent *pe) {
+	
+	QPainter p(this);
+	p.fillRect(0,0,width(),height(),QColor(0,0,0));
+}
+
+GlobalBeatBarColumn::GlobalBeatBarColumn(QWidget *p_parent) : QWidget(p_parent) {
+	
+	
 }
 
 
