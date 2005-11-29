@@ -29,9 +29,9 @@ class BarMap{
 public:
 	
 	int insert_bar_len_at_beat(int p_beat,int p_len);
-	int get_bar_from_beat(int p_beat);
-	int get_barcount_at_beat(int p_beat);
-	int get_bar_beat_from_beat(int p_beat);
+	int get_bar_idx_from_beat(int p_beat);
+	int get_bar_at_beat(int p_beat);
+	int get_bar_beat(int p_beat);
 	void remove_bar_len(int p_bar_idx);
 	void set_bar_len(int p_bar_idx,int p_len);
 	

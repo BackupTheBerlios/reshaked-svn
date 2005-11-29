@@ -951,7 +951,7 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 		if (get_moving_block_pos_and_status(I->list,I->block,dst_list,dst_tick,free_x,allowed))
 			continue;
 		free_x-=display.ofs_x*display.zoom_width;
-		float free_y=((double)dst_tick/(double)TICKS_PER_BEAT)*display.zoom_height-display.ofs_y;
+		float free_y=((double)dst_tick/(double)TICKS_PER_BEAT-display.ofs_y)*display.zoom_height;
 
 		paint_block(p,(int)free_x,(int)free_y,I->list,I->block,true,!allowed);
 
@@ -972,7 +972,29 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 		paint_block(p,(int)f_from_x,(int)f_from_y,resizing_block.list,resizing_block.block,true,!allowed,new_len,dont_paint_contents);
 
 	}
-
+	
+	
+	/* paint lines */
+	
+	int beat_from=get_beat_at_pixel(0);
+	int beat_to=get_beat_at_pixel(height());
+	
+	PixmapFont *pf=VisualSettings::get_singleton()->get_global_bar_font();
+	
+	for (int i=beat_from;i<=beat_to;i++) {
+		
+		int line = get_beat_pixel( i );
+		if (song->get_bar_map().get_bar_beat( i )) { //regular beat
+			 
+			if (get_beat_pixel_size()<3) //dont paint it so small, make this constant later
+				continue;
+			p.setPen(GET_QCOLOR(COLORLIST_GLOBAL_VIEW_BEAT_LINE));
+			p.drawRect(0,line,width(),0);
+		} else { //bar 
+			p.setPen(GET_QCOLOR(COLORLIST_GLOBAL_VIEW_BAR_LINE));
+			p.drawRect(0,line,width(),0);
+		}
+	}
 }
 
 
@@ -1037,11 +1059,27 @@ void GlobalView::set_zoom(float p_zoom) {
 
 int GlobalView::get_bar_at_pixel(int p_pix) {
 	
-	int beat=(int)((((float)p_pix/display.zoom_height)+display.ofs_x));
+	int beat=(int)((((float)p_pix/display.zoom_height)+display.ofs_y));
 	//printf("find barcount for beat %i\n",beat);
-	int bar=song->get_bar_map().get_barcount_at_beat( beat );
+	int bar=song->get_bar_map().get_bar_at_beat( beat );
 	return bar;
 }
+
+int GlobalView::get_beat_pixel(int p_beat) {
+	
+	return (int)(((float)p_beat-display.ofs_y)*display.zoom_height);
+}
+
+int GlobalView::get_beat_at_pixel(int p_pix) {
+	
+	return (int)((((float)p_pix/display.zoom_height)+display.ofs_y));
+}
+
+float GlobalView::get_beat_pixel_size() {
+	
+	return display.zoom_height;
+}
+
 GlobalView::GlobalView(QWidget *p_widget,Editor *p_editor) : QWidget(p_widget)
 {
 	// TODO: put constructor code here

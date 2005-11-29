@@ -153,6 +153,9 @@ public:
 	int get_pixel_v_offset();
 	void set_pixel_v_offset(int p_ofs);
 	int get_bar_at_pixel(int p_pix);
+	int get_beat_at_pixel(int p_pix);
+	int get_beat_pixel(int p_beat);
+	float get_beat_pixel_size();
 	
 	void set_zoom(float p_zoom); ///<from 0 to 1
 	GlobalView(QWidget *p_widget,Editor *p_editor);

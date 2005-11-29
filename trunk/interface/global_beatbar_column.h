@@ -23,13 +23,14 @@ namespace ReShaked {
 class GlobalBeatBarColumn : public QWidget {
 				       
 	GlobalView *global_view;
+	BarMap *bar_map;
 				       
 	void paintEvent(QPaintEvent *p);
 public:
 	
 	void set_global_view(GlobalView *p_global_view);
 	
-	GlobalBeatBarColumn(QWidget *p_parent);
+	GlobalBeatBarColumn(QWidget *p_parent,BarMap *p_bar_map);
 	~GlobalBeatBarColumn();
 
 };

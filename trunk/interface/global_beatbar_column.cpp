@@ -28,40 +28,40 @@ void GlobalBeatBarColumn::paintEvent(QPaintEvent *pe) {
 	
 	QPainter p(this);
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));
+	int beat_from=global_view->get_beat_at_pixel(0);
+	int beat_to=global_view->get_beat_at_pixel(height());
 	
-	int old_bar=-1;
-	int next_i_allowed=-1;
+	PixmapFont *pf=VisualSettings::get_singleton()->get_global_bar_font();
+	PixmapFont *bf=VisualSettings::get_singleton()->get_global_beat_font();
 	
-	for (int i=0;i<height();i++) {
+	for (int i=beat_from;i<=beat_to;i++) {
 		
-		int current_bar=global_view->get_bar_at_pixel(i);
-		bool bar=false;
-		if (global_view->get_pixel_v_offset()==0 && i==0) 
-			bar=true;
-		else if (old_bar!=current_bar && i>next_i_allowed)
-			bar=true;
 		
-		old_bar=current_bar;
-		if (!bar) 
-			continue;
+		if (global_view->get_beat_pixel_size()>bf->get_height()) { //paint beat
+
+				
+			QString s = QString::number( bar_map->get_bar_beat( i) );
+			int ofs=width()-(s.length()+1)*bf->get_width();
+			bf->render_string( p, ofs, global_view->get_beat_pixel( i ), s.toAscii().data() );
+		}
+		
+		if (!bar_map->get_bar_beat( i )) { // paint bar
 			
-		PixmapFont *pf=VisualSettings::get_singleton()->get_global_bar_font();
-		QString s = QString::number(current_bar);
-		int ofs=width()-(s.length()+1)*pf->get_width();
-		pf->render_string( p, ofs, i, s.toAscii().data() );
-		next_i_allowed=i+pf->get_height();
+			QString s = QString::number(bar_map->get_bar_at_beat( i) );
+			int ofs=width()-(s.length()+3)*pf->get_width();
+			pf->render_string( p, ofs, global_view->get_beat_pixel( i ), s.toAscii().data() );
+		}			
+			
 	}
 }
 
-GlobalBeatBarColumn::GlobalBeatBarColumn(QWidget *p_parent) : QWidget(p_parent) {
+GlobalBeatBarColumn::GlobalBeatBarColumn(QWidget *p_parent,BarMap *p_bar_map) : QWidget(p_parent) {
 	
-	
-	setFixedWidth(VisualSettings::get_singleton()->get_global_bar_font()->get_width()*5);
+	bar_map=p_bar_map;
+	setFixedWidth(VisualSettings::get_singleton()->get_global_bar_font()->get_width()*7);
 	setBackgroundRole(QPalette::NoRole);
 	//setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
-	
-	
-	
+
 }
 
 

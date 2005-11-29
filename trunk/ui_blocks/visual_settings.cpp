@@ -32,6 +32,7 @@
 #include "pixmaps/envelope_point.xpm"
 
 #include "pixmaps/font_global_bar.xpm"
+#include "pixmaps/font_global_beat.xpm"
 
 #include "pixmaps/track_move_left.xpm"
 #include "pixmaps/track_move_right.xpm"
@@ -67,6 +68,12 @@ PixmapFont* VisualSettings::get_global_bar_font() {
 	
 	return &global_bar_font;
 }
+
+PixmapFont* VisualSettings::get_global_beat_font() {
+	
+	return &global_beat_font;
+}
+
 PixmapFont* VisualSettings::get_pattern_font() {
 
 	return &pattern_font;
@@ -141,6 +148,8 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,255,200,128);
 	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(150,200,150,64);
 	color_map[COLORLIST_AUTOMATION_ENVELOPE]=QColor(255,255,200,200);
+	color_map[COLORLIST_GLOBAL_VIEW_BAR_LINE]=QColor(200,255,200,128);
+	color_map[COLORLIST_GLOBAL_VIEW_BEAT_LINE]=QColor(150,200,150,64);
 	
 	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);
 	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);
@@ -167,6 +176,7 @@ VisualSettings::VisualSettings() {
 
 	rowcount_font.set_font( QPixmap((const char**)rowcount_font_xpm), "ABCDEFG#0123456789-*"); 
 	global_bar_font.set_font( QPixmap((const char**)font_global_bar_xpm), "0123456789BEATR"); 
+	global_beat_font.set_font( QPixmap((const char**)font_global_beat_xpm), "0123456789BEATR"); 
 	editing_row_height=pattern_font.get_height()+8;
 	pattern_cursor=QPixmap(pattern_cursor_xpm);
 	pattern_cursor_offset=QPoint(-3,-3); 

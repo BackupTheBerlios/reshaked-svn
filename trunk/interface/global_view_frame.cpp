@@ -81,7 +81,7 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QWidget (
 	QGridLayout *l = new QGridLayout(this);
 	
 	
-	beat_bar_column = new GlobalBeatBarColumn(this);
+	beat_bar_column = new GlobalBeatBarColumn(this,&editor->get_song()->get_bar_map());
 	l->addWidget(beat_bar_column,1,0);
 	
 	global_view = new GlobalView( this, p_editor);

@@ -20,14 +20,14 @@ int BarMap::insert_bar_len_at_beat(int p_beat,int p_len) {
 }
 
 
-int BarMap::get_bar_from_beat(int p_beat) {
+int BarMap::get_bar_idx_from_beat(int p_beat) {
 
 	ERR_FAIL_COND_V(p_beat<0,-1);	
 	int idx=bar_len_map.get_prev_index( p_beat );
 	ERR_FAIL_COND_V(idx<0,-1);
 	return idx;	
 }
-int BarMap::get_barcount_at_beat(int p_beat) {
+int BarMap::get_bar_at_beat(int p_beat) {
 	
 	ERR_FAIL_COND_V(p_beat<0,-1);	
 	int idx=bar_len_map.get_prev_index( p_beat );
@@ -52,10 +52,11 @@ int BarMap::get_barcount_at_beat(int p_beat) {
 	return bar_count;
 	
 }
-int BarMap::get_bar_beat_from_beat(int p_beat) {
+int BarMap::get_bar_beat(int p_beat) {
 	
-	int bar=get_bar_from_beat(p_beat);
-	return p_beat - bar_len_map.get_index_pos( bar );
+	int bar_idx=get_bar_idx_from_beat(p_beat);
+	int bar_len= bar_len_map.get_index_value( bar_idx );
+	return (p_beat - bar_len_map.get_index_pos( bar_idx ))%bar_len;
 	
 }
 void BarMap::remove_bar_len(int p_bar_idx) {
