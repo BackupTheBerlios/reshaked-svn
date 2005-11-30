@@ -416,24 +416,34 @@ void BlockListUI_Pattern::mousePressEvent ( QMouseEvent * e ) {
 	update();
 
 }
-void BlockListUI_Pattern::keyPressEvent ( QKeyEvent * e ) {
 
-
-	int key_value=e->key();
-
-	if (key_value!=Qt::Key_Backtab) { //ruins things otherwise
+bool BlockListUI_Pattern::event ( QEvent * ev )  {
+	
+	if (ev->type()==QEvent::KeyPress) {
 		
-		bool alt=e->modifiers() & Qt::AltModifier;
-		bool shift=e->modifiers() & Qt::ShiftModifier;
-		bool control=e->modifiers() & Qt::ControlModifier;
+		QKeyEvent * e=(QKeyEvent*)ev;
+		int key_value=e->key();
+
+		if (key_value!=Qt::Key_Backtab) { //ruins things otherwise
 		
-		key_value|= (alt?Qt::ALT:0);
-		key_value|= (shift?Qt::SHIFT:0);
-		key_value|= (control?Qt::CTRL:0);
+			bool alt=e->modifiers() & Qt::AltModifier;
+			bool shift=e->modifiers() & Qt::ShiftModifier;
+			bool control=e->modifiers() & Qt::ControlModifier;
+		
+			key_value|= (alt?Qt::ALT:0);
+			key_value|= (shift?Qt::SHIFT:0);
+			key_value|= (control?Qt::CTRL:0);
+		}
+		
+		if (editor->pattern_edit_key_press(key_value)) {
+			
+			update();
+			return true;
+		}
+		
 	}
-	if (editor->pattern_edit_key_press(key_value))
-		update();
-
+	
+	return QWidget::event(ev);
 }
 BlockListUI_Pattern::BlockListUI_Pattern(QWidget *p_parent,Editor *p_editor, int p_track) : BlockListUI_Base(p_parent) {
 

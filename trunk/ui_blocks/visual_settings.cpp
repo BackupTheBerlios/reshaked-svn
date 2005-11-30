@@ -140,6 +140,7 @@ VisualSettings::VisualSettings() {
 	skin_box_map[SKINBOX_EDITING_PATTERN_SELECTED]=new SkinBox((const char**)pattern_bg_sel_xpm,4,4,4,4);
 	skin_box_map[SKINBOX_EDITING_AUTOMATION]=new SkinBox((const char**)automation_bg_xpm,4,4,4,4);
 	skin_box_map[SKINBOX_EDITING_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_bg_sel_xpm,4,4,4,4);
+	skin_box_map[SKINBOX_EDITING_RESIZABLE_CURSOR]=new SkinBox((const char**)pattern_cursor_xpm,3,3,3,3,true);
 
 
 	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0xca,0xfd,0xc0);

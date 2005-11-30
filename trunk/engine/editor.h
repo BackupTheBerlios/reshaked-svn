@@ -60,7 +60,7 @@ private:
 	UI_UpdateNotify *ui_update_notify;
 	
 	void enter_blocklist(EnterBLDir p_dir);
-
+	bool handle_navigation_key_press(BlockList *p_blocklist,int p_event);
 public:
 	
 	Cursor &get_cursor();
@@ -75,7 +75,8 @@ public:
 	void set_pattern_edit_field(int p_field);
 	int get_pattern_edit_field();
 	
-	bool pattern_edit_key_press(int p_key_value); ///< return true if it must repaint
+	bool pattern_edit_key_press(int p_key_value); ///< return true if it must repaint / grab event
+	bool automation_edit_key_press(int p_key_value); ///< return true if it must repaint / grab event
 		
 	
 	/* global abstraction to a blocklist array */

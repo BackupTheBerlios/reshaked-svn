@@ -40,7 +40,7 @@ class BlockListUI_Pattern : public BlockListUI_Base {
 	void focusInEvent ( QFocusEvent * event );
 	void mousePressEvent ( QMouseEvent * e );
 	
-	void keyPressEvent ( QKeyEvent * e );
+	bool event( QEvent * ev );
 public:
 	
 	BlockListUI_Pattern(QWidget *p_parent,Editor *p_editor, int p_track);

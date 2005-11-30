@@ -293,6 +293,23 @@ void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_t
 	
 }
 
+void BlockListUI_Automation::paint_cursor(QPainter &p) {
+
+	int row=editor->get_cursor().get_pos()-editor->get_cursor().get_window_offset();
+			
+	PixmapFont * font=VisualSettings::get_singleton()->get_pattern_font();
+	SkinBox *cursor=GET_SKIN(SKINBOX_EDITING_RESIZABLE_CURSOR);
+
+	int rowsize=VisualSettings::get_singleton()->get_editing_row_height();
+	int fontofs=(rowsize-font->get_height())/2;
+	int textofs=row*rowsize+fontofs;
+
+	int xofs=font->get_width()/2+VisualSettings::get_singleton()->get_pattern_cursor_offset().x();
+	textofs+=VisualSettings::get_singleton()->get_pattern_cursor_offset().y();
+	
+	cursor->paint_into(p,xofs,textofs,width()-(xofs*2),rowsize);
+}
+
 void BlockListUI_Automation::fix_pre_scroll(int p_scroll) {
 	
 	/* repaint name */  // REMOVED there was really no way to implement this	
@@ -336,7 +353,8 @@ void BlockListUI_Automation::paintEvent(QPaintEvent *pe) {
 	paint_row_lines( p,row_from,row_to );
 	//if (paint_name_enabled)
 		//paint_name( p); - no name painting goes here :(
-	
+	if (hasFocus())
+		paint_cursor(p);
 	
 	
 }
@@ -614,7 +632,37 @@ void BlockListUI_Automation::mouseReleaseEvent ( QMouseEvent * e ) {
 
 bool BlockListUI_Automation::can_scroll() {
 	
-	return true;
+	return !hasFocus();
+}
+
+bool BlockListUI_Automation::event( QEvent * ev ) {
+	
+	if (ev->type()==QEvent::KeyPress) {
+		
+		QKeyEvent * e=(QKeyEvent*)ev;
+		int key_value=e->key();
+
+		if (key_value!=Qt::Key_Backtab) { //ruins things otherwise
+		
+			bool alt=e->modifiers() & Qt::AltModifier;
+			bool shift=e->modifiers() & Qt::ShiftModifier;
+			bool control=e->modifiers() & Qt::ControlModifier;
+		
+			key_value|= (alt?Qt::ALT:0);
+			key_value|= (shift?Qt::SHIFT:0);
+			key_value|= (control?Qt::CTRL:0);
+		}
+		
+		if (editor->automation_edit_key_press(key_value)) {
+			
+			update();
+			return true;
+		}
+		
+	}
+	
+	return QWidget::event(ev);	
+	
 }
 
 BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, int p_track,int p_automation) : BlockListUI_Base(p_parent) {

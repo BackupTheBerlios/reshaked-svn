@@ -27,11 +27,19 @@ void SkinBox::paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h) {
 	
 	/* Margins */
 	
-	p.drawTiledPixmap(p_x+left,p_y,center_w,top,pix_top);
-	p.drawTiledPixmap(p_x,p_y+top,left,center_h,pix_left);
-	p.drawTiledPixmap(p_x+left,p_y+top+center_h,center_w,bottom,pix_bottom);
-	p.drawTiledPixmap(p_x+left+center_w,p_y+top,right,center_h,pix_right);
+	if (stretch) {
+		
+		p.drawPixmap(p_x+left,p_y,center_w,top,pix_top);
+		p.drawPixmap(p_x,p_y+top,left,center_h,pix_left);
+		p.drawPixmap(p_x+left,p_y+top+center_h,center_w,bottom,pix_bottom);
+		p.drawPixmap(p_x+left+center_w,p_y+top,right,center_h,pix_right);
 	
+	} else {
+		p.drawTiledPixmap(p_x+left,p_y,center_w,top,pix_top);
+		p.drawTiledPixmap(p_x,p_y+top,left,center_h,pix_left);
+		p.drawTiledPixmap(p_x+left,p_y+top+center_h,center_w,bottom,pix_bottom);
+		p.drawTiledPixmap(p_x+left+center_w,p_y+top,right,center_h,pix_right);
+	}	
 	/* center */
 	
 	p.drawTiledPixmap(p_x+left,p_y+right,center_w,center_h,pix_center);
@@ -39,7 +47,7 @@ void SkinBox::paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h) {
 	
 }
 
-void SkinBox::load_from_pixmap(const QPixmap& p_pixmap,int p_top, int p_left, int p_bottom, int p_right) {
+void SkinBox::load_from_pixmap(const QPixmap& p_pixmap,int p_top, int p_left, int p_bottom, int p_right, bool p_stretch) {
 	
 	int center_width=p_pixmap.width()-p_left-p_right;
 	int center_height=p_pixmap.height()-p_top-p_bottom;
@@ -57,20 +65,21 @@ void SkinBox::load_from_pixmap(const QPixmap& p_pixmap,int p_top, int p_left, in
 	left=p_left;
 	right=p_right;
 	bottom=p_bottom;
-	
+	stretch=p_stretch;
 	
 }
 
-void SkinBox::load_from_xpm(const char** p_xpm,int p_top, int p_left, int p_bottom, int p_right) {
+void SkinBox::load_from_xpm(const char** p_xpm,int p_top, int p_left, int p_bottom, int p_right, bool p_stretch) {
 
 	QPixmap tmp(p_xpm);
-	load_from_pixmap(tmp,p_top,p_left,p_bottom,p_right);
+	load_from_pixmap(tmp,p_top,p_left,p_bottom,p_right,p_stretch);
+	
 	
 }
 
-SkinBox::SkinBox(const char ** p_xpm,int p_top, int p_left, int p_bottom, int p_right) {
+SkinBox::SkinBox(const char ** p_xpm,int p_top, int p_left, int p_bottom, int p_right, bool p_stretch) {
 	
-	load_from_xpm(p_xpm,p_top,p_left,p_bottom,p_right);
+	load_from_xpm(p_xpm,p_top,p_left,p_bottom,p_right,p_stretch);
 }
 SkinBox::SkinBox()
 {

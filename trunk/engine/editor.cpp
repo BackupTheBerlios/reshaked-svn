@@ -74,6 +74,188 @@ void Editor::enter_blocklist(EnterBLDir p_dir) {
 	ui_update_notify->cursor_changed_blocklist();
 }
 
+bool Editor::automation_edit_key_press(int p_key_value) {
+	
+	Automation *automation=dynamic_cast<Automation*>(get_blocklist( get_current_blocklist() ) );
+	ERR_FAIL_COND_V(automation==NULL,false);
+	
+	if (handle_navigation_key_press( automation, p_key_value))
+		return true;
+	bool handled=true;
+	
+	SWITCH(p_key_value)
+			
+		CASE( KEYBIND("left") ) {
+
+			if (global_edit.current_blocklist>0) {
+				global_edit.current_blocklist--;
+				enter_blocklist(ENTER_RIGHT);
+			}				
+		}			
+		CASE( KEYBIND("right") ) {
+			if (global_edit.current_blocklist<(get_blocklist_count()-1)) {
+				global_edit.current_blocklist++;
+				enter_blocklist(ENTER_LEFT);
+			}				
+		}
+		DEFAULT
+		
+			handled=false;
+	
+		
+	END_SWITCH;			
+	return handled;	
+}
+
+bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int p_event) {
+	
+	bool handled=true;
+	SWITCH(p_event)
+	
+		CASE( KEYBIND("up") ) {
+
+			cursor.set_pos( cursor.get_pos() -1 );
+
+		}
+		CASE( KEYBIND("down") ) {
+
+			cursor.set_pos( cursor.get_pos() +1 );
+
+		}
+		CASE( KEYBIND("page_up") ) {
+
+			cursor.set_pos( cursor.get_pos() - cursor.get_window_size()/2 );
+
+		}
+		CASE( KEYBIND("page_down") ) {
+
+			cursor.set_pos( cursor.get_pos() + cursor.get_window_size()/2 );
+
+		}
+		CASE( KEYBIND("home") ) {
+		
+			if (global_edit.current_blocklist==0) {
+				cursor.set_pos( 0 );
+			} else {
+				global_edit.current_blocklist=0;
+				enter_blocklist(ENTER_LEFT);
+			}
+
+		}
+		CASE( KEYBIND("end") ) {
+		
+			global_edit.current_blocklist=get_blocklist_count()-1;
+			enter_blocklist(ENTER_RIGHT);
+		
+		}
+
+		CASE( KEYBIND("next_track") ) {
+		
+			if (global_edit.current_blocklist<(get_blocklist_count()-1)) {
+				global_edit.current_blocklist++;
+				enter_blocklist(ENTER_LEFT);
+			}				
+		
+		
+		}
+		CASE( KEYBIND("prev_track") ) {
+		
+		
+			if (global_edit.current_blocklist>0) {
+				global_edit.current_blocklist--;
+				enter_blocklist(ENTER_RIGHT);
+			}				
+		
+		}
+
+
+		CASE( KEYBIND("global/raise_octave") ) {
+		
+			set_editing_octave( get_editing_octave() +1 );
+		}
+
+		CASE( KEYBIND("global/lower_octave") ) {
+		
+			set_editing_octave( get_editing_octave() -1 );
+		}
+
+
+		CASE( KEYBIND("page_up_blocksnap") ) {
+		
+			Tick cursor_pos=cursor.get_tick_pos();
+
+			int idx=p_blocklist->get_prev_block_from_idx( cursor.get_tick_pos() );
+			if (idx==-1)
+				return false;
+		
+			Tick begin=p_blocklist->get_block_pos(idx);
+			Tick end=begin+p_blocklist->get_block(idx)->get_length();
+		
+			if (cursor_pos<end) { /* inside */
+			
+				if (cursor_pos==begin) { /* at top */
+				//goto end of next block 
+					if (idx>0) { //have somewhere to go?				
+						cursor_pos = p_blocklist->get_block_pos(idx-1);
+						cursor_pos+=p_blocklist->get_block(idx-1)->get_length();					
+						cursor_pos-=(TICKS_PER_BEAT/cursor.get_snap());						
+					}
+				} else {
+				
+					cursor_pos=begin;	
+				}
+			} else {
+			
+				cursor_pos=end-(TICKS_PER_BEAT/cursor.get_snap());
+			}
+		
+		
+			cursor.set_from_tick_pos( cursor_pos );
+		}
+		CASE( KEYBIND("page_down_blocksnap") ) {
+		
+			Tick cursor_pos=cursor.get_tick_pos();
+
+			int idx=p_blocklist->get_block_idx_at_pos( cursor_pos );
+			if (idx<0)
+				idx=p_blocklist->get_next_block_from_idx( cursor.get_tick_pos() );
+			if (idx==p_blocklist->get_block_count())
+				return false;
+		
+			Tick begin=p_blocklist->get_block_pos(idx);
+			Tick end=begin+p_blocklist->get_block(idx)->get_length();
+			end-=(TICKS_PER_BEAT/cursor.get_snap());
+		
+			if (cursor_pos>=begin) { /* inside */
+			
+				if (cursor_pos==end) { /* at top */
+				//goto end of next block 
+					if (idx<(p_blocklist->get_block_count()-1)) { //have somewhere to go?				
+						cursor_pos = p_blocklist->get_block_pos(idx+1);
+					
+					}
+				} else {
+				
+					cursor_pos=end;	
+				}
+			} else {
+			
+				cursor_pos=begin;
+			}
+		
+		
+			cursor.set_from_tick_pos( cursor_pos );
+		}
+		
+		DEFAULT
+			
+			handled=false;
+	
+	END_SWITCH;
+			
+	return handled;
+}
+
 bool Editor::pattern_edit_key_press(int p_event) {
 	
 	Track_Pattern *pattern_track=dynamic_cast<Track_Pattern*>(get_blocklist( get_current_blocklist() ) );
@@ -81,7 +263,8 @@ bool Editor::pattern_edit_key_press(int p_event) {
 
 	bool repaint=false;
 	
-	
+	if (handle_navigation_key_press( pattern_track, p_event))
+		   return true;
 	repaint=true;
 	SWITCH(p_event)
 			
@@ -118,26 +301,6 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			}
 				//song_edit->move_editing_right();
 		}
-		CASE( KEYBIND("up") ) {
-
-			cursor.set_pos( cursor.get_pos() -1 );
-
-		}
-		CASE( KEYBIND("down") ) {
-
-			cursor.set_pos( cursor.get_pos() +1 );
-
-		}
-		CASE( KEYBIND("page_up") ) {
-
-			cursor.set_pos( cursor.get_pos() - cursor.get_window_size()/2 );
-
-		}
-		CASE( KEYBIND("page_down") ) {
-
-			cursor.set_pos( cursor.get_pos() + cursor.get_window_size()/2 );
-
-		}
 		CASE( KEYBIND("note_entry/clear_field") ) {
 
 			pattern_track->set_note(Track_Pattern::Position(cursor.get_tick_pos(),pattern_edit.column),Track_Pattern::Note(Track_Pattern::Note::NO_NOTE));
@@ -149,119 +312,6 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			pattern_track->set_note(Track_Pattern::Position(cursor.get_tick_pos(),pattern_edit.column),Track_Pattern::Note(Track_Pattern::Note::NOTE_OFF));
 			cursor.set_pos( cursor.get_pos() +1 );
 
-		}
-		CASE( KEYBIND("next_track") ) {
-			
-			if (global_edit.current_blocklist<(get_blocklist_count()-1)) {
-				global_edit.current_blocklist++;
-				enter_blocklist(ENTER_LEFT);
-			}				
-			
-			
-		}
-		CASE( KEYBIND("prev_track") ) {
-			
-			
-			if (global_edit.current_blocklist>0) {
-				global_edit.current_blocklist--;
-				enter_blocklist(ENTER_RIGHT);
-			}				
-			
-		}
-
-		CASE( KEYBIND("home") ) {
-			
-			if (global_edit.current_blocklist==0 && pattern_edit.field==0 && pattern_edit.column==0) {
-				cursor.set_pos( 0 );
-			} else {
-				global_edit.current_blocklist=0;
-				enter_blocklist(ENTER_LEFT);
-			}
-			
-		}
-		CASE( KEYBIND("end") ) {
-			
-			global_edit.current_blocklist=get_blocklist_count()-1;
-			enter_blocklist(ENTER_RIGHT);
-			
-		}
-	
-		CASE( KEYBIND("global/raise_octave") ) {
-			
-			set_editing_octave( get_editing_octave() +1 );
-		}
-	
-		CASE( KEYBIND("global/lower_octave") ) {
-			
-			set_editing_octave( get_editing_octave() -1 );
-		}
-	
-
-		CASE( KEYBIND("page_up_blocksnap") ) {
-			
-			Tick cursor_pos=cursor.get_tick_pos();
-
-			int idx=pattern_track->get_prev_block_from_idx( cursor.get_tick_pos() );
-			if (idx==-1)
-				return false;
-			
-			Tick begin=pattern_track->get_block_pos(idx);
-			Tick end=begin+pattern_track->get_block(idx)->get_length();
-			
-			if (cursor_pos<end) { /* inside */
-				
-				if (cursor_pos==begin) { /* at top */
-					//goto end of next block 
-					if (idx>0) { //have somewhere to go?				
-						cursor_pos = pattern_track->get_block_pos(idx-1);
-						cursor_pos+=pattern_track->get_block(idx-1)->get_length();					
-						cursor_pos-=(TICKS_PER_BEAT/cursor.get_snap());						
-					}
-				} else {
-					
-					cursor_pos=begin;	
-				}
-			} else {
-				
-				cursor_pos=end-(TICKS_PER_BEAT/cursor.get_snap());
-			}
-			
-			
-			cursor.set_from_tick_pos( cursor_pos );
-		}
-		CASE( KEYBIND("page_down_blocksnap") ) {
-			
-			Tick cursor_pos=cursor.get_tick_pos();
-
-			int idx=pattern_track->get_block_idx_at_pos( cursor_pos );
-			if (idx<0)
-				idx=pattern_track->get_next_block_from_idx( cursor.get_tick_pos() );
-			if (idx==pattern_track->get_block_count())
-				return false;
-			
-			Tick begin=pattern_track->get_block_pos(idx);
-			Tick end=begin+pattern_track->get_block(idx)->get_length();
-			end-=(TICKS_PER_BEAT/cursor.get_snap());
-			
-			if (cursor_pos>=begin) { /* inside */
-				
-				if (cursor_pos==end) { /* at top */
-					//goto end of next block 
-					if (idx<(pattern_track->get_block_count()-1)) { //have somewhere to go?				
-						cursor_pos = pattern_track->get_block_pos(idx+1);
-						
-					}
-				} else {
-					
-					cursor_pos=end;	
-				}
-			} else {
-				
-				cursor_pos=begin;
-			}
-			
-			
-			cursor.set_from_tick_pos( cursor_pos );
 		}
 		
 		CASE( KEYBIND("move_note_down") ) {
@@ -531,6 +581,7 @@ int Editor::get_track_blocklist(int p_track) {
 		}
 	}
 	
+	return -1;
 }
 
 int Editor::get_blocklist_track(int p_blocklist) {

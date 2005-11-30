@@ -34,13 +34,14 @@ class SkinBox {
 	QPixmap pix_bottom_right;
 	
 	int top,left,right,bottom;	
+	bool stretch;
 public:
 	
 	void paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h);
-	void load_from_xpm(const char** p_xpm,int p_top, int p_left, int p_bottom, int p_right);
-	void load_from_pixmap(const QPixmap& p_pixmap,int p_top, int p_left, int p_bottom, int p_right);
+	void load_from_xpm(const char** p_xpm,int p_top, int p_left, int p_bottom, int p_right,bool p_stretchable=false);
+	void load_from_pixmap(const QPixmap& p_pixmap,int p_top, int p_left, int p_bottom, int p_right,bool p_stretchable=false);
 	
-	SkinBox(const char ** p_xpm,int p_top, int p_left, int p_bottom, int p_right);
+	SkinBox(const char ** p_xpm,int p_top, int p_left, int p_bottom, int p_right,bool p_stretchable=false);
 	SkinBox();
 	~SkinBox();
 
