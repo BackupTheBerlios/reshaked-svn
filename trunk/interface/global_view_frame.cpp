@@ -74,19 +74,32 @@ GlobalView *GlobalViewFrame::get_global_view() {
 	return global_view;
 }
 
-GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QWidget (p_parent) {
+GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p_parent) {
 	
 	editor=p_editor;
 	
 	QGridLayout *l = new QGridLayout(this);
 	
+	cursor_op= new GlobalViewCursor(this);
 	
-	beat_bar_column = new GlobalBeatBarColumn(this,&editor->get_song()->get_bar_map());
-	l->addWidget(beat_bar_column,1,0);
+	l->addWidget(cursor_op,0,0,1,2);
+		
 	
-	global_view = new GlobalView( this, p_editor);
+	QFrame *gb_frame = new QFrame( this );
+	gb_frame->setLayout(new QHBoxLayout(gb_frame));
+	gb_frame->setLineWidth(2);
+	gb_frame->setFrameStyle(Panel+Sunken);
+	gb_frame->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	l->addWidget(gb_frame,1,0,1,2);
+	beat_bar_column = new GlobalBeatBarColumn(gb_frame,&editor->get_song()->get_bar_map());
+	gb_frame->layout()->addWidget(beat_bar_column);
+	global_view = new GlobalView( gb_frame, p_editor);
+	gb_frame->layout()->addWidget(global_view);
+	gb_frame->layout()->setMargin(0);
+	gb_frame->layout()->setSpacing(0);
+	
+	
 	beat_bar_column->set_global_view( global_view );
-	l->addWidget(global_view,1,1);
 	v_scroll = new QScrollBar(Qt::Vertical,this);
 	l->addWidget(v_scroll,1,2);
 	
@@ -117,11 +130,14 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QWidget (
 	QObject::connect(h_scroll,SIGNAL(valueChanged(int)),this,SLOT(h_scollbar_changed_slot( int )));
 	QObject::connect(v_scroll,SIGNAL(valueChanged(int)),this,SLOT(v_scollbar_changed_slot( int )));
 	QObject::connect(zoom,SIGNAL(valueChanged(int)),this,SLOT(zoom_changed_slot( int )));
+	QObject::connect(cursor_op,SIGNAL(edit_mode_changed_signal( GlobalView::EditMode )),global_view,SLOT(set_edit_mode( EditMode )));
 	
 	l->setMargin(0);
 	l->setSpacing(0);
 	h->setMargin(0);
 	
+	setFrameStyle(Panel+Sunken);
+	setLineWidth(1);
 }
 
 

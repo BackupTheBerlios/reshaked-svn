@@ -72,4 +72,15 @@ String DeQStrify(const QString& p_str) {
 	
 }
 
+
+void BindIntSignal::emitter_slot() {
+	
+	activated_signal(val);
+}
+BindIntSignal::BindIntSignal(QObject *p_parent,int p_int) :QObject(p_parent){
+	
+	val=p_int;
+	
+}
+
 }

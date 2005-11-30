@@ -21,6 +21,25 @@ class GlobalView : public QWidget {
 
 	Q_OBJECT
 	
+public:			
+	
+	enum EditMode {
+		EDIT_MODE_SELECT,
+		EDIT_MODE_ADD_BLOCK,
+		EDIT_MODE_COPY_BLOCK,
+		EDIT_MODE_COPY_LINK_BLOCK,
+		EDIT_MODE_ERASE_BLOCK,
+	};
+private:
+	
+	enum CurrentCursor {
+		CURSOR_POINT,
+		CURSOR_ADD,
+		CURSOR_RESIZE,
+		CURSOR_ERASE,
+	};
+	
+	CurrentCursor current_cursor;
 	Song *song;
 	Editor *editor;
 	void paintEvent(QPaintEvent *p);
@@ -34,6 +53,8 @@ class GlobalView : public QWidget {
 		float zoom_height;
 		float ofs_x,ofs_y;
 	} display;
+	
+	EditMode edit_mode;
 
 	struct MouseData {
 
@@ -144,6 +165,9 @@ signals:
 	
 	void resized_signal();
 	void drawing_signal();
+public slots:
+			
+	void set_edit_mode(EditMode p_edit_mode);
 public:
 	
 	int get_total_pixel_width();

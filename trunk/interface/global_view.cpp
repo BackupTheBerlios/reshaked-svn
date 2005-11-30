@@ -18,11 +18,12 @@ namespace ReShaked {
 //TOODO MAKE TRACK TYPE CREATION
 
 
-	struct NewBlock {
-		int blocklist;
-		Tick pos;
-		NewBlock(int p_list=0, Tick p_pos=0) { blocklist=p_list; pos=p_pos; }
-	};
+struct NewBlock {
+	int blocklist;
+	Tick pos;
+	NewBlock(int p_list=0, Tick p_pos=0) { blocklist=p_list; pos=p_pos; }
+};
+
 
 /******************* HELPERS *********************/
 
@@ -561,25 +562,38 @@ void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
 				} break;
 				case MouseData::POS_OVER: {
 
+					if (!(edit_mode==EDIT_MODE_SELECT || edit_mode==EDIT_MODE_COPY_BLOCK || edit_mode==EDIT_MODE_COPY_LINK_BLOCK))
+								break;
+					
 					if (selection.empty()) { //
 						mouse_data.selecting=false;
 						return;
 
 					}
-					compute_moving_block_list();
-					if (e->modifiers()&Qt::ShiftModifier) { //copy
+					
+					if ((edit_mode==EDIT_MODE_SELECT && e->modifiers()&Qt::ShiftModifier) || edit_mode!=EDIT_MODE_SELECT )  { //copy
 
-						if (e->modifiers()&Qt::ControlModifier)
+						compute_moving_block_list();
+						if ((edit_mode==EDIT_MODE_SELECT && e->modifiers()&Qt::ControlModifier) || edit_mode==EDIT_MODE_COPY_LINK_BLOCK)
 							moving_block.operation=MovingBlock::OP_COPY_LINK;
 						else
 							moving_block.operation=MovingBlock::OP_COPY;
 
-					} else
+					} else if (edit_mode==EDIT_MODE_SELECT) {
+						compute_moving_block_list();
 						moving_block.operation=MovingBlock::OP_MOVE;
+					} else {
+						mouse_data.selecting=false;
+						return;
+					}
 				} break;
 				case MouseData::POS_RESIZE: {
 
-
+					if (edit_mode!=EDIT_MODE_SELECT) {
+						mouse_data.selecting=false;
+						return;
+					}
+						
 					resizing_block.block=mouse_data.clicked_block;
 					resizing_block.list=mouse_data.clicked_list;
 
@@ -612,21 +626,36 @@ void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
 //		printf("travelling block %i, tick %.2f\n",blocklist,(float)tick/(float)TICKS_PER_BEAT);
 		MouseData::BlockPositionAction a=get_block_position_action( blocklist , tick );
 
+		/* update cursor */
+		
+		CurrentCursor cursor_now; 
 		switch (a) {
 
 			case MouseData::POS_NOBLOCK:
 			case MouseData::POS_OVER: {
 
-				setCursor(Qt::ArrowCursor);
+				if (edit_mode==EDIT_MODE_ADD_BLOCK) 					
+					cursor_now=CURSOR_ADD;
+				else
+					cursor_now=CURSOR_POINT;
 
 			} break;
 			case MouseData::POS_RESIZE: {
 
-				setCursor(Qt::SizeVerCursor);
+				if (edit_mode==EDIT_MODE_SELECT) 
+					cursor_now=CURSOR_RESIZE;
 			} break;
 
 		};
-
+		
+		if (current_cursor!=cursor_now) {
+			current_cursor=cursor_now;
+			switch (current_cursor) {
+				case CURSOR_POINT: setCursor(Qt::ArrowCursor); break;
+				case CURSOR_ADD: 					setCursor(QCursor(GET_QPIXMAP(ICON_CURSOR_ADD_BLOCK),0,32)); break;
+				case CURSOR_RESIZE: setCursor(Qt::SizeVerCursor); break;
+			}
+		}
 	}
 
 }
@@ -657,7 +686,7 @@ void GlobalView::mousePressEvent ( QMouseEvent * e ) {
 	mouse_data.clicked_block=-1;
 	int blocklist=-1,block=-1;
 
-	if (e->modifiers()&Qt::ControlModifier && !(e->modifiers()&Qt::ShiftModifier)) {
+	if ( edit_mode==EDIT_MODE_ADD_BLOCK || (edit_mode==EDIT_MODE_SELECT && e->modifiers()&Qt::ControlModifier && !(e->modifiers()&Qt::ShiftModifier))) {
 
 		//printf("one\n");
 		if (!get_click_location(e->x(),e->y(),&blocklist,&block))
@@ -704,30 +733,28 @@ void GlobalView::mousePressEvent ( QMouseEvent * e ) {
 	}
 
 
-
-
-
 	if (get_click_location(e->x(),e->y(),&blocklist,&block))
 		return; //no location
 
 	mouse_data.clicked_list=blocklist;
 	mouse_data.clicked_block=block;
 
-	if (is_block_selected(blocklist,block)) {
-
-		mouse_data.deselecting=true;
-		mouse_data.deselecting_block=block;
-		mouse_data.deselecting_list=blocklist;
-		mouse_data.shift_when_deselecting=e->modifiers()&Qt::ShiftModifier;
-	} else {
-
-		if (! (e->modifiers()&Qt::ShiftModifier))
-			clear_selection();
-		add_block_to_selection(blocklist,block);
-
-
+	if (edit_mode==EDIT_MODE_SELECT) {
+		if (is_block_selected(blocklist,block)) {
+	
+			mouse_data.deselecting=true;
+			mouse_data.deselecting_block=block;
+			mouse_data.deselecting_list=blocklist;
+			mouse_data.shift_when_deselecting=e->modifiers()&Qt::ShiftModifier;
+		} else {
+	
+			if (! (e->modifiers()&Qt::ShiftModifier))
+				clear_selection();
+			add_block_to_selection(blocklist,block);
+	
+	
+		}
 	}
-
 	/* process the selecting stuff */
 	int ablocklist=-1;
 	Tick atick=-1;
@@ -997,6 +1024,15 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 	}
 }
 
+/******************************** CLASS API *************************************/
+/******************************** CLASS API *************************************/
+/******************************** CLASS API *************************************/
+/******************************** CLASS API *************************************/
+
+void GlobalView::set_edit_mode(EditMode p_edit_mode) {
+	
+	edit_mode=p_edit_mode;
+}
 
 int GlobalView::get_total_pixel_width() {
 	
@@ -1102,6 +1138,9 @@ GlobalView::GlobalView(QWidget *p_widget,Editor *p_editor) : QWidget(p_widget)
 
 	moving_block.moving=false;
 	resizing_block.resizing=false;
+	
+	edit_mode=EDIT_MODE_SELECT;
+	current_cursor=CURSOR_POINT;
 }
 
 

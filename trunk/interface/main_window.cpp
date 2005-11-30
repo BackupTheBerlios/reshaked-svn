@@ -233,8 +233,8 @@ MainWindow::MainWindow() {
 	
 	snap = new QComboBox(editing_toolbar);
 	for (int i=0;i<MAX_DIVISORS;i++) {
-		
-		snap->addItem(QString::number(divisors[i]));
+
+		snap->addItem("1/"+QString::number(divisors[i]));
 	}
 	snap->setFocusPolicy(Qt::NoFocus);
 	snap->setCurrentIndex(3);

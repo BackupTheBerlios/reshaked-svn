@@ -44,6 +44,14 @@
 #include "pixmaps/track_column_rem.xpm"
 #include "pixmaps/zoom.xpm"
 
+#include "pixmaps/global_edit_add_block.xpm"
+#include "pixmaps/global_edit_copy_block_linked.xpm"
+#include "pixmaps/global_edit_copy_block.xpm"
+#include "pixmaps/global_edit_delete_block.xpm"
+#include "pixmaps/global_edit_select_block.xpm"
+
+#include "pixmaps/cursor_add_block.xpm"
+
 
 #include <iostream>
 
@@ -172,6 +180,14 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_COLUMN_REMOVE]=QPixmap((const char**)track_column_rem_xpm);
 	pixmap_map[ICON_ZOOM_SMALL]=QPixmap((const char**)zoom_xpm);
 			
+	pixmap_map[ICON_GLOBAL_VIEW_SELECT_BLOCK]=QPixmap((const char**)global_edit_select_block_xpm);
+	pixmap_map[ICON_GLOBAL_VIEW_ADD_BLOCK]=QPixmap((const char**)global_edit_add_block_xpm);
+	pixmap_map[ICON_GLOBAL_VIEW_COPY_BLOCK]=QPixmap((const char**)global_edit_copy_block_xpm);
+	pixmap_map[ICON_GLOBAL_VIEW_COPY_LINK_BLOCK]=QPixmap((const char**)global_edit_copy_block_linked_xpm);
+	pixmap_map[ICON_GLOBAL_VIEW_ERASE_BLOCK]=QPixmap((const char**)global_edit_delete_block_xpm);
+	
+	pixmap_map[ICON_CURSOR_ADD_BLOCK]=QPixmap((const char**)cursor_add_block_xpm);
+	
 	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#0123456789-*");
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#0123456789-*"); 
 
