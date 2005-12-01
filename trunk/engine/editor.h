@@ -85,6 +85,8 @@ public:
 	int get_current_blocklist();
 	void set_current_blocklist(int p_which);
 	int get_current_track();
+	int find_Track(Track *p_track);
+	void set_track_name(int p_track,String p_name);
 	
 	int get_blocklist_count();
 	BlockList* get_blocklist(int p_idx);
@@ -93,8 +95,8 @@ public:
 	
 	Song* get_song();
 	
-	void track_pattern_add_column();
-	void track_pattern_remove_column();
+	void track_pattern_add_column(int p_which=-1);
+	void track_pattern_remove_column(int p_which=-1);
 	
 	void add_track(TrackType p_type,int p_channels,String p_name);
 	

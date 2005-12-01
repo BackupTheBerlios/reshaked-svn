@@ -540,9 +540,10 @@ int Editor::get_blocklist_count() {
 }
 
 
-void Editor::track_pattern_add_column() {
+void Editor::track_pattern_add_column(int p_which) {
 	
-	Track_Pattern * p = dynamic_cast<Track_Pattern*>(song->get_track(get_current_track()));	
+	int track_idx=(p_which==-1)?get_current_track():p_which;
+	Track_Pattern * p = dynamic_cast<Track_Pattern*>(song->get_track(track_idx));	
 	if (!p)
 		return;
 	
@@ -552,9 +553,10 @@ void Editor::track_pattern_add_column() {
 }
 
 
-void Editor::track_pattern_remove_column() {
+void Editor::track_pattern_remove_column(int p_which) {
 	
-	Track_Pattern * p = dynamic_cast<Track_Pattern*>(song->get_track(get_current_track()));	
+	int track_idx=(p_which==-1)?get_current_track():p_which;
+	Track_Pattern * p = dynamic_cast<Track_Pattern*>(song->get_track(track_idx));	
 	if (!p)
 		return;
 	
@@ -611,6 +613,20 @@ int Editor::get_current_blocklist() {
 	return global_edit.current_blocklist;
 }
 
+int Editor::find_Track(Track *p_track) {
+	
+	for (int i=0;i<song->get_track_count();i++) 
+		if (song->get_track(i)==p_track)
+			return i;
+	
+	return -1;
+}
+void Editor::set_track_name(int p_track,String p_name) {
+	
+	Track *t=song->get_track(p_track);
+	ERR_FAIL_COND(t==NULL);
+	t->set_name( p_name );
+}
 int Editor::get_current_track() {
 	
 	int blocks=0;

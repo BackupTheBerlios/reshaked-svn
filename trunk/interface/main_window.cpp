@@ -22,6 +22,7 @@
 #include "pixmaps/view_global.xpm"
 #include "pixmaps/view_edit.xpm"
 #include "pixmaps/view_controls.xpm"
+#include "visual_settings.h"
 
 
 
@@ -77,9 +78,31 @@ void MainWindow::set_top_screen(TopScreenList p_list) {
 
 }
 
+void MainWindow::set_track_settings_page(TrackSettings::TrackSettingsPage p_page) {
+	
+	track_settings->set_page( p_page );
+	
+	if (p_page!=TrackSettings::TRACK_SETTINGS_PATTERN)
+		get_action(TRACK_SYNTH)->setChecked(false);
+	if (p_page!=TrackSettings::TRACK_SETTINGS_CONTROLS)
+		get_action(TRACK_CONTROLS)->setChecked(false);
+	if (p_page!=TrackSettings::TRACK_SETTINGS_AUTOMATION)
+		get_action(TRACK_AUTOMATIONS)->setChecked(false);
+	if (p_page!=TrackSettings::TRACK_SETTINGS_EFFECTS)
+		get_action(TRACK_EFFECTS)->setChecked(false);
+	if (p_page!=TrackSettings::TRACK_SETTINGS_CONNECTIONS)
+		get_action(TRACK_CONNECTIONS)->setChecked(false);
+	
+	
+}
+
 void MainWindow::menu_action_callback(int p_action) {
 
-
+	if (p_action<0 || p_action>=MAX_ITEMS)
+		return;
+	
+	MenuItems item=(MenuItems)p_action;
+	
 	switch (p_action) {
 
 		case ITEM_TRACK_ADD_PATTERN: {
@@ -94,8 +117,13 @@ void MainWindow::menu_action_callback(int p_action) {
 			blui_list->update_track_list();
 			delete new_dialog;
 
-			if (data.song.get_track_count())
-				get_action(NAVIGATION_CONTROLS_VIEW)->setEnabled(true);
+			if (data.song.get_track_count()) {
+
+				get_action(TRACK_CONTROLS)->setEnabled(true);
+				get_action(TRACK_AUTOMATIONS)->setEnabled(true);
+				get_action(TRACK_EFFECTS)->setEnabled(true);
+				get_action(TRACK_CONNECTIONS)->setEnabled(true);
+			}
 
 		} break;
 
@@ -109,22 +137,49 @@ void MainWindow::menu_action_callback(int p_action) {
 			set_top_screen(TOP_SCREEN_EDIT_VIEW);
 
 		} break;
+		
+		case TRACK_SYNTH: {
+			settings_dock->setVisible( get_action( item )->isChecked() );
+			track_settings->set_page( TrackSettings::TRACK_SETTINGS_PATTERN );
+		} break;
+		case TRACK_CONTROLS: {
+
+			settings_dock->setVisible( get_action( item )->isChecked() );
+			set_track_settings_page(TrackSettings::TRACK_SETTINGS_CONTROLS);
+		} break;
+		case TRACK_AUTOMATIONS: {
+
+			settings_dock->setVisible( get_action( item )->isChecked() );
+			set_track_settings_page(TrackSettings::TRACK_SETTINGS_AUTOMATION);		
+		} break;
+		case TRACK_EFFECTS: {
+
+			settings_dock->setVisible( get_action( item )->isChecked() );
+			set_track_settings_page(TrackSettings::TRACK_SETTINGS_EFFECTS);	
+		} break;
+		case TRACK_CONNECTIONS: {
+
+			settings_dock->setVisible( get_action( item )->isChecked() );
+			set_track_settings_page(TrackSettings::TRACK_SETTINGS_CONNECTIONS);	
+		} break;
+		
+		/*
 		case NAVIGATION_CONTROLS_VIEW: {
 			settings_dock->setVisible(get_action(NAVIGATION_CONTROLS_VIEW)->isChecked());
 		} break;
+		*/
 	}
 }
 
-void MainWindow::create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QToolBar *p_toolbar,const char **p_xpm) {
+void MainWindow::create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QToolBar *p_toolbar,const QPixmap &p_pixmap) {
 
 	ERR_FAIL_COND( action_map.find(p_item)!=action_map.end() );
 
 
 	IndexedAction *q;
 	QPixmap px;
-	if (p_xpm) {
-		px=QPixmap(p_xpm);
-		q = new IndexedAction(p_item,p_text,QPixmap(px),this);
+	if (!p_pixmap.isNull()) {
+		q = new IndexedAction(p_item,p_text,p_pixmap,this);
 	} else
 
 		q = new IndexedAction(p_item,p_text,this);
@@ -138,8 +193,8 @@ void MainWindow::create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QTo
 		
 		QToolButton *tb = new QToolButton(this);
 		tb->setDefaultAction(q);
-		if (p_xpm)
-			tb->setIconSize(px.size());
+		if (!p_pixmap.isNull())
+			tb->setIconSize(p_pixmap.size());
 		p_toolbar->addWidget(tb);
 		
 	}
@@ -183,14 +238,32 @@ void MainWindow::add_menus() {
 	create_action(ITEM_TRACK_MOVE_LEFT,"Move Curent Track Left",track,NULL);
 	create_action(ITEM_TRACK_MOVE_RIGHT,"Move Curent Track Right",track,NULL);
 
-	create_action(NAVIGATION_GLOBAL_VIEW,"Global View",NULL,navigation_toolbar,(const char**)view_global_xpm);
+	create_action(NAVIGATION_GLOBAL_VIEW,"Global View",NULL,navigation_toolbar,QPixmap((const char**)view_global_xpm));
 	get_action(NAVIGATION_GLOBAL_VIEW)->setCheckable(true);
 	get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
-	create_action(NAVIGATION_EDIT_VIEW,"Edit View",NULL,navigation_toolbar,(const char**)view_edit_xpm);
+	create_action(NAVIGATION_EDIT_VIEW,"Edit View",NULL,navigation_toolbar,QPixmap((const char**)view_edit_xpm));
+	navigation_toolbar->addSeparator();
 	get_action(NAVIGATION_EDIT_VIEW)->setCheckable(true);
-	create_action(NAVIGATION_CONTROLS_VIEW,"Edit View",NULL,navigation_toolbar,(const char**)view_controls_xpm);
-	get_action(NAVIGATION_CONTROLS_VIEW)->setCheckable(true);
-	get_action(NAVIGATION_CONTROLS_VIEW)->setEnabled(false);
+	
+	track->addSeparator();
+	
+	create_action(TRACK_SYNTH,"Edit Synth",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_PATTERN));
+	create_action(TRACK_CONTROLS,"Edit Controls",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONTROLS));
+	create_action(TRACK_AUTOMATIONS,"Edit Automations",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS));
+	create_action(TRACK_EFFECTS,"Edit Effects",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS));
+	create_action(TRACK_CONNECTIONS,"Edit Connections",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONNECTIONS));
+
+	get_action(TRACK_SYNTH)->setCheckable(true);
+	get_action(TRACK_CONTROLS)->setCheckable(true);
+	get_action(TRACK_AUTOMATIONS)->setCheckable(true);
+	get_action(TRACK_EFFECTS)->setCheckable(true);
+	get_action(TRACK_CONNECTIONS)->setCheckable(true);
+	get_action(TRACK_SYNTH)->setEnabled(false);
+	get_action(TRACK_CONTROLS)->setEnabled(false);
+	get_action(TRACK_AUTOMATIONS)->setEnabled(false);
+	get_action(TRACK_EFFECTS)->setEnabled(false);
+	get_action(TRACK_CONNECTIONS)->setEnabled(false);
+
 
 }
 
@@ -218,9 +291,11 @@ MainWindow::MainWindow() {
 	//settings_dock->setLayout(new QHBoxLayout(settings_dock));
 	track_settings = new TrackSettings(settings_dock,data.editor);
 	settings_dock->layout()->addWidget(track_settings);
+	
 	navigation_toolbar = addToolBar("Navigation");
-
+	track_toolbar = addToolBar("Track");
 	editing_toolbar = addToolBar("Editing");
+	
 	editing_toolbar->addWidget(new QLabel(" Octave: ",editing_toolbar));
 	octave = new SpinBoxNoFocus(editing_toolbar);
 	octave->setRange(0,8);
@@ -263,7 +338,7 @@ MainWindow::MainWindow() {
 	
 	
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
-
+	setMinimumSize(750,550); //dont mess with my app!
 }
 
 MainWindow::~MainWindow()

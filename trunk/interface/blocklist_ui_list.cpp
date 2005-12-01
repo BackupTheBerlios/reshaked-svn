@@ -144,7 +144,7 @@ void BlockListUIList::update_track_list() {
 		QVBoxLayout *vl=new QVBoxLayout(vb);
 		vb->setLayout(vl);
 		
-		TrackTop *top = new TrackTop(vb,editor->get_song()->get_track(i));
+		TrackTop *top = new TrackTop(vb,editor->get_song()->get_track(i),editor);
 		track_tops.push_back(top);
 		vl->addWidget(top);
 		
@@ -208,7 +208,7 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QWidget (
 	editor=p_editor;
 	QHBoxLayout *l = new QHBoxLayout(this);
 	CVBox *cvb = new CVBox(this);
-	new TrackTop(cvb,NULL); //this is only remporary
+	new TrackTop(cvb,NULL,NULL); //this is only remporary
 	row_display = new RowListDisplay(cvb ,&editor->get_cursor());
 	cvb->layout()->setMargin(0);
 	cvb->layout()->setSpacing(0);

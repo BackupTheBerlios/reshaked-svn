@@ -614,6 +614,16 @@ void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
 		if (resizing_block.resizing)
 			resizing_block.current_y=(float)e->y()/display.zoom_height+display.ofs_y;
 
+		if (e->y()>height()) {
+			display.ofs_y+=(float)(e->y()-height())/display.zoom_height;
+			QCursor::setPos( mapToGlobal( QPoint( e->x(), height()) ) );
+		}
+		if (e->y()<0) {
+			display.ofs_y+=e->y()/display.zoom_height;
+			if (display.ofs_y<0)
+				display.ofs_y=0;
+			QCursor::setPos( mapToGlobal( QPoint( e->x(), 0) ) );
+		}
 		update();
 
 	} else { //just moving overGlobalView(

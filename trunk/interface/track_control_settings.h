@@ -16,7 +16,7 @@
 #include <Qt/qgroupbox.h>
 #include "ui_blocks/property_editors.h"
 #include "engine/editor.h"
-#include "interface/automation_tree.h"
+
 namespace ReShaked {
 
 /**
@@ -29,10 +29,8 @@ class TrackControlSettings : public QWidget {
 	PropertyEditKnob *edit_swing;
 	PropertyEditKnob *edit_balance;
 	Track *track;
-	AutomationTree *automation_tree;
 	
 public:
-	AutomationTree *get_automation_tree();
 	
 	void set_track(Track *p_track);
 	TrackControlSettings(QWidget *p_parent);

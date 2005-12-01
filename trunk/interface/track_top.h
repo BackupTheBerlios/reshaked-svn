@@ -13,8 +13,10 @@
 #define RESHAKEDTRACK_TOP_H
 
 #include <Qt/qwidget.h>
+#include <Qt/qmenu.h>
 
 #include "engine/editor.h"
+
 
 namespace ReShaked {
 
@@ -25,13 +27,37 @@ namespace ReShaked {
 				    
 class TrackTop : public QWidget {
 			    
-	Track *track;
-
+	Q_OBJECT
+			    
+	enum TrackActions {
+		/* for pattern tracks */
+		ACTION_PATTERN_ADD_COLUMN,
+		ACTION_PATTERN_REMOVE_COLUMN,
+		
+		/* track generic */
+		ACTION_MOVE_TRACK_LEFT,
+		ACTION_MOVE_TRACK_RIGHT,
+		
+		ACTION_RENAME,
+		ACTION_DUPLICATE,
 	
+		ACTION_DELETE,
+	};
+			    
+	Track *track;
+	Editor *editor;
+
+	QMenu *menu;
 	void paintEvent(QPaintEvent *e);
 	
+	void mousePressEvent(QMouseEvent *e);
+	void rename();
+	
+protected slots:
+			
+	void action_slot(QAction *p_action);
 public:
-	TrackTop(QWidget *p_parent,Track *p_track);
+	TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor);
 	~TrackTop();
 
 };

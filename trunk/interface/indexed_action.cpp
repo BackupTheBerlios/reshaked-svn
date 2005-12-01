@@ -13,7 +13,10 @@ void IndexedAction::triggered_slot() {
 	
 	selected_index_signal(index);
 }
-	
+int IndexedAction::get_index() {
+		
+	return index;
+}
 IndexedAction::IndexedAction(int p_index,QString p_text,QPixmap p_pix,QWidget *p_parent) :
 	QAction (p_pix,p_text,p_parent) {
 	

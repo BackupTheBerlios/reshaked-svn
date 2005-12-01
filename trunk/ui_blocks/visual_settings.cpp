@@ -26,6 +26,7 @@
 #include "pixmaps/knob_base.xpm"
 #include "pixmaps/knob_handle.xpm"
 #include "pixmaps/track_settings_pattern.xpm"
+#include "pixmaps/track_settings_automations.xpm"
 #include "pixmaps/track_settings_controls.xpm"
 #include "pixmaps/track_settings_effects.xpm"
 #include "pixmaps/track_settings_connections.xpm"
@@ -164,6 +165,7 @@ VisualSettings::VisualSettings() {
 	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);
 	pixmap_map[PIXMAP_KNOB_HANDLE]=QPixmap((const char**)knob_handle_xpm);
 	pixmap_map[PIXMAP_TRACK_SETTINGS_PATTERN]=QPixmap((const char**)track_settings_pattern_xpm);
+	pixmap_map[PIXMAP_TRACK_SETTINGS_AUTOMATIONS]=QPixmap((const char**)track_settings_automations_xpm); 
 	pixmap_map[PIXMAP_TRACK_SETTINGS_CONTROLS]=QPixmap((const char**)track_settings_controls_xpm);
 	pixmap_map[PIXMAP_TRACK_SETTINGS_EFFECTS]=QPixmap((const char**)track_settings_effects_xpm);
 	pixmap_map[PIXMAP_TRACK_SETTINGS_CONNECTIONS]=QPixmap((const char**)track_settings_connections_xpm);

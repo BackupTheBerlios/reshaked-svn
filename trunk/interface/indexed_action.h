@@ -23,6 +23,7 @@ signals:
 	void selected_index_signal(int);
 public:
 	
+	int get_index();
 	IndexedAction(int p_index,QString p_text,QPixmap p_pix,QWidget *p_parent);
 	IndexedAction(int p_index,QString p_text,QWidget *p_parent);
 	~IndexedAction();

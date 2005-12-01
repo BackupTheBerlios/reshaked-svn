@@ -67,8 +67,14 @@ class MainWindow : public QMainWindow {
 
 		NAVIGATION_GLOBAL_VIEW,
 		NAVIGATION_EDIT_VIEW,
-		NAVIGATION_CONTROLS_VIEW
+		
+		TRACK_SYNTH,
+		TRACK_CONTROLS,
+		TRACK_AUTOMATIONS,
+		TRACK_EFFECTS,
+		TRACK_CONNECTIONS,
 
+		MAX_ITEMS
 	};
 
 
@@ -84,7 +90,7 @@ class MainWindow : public QMainWindow {
 	std::map<int,QAction*> action_map;
 
 	void create_keybindings();
-	void create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QToolBar *p_toolbar,const char **p_xpm=NULL);
+	void create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QToolBar *p_toolbar,const QPixmap &p_pixmap = QPixmap());
 	QAction *get_action(MenuItems p_item);
 	void add_menus();
 
@@ -95,6 +101,7 @@ class MainWindow : public QMainWindow {
 	BlockListUIList *blui_list;
 
 	QToolBar *navigation_toolbar;
+	QToolBar *track_toolbar;
 	QToolBar *editing_toolbar;
 	
 	QSpinBox *octave;
@@ -107,6 +114,7 @@ class MainWindow : public QMainWindow {
 	TrackSettings *track_settings;
 
 	void set_top_screen(TopScreenList p_list);
+	void set_track_settings_page(TrackSettings::TrackSettingsPage p_page);
 
 	bool updating_octave;
 	
