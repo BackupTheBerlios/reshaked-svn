@@ -123,6 +123,7 @@ public slots:
 	void snap_changed_slot(int p_to_idx);
 	void octave_changed_slot(int p_to_idx);
 	void octave_changed_external_slot();
+	void blocklist_changed_slot();
 public:
 
 	MainWindow();

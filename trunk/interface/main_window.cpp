@@ -267,6 +267,16 @@ void MainWindow::add_menus() {
 
 }
 
+
+void MainWindow::blocklist_changed_slot() {
+	
+	
+	Track *t=data.song.get_track( data.editor->get_current_track () );
+	if (t==NULL)
+		return;
+	settings_dock->setWindowTitle(QStrify(t->get_name())+ " Properties");
+}
+
 MainWindow::MainWindow() {
 
 	update_notify = new Qt_UpdateNotify(this);
@@ -325,6 +335,7 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(edit_window_moved()),blui_list,SLOT(vscroll_track_list()));
 	
 	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),blui_list,SLOT(cursor_changed_blocklist()));
+	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),this,SLOT(blocklist_changed_slot()));
 	QObject::connect(update_notify,SIGNAL(cursor_moved()),blui_list,SLOT(ensure_cursor_visible()));
 
 	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),track_settings,SLOT(selected_track_changed_slot()));
