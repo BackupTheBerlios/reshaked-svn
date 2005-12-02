@@ -31,7 +31,7 @@ void GlobalViewBlocks::paint_block_contents(QPainter &p, int p_x,int p_y,int p_w
 		
 		Automation::AutomationBlock *b=dynamic_cast<Automation::AutomationBlock*>(p_block);
 		
-		p.setPen( GET_QCOLOR( COLORLIST_AUTOMATION_ENVELOPE ) );
+		p.setPen( QColor(0,0,0) );
 		
 		int prev_x=-1;
 		

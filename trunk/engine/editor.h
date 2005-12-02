@@ -55,6 +55,15 @@ private:
 		
 	} global_edit;
 	
+	struct Selection {
+		
+		struct Pos {
+			int blocklist,column,row;
+		} begin,end;
+		bool enabled;
+		
+	} selection;
+	
 	Song *song;
 	Cursor cursor;
 	UI_UpdateNotify *ui_update_notify;

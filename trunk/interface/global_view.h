@@ -45,9 +45,11 @@ private:
 	void paintEvent(QPaintEvent *p);
 
 	enum {
-		MAX_LISTS=1000
+		MAX_LISTS=1000,
+		BLOCK_SPACING=3
 	}; //dont think there will be more than that..
 
+	
 	struct DisplayParams {
 		float zoom_width;
 		float zoom_height;

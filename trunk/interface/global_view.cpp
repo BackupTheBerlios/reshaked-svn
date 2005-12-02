@@ -879,9 +879,9 @@ void GlobalView::paint_name(QPainter&p, int p_blocklist,int p_ofs) {
 	p.setPen(QColor(0,0,0,200));
 	p.drawText(6,-(p_ofs+m.descent()+1),name);
 	if (p_blocklist==editor->get_current_blocklist())
-		p.setPen(QColor(255,222,222,100));
+		p.setPen(QColor(255,222,222,200));
 	else
-		p.setPen(QColor(255,255,255,100));
+		p.setPen(QColor(255,255,255,200));
 	p.drawText(5,-(p_ofs+m.descent()),name);
 	p.restore();
 
@@ -904,6 +904,8 @@ void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,
 	float f_height=((float)block_len/(float)(TICKS_PER_BEAT))*display.zoom_height;
 	float f_width=get_block_list_width(blocklist)*display.zoom_width;
 
+	p_x+=BLOCK_SPACING;
+	f_width-=BLOCK_SPACING*2;
 	
 	SkinBox *sb;
 	

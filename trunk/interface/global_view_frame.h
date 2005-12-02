@@ -45,6 +45,8 @@ public slots:
 	void h_scollbar_changed_slot(int p_new_idx);
 	void v_scollbar_changed_slot(int p_new_idx);
 	void zoom_changed_slot(int p_to_val);
+signals:
+	void global_view_changed_blocks_signal();		
 public:
 	GlobalView *get_global_view();
 	GlobalViewFrame(QWidget *p_parent,Editor *p_editor);

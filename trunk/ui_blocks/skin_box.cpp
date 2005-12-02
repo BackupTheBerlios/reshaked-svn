@@ -19,6 +19,8 @@ void SkinBox::paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h) {
 	int center_w=p_w-left-right;
 	int center_h=p_h-top-bottom;
 	
+	p.setClipping(true);
+	p.setClipRect(p_x,p_y,p_w,p_h);
 	/* Corners */
 	p.drawPixmap(p_x,p_y,pix_top_left);	
 	p.drawPixmap(p_x+left+center_w,p_y,pix_top_right);	
@@ -41,9 +43,13 @@ void SkinBox::paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h) {
 		p.drawTiledPixmap(p_x+left+center_w,p_y+top,right,center_h,pix_right);
 	}	
 	/* center */
-	
-	p.drawTiledPixmap(p_x+left,p_y+right,center_w,center_h,pix_center);
+	if (stretch) 
+		p.drawPixmap(p_x+left,p_y+right,center_w,center_h,pix_center);
+	else		
+		p.drawTiledPixmap(p_x+left,p_y+right,center_w,center_h,pix_center);
 
+	p.setClipping(false);
+	
 	
 }
 

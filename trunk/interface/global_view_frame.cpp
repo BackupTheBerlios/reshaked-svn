@@ -127,6 +127,7 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	zoom->setValue(35); 
 	
 	QObject::connect(global_view,SIGNAL(resized_signal()),this,SLOT(block_list_changed_slot()));
+	QObject::connect(global_view,SIGNAL(resized_signal()),this,SIGNAL(global_view_changed_blocks_signal()));
 	QObject::connect(h_scroll,SIGNAL(valueChanged(int)),this,SLOT(h_scollbar_changed_slot( int )));
 	QObject::connect(v_scroll,SIGNAL(valueChanged(int)),this,SLOT(v_scollbar_changed_slot( int )));
 	QObject::connect(zoom,SIGNAL(valueChanged(int)),this,SLOT(zoom_changed_slot( int )));
@@ -138,6 +139,7 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	
 	setFrameStyle(Panel+Sunken);
 	setLineWidth(1);
+	
 }
 
 

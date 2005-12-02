@@ -769,6 +769,7 @@ Editor::Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify) : cursor(p_ui_u
 	pattern_edit.note_edit_mode=MODE_NOTE;
 	song = p_song;
 	global_edit.editing_octave=4;
+	selection.enabled=false;
 }
 
 

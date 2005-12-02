@@ -105,7 +105,7 @@ class MainWindow : public QMainWindow {
 	QToolBar *editing_toolbar;
 	
 	QSpinBox *octave;
-	QComboBox *snap;
+
 	
 	VisualSettings visual_settings;
 
@@ -120,7 +120,7 @@ class MainWindow : public QMainWindow {
 	
 public slots:
 	void menu_action_callback(int p_action);
-	void snap_changed_slot(int p_to_idx);
+
 	void octave_changed_slot(int p_to_idx);
 	void octave_changed_external_slot();
 	void blocklist_changed_slot();

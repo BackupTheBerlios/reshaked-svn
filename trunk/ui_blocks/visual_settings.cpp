@@ -145,21 +145,21 @@ QPoint VisualSettings::get_pattern_cursor_offset() {
 
 VisualSettings::VisualSettings() {
 
-	singleton=this;
+	singleton=this;    
 
-	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN]=new SkinBox((const char**)pattern_glob_bg_xpm,2,2,2,2);
-	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION]=new SkinBox((const char**)automation_glob_bg_xpm,2,2,2,2);
-	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]=new SkinBox((const char**)pattern_glob_bg_sel_xpm,2,2,2,2);
-	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_glob_bg_sel_xpm,2,2,2,2);
-	skin_box_map[SKINBOX_EDITING_PATTERN]=new SkinBox((const char**)pattern_bg_xpm,4,4,4,4);
+	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN]=new SkinBox((const char**)pattern_glob_bg_xpm,6,6,6,6,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION]=new SkinBox((const char**)automation_glob_bg_xpm,6,6,6,6,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]=new SkinBox((const char**)pattern_glob_bg_sel_xpm,6,6,6,6,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_glob_bg_sel_xpm,6,6,6,6,true);
+	skin_box_map[SKINBOX_EDITING_PATTERN]=new SkinBox((const char**)pattern_bg_xpm,8,8,8,8);
 	skin_box_map[SKINBOX_EDITING_PATTERN_SELECTED]=new SkinBox((const char**)pattern_bg_sel_xpm,4,4,4,4);
 	skin_box_map[SKINBOX_EDITING_AUTOMATION]=new SkinBox((const char**)automation_bg_xpm,4,4,4,4);
 	skin_box_map[SKINBOX_EDITING_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_bg_sel_xpm,4,4,4,4);
 	skin_box_map[SKINBOX_EDITING_RESIZABLE_CURSOR]=new SkinBox((const char**)pattern_cursor_xpm,3,3,3,3,true);
 
 
-	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0xca,0xfd,0xc0);
-	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(0xda,0x9d,0x82);
+	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0,33,0);
+	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(55,33,0);
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
 	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,255,200,128);
 	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(150,200,150,64);

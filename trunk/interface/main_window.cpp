@@ -37,12 +37,6 @@ public:
 	}
 };
 
-void MainWindow::snap_changed_slot(int p_to_idx) {
-	
-	if (p_to_idx<0 || p_to_idx>=MAX_DIVISORS)
-		return;
-	data.editor->set_snap(divisors[p_to_idx]);
-}
 void MainWindow::octave_changed_slot(int p_to_idx) {
 	
 	updating_octave=true;
@@ -314,17 +308,6 @@ MainWindow::MainWindow() {
 	QObject::connect(octave,SIGNAL(valueChanged(int)),this,SLOT(octave_changed_slot( int )));
 	updating_octave=false;;	
 	editing_toolbar->addWidget(octave);
-	editing_toolbar->addWidget(new QLabel(" Snap: ",editing_toolbar));
-	
-	snap = new QComboBox(editing_toolbar);
-	for (int i=0;i<MAX_DIVISORS;i++) {
-
-		snap->addItem("1/"+QString::number(divisors[i]));
-	}
-	snap->setFocusPolicy(Qt::NoFocus);
-	snap->setCurrentIndex(3);
-	QObject::connect(snap,SIGNAL(activated(int)),this,SLOT(snap_changed_slot( int )));
-	editing_toolbar->addWidget(snap);
 	
 	
 	add_menus();
@@ -333,6 +316,7 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(edit_window_changed()),blui_list,SLOT(repaint_track_list()));
 
 	QObject::connect(update_notify,SIGNAL(edit_window_moved()),blui_list,SLOT(vscroll_track_list()));
+	
 	
 	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),blui_list,SLOT(cursor_changed_blocklist()));
 	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),this,SLOT(blocklist_changed_slot()));
@@ -347,6 +331,7 @@ MainWindow::MainWindow() {
 	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),global_view_frame,SLOT(update()));
 	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),blui_list,SLOT(repaint_names()));
 	
+	QObject::connect(global_view_frame,SIGNAL(global_view_changed_blocks_signal()),blui_list,SLOT(update_h_scroll()));
 	
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 	setMinimumSize(750,550); //dont mess with my app!

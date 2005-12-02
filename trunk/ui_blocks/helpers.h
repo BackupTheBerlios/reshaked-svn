@@ -25,12 +25,12 @@ class CHBox : public QWidget {
 
 	Q_OBJECT
 		
-	QLayout *l;
+	QBoxLayout *l;
 	bool event ( QEvent * e );
 	
 	
 public:
-	
+	QBoxLayout *layout() { return l; }
 	CHBox(QWidget *p_parent,bool p_vertical=false);
 
 };

@@ -103,6 +103,9 @@ void Cursor::set_snap(Tick p_snap) {
 	snap=p_snap;
 	cursor_pos=ticks_to_snap(old_cursor_snap);
 	int new_window_offset=cursor_pos-window_offset_diff;
+	if (new_window_offset<0)
+		new_window_offset=0;
+		
 	window_offset=new_window_offset;
 	ui_update_notify->edit_window_changed();
 	

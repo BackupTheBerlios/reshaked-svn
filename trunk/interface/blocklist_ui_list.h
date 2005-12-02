@@ -17,6 +17,7 @@
 #include <Qt/qscrollarea.h>
 #include <Qt/qlayout.h>
 #include <Qt/qframe.h>
+#include <Qt/qcombobox.h>
 #include "engine/editor.h"
 #include "interface/rowlist_display.h"
 #include "interface/track_top.h"
@@ -36,9 +37,12 @@ class BlockListUIList : public QFrame {
 	QWidget *hbox;
 	QHBoxLayout *hbox_layout;
 	QScrollArea *scrollarea;
+	QScrollBar *v_scroll;
 
 	RowListDisplay *row_display;
 	Editor *editor;
+	QComboBox *snap;
+	bool scrolling;
 
 public slots:
 
@@ -49,6 +53,10 @@ public slots:
 	void update_track_list();
 	void vscroll_track_list();
 	void repaint_names();
+	void update_h_scroll();
+	void snap_changed_slot(int p_to_idx);
+	void v_scrollbar_changed(int p_scroll);
+	
 public:
 
 	BlockListUIList(QWidget *p_parent,Editor *p_editor);

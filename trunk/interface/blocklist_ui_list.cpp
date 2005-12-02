@@ -43,6 +43,7 @@ void BlockListUIList::vscroll_track_list() {
 		block_list_ui_list[i]->update_viewport_pos( editor->get_cursor().get_window_offset() );
 	}
 	row_display->update();
+	v_scroll->setValue( editor->get_cursor().get_window_offset() );
 	
 }
 
@@ -211,36 +212,97 @@ void BlockListUIList::update_track_list() {
 
 	hbox->adjustSize();
 
-
+	update_h_scroll();
 }
 
+void BlockListUIList::snap_changed_slot(int p_to_idx) {
+	
+	if (p_to_idx<0 || p_to_idx>=MAX_DIVISORS)
+		return;
+	editor->set_snap(divisors[p_to_idx]);
+	
+	update_h_scroll();
+}
+
+
+void BlockListUIList::update_h_scroll() {
+	
+	int max_len=editor->get_cursor().ticks_to_snap( editor->get_song_max_len() );
+	max_len-=editor->get_cursor().get_window_size();
+	printf("max len is %i\n",max_len);
+	v_scroll->setRange(0,max_len);
+	v_scroll->setPageStep(editor->get_cursor().get_window_size());
+}
+
+void BlockListUIList::v_scrollbar_changed(int p_scroll) {
+	
+	if (scrolling)
+		return;
+	
+	scrolling=true;	
+	
+	int cursor_ofs=editor->get_cursor().get_pos()-editor->get_cursor().get_window_offset();
+	editor->get_cursor().set_window_offset( p_scroll );
+	editor->get_cursor().set_pos( p_scroll+cursor_ofs);
+	
+	
+	scrolling=false;
+}
 
 BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p_parent)
 {
 
-
-
 	editor=p_editor;
-	QHBoxLayout *l = new QHBoxLayout(this);
-	CVBox *cvb = new CVBox(this);
+	
+	QVBoxLayout *vl = new QVBoxLayout(this);
+	setLayout(vl);
+	
+	CHBox *hb_top= new CHBox(this);
+	vl->addWidget(hb_top);
+	
+	(new QFrame(hb_top))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	new QLabel(" Snap: ",hb_top);
+	
+
+	snap = new QComboBox(hb_top);
+	for (int i=0;i<MAX_DIVISORS;i++) {
+
+		snap->addItem("1/"+QString::number(divisors[i]));
+	}
+	snap->setFocusPolicy(Qt::NoFocus);
+	snap->setCurrentIndex(3);
+	
+	QObject::connect(snap,SIGNAL(activated(int)),this,SLOT(snap_changed_slot( int )));
+	
+	
+	CHBox *hb= new CHBox(this);
+	vl->addWidget(hb);
+	
+	QBoxLayout *l = hb->layout();
+	
+	
+	CVBox *cvb = new CVBox(hb);
 	new TrackTop(cvb,NULL,NULL); //this is only remporary
 	row_display = new RowListDisplay(cvb ,editor);
 	cvb->layout()->setMargin(0);
 	cvb->layout()->setSpacing(0);
 	l->addWidget(cvb);
 
-	scrollarea = new QScrollArea(this);
+	scrollarea = new QScrollArea(hb);
 	l->addWidget(scrollarea);;
 	scrollarea->setFrameStyle(QFrame::NoFrame);
 	scrollarea->viewport()->setContentsMargins(0,0,0,0);
 	scrollarea->setContentsMargins(0,0,0,0);
 
-
+	v_scroll=new QScrollBar(Qt::Vertical,hb);
+	QObject::connect(v_scroll,SIGNAL(valueChanged(int)),this,SLOT(v_scrollbar_changed(int)));
+	
 	//scrollarea->setFrameRect(QRect(0, 0, 0, 0 ));
 
 	//scrollarea->setFrameRect(QRect(0, 0, 0, 0 ));
 
-	hbox = new QWidget(this);
+	
+	hbox = new QWidget(scrollarea);
 	hbox_layout = new QHBoxLayout(hbox);
 	hbox->setLayout(hbox_layout);
 	hbox_layout->addWidget(new BlackWidget(hbox));
@@ -254,8 +316,12 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	
 	l->setSpacing(0);
 	l->setMargin(0);
+	vl->setSpacing(0);
+	vl->setMargin(0);
+	hb_top->layout()->setMargin(3);
 	setFrameStyle(Panel+Sunken);
 	setLineWidth(1);
+	scrolling=false;
 	
 }
 

@@ -40,7 +40,7 @@ void GlobalBeatBarColumn::paintEvent(QPaintEvent *pe) {
 		if (global_view->get_beat_pixel_size()>bf->get_height()) { //paint beat
 
 				
-			QString s = QString::number( bar_map->get_bar_beat( i) );
+			QString s = QString::number( bar_map->get_bar_beat( i)+1 );
 			int ofs=width()-(s.length()+1)*bf->get_width();
 			bf->render_string( p, ofs, global_view->get_beat_pixel( i ), s.toAscii().data() );
 		}
@@ -53,6 +53,9 @@ void GlobalBeatBarColumn::paintEvent(QPaintEvent *pe) {
 		}			
 			
 	}
+	p.setPen(QColor(150,150,150));
+	int line_pos=width()-bf->get_width()*5/2;
+	p.drawLine(line_pos,0,line_pos,height());
 }
 
 GlobalBeatBarColumn::GlobalBeatBarColumn(QWidget *p_parent,BarMap *p_bar_map) : QWidget(p_parent) {
