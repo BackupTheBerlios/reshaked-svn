@@ -212,10 +212,10 @@ void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_t
 	int lines=rows*row_height;
 	int line_from=p_from_row*row_height;
 
-	float prev=-1;
 	
+	QColor env_col=VisualSettings::get_singleton()->get_color( COLORLIST_AUTOMATION_ENVELOPE );
 	QPen pen(VisualSettings::get_singleton()->get_color( COLORLIST_AUTOMATION_ENVELOPE ));
-	pen.setWidth(2);
+	pen.setWidth(1);
 	p.setPen(pen);
 	
 	//p.setRenderHint(QPainter::Antialiasing,true);
@@ -223,6 +223,7 @@ void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_t
 	
 	//p.setClipping(true);
 	//p.setClipRect ( ,4,width()-8,height()-8);
+	int prev=-1;
 	
 	for (int i=0;i<lines;i++) { //paint an extra one, even if not editable
 		
@@ -236,15 +237,21 @@ void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_t
 			continue; //cant be drawn
 		}
 		
-		if (prev==-1)
-			prev=val; //not much to do, use the same
 		
-		int x_ofs=font_width+lrintf(val*(float)(width()-font_width*2));
-		int x_ofs_prev=font_width+lrintf(prev*(float)(width()-font_width*2));
-		p.drawLine(x_ofs_prev,line-1,x_ofs,line);
+		int x_ofs=font_width+(int)(val*(float)(width()-font_width*2));
+		
+		
+		if (prev==-1) {
+			prev=x_ofs; //not much to do, use the same
+		}
+		
+		if (x_ofs<prev)		
+			p.fillRect(x_ofs,line,(prev-x_ofs)+2,1,env_col);
+		else
+			p.fillRect(prev,line,(x_ofs-prev)+2,1,env_col);
+		//p.drawLine(prev,line-1,x_ofs,line);
 	
-		prev=val;
-
+		prev=x_ofs;
 	}
 	
 	//p.setRenderHint(QPainter::Antialiasing,false);

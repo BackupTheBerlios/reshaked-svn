@@ -16,6 +16,7 @@
 #include "ui_blocks/helpers.h"
 #include <Qt/qscrollarea.h>
 #include <Qt/qlayout.h>
+#include <Qt/qframe.h>
 #include "engine/editor.h"
 #include "interface/rowlist_display.h"
 #include "interface/track_top.h"
@@ -25,13 +26,13 @@ namespace ReShaked {
 /**
 	@author red <red@killy>
 */
-class BlockListUIList : public QWidget {
+class BlockListUIList : public QFrame {
 
 	Q_OBJECT
 
 	std::vector<BlockListUI_Base*> block_list_ui_list;
 	std::vector<TrackTop*> track_tops;
-	QFrame *spacer;
+	
 	QWidget *hbox;
 	QHBoxLayout *hbox_layout;
 	QScrollArea *scrollarea;

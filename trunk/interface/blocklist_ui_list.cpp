@@ -16,10 +16,25 @@
 #include "blocklist_ui_automation.h"
 #include <Qt/qlabel.h>
 #include <Qt/qscrollbar.h>
+#include <Qt/qpainter.h>
 #include "interface/blocklist_separator.h"
 
 //@TODO SOFT SCROLL when ensuring cursor visible
 namespace ReShaked {
+
+
+class BlackWidget : public QWidget {
+	
+	void paintEvent(QPaintEvent *pe) {
+		QPainter p(this);
+		p.fillRect(0,0,width(),height(),QColor(0,0,0));
+	}
+public:	
+	BlackWidget(QWidget *p_parent) : QWidget(p_parent) {
+		
+		setBackgroundRole(QPalette::NoRole);
+	}
+};
 
 void BlockListUIList::vscroll_track_list() {
 	
@@ -187,7 +202,7 @@ void BlockListUIList::update_track_list() {
 		vb->show();
 	}
 
-	spacer = new QFrame(hbox);
+	BlackWidget *spacer = new BlackWidget(hbox);
 	hbox_layout->addWidget( spacer );
 	spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
@@ -200,7 +215,7 @@ void BlockListUIList::update_track_list() {
 }
 
 
-BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QWidget (p_parent)
+BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p_parent)
 {
 
 
@@ -225,17 +240,23 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QWidget (
 
 	//scrollarea->setFrameRect(QRect(0, 0, 0, 0 ));
 
-	hbox=NULL;
-	//CHBox *temp_hbox= new CHBox(scrollarea);
-	//hbox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//emp_hbox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	spacer=NULL;
+	hbox = new QWidget(this);
+	hbox_layout = new QHBoxLayout(hbox);
+	hbox->setLayout(hbox_layout);
+	hbox_layout->addWidget(new BlackWidget(hbox));
+	hbox_layout->setMargin(0);
+	scrollarea->setWidget(hbox);
+	scrollarea->setWidgetResizable(true);
 
 	scrollarea->setFocusPolicy(Qt::NoFocus);
 	scrollarea->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
 	
 	l->setSpacing(0);
+	l->setMargin(0);
+	setFrameStyle(Panel+Sunken);
+	setLineWidth(1);
+	
 }
 
 
