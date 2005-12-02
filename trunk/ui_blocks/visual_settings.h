@@ -44,6 +44,7 @@ enum ColorList {
 
 	COLORLIST_GLOBAL_VIEW_BAR_LINE,
 	COLORLIST_GLOBAL_VIEW_BEAT_LINE,
+	COLORLIST_PATTERN_EDIT_BAR,
 	COLORLIST_PATTERN_EDIT_NOTE,
 	COLORLIST_PATTERN_EDIT_VOL,
 	COLORLIST_PATTERN_EDIT_FOCUS_RECT,
@@ -112,6 +113,7 @@ class VisualSettings{
 	PixmapFont pattern_font;
 	PixmapFont pattern_vol_font;
 	PixmapFont rowcount_font;
+	PixmapFont rowcount_subbeat_font;
 	PixmapFont global_bar_font;
 	PixmapFont global_beat_font;
 	QPixmap pattern_cursor;
@@ -126,6 +128,7 @@ public:
 	PixmapFont* get_pattern_font();
 	PixmapFont* get_pattern_vol_font();
 	PixmapFont* get_rowcount_font();
+	PixmapFont* get_rowcount_subbeat_font();
 	PixmapFont* get_global_bar_font();
 	PixmapFont* get_global_beat_font();
 	static VisualSettings * get_singleton();

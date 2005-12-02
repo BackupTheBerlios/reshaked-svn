@@ -21,6 +21,8 @@ void RowListDisplay::paintEvent(QPaintEvent *pe) {
 
 	PixmapFont *pfont = VisualSettings::get_singleton()->get_pattern_font();
 	PixmapFont *rfont = VisualSettings::get_singleton()->get_rowcount_font();
+	PixmapFont *bfont = VisualSettings::get_singleton()->get_rowcount_subbeat_font();
+	
 	QPainter p(this);
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));
 	int rowsize=VisualSettings::get_singleton()->get_editing_row_height();
@@ -29,9 +31,41 @@ void RowListDisplay::paintEvent(QPaintEvent *pe) {
 
 	for (int i=0;i<visible_rows;i++) {
 
+		
+		
 		int beat=cursor->get_snapped_window_beat( i );
 		int subbeat=cursor->get_snapped_window_subsnap( i );
 
+		/* SUB BEAT */
+			
+		QString str;
+		int xofs;
+		
+		
+		/* BAR */
+		
+		if (subbeat>0) { /*subbeat*/
+			
+			str=QString::number(subbeat);
+		
+			xofs=width()-(str.length()+1)*pfont->get_width();
+			bfont->render_string( p, xofs,i*rowsize+fontofs , str.toAscii().data() );
+		} else if (song->get_bar_map().get_bar_beat( beat)==0) { //bar
+			str=QString::number(song->get_bar_map().get_bar_at_beat( beat) );
+			str="*"+str+"*";
+			xofs=0;//width()-(str.length())*pfont->get_width();
+			rfont->render_string( p, xofs,i*rowsize+fontofs , str.toAscii().data() );
+		} else  {
+				
+			/* BEAT */
+			
+			str=QString::number(song->get_bar_map().get_bar_beat( beat) );
+			str+="-";	
+			xofs=width()-(str.length()+1)*pfont->get_width();
+			pfont->render_string( p, xofs,i*rowsize+fontofs , str.toAscii().data() );
+		} 
+		
+		/*
 		char str[5]={' ',' ',' ',' ',0};
 
 		int displaynum=(subbeat==0)?beat:subbeat;
@@ -50,22 +84,31 @@ void RowListDisplay::paintEvent(QPaintEvent *pe) {
 			str[3]='0'+DIGIT_1(displaynum);
 
 		displayfont->render_string( p, x,i*rowsize+fontofs , str );
-
-		if ( subbeat==0 ) //beat
+		*/
+		
+		if (subbeat==0) { //just paint subbeat
+		
+			
 			p.fillRect(0,i*rowsize,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
-		else
+			if (song->get_bar_map().get_bar_beat( beat)==0)  {
+				p.fillRect(0,i*rowsize,width(),rowsize,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
+			}
+			
+		} else {
 			p.fillRect(0,i*rowsize,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
-
+		}
+		
 	}
 
 }
-RowListDisplay::RowListDisplay(QWidget *p_parent,Cursor *p_cursor) : QWidget(p_parent) {
+RowListDisplay::RowListDisplay(QWidget *p_parent,Editor *p_editor) : QWidget(p_parent) {
 
 	setFixedWidth(VisualSettings::get_singleton()->get_rowcount_font()->get_width()*CHAR_WIDTH);
 
 	setBackgroundRole(QPalette::NoRole);
 
-	cursor=p_cursor;
+	cursor=&p_editor->get_cursor();
+	song=p_editor->get_song();
 }
 
 

@@ -13,7 +13,7 @@
 #define RESHAKEDROWLIST_DISPLAY_H
 
 #include <Qt/qwidget.h>
-#include "engine/cursor.h"
+#include "engine/editor.h"
 
 namespace ReShaked {
 
@@ -23,14 +23,15 @@ namespace ReShaked {
 class RowListDisplay : public QWidget {
 
 	enum {
-		CHAR_WIDTH=4
+		CHAR_WIDTH=6
 	};
 
 	void paintEvent(QPaintEvent *p);
 	Cursor *cursor;
+	Song *song;
 public:
 
-	RowListDisplay(QWidget *p_parent,Cursor *p_cursor);
+	RowListDisplay(QWidget *p_parent,Editor *p_editor);
 	~RowListDisplay();
 };
 

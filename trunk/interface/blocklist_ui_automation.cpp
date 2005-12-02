@@ -103,17 +103,23 @@ void BlockListUI_Automation::paint_row_lines(QPainter &p,int p_from_row, int p_t
 		if ( (tick % TICKS_PER_BEAT)==0 ) {//beat
 			
 			int block=automation->get_prev_block_from_idx( tick );
+			bool paint=true;
 			if ( block!=-1) {
 				
 				if (automation->get_block_pos(block)==tick)
-					continue;
+					paint=false;
 				
 				if (automation->get_block_pos(block)+automation->get_block(block)->get_length()==tick)
-					continue;
+					paint=false;
 				
 			}
-			p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
+			if (paint)
+				p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
 		
+			if (editor->get_song()->get_bar_map().get_bar_beat(tick/TICKS_PER_BEAT)==0)  {
+				p.fillRect(0,i*row_size,width(),row_size,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
+			}
+			
 		} else
 			p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
 

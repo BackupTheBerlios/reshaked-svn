@@ -27,7 +27,7 @@ void BlockListUIList::vscroll_track_list() {
 
 		block_list_ui_list[i]->update_viewport_pos( editor->get_cursor().get_window_offset() );
 	}
-	printf("vscrolled\n");
+	row_display->update();
 	
 }
 
@@ -209,7 +209,7 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QWidget (
 	QHBoxLayout *l = new QHBoxLayout(this);
 	CVBox *cvb = new CVBox(this);
 	new TrackTop(cvb,NULL,NULL); //this is only remporary
-	row_display = new RowListDisplay(cvb ,&editor->get_cursor());
+	row_display = new RowListDisplay(cvb ,editor);
 	cvb->layout()->setMargin(0);
 	cvb->layout()->setSpacing(0);
 	l->addWidget(cvb);

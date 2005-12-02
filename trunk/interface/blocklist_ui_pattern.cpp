@@ -311,25 +311,29 @@ void BlockListUI_Pattern::paint_row_lines(QPainter &p) {
 	int row_size=VisualSettings::get_singleton()->get_editing_row_height();
 
 	for (int i=0;i<visible_rows;i++) {
-		if (i==0) //dont want the first one!
-			continue;
 		
 		Tick tick=editor->get_cursor().get_snapped_window_tick_pos(i);
 
 		if ( (tick % TICKS_PER_BEAT)==0 ) {//beat
 			
 			int block=track->get_prev_block_from_idx( tick );
+			bool paint=true;
 			if ( block!=-1) {
 				
 				if (track->get_block_pos(block)==tick)
-					continue;
+					paint=false;
 				
 				if (track->get_block_pos(block)+track->get_block(block)->get_length()==tick)
-					continue;
+					paint=false;
 				
 			}
-			p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
+			if (paint)
+				p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
 		
+			if (song->get_bar_map().get_bar_beat(tick/TICKS_PER_BEAT)==0)  {
+				p.fillRect(0,i*row_size,width(),row_size,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
+			}
+
 		} else
 			p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
 

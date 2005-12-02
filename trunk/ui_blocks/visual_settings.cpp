@@ -17,6 +17,7 @@
 #include "pixmaps/pattern_font.xpm"
 #include "pixmaps/pattern_vol_font.xpm"
 #include "pixmaps/rowcount_font.xpm"
+#include "pixmaps/rowcount_font_subbeat.xpm"
 #include "pixmaps/pattern_bg.xpm"
 #include "pixmaps/automation_bg.xpm"
 #include "pixmaps/automation_bg_sel.xpm"
@@ -97,6 +98,11 @@ PixmapFont* VisualSettings::get_rowcount_font() {
 	return &rowcount_font;
 }
 
+PixmapFont* VisualSettings::get_rowcount_subbeat_font() {
+
+	return &rowcount_subbeat_font;
+}
+
 SkinBox * VisualSettings::get_skin_box(SkinBoxList p_which) {
 
 	SkinBoxMap::iterator I=skin_box_map.find(p_which);
@@ -160,6 +166,7 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_AUTOMATION_ENVELOPE]=QColor(255,255,200,200);
 	color_map[COLORLIST_GLOBAL_VIEW_BAR_LINE]=QColor(200,255,200,128);
 	color_map[COLORLIST_GLOBAL_VIEW_BEAT_LINE]=QColor(150,200,150,64);
+	color_map[COLORLIST_PATTERN_EDIT_BAR]=QColor(222,255,242,40);
 	
 	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);
 	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);
@@ -194,6 +201,7 @@ VisualSettings::VisualSettings() {
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#0123456789-*"); 
 
 	rowcount_font.set_font( QPixmap((const char**)rowcount_font_xpm), "ABCDEFG#0123456789-*"); 
+	rowcount_subbeat_font.set_font( QPixmap((const char**)rowcount_font_subbeat_xpm), "ABCDEFG#0123456789-*"); 
 	global_bar_font.set_font( QPixmap((const char**)font_global_bar_xpm), "0123456789BEATR"); 
 	global_beat_font.set_font( QPixmap((const char**)font_global_beat_xpm), "0123456789BEATR"); 
 	editing_row_height=pattern_font.get_height()+8;
