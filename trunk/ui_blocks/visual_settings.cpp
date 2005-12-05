@@ -1,6 +1,6 @@
 //
 // C++ Implementation: visual_settings
-//  
+//   
 // Description:
 //
 //
@@ -159,7 +159,7 @@ VisualSettings::VisualSettings() {
 
 
 	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0,33,0);
-	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(55,33,0);
+	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(255,190,170);
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
 	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,255,200,128);
 	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(150,200,150,64);
@@ -204,7 +204,7 @@ VisualSettings::VisualSettings() {
 	rowcount_subbeat_font.set_font( QPixmap((const char**)rowcount_font_subbeat_xpm), "ABCDEFG#0123456789-*"); 
 	global_bar_font.set_font( QPixmap((const char**)font_global_bar_xpm), "0123456789BEATR"); 
 	global_beat_font.set_font( QPixmap((const char**)font_global_beat_xpm), "0123456789BEATR"); 
-	editing_row_height=pattern_font.get_height()+8;
+	editing_row_height=pattern_font.get_height()+5;
 	pattern_cursor=QPixmap(pattern_cursor_xpm);
 	pattern_cursor_offset=QPoint(-3,-3); 
 
