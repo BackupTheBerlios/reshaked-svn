@@ -16,7 +16,7 @@
 #include <Qt/qmainwindow.h>
 #include <Qt/qsplitter.h>
 #include <Qt/qaction.h>
-#include "engine/editor.h"
+#include "editor/editor.h"
 #include "interface/global_view_frame.h"
 #include "interface/blocklist_ui_list.h"
 
@@ -28,7 +28,7 @@
 #include <Qt/qtoolbar.h>
 #include <Qt/qspinbox.h>
 #include <Qt/qcombobox.h>
-#include "engine/keyboard_input.h"
+#include "editor/keyboard_input.h"
 #include "interface/qt_updatenotify.h"
 #include "interface/track_settings.h"
 

@@ -9,9 +9,12 @@ BarMap& Song::get_bar_map() {
 	return bar_map;	
 }
 
-void Song::add_track(Track* p_track) {
+void Song::add_track(Track* p_track,int p_at_pos) {
 	
-	track_list.push_back(p_track);
+	if (p_at_pos==-1)
+		p_at_pos=track_list.size();
+	
+	track_list.insert(track_list.begin()+p_at_pos,p_track);
 	p_track->set_automation_pool(automation_pool);
 	
 }

@@ -22,7 +22,6 @@
 //@TODO SOFT SCROLL when ensuring cursor visible
 namespace ReShaked {
 
-
 class BlackWidget : public QWidget {
 	
 	void paintEvent(QPaintEvent *pe) {
@@ -44,6 +43,19 @@ void BlockListUIList::vscroll_track_list() {
 	}
 	row_display->update();
 	v_scroll->setValue( editor->get_cursor().get_window_offset() );
+	
+}
+
+void BlockListUIList::update_blocklist_list(const std::list<int>& p_list) {
+	
+	std::list<int>::const_iterator I=p_list.begin();
+	for (;I!=p_list.end();I++) {
+		
+		int blidx=*I;
+		if (blidx<0 || blidx>=block_list_ui_list.size())
+			continue;
+		block_list_ui_list[blidx]->update();
+	}
 	
 }
 

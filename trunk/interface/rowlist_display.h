@@ -13,7 +13,7 @@
 #define RESHAKEDROWLIST_DISPLAY_H
 
 #include <Qt/qwidget.h>
-#include "engine/editor.h"
+#include "editor/editor.h"
 
 namespace ReShaked {
 

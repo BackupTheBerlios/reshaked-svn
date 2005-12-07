@@ -18,7 +18,7 @@
 #include <Qt/qlayout.h>
 #include <Qt/qframe.h>
 #include <Qt/qcombobox.h>
-#include "engine/editor.h"
+#include "editor/editor.h"
 #include "interface/rowlist_display.h"
 #include "interface/track_top.h"
 
@@ -56,6 +56,7 @@ public slots:
 	void update_h_scroll();
 	void snap_changed_slot(int p_to_idx);
 	void v_scrollbar_changed(int p_scroll);
+	void update_blocklist_list(const std::list<int>& p_list);
 	
 public:
 

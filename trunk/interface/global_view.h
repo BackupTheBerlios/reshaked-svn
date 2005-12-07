@@ -9,7 +9,7 @@
 #define _GLOBALVIEW_H_
 
 #include <Qt/qwidget.h>
-#include "engine/editor.h"
+#include "editor/editor.h"
 #include <set>
 #include <list>
 #include "ui_blocks/visual_settings.h"

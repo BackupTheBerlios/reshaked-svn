@@ -185,6 +185,19 @@ Property *Automation::get_property() {
 	return property;	
 }
 
+bool Automation::shares_block_data(Block *p_block) {
+	
+	AutomationBlock *b=dynamic_cast<AutomationBlock*>(p_block);
+	if (!b)
+		return false; //not same type
+	for (int i=0;i<get_block_count();i++)
+		if (b->get_data()==get_block(i)->get_data())
+			return true; //shared!
+		
+	return false;
+	
+}
+
 Automation::AutomationBlock::AutomationBlock(AutomationData *p_data) {
 
 	data=p_data;

@@ -16,7 +16,7 @@
 #include "interface/blocklist_ui_base.h"
 #include "engine/song.h"
 #include "engine/track_pattern.h"
-#include "engine/editor.h"
+#include "editor/editor.h"
 namespace ReShaked {
 
 /**

@@ -78,6 +78,7 @@ private:
 
 public:
 	
+	bool shares_block_data(Block *p_block);
 	Property *get_property();
 	
 	AutomationBlock * get_block(int p_block);

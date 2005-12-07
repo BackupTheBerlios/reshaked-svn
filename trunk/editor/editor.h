@@ -13,70 +13,34 @@
 #define RESHAKEDEDITOR_H
 
 
-#include "engine/song.h"
-#include "engine/cursor.h"
+
+#include "editor/editor_data.h"
+#include "editor/editor_commands.h"
 namespace ReShaked {
 
 /**
 	@author red <red@killy>
 */
 class Editor {
-public:
-	enum PatternNoteEditMode {
-		MODE_NOTE,
-		MODE_VOLUME,
-	};	
-private:
+
 	
 	
-	enum EnterBLDir {
-		ENTER_LEFT,
-		ENTER_RIGHT
-	};
-	enum {
-		
-		MAX_FIELDS=2
-	};
+	EditorData *d;
+	EditorCommands commands;
 	
-	
-	struct PatternEdit {
-		
-		
-		PatternNoteEditMode note_edit_mode;
-		int column;
-		int field;
-		
-	} pattern_edit;
-	
-	struct GlobalEdit {
-		
-		int current_blocklist;
-		int editing_octave;
-		
-	} global_edit;
-	
-	struct Selection {
-		
-		struct Pos {
-			int blocklist,column,row;
-		} begin,end;
-		bool enabled;
-		
-	} selection;
-	
-	Song *song;
-	Cursor cursor;
-	UI_UpdateNotify *ui_update_notify;
-	
-	void enter_blocklist(EnterBLDir p_dir);
+	void enter_blocklist(EditorData::EnterBLDir p_dir);
 	bool handle_navigation_key_press(BlockList *p_blocklist,int p_event);
+	
+friend class EditorCommands;	
+	
+	void revalidate_cursor();
 public:
 	
 	Cursor &get_cursor();
 	/** PATTERN EDIT */
 	
-	void set_pattern_note_edit_mode(PatternNoteEditMode p_mode);
-	PatternNoteEditMode get_pattern_note_edit_mode();
+	void set_pattern_note_edit_mode(EditorData::PatternNoteEditMode p_mode);
+	EditorData::PatternNoteEditMode get_pattern_note_edit_mode();
 	
 	void set_pattern_edit_column(int p_column);
 	int get_pattern_edit_column();
@@ -108,13 +72,18 @@ public:
 	void track_pattern_remove_column(int p_which=-1);
 	
 	void add_track(TrackType p_type,int p_channels,String p_name);
+	void remove_track(int p_which);
 	
 	void set_snap(int p_new_snap);
 	void set_editing_octave(int p_octave);
 	int get_editing_octave();
+	void get_blocklists_sharing_block(BlockList::Block * p_block, std::list<int> *p_blocklist);
 	
 	Tick get_song_max_len();
 	Tick get_block_list_max_len(BlockList *p_bl);
+	
+	void undo();
+	void redo();
 	
 	Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify);
 	

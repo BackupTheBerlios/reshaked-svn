@@ -126,6 +126,8 @@ void TrackTop::action_slot(QAction *p_action) {
 	
 		case ACTION_DELETE: {
 			
+			editor->remove_track( editor->find_Track( track ) );
+			
 			
 		} break;
 	}

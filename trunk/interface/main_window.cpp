@@ -121,6 +121,14 @@ void MainWindow::menu_action_callback(int p_action) {
 
 		} break;
 
+		case ITEM_EDIT_UNDO: {
+			
+			data.editor->undo();
+		} break;
+		case ITEM_EDIT_REDO: {
+			
+			data.editor->redo();
+		} break;
 
 		case NAVIGATION_GLOBAL_VIEW: {
 
@@ -332,6 +340,7 @@ MainWindow::MainWindow() {
 	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),blui_list,SLOT(repaint_names()));
 	
 	QObject::connect(global_view_frame,SIGNAL(global_view_changed_blocks_signal()),blui_list,SLOT(update_h_scroll()));
+	QObject::connect(update_notify,SIGNAL(update_blocklist_list( const std::list< int >& )),blui_list,SLOT(update_blocklist_list(const std::list<int>&)));
 	
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 	setMinimumSize(750,550); //dont mess with my app!

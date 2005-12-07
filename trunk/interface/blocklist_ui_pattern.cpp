@@ -72,7 +72,7 @@ void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Patter
 
 		switch( editor->get_pattern_note_edit_mode() ) {
 
-		case Editor::MODE_NOTE: {
+		case EditorData::MODE_NOTE: {
 
 
 			int note=p_note.note.note % 12;
@@ -90,7 +90,7 @@ void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Patter
 			p.fillRect(fontxofs,volofs,vol_w,2,volcol);
 
 		} break;
-		case Editor::MODE_VOLUME: {
+		case EditorData::MODE_VOLUME: {
 
 
 			buf[0]=' ';
@@ -245,11 +245,11 @@ void BlockListUI_Pattern::paint_cursor(QPainter &p,int p_row) {
 
 	switch( editor->get_pattern_note_edit_mode() ) {
 
-		case Editor::MODE_NOTE: {
+		case EditorData::MODE_NOTE: {
 
 			xofs+=2*field*font->get_width();
 		} break;
-		case Editor::MODE_VOLUME: {
+		case EditorData::MODE_VOLUME: {
 
 			xofs+=font->get_width()+field*font->get_width();
 		} break;
@@ -404,7 +404,7 @@ void BlockListUI_Pattern::mousePressEvent ( QMouseEvent * e ) {
 	int columnwidth=font->get_width()*4;
 
 	int click_x=e->x();
-	if (editor->get_pattern_note_edit_mode()==Editor::MODE_NOTE)
+	if (editor->get_pattern_note_edit_mode()==EditorData::MODE_NOTE)
 		click_x+=font->get_width()/2; //makes clicking easier
 	click_x-=font->get_width();
 	if (click_x<0)

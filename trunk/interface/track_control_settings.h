@@ -15,7 +15,7 @@
 #include "ui_blocks/helpers.h"
 #include <Qt/qgroupbox.h>
 #include "ui_blocks/property_editors.h"
-#include "engine/editor.h"
+#include "editor/editor.h"
 
 namespace ReShaked {
 

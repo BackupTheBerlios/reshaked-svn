@@ -13,7 +13,7 @@
 #define RESHAKEDGLOBAL_VIEW_BLOCKS_H
 
 #include <Qt/qpainter.h>
-#include "editor.h"
+#include "editor/editor.h"
 
 
 namespace ReShaked {

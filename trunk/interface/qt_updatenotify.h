@@ -13,7 +13,7 @@
 #define RESHAKEDQT_UPDATENOTIFY_H
 
 #include <Qt/qobject.h>
-#include "engine/ui_updatenotify.h"
+#include "editor/ui_updatenotify.h"
 
 namespace ReShaked {
 
@@ -32,7 +32,7 @@ signals:
 	void track_list_changed();
 	void edit_window_moved();
 	void editing_octave_changed();
-	
+	void update_blocklist_list(const std::list<int>& p_which);	
 public:
 	
 	

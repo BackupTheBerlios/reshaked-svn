@@ -4,7 +4,7 @@
 #include "typedefs.h"
 
 
-#include "engine/ui_updatenotify.h"
+#include "editor/ui_updatenotify.h"
 
 //@TODO Make an object for pattern changed notify or something
 

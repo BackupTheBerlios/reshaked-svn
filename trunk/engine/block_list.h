@@ -66,6 +66,8 @@ protected:
 
 public:
 
+	virtual bool shares_block_data(Block *p_block)=0;
+	
 	virtual void create_block(Tick p_pos,BlockCreationData *p_creation_data=NULL)=0;
 	virtual void copy_block(Block *p_from,Tick p_to_where,int p_existing=-1);
 	virtual void copy_block_link(Block *p_from,Tick p_to_where,int p_existing=-1);
@@ -85,6 +87,7 @@ public:
 	
 	Tick get_block_pos(int p_index);
 	int get_block_idx_at_pos(Tick p_pos); ///< val<0 for no block, return first find in overlap
+	Block* get_block_at_pos(Tick p_pos); ///< NULL for no block, return first find in overlap
 	int get_prev_block_from_idx(Tick p_pos); ///< returns -1 if no block found
 	int get_next_block_from_idx(Tick p_pos); ///< returns amount of blocks if no block found
 

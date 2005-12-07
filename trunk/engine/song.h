@@ -27,7 +27,7 @@ public:
 	DataPool *get_pattern_pool();
 	DataPool *get_automation_pool();
 	
-	void add_track(Track* p_track);
+	void add_track(Track* p_track,int p_at_pos=-1); ///< pos, or -1 for at end (default)
 	int get_track_count();
 	Track* get_track(int p_idx);
 	void remove_track(int p_idx); 

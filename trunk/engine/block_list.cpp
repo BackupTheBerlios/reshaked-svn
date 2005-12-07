@@ -171,6 +171,13 @@ int BlockList::get_block_idx_at_pos(Tick p_pos) { // NULL for no block
 	return prev_idx;
 }
 
+BlockList::Block* BlockList::get_block_at_pos(Tick p_pos) {
+	
+	int idx=get_block_idx_at_pos( p_pos );
+	if (idx<0)
+		return NULL;
+	return get_block(idx);
+}
 bool BlockList::get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) {
 	
 	*p_from_res=-1;

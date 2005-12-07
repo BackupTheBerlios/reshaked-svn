@@ -15,7 +15,7 @@
 #include <Qt/qwidget.h>
 #include <Qt/qmenu.h>
 
-#include "engine/editor.h"
+#include "editor/editor.h"
 
 
 namespace ReShaked {

@@ -13,7 +13,7 @@
 #define RESHAKEDBLOCKLIST_UI_AUTOMATION_H
 
 #include "interface/blocklist_ui_base.h"
-#include "engine/editor.h"
+#include "editor/editor.h"
 #include "engine/automation.h"
 
 namespace ReShaked {

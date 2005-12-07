@@ -281,7 +281,18 @@ String Track_Pattern::get_type_name() {
 	return "pattern";
 }
 
-
+bool Track_Pattern::shares_block_data(Block *p_block) {
+	
+	PatternBlock *b=dynamic_cast<PatternBlock*>(p_block);
+	if (!b)
+		return false; //not same type
+	for (int i=0;i<get_block_count();i++)
+		if (b->get_pattern()==get_block(i)->get_pattern())
+			return true; //shared!
+		
+	return false;
+	
+}
 
 Track_Pattern::Track_Pattern(int p_channels,DataPool *p_pool) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT) {
 
