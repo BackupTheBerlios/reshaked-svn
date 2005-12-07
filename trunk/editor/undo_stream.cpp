@@ -71,6 +71,10 @@ void UndoStream::add_command( CommandFunc *p_command ) {
 	UndoElement e;
 	e.redo=p_command;
 	e.undo=p_command->exec();
+	if (e.undo==NULL) { //the command failed, abort. Commands shouldnt fail, but I just do it for app safety
+		delete p_command;
+		return;
+	}
 	undo_stream.back().command_list.push_back(e);
 
 }

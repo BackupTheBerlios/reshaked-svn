@@ -122,6 +122,62 @@ class CommandFunc3 : public CommandFunc {
 #define Command3(m_self,m_method,m_p1,m_p2,m_p3) new CommandFunc3<typeof(*m_self),typeof(m_p1),typeof(m_p2),typeof(m_p3)>(m_self,m_method,m_p1,m_p2,m_p3)
 
 
+template<class T,class P1,class P2,class P3,class P4>
+class CommandFunc4 : public CommandFunc {
+
+	typedef CommandFunc* (T::*Command)(bool,P1,P2,P3,P4);
+	P1 param1;
+	P2 param2;
+	P3 param3;
+	P4 param4;
+
+	Command command;
+	T *instance;
+	public:
+		virtual CommandFunc* exec(bool p_no_undo=false) {
+			return (instance->*command)(p_no_undo,param1,param2,param3,param4);
+		}
+		CommandFunc4(T *p_instance,Command p_command,const P1 &p_param1,const P2 &p_param2,const P3 &p_param3,const P4 &p_param4) {
+			instance=p_instance;
+			command=p_command;
+			param1=p_param1;
+			param2=p_param2;
+			param3=p_param3;
+			param4=p_param4;
+		}
+};
+
+#define Command4(m_self,m_method,m_p1,m_p2,m_p3,m_p4) new CommandFunc4<typeof(*m_self),typeof(m_p1),typeof(m_p2),typeof(m_p3),typeof(m_p4)>(m_self,m_method,m_p1,m_p2,m_p3,m_p4)
+
+template<class T,class P1,class P2,class P3,class P4,class P5>
+class CommandFunc5 : public CommandFunc {
+
+	typedef CommandFunc* (T::*Command)(bool,P1,P2,P3,P4,P5);
+	P1 param1;
+	P2 param2;
+	P3 param3;
+	P4 param4;
+	P5 param5;
+
+	Command command;
+	T *instance;
+	public:
+		virtual CommandFunc* exec(bool p_no_undo=false) {
+			return (instance->*command)(p_no_undo,param1,param2,param3,param4,param5);
+		}
+		CommandFunc5(T *p_instance,Command p_command,const P1 &p_param1,const P2 &p_param2,const P3 &p_param3,const P4 &p_param4,const P5 &p_param5) {
+			instance=p_instance;
+			command=p_command;
+			param1=p_param1;
+			param2=p_param2;
+			param3=p_param3;
+			param4=p_param4;
+			param5=p_param5;
+		}
+};
+
+#define Command5(m_self,m_method,m_p1,m_p2,m_p3,m_p4,m_p5) new CommandFunc5<typeof(*m_self),typeof(m_p1),typeof(m_p2),typeof(m_p3),typeof(m_p4),typeof(m_p5)>(m_self,m_method,m_p1,m_p2,m_p3,m_p4,m_p5)
+
 class UndoStream {
 	
 	

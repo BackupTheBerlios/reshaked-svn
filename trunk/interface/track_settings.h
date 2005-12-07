@@ -69,10 +69,10 @@ protected slots:
 public slots:
 			
 	
-	void selected_track_changed_slot();
+	void track_changed_slot();
 	void automation_add_slot(String p_path);
 	void automation_remove_slot(String p_path);
-	
+	void automation_update_status();
 	
 signals:
 	void update_track_names_signal();	

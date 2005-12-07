@@ -1,0 +1,42 @@
+
+Goals for 50%
+
+Automation:
+*-Edit UNDO
+-LFO edit
+-Interpolation Edit
+-Move left/right
+
+BUG:
+-Fix Screen-Screen Copy in automation, add in pattern
+
+Shortcuts:
+-Make compatible with QActions
+
+Global View
+-Fix block MOVING
+-Add undo/redo to all block operations
+-Optimize painting a bit using clip regions
+
+
+Selection
+-Make selection :)
+
+
+Goals for 60% 
+-Basic audio system working and routing, using JACK driver
+-Add audio locks everywhere
+-Global stuff (tempo)
+
+Goals for 70% 
+-Rack working
+-Synth working
+-Routing working
+
+Goals for 80%
+-Simple synth
+-Simple effects: filterbank, chorus, freeverb
+
+Goals for 90%
+-Saving/Loading of project
+

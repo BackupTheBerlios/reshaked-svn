@@ -33,6 +33,7 @@ public:
 	friend class Track;	// will add more stuff later
 		void *private_data;
 		String path;
+		bool visible;
 		TrackAutomation(DataPool *p_pool,String p_path,Property *p_property) : Automation(p_pool,p_property) { private_data=NULL; path=p_path; }
 	};
 	
@@ -97,13 +98,16 @@ public:
 	int get_property_count();
 	int get_idx_by_path(String p_path);
 	Property *get_property(int p_idx);
+	Automation *get_property_automation(int p_idx);
 	String get_property_path(int p_idx);
 
 	
-	void add_automation(String p_path);
-	int get_automation_count();
-	Automation *get_automation(int p_index);
+	void show_automation(String p_path);
+	void hide_automation(String p_path);
+	int get_visible_automation_count();
+	Automation *get_visible_automation(int p_index);
 	bool has_property_automation(int p_index);
+	bool has_property_visible_automation(int p_index);
 	
 	void set_automation_pool(DataPool *p_pool);
 	

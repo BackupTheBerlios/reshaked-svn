@@ -80,20 +80,89 @@ int Track::get_idx_by_path(String p_path) {
 	return -1;
 		
 }
-void Track::add_automation(String p_path) {
+void Track::show_automation(String p_path) {
 
 	
 	int idx=get_idx_by_path(p_path);
 	if (idx==-1)
 		return;
 			
-	if (has_property_automation(idx))
-		return; // cant really add an automation
-	
-	base_private.automations.push_back(new TrackAutomation(automation_pool,p_path,get_property(idx)));
-	base_private.property_list[idx]->automated=base_private.automations[ base_private.automations.size()-1 ];
+	if (has_property_automation(idx)) { //already has automation 
+		
+		base_private.property_list[ idx ]->automated->visible=true;
+	} else {
+		
+		base_private.automations.push_back(new TrackAutomation(automation_pool,p_path,get_property(idx)));
+		base_private.property_list[idx]->automated=base_private.automations[ base_private.automations.size()-1 ];
+		base_private.automations[ base_private.automations.size()-1 ]->visible=true;
+	}
 }
 
+void Track::hide_automation(String p_path) {
+	
+	int idx=get_idx_by_path(p_path);
+	if (idx==-1)
+		return;
+			
+	if (!has_property_automation(idx))
+		return; //nothing to do
+	
+	if (base_private.property_list[ idx ]->automated->get_block_count()==0) { //no block
+		
+		/* This doesnt have any blocks, so simply we screw it */
+		
+		for (int i=0;i<base_private.automations.size();i++) {
+			
+			if (base_private.automations[i]==base_private.property_list[ idx ]->automated) {
+				
+				delete base_private.automations[i]; //it's al doup
+				base_private.automations.erase(base_private.automations.begin()+i);
+				base_private.property_list[ idx ]->automated=NULL;
+				printf("deleted automation since it was empty!\n");
+				break;
+			}
+		}
+		
+		
+	} else {
+		
+		
+		base_private.property_list[ idx ]->automated->visible=false;
+		
+		
+	}
+	
+}
+
+int Track::get_visible_automation_count() {
+	
+	int count=0;
+	for (int i=0;i<base_private.automations.size();i++) {
+		
+		if (base_private.automations[i]->visible)
+			count++;
+	}
+	
+	return count;
+}
+Automation *Track::get_visible_automation(int p_index) {
+	
+	int count=0;
+	for (int i=0;i<base_private.automations.size();i++) {
+		
+		
+		if (base_private.automations[i]->visible) {
+			if (count==p_index)
+				return base_private.automations[i];
+			count++;
+		}
+	}
+	
+	return NULL;
+	
+}
+
+/* Some day i'll need this again?
 int Track::get_automation_count() {
 	
 	return base_private.automations.size();	
@@ -103,7 +172,7 @@ Automation *Track::get_automation(int p_index) {
 	ERR_FAIL_INDEX_V(p_index,(int)base_private.automations.size(),NULL);
 	return base_private.automations[p_index];
 }
-
+*/
 int Track::get_input_plug_count() {
 
     return 1;
@@ -153,6 +222,13 @@ Property *Track::get_property(int p_idx) {
 	return base_private.property_list[p_idx]->property;
 }
 
+Automation *Track::get_property_automation(int p_idx) {
+	
+	ERR_FAIL_INDEX_V(p_idx,get_property_count(),NULL);
+	
+	return base_private.property_list[p_idx]->automated;
+	
+}
 bool Track::has_property_automation(int p_idx) {
 	
 	ERR_FAIL_INDEX_V(p_idx,get_property_count(),false);
@@ -161,6 +237,14 @@ bool Track::has_property_automation(int p_idx) {
 	
 }
 	
+bool Track::has_property_visible_automation(int p_idx) {
+
+	ERR_FAIL_INDEX_V(p_idx,get_property_count(),false);
+
+	return (base_private.property_list[p_idx]->automated!=NULL && base_private.property_list[p_idx]->automated->visible);
+
+}
+
 String Track::get_property_path(int p_idx) {
 	
 	ERR_FAIL_INDEX_V(p_idx,get_property_count(),"");

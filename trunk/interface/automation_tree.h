@@ -16,6 +16,7 @@
 #include "ui_blocks/helpers.h"
 #include <Qt/qtreewidget.h>
 #include "engine/track.h"
+#include <vector>
 
 namespace ReShaked {
 
@@ -39,10 +40,12 @@ class AutomationTree : public CHBox {
 	QTreeWidget *tree;
 	Track *track;
 	
+	std::vector<QTreeAutomationItem*> item_array;
 public slots:	
 	
 
 	void item_clicked( QTreeWidgetItem * item, int column );
+	void update_item_status();
 signals:
 		
 	void attempt_automation_add_signal(String p_path);	

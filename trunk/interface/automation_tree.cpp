@@ -39,6 +39,7 @@ void AutomationTree::update_automation_tree() {
 	PathMap hashmap;
 	
 	tree->clear();
+	item_array.clear();
 	
 	for (int i=0;i<track->get_property_count();i++) {
 		
@@ -93,6 +94,7 @@ void AutomationTree::update_automation_tree() {
 
 						}
 						
+						tree->expandItem(node);
 						QString nodename=auxp.right( auxp.length()-(auxp.lastIndexOf("/")+1) );
 						node->setText(0,nodename+"/");
 						
@@ -112,22 +114,62 @@ void AutomationTree::update_automation_tree() {
 				
 		}
 		
-		item->setText( 0, QStrify( track->get_property( i)->get_caption() ) );
+		if (track->has_property_automation( i ) && track->get_property_automation(i)->get_block_count()) {
+				
+			item->setText( 0, QStrify( track->get_property( i)->get_caption()+"(*)" ) );
+		
+		} else {
+		
+			item->setText( 0, QStrify( track->get_property( i)->get_caption() ) );
+		
+		}
+		
+		//item->setText( 0, QStrify( track->get_property( i)->get_caption() ) );
 		item->setText( 1, QStrify( track->get_property( i)->get_text_value( track->get_property( i)->get_min() ) ) );
 		item->setText( 2, QStrify( track->get_property( i)->get_text_value( track->get_property( i)->get_max() ) ) );
 		item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
 		item->setCheckState(0,track->has_property_automation(i)?Qt::Checked:Qt::Unchecked);
+		tree->expandItem(item);
+		item_array.push_back(item);
 //		for (int j=0;j
 		
 	}
 }
 	
 
+void AutomationTree::update_item_status() {
+	
+	if (!track)
+		return;
+	
+	
+	for (int i=0;i<item_array.size();i++) {
+		
+		int idx=track->get_idx_by_path( item_array[i]->get_path() );
+		if (idx<0)
+			continue;
+		
+		if (track->has_property_automation( idx ) && track->get_property_automation(idx)->get_block_count()) {
+				
+			item_array[i]->setText( 0, QStrify( track->get_property( idx)->get_caption()+"(*)" ) );
+		
+		} else {
+		
+			item_array[i]->setText( 0, QStrify( track->get_property( idx)->get_caption() ) );
+		
+		}
+		
+		item_array[i]->setCheckState(0,track->has_property_automation(idx)?Qt::Checked:Qt::Unchecked);
+	}
+	
+}
+
 
 void AutomationTree::set_track(Track *p_track) {
 	
 	track=p_track;
 	update_automation_tree();
+	
 	
 }
 
@@ -142,7 +184,7 @@ void AutomationTree::item_clicked( QTreeWidgetItem * p_item, int column ) {
 	if (idx==-1)
 		return;
 	
-	bool has_auto=track->has_property_automation( idx );
+	bool has_auto=track->has_property_visible_automation( idx );
 	
 	if (checked==has_auto)
 		return; //nothing to do
@@ -153,6 +195,7 @@ void AutomationTree::item_clicked( QTreeWidgetItem * p_item, int column ) {
 		attempt_automation_remove_signal(item->get_path());	
 
 
+	
 }
 
 AutomationTree::AutomationTree(QWidget *p_parent) : CHBox(p_parent) {

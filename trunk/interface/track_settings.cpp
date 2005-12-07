@@ -70,7 +70,7 @@ TrackSettings::TrackSettingsPage TrackSettings::get_page() {
 
 
 
-void TrackSettings::selected_track_changed_slot() {
+void TrackSettings::track_changed_slot() {
 	
 	int track_idx=editor->get_current_track();
 	if (track_idx==-1)
@@ -102,14 +102,19 @@ QPushButton *TrackSettings::setup_button(QPushButton *p_button,QPixmap p_pixmap,
 }
 void TrackSettings::automation_add_slot(String p_path) {
 
-	editor->add_automation( p_path );
+	editor->show_automation( p_path );
 
 }
 void TrackSettings::automation_remove_slot(String p_path) {
 
+	editor->hide_automation( p_path );
+	
 }
 
-
+void TrackSettings::automation_update_status() {
+	
+	automation_settings->update_item_status();
+}
 
 TrackSettings::TrackSettings(QWidget *p_parent,Editor * p_editor) :CVBox(p_parent) {
 	

@@ -535,10 +535,26 @@ void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 	d->erase_index( moving_point.point );
 	d->insert( new_tick, Automation::AutomationValue( new_val, lfo_depth ) );
 
+	moving_point.new_tick=new_tick;
+	moving_point.new_value=new_val;
 	//dont conflict whenmoving point
 	point_over.block=moving_point.block;
 	point_over.point=moving_point.point;
 	
+	update();
+	
+}
+
+void BlockListUI_Automation::cancel_motion() {
+	
+	Automation::AutomationData *d=automation->get_block(moving_point.block)->get_data();
+	float lfo_depth=d->get_index_value( moving_point.point ).lfo_depth;
+	d->erase_index( moving_point.point );
+	if (!moving_point.adding) //if it was adding a point, simply remove it
+		d->insert( moving_point.original_tick , Automation::AutomationValue( moving_point.original_value, lfo_depth ) );
+		
+	moving_point.moving=false;		
+
 	update();
 	
 }
@@ -547,16 +563,7 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 	if (e->button()==Qt::RightButton && moving_point.moving ) {
 	
 		/* Cancel motion */
-		
-		Automation::AutomationData *d=automation->get_block(moving_point.block)->get_data();
-		float lfo_depth=d->get_index_value( moving_point.point ).lfo_depth;
-		d->erase_index( moving_point.point );
-		if (!moving_point.adding) //if it was adding a point, simply remove it
-			d->insert( moving_point.original_tick , Automation::AutomationValue( moving_point.original_value, lfo_depth ) );
-		
-		moving_point.moving=false;		
-
-		update();
+		cancel_motion();
 		return;
 	} else if ( !moving_point.moving && ((e->button()==Qt::LeftButton && e->modifiers()&Qt::ControlModifier) || e->button()==Qt::RightButton )) {
 		/* delete point */
@@ -566,8 +573,7 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 		if (find_closest_point(e->x(),e->y(),CLOSEST_POINT_RADIUS, &closest_block, &closest_point))
 			return;
 		
-		Automation::AutomationData *d=automation->get_block(closest_block)->get_data();
-		d->erase_index( closest_point );
+		editor->remove_automation_point( automation, closest_block, closest_point );
 		
 		update();
 		return;		
@@ -636,6 +642,23 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 }
 void BlockListUI_Automation::mouseReleaseEvent ( QMouseEvent * e ) {
 	
+	if (moving_point.moving) { /* we were moving a point */
+		
+		cancel_motion(); //wathever we did, cancel it
+		//the reason for this is tha we actually want the editor to do it for us
+		//this way we can take advantage of the undo/redo system
+		
+		if (moving_point.adding) { //add point
+			
+			Tick tick_global=automation->get_block_pos(moving_point.block)+moving_point.new_tick;
+			editor->add_automation_point( automation, tick_global, moving_point.new_value );
+		} else { //move point
+			
+			Tick tick_global=automation->get_block_pos(moving_point.block)+moving_point.new_tick;
+			editor->move_automation_point( automation, moving_point.block, moving_point.point, moving_point.new_tick, moving_point.new_value); 
+		}
+		
+	}
 	compute_point_over(e->x(),e->y());
 	
 	moving_point.moving=false;
@@ -681,7 +704,7 @@ bool BlockListUI_Automation::event( QEvent * ev ) {
 BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, int p_track,int p_automation) : BlockListUI_Base(p_parent) {
 	
 	editor = p_editor;
-	automation=editor->get_song()->get_track(p_track)->get_automation(p_automation);
+	automation=editor->get_song()->get_track(p_track)->get_visible_automation(p_automation);
 	
 	setBackgroundRole(QPalette::NoRole);
 

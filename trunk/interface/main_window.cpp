@@ -269,7 +269,32 @@ void MainWindow::add_menus() {
 
 }
 
+void MainWindow::track_list_changed_slot() {
 
+	if ( data.editor->get_current_track ()<0 || data.editor->get_current_track ()>=data.song.get_track_count() ) {
+
+		get_action(TRACK_SYNTH)->setEnabled(false);
+		get_action(TRACK_CONTROLS)->setEnabled(false);
+		get_action(TRACK_AUTOMATIONS)->setEnabled(false);
+		get_action(TRACK_EFFECTS)->setEnabled(false);
+		get_action(TRACK_CONNECTIONS)->setEnabled(false);
+		get_action(TRACK_SYNTH)->setChecked(false);
+		get_action(TRACK_CONTROLS)->setChecked(false);
+		get_action(TRACK_AUTOMATIONS)->setChecked(false);
+		get_action(TRACK_EFFECTS)->setChecked(false);
+		get_action(TRACK_CONNECTIONS)->setChecked(false);
+		settings_dock->hide();
+	} else {
+		blocklist_changed_slot();
+		get_action(TRACK_CONTROLS)->setEnabled(true);
+		get_action(TRACK_AUTOMATIONS)->setEnabled(true);
+		get_action(TRACK_EFFECTS)->setEnabled(false);
+		get_action(TRACK_CONNECTIONS)->setEnabled(true);
+	}
+		
+	
+	
+}
 void MainWindow::blocklist_changed_slot() {
 	
 	
@@ -330,7 +355,10 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),this,SLOT(blocklist_changed_slot()));
 	QObject::connect(update_notify,SIGNAL(cursor_moved()),blui_list,SLOT(ensure_cursor_visible()));
 
-	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),track_settings,SLOT(selected_track_changed_slot()));
+	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),track_settings,SLOT(track_changed_slot()));
+	QObject::connect(update_notify,SIGNAL(current_automation_status_changed()),track_settings,SLOT(automation_update_status()),Qt::QueuedConnection);
+	QObject::connect(update_notify,SIGNAL(current_automation_status_changed()),blui_list,SLOT(update_track_list()));
+	QObject::connect(update_notify,SIGNAL(current_automation_status_changed()),global_view_frame,SLOT(update()));
 
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),blui_list,SLOT(update_track_list()));
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),global_view_frame,SLOT(update()));
@@ -341,6 +369,8 @@ MainWindow::MainWindow() {
 	
 	QObject::connect(global_view_frame,SIGNAL(global_view_changed_blocks_signal()),blui_list,SLOT(update_h_scroll()));
 	QObject::connect(update_notify,SIGNAL(update_blocklist_list( const std::list< int >& )),blui_list,SLOT(update_blocklist_list(const std::list<int>&)));
+	
+	QObject::connect(update_notify,SIGNAL(track_list_changed()),this,SLOT(track_list_changed_slot()));
 	
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 	setMinimumSize(750,550); //dont mess with my app!

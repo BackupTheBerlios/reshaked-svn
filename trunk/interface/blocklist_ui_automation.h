@@ -63,6 +63,9 @@ class BlockListUI_Automation : public BlockListUI_Base {
 		
 		Tick original_tick;
 		float original_value;
+		Tick new_tick;
+		float new_value;
+		
 		
 	} moving_point;
 	
@@ -78,6 +81,8 @@ class BlockListUI_Automation : public BlockListUI_Base {
 	bool paint_name_enabled;
 	void fix_pre_scroll(int p_scroll);
 	bool can_scroll();
+	
+	void cancel_motion();
 	
 	/* helpers */
 	int get_row_size();

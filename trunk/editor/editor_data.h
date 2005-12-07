@@ -61,6 +61,7 @@ friend class EditorCommands;
 		int current_blocklist;
 		int editing_octave;
 		bool setnote_dont_update;
+		bool automation_point_dont_update;
 
 	} global_edit;
 

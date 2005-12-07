@@ -545,10 +545,10 @@ BlockList* Editor::get_blocklist(int p_idx) {
 			return t;
 		blocks++;
 		
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 			
 			if (blocks==p_idx)
-				return t->get_automation(j);
+				return t->get_visible_automation(j);
 			blocks++;
 		}
 	}
@@ -563,7 +563,7 @@ int Editor::get_blocklist_count() {
 		Track * t = d->song->get_track(i);
 		blocks++;
 		
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 			
 			blocks++;
 		}
@@ -610,7 +610,7 @@ int Editor::get_track_blocklist(int p_track) {
 		
 		blocks++;
 		
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 			
 			blocks++;
 		}
@@ -629,7 +629,7 @@ int Editor::get_blocklist_track(int p_blocklist) {
 		
 		blocks++;
 		
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 			
 			if (blocks==p_blocklist)
 				return i;
@@ -659,6 +659,8 @@ void Editor::revalidate_cursor() {
 			if (d->pattern_edit.column>=pattern_track->get_visible_columns())
 				d->pattern_edit.column=pattern_track->get_visible_columns()-1;
 		}
+		
+		d->ui_update_notify->cursor_changed_blocklist();
 	}
 	
 }
@@ -691,7 +693,7 @@ int Editor::get_current_track() {
 			return i;
 		blocks++;
 		
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 			
 			if (d->global_edit.current_blocklist==blocks)
 				return i;
@@ -725,9 +727,9 @@ void Editor::get_blocklists_sharing_block(BlockList::Block * p_block,std::list<i
 		
 		bl++;
 		
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 			
-			if (t->get_automation(j)->shares_block_data(p_block))
+			if (t->get_visible_automation(j)->shares_block_data(p_block))
 				p_blocklist->push_back(bl);
 		
 			bl++;
@@ -735,14 +737,64 @@ void Editor::get_blocklists_sharing_block(BlockList::Block * p_block,std::list<i
 	}
 }
 
-void Editor::add_automation(String p_path) {
+void Editor::update_blocklists_sharing_block(BlockList::Block * p_block) {
+	
+	if (!p_block)
+		return;
+	std::list<int> blist;
+	get_blocklists_sharing_block( p_block, &blist);
+	d->ui_update_notify->update_blocklist_list( blist );
+	
+}
+void Editor::show_automation(String p_path) {
+	
+	
 	
 	int selected_track=get_current_track();
 	Track *t = d->song->get_track(selected_track);
-	t->add_automation(p_path);
-	d->ui_update_notify->track_list_changed();
+	
+	d->undo_stream.begin("Show Automation");
+	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_show,t,p_path) );
+	d->undo_stream.end();
+	
 	
 }
+
+void Editor::hide_automation(String p_path) {
+	
+	int selected_track=get_current_track();
+	Track *t = d->song->get_track(selected_track);
+	
+	d->undo_stream.begin("Hide Automation");
+	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_hide,t,p_path) );
+	d->undo_stream.end();
+	
+}
+
+void Editor::add_automation_point(Automation *p_automation,Tick p_tick, float p_val) {
+	
+	d->undo_stream.begin("Add Point");
+	d->undo_stream.add_command( Command4(&commands,&EditorCommands::add_automation_point,p_automation,p_tick,p_val,0.0f) );
+	d->undo_stream.end();
+	
+	
+}
+void Editor::move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val) {
+	
+	d->undo_stream.begin("Move Point");
+	d->undo_stream.add_command( Command5(&commands,&EditorCommands::move_automation_point,p_automation,p_block,p_point,p_to_tick,p_to_val) );
+	d->undo_stream.end();
+	
+}
+void Editor::remove_automation_point(Automation *p_automation,int p_block,int p_point) {
+	
+	d->undo_stream.begin("Remove Point");
+	d->undo_stream.add_command( Command3(&commands,&EditorCommands::remove_automation_point,p_automation,p_block,p_point) );
+	d->undo_stream.end();
+	
+	
+}
+
 
 Song* Editor::get_song() {
 	
@@ -810,6 +862,31 @@ void Editor::set_snap(int p_new_snap) {
 	d->cursor.set_snap( p_new_snap );	
 }
 
+void Editor::move_track_left(int p_which) {
+	
+	ERR_FAIL_INDEX(p_which,d->song->get_track_count());
+	if (p_which==0)
+		return;
+	
+	d->undo_stream.begin("Track Move Left");
+	d->undo_stream.add_command(Command1(&commands,&EditorCommands::track_move_left,p_which));
+	d->undo_stream.end();
+	
+}
+void Editor::move_track_right(int p_which) {
+	ERR_FAIL_INDEX(p_which,d->song->get_track_count());
+	
+	if (p_which==(d->song->get_track_count()-1))
+		return;
+	
+	d->undo_stream.begin("Track Move Right");
+	d->undo_stream.add_command(Command1(&commands,&EditorCommands::track_move_right,p_which));
+	d->undo_stream.end();
+	
+	
+}
+
+
 Tick Editor::get_block_list_max_len(BlockList *p_bl) {
 	
 	int block_count=p_bl->get_block_count();
@@ -838,9 +915,9 @@ Tick Editor::get_song_max_len() {
 		
 		if (get_block_list_max_len(t)>max_len)
 			max_len=get_block_list_max_len(t);
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 			
-			Automation *a=t->get_automation(j);;
+			Automation *a=t->get_visible_automation(j);;
 			if (get_block_list_max_len(a)>max_len)
 				max_len=get_block_list_max_len(a);
 			

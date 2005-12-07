@@ -73,10 +73,10 @@ BlockList* GlobalView::get_block_list(int p_idx) {
 			return t;
 		blocks++;
 
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 
 			if (blocks==p_idx)
-				return t->get_automation(j);
+				return t->get_visible_automation(j);
 			blocks++;
 		}
 	}
@@ -91,7 +91,7 @@ int GlobalView::get_block_list_count() {
 		Track * t = song->get_track(i);
 		blocks++;
 
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 
 			blocks++;
 		}
@@ -113,7 +113,7 @@ int GlobalView::get_block_list_at_offset(float p_offset) {
 
 		block++;
 
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 
 			offset+=0.5;
 			if (offset>=p_offset)
@@ -139,7 +139,7 @@ float GlobalView::get_block_list_offset(int p_index) {
 		offset+=1;
 
 
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 
 			if (p_index==block)
 				return offset;
@@ -1053,9 +1053,9 @@ int GlobalView::get_total_pixel_width() {
 		Track * t = song->get_track(i);
 		width_accum+=get_block_list_width( t);
 
-		for (int j=0;j<t->get_automation_count();j++) {
+		for (int j=0;j<t->get_visible_automation_count();j++) {
 
-			width_accum+=get_block_list_width(t->get_automation( j ));
+			width_accum+=get_block_list_width(t->get_visible_automation( j ));
 			
 		}
 	}

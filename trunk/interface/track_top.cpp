@@ -108,10 +108,12 @@ void TrackTop::action_slot(QAction *p_action) {
 		/* track generic */
 		case ACTION_MOVE_TRACK_LEFT: {
 			
+			editor->move_track_left( editor->find_Track( track ) );
 			
 		} break;
 		case ACTION_MOVE_TRACK_RIGHT: {
 			
+			editor->move_track_right( editor->find_Track( track ) );
 			
 		} break;
 		
@@ -131,6 +133,9 @@ void TrackTop::action_slot(QAction *p_action) {
 			
 		} break;
 	}
+	
+	
+	
 	
 }
 

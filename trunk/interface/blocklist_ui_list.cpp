@@ -197,12 +197,12 @@ void BlockListUIList::update_track_list() {
 			}
 		END_SWITCH
 
-		for (int j=0;j<editor->get_song()->get_track(i)->get_automation_count();j++) {
+		for (int j=0;j<editor->get_song()->get_track(i)->get_visible_automation_count();j++) {
 
 			block_list_ui_list.push_back( new BlockListUI_Automation(hb,editor,i,j) );
 			hl->addWidget(block_list_ui_list [block_list_ui_list.size() -1] );
 			
-			Automation *a=editor->get_song()->get_track(i)->get_automation(j);
+			Automation *a=editor->get_song()->get_track(i)->get_visible_automation(j);
 			BlockList_Separator *s = new BlockList_Separator(hb,QStrify(a->get_property()->get_caption()));
 			hl->addWidget(s);
 

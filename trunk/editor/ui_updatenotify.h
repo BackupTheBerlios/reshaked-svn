@@ -28,6 +28,8 @@ public:
 	virtual void track_list_changed()=0;
 	virtual void editing_octave_changed()=0;
 	
+	virtual void current_automation_status_changed()=0;
+	
 	virtual void update_blocklist_list(const std::list<int>& p_which)=0;
 	
 	virtual ~UI_UpdateNotify(){}

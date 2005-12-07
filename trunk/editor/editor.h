@@ -61,10 +61,18 @@ public:
 	int find_Track(Track *p_track);
 	void set_track_name(int p_track,String p_name);
 	
+	void move_track_left(int p_which);
+	void move_track_right(int p_which);
+	
 	int get_blocklist_count();
 	BlockList* get_blocklist(int p_idx);
 		
-	void add_automation(String p_path);
+	void show_automation(String p_path);
+	void hide_automation(String p_path);
+	
+	void add_automation_point(Automation *p_automation,Tick p_tick, float p_val);
+	void move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val);
+	void remove_automation_point(Automation *p_automation,int p_block,int p_point);
 	
 	Song* get_song();
 	
@@ -78,9 +86,11 @@ public:
 	void set_editing_octave(int p_octave);
 	int get_editing_octave();
 	void get_blocklists_sharing_block(BlockList::Block * p_block, std::list<int> *p_blocklist);
+	void update_blocklists_sharing_block(BlockList::Block * p_block);
 	
 	Tick get_song_max_len();
 	Tick get_block_list_max_len(BlockList *p_bl);
+	
 	
 	void undo();
 	void redo();
