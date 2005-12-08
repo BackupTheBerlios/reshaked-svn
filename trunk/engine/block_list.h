@@ -9,6 +9,7 @@
 
 #include "typedefs.h"
 #include "value_stream.h"
+#include <list>
 
 namespace ReShaked {
 
@@ -58,7 +59,8 @@ private:
 protected:
 
 	bool add_block(Block *p_block,Tick p_pos);
-	void remove_block(int p_index);
+
+	virtual bool accepts_block(Block *p_block)=0;
 
 	virtual Block *create_duplicate_block(Block *p_block)=0;
 	virtual Block *create_link_block(Block *p_block)=0;
@@ -72,13 +74,16 @@ public:
 	virtual void copy_block(Block *p_from,Tick p_to_where,int p_existing=-1);
 	virtual void copy_block_link(Block *p_from,Tick p_to_where,int p_existing=-1);
 	virtual void move_block(BlockList *p_from_track,int p_which,Tick p_to_pos);
+	virtual void insert_block(Block *p_block, Tick p_pos);
 	virtual bool is_move_block_allowed(int p_which,Tick p_to_new_pos);
-	virtual void erase_block(int p_which)=0;
+	virtual void remove_block(int p_index);
 	virtual BlockCreationBehavior get_block_creation_behavior()=0;
+	
 	
 
 
 	bool block_fits(Tick p_pos,Tick p_size,int p_current=-1);
+	bool block_fits(Tick p_pos,Tick p_size,const std::list<int>& p_exclude_list); 
 
 	int get_block_count();
 	Block* get_block(int p_index);
@@ -95,6 +100,7 @@ public:
 	virtual String get_type_name()=0;
 	BlockType get_block_type();
 	virtual bool can_resize_from_begining()=0;
+	
 	
 /* properties */
 

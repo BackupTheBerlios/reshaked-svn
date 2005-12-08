@@ -84,8 +84,12 @@ private:
 
 		struct Element {
 			int list;
-			int block;
+			int block; //must be known for painting purposes only.. I should remove it when separating this
 			BlockList::Block *block_ptr; //litle hack for ease of code
+			int new_list;
+			Tick new_tick;
+			bool can_move;
+			float free_x;
 		};
 
 

@@ -143,53 +143,38 @@ void BlockListUI_Automation::paint_frames(QPainter& p,int p_from_row,int p_to_ro
 	if (p_to_row==-1)
 		p_to_row=editor->get_cursor().get_window_size();
 	
-	p.setClipping(true);
-	int row_size=get_row_size();
-	p.setClipRect ( 0,p_from_row*row_size,width(),(p_to_row+1)*row_size );
+	p_to_row++; //always add one just in case
 	
-	int visible_rows=(p_to_row-p_from_row)+1;
 	
 	SkinBox *sb=VisualSettings::get_singleton()->get_skin_box( hasFocus() ? SKINBOX_EDITING_AUTOMATION_SELECTED : SKINBOX_EDITING_AUTOMATION );
-
-	for (int i=0;i<(visible_rows+3);i++) {
-		Tick tick=editor->get_cursor().get_snapped_window_tick_pos(p_from_row+i);
-		int block_idx=automation->get_block_idx_at_pos(tick);
-
-		bool begin=(block_idx!=-1 && automation->get_block_pos(block_idx)==tick);
-
-		if (block_idx!=-1 && i==0 && !begin) {
-
-			begin_pos=-1;
-		}
-
-		if (i==0)
-			old_block_idx=block_idx;
-
-		bool end=((old_block_idx!=block_idx || i==(visible_rows+2)) && old_block_idx!=-1);
-		old_block_idx=block_idx;
-
-		if (end) {
-
-			int begin_h=begin_pos*row_size+p_from_row*row_size;
-			int len_h=(i-begin_pos)*row_size+p_from_row*row_size;
-
-			sb->paint_into( p, 0,begin_h, width(), len_h );
-
-		}
-
-		if (begin)
-			begin_pos=i;
-
+	
+	int block_from,block_to;
+	if (automation->get_blocks_in_rage( editor->get_cursor().get_snapped_window_tick_pos( p_from_row ), editor->get_cursor().get_snapped_window_tick_pos( p_to_row +1 ), &block_from, &block_to ))
+		return;
+	
+	for (int i=block_from;i<=block_to;i++) {
+		
+		int block_from_row=((automation->get_block_pos(i)/TICKS_PER_BEAT)*editor->get_cursor().get_snap())-editor->get_cursor().get_window_offset();
+		int block_to_row=block_from_row+(automation->get_block(i)->get_length()/TICKS_PER_BEAT)*editor->get_cursor().get_snap();
+		
+		/* snap offscreen */
+		if (block_from_row<-1)
+			block_from_row=-1;
+		//window size + 2 because there is the incomplete row+the next one, remember the block has pixmapped margin
+		if (block_to_row>(editor->get_cursor().get_window_size()+2))
+			block_to_row=editor->get_cursor().get_window_size()+2;
+		
+		int from_y=block_from_row*get_row_size();
+		int height_y=(block_to_row-block_from_row)*get_row_size();
+		sb->paint_into( p, 0,from_y, width(), height_y );
+		
 	}
-
+	
 	if(hasFocus()) {
 
 		p.setPen( VisualSettings::get_singleton()->get_color( COLORLIST_PATTERN_EDIT_FOCUS_RECT ) );
 		p.drawRect(0,0,width()-1,height()-1);
 	}
-
-	p.setClipping(false);
-
 }
 
 void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_to_row) {
@@ -354,20 +339,27 @@ void BlockListUI_Automation::paintEvent(QPaintEvent *pe) {
 	*/
 	QPainter p(this);
 	
+	p.setClipping(true);
+	p.setClipRect(pe->rect());
+	
 	int row_from=pe->rect().y()/row_size;
 	if (row_from>0)
 		row_from--; //permits proper update on screen-screen copying
 	int row_to=(pe->rect().y()+pe->rect().height())/row_size+1;
-	printf("paint from %i to %i\n",row_from,row_to);
 
 	p.fillRect(0,row_size*row_from,width(),(row_to-row_from)*row_size,QColor(0,0,0));
 	paint_frames(p,row_from,row_to); //paint all by default
 	paint_envelopes( p,row_from,row_to );
 	paint_row_lines( p,row_from,row_to );
+	
+	//printf("paint from %i to %i, screen is %i lines to paint\n",row_from,row_to,(height()/row_size)+1);
+	
 	//if (paint_name_enabled)
 		//paint_name( p); - no name painting goes here :(
 	if (hasFocus())
 		paint_cursor(p);
+	
+	p.setClipping(false);
 	
 	
 }

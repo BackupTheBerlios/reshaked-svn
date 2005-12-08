@@ -63,6 +63,7 @@ public:
 	BindIntSignal(QObject *p_parent,int p_int);	
 };
 
+
 #define connect_bind_int(m_from_obj,m_from_sig,m_to,m_to_sigslot,m_int) 		\
 	{							   			\
 		BindIntSignal *_bis = new BindIntSignal(m_from_obj,m_int);		\

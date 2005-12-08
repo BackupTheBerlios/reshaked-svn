@@ -31,6 +31,7 @@
 #include "editor/keyboard_input.h"
 #include "interface/qt_updatenotify.h"
 #include "interface/track_settings.h"
+#include "ui_blocks/qaction_keybind.h"
 
 namespace ReShaked {
 
@@ -90,7 +91,8 @@ class MainWindow : public QMainWindow {
 	std::map<int,QAction*> action_map;
 
 	void create_keybindings();
-	void create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QToolBar *p_toolbar,const QPixmap &p_pixmap = QPixmap());
+	void create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,QToolBar *p_toolbar,const QPixmap &p_pixmap = QPixmap());
+	
 	QAction *get_action(MenuItems p_item);
 	void add_menus();
 

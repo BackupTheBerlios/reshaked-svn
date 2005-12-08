@@ -173,7 +173,7 @@ void MainWindow::menu_action_callback(int p_action) {
 	}
 }
 
-void MainWindow::create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QToolBar *p_toolbar,const QPixmap &p_pixmap) {
+void MainWindow::create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,QToolBar *p_toolbar,const QPixmap &p_pixmap) {
 
 	ERR_FAIL_COND( action_map.find(p_item)!=action_map.end() );
 
@@ -200,8 +200,8 @@ void MainWindow::create_action(MenuItems p_item,QString p_text,QMenu *p_menu,QTo
 		p_toolbar->addWidget(tb);
 		
 	}
-
-
+	
+	data.keyboard_codes.add_key_bind("actions/"+p_kb_path,DeQStrify(p_text),Keyboard_Input::NO_KEY,false,new QAction_Keybind(q));
 }
 
 QAction *MainWindow::get_action(MenuItems p_item) {
@@ -223,37 +223,35 @@ void MainWindow::add_menus() {
 	QMenu * edit = menuBar()->addMenu("Edit");
 	QMenu * track = menuBar()->addMenu("Track");
 
-	create_action(ITEM_SONG_NEW,"New",file,NULL);
-	create_action(ITEM_SONG_OPEN,"Open",file,NULL);
-	create_action(ITEM_SONG_SAVE,"Save",file,NULL);
-	create_action(ITEM_SONG_SAVE_AS,"Save As..",file,NULL);
+	create_action(ITEM_SONG_NEW,"New","new",file,NULL);
+	create_action(ITEM_SONG_OPEN,"Open","open",file,NULL);
+	create_action(ITEM_SONG_SAVE,"Save","save",file,NULL);
+	create_action(ITEM_SONG_SAVE_AS,"Save As..","save_as",file,NULL);
 	file->addSeparator();
-	create_action(ITEM_SONG_EXIT,"Quit",file,NULL);
+	create_action(ITEM_SONG_EXIT,"Quit","quit",file,NULL);
 
-	create_action(ITEM_EDIT_UNDO,"Undo",edit,NULL);
-	create_action(ITEM_EDIT_REDO,"Redo",edit,NULL);
+	create_action(ITEM_EDIT_UNDO,"Undo","undo",edit,NULL);
+	create_action(ITEM_EDIT_REDO,"Redo","redo",edit,NULL);
 
-	create_action(ITEM_TRACK_ADD_PATTERN,"Add Pattern Track",track,NULL);
-	create_action(ITEM_TRACK_ADD_AUDIO,"Add Audio Track",track,NULL);
-	create_action(ITEM_TRACK_REMOVE,"Remove Current Track",track,NULL);
+	create_action(ITEM_TRACK_ADD_PATTERN,"Add Pattern Track","add_pattern",track,NULL);
+	//create_action(ITEM_TRACK_ADD_AUDIO,"Add Audio Track",track,NULL);
+	create_action(ITEM_TRACK_REMOVE,"Remove Current Track","remove_current_track",track,NULL);
 	track->addSeparator();
-	create_action(ITEM_TRACK_MOVE_LEFT,"Move Curent Track Left",track,NULL);
-	create_action(ITEM_TRACK_MOVE_RIGHT,"Move Curent Track Right",track,NULL);
 
-	create_action(NAVIGATION_GLOBAL_VIEW,"Global View",NULL,navigation_toolbar,QPixmap((const char**)view_global_xpm));
+	create_action(NAVIGATION_GLOBAL_VIEW,"Global View","switch_to_global_view",NULL,navigation_toolbar,QPixmap((const char**)view_global_xpm));
 	get_action(NAVIGATION_GLOBAL_VIEW)->setCheckable(true);
 	get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
-	create_action(NAVIGATION_EDIT_VIEW,"Edit View",NULL,navigation_toolbar,QPixmap((const char**)view_edit_xpm));
+	create_action(NAVIGATION_EDIT_VIEW,"Edit View","switch_to_edit_view",NULL,navigation_toolbar,QPixmap((const char**)view_edit_xpm));
 	navigation_toolbar->addSeparator();
 	get_action(NAVIGATION_EDIT_VIEW)->setCheckable(true);
 	
 	track->addSeparator();
 	
-	create_action(TRACK_SYNTH,"Edit Synth",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_PATTERN));
-	create_action(TRACK_CONTROLS,"Edit Controls",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONTROLS));
-	create_action(TRACK_AUTOMATIONS,"Edit Automations",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS));
-	create_action(TRACK_EFFECTS,"Edit Effects",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS));
-	create_action(TRACK_CONNECTIONS,"Edit Connections",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONNECTIONS));
+	create_action(TRACK_SYNTH,"Edit Synth Tab","edit_synth_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_PATTERN));
+	create_action(TRACK_CONTROLS,"Edit Controls","edit_ctrls_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONTROLS));
+	create_action(TRACK_AUTOMATIONS,"Edit Automations","edit_automations_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS));
+	create_action(TRACK_EFFECTS,"Edit Effects","edit_effects_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS));
+	create_action(TRACK_CONNECTIONS,"Edit Connections","edit_connections_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONNECTIONS));
 
 	get_action(TRACK_SYNTH)->setCheckable(true);
 	get_action(TRACK_CONTROLS)->setCheckable(true);

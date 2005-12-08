@@ -99,6 +99,8 @@ void MainWindow::create_keybindings() {
 	for (int i=0;i<MAX_KEYS;i++)
 		data.keyboard_codes.add_key_bind((String)"note_entry/"+key_name[i],key_name[i],default_pianokey_bind[i]);
 
+	data.keyboard_codes.set_key_bind_key_by_name("actions/undo",Qt::CTRL+Qt::Key_Z);
+	data.keyboard_codes.set_key_bind_key_by_name("actions/redo",Qt::SHIFT+Qt::CTRL+Qt::Key_Z);
 
 }
 

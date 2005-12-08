@@ -125,11 +125,6 @@ BlockList::Block *Track_Pattern::create_link_block(Block *p_block) {
 }
 
 
-void Track_Pattern::erase_block(int p_which) {
-
-
-
-}
 
 bool Track_Pattern::can_resize_from_begining() {
 
@@ -292,6 +287,11 @@ bool Track_Pattern::shares_block_data(Block *p_block) {
 		
 	return false;
 	
+}
+
+bool Track_Pattern::accepts_block(Block *p_block) {
+	
+	return dynamic_cast<PatternBlock*>(p_block)!=NULL;	
 }
 
 Track_Pattern::Track_Pattern(int p_channels,DataPool *p_pool) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT) {

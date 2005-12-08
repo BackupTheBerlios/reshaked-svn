@@ -41,6 +41,8 @@ class BlockListUI_Pattern : public BlockListUI_Base {
 	void mousePressEvent ( QMouseEvent * e );
 	
 	bool event( QEvent * ev );
+	
+	bool can_scroll();
 public:
 	
 	BlockListUI_Pattern(QWidget *p_parent,Editor *p_editor, int p_track);

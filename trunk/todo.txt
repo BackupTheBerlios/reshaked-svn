@@ -1,4 +1,3 @@
-
 Goals for 50%
 
 Automation:
@@ -8,12 +7,17 @@ Automation:
 -Move left/right
 
 BUG:
--Fix Screen-Screen Copy in automation, add in pattern
+*-Fix Screen-Screen Copy in automation, add in pattern
 
 Shortcuts:
--Make compatible with QActions
+*-Make compatible with QActions
+
+Undo/Redo:
+-Make block undoredo system
+
 
 Global View
+-Make selecting block with mouse drag/createarea
 -Fix block MOVING
 -Add undo/redo to all block operations
 -Optimize painting a bit using clip regions
@@ -21,6 +25,7 @@ Global View
 
 Selection
 -Make selection :)
+-Select blocks in global_view
 
 
 Goals for 60% 

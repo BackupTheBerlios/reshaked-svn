@@ -46,11 +46,26 @@ namespace ReShaked {
 	(Keyboard_Input::get_singleton_instance()->get_key_bind_by_name(m_str)==m_key)
 
 class Keyboard_Input {
-
+public:
+	
+	
+	enum {
+		
+		NO_KEY=-1
+	};
+	class External {
+	public:
+					
+		virtual void set_bind(int p_key)=0;
+		
+		~External() {}
+	};	
+	
 	static Keyboard_Input *singleton_instance;
 
 	struct Bind {
 
+		External *external;
 		bool readonly;
 		String category;
 		String name;
@@ -69,12 +84,14 @@ public:
 
 	static Keyboard_Input* get_singleton_instance();
 
-	void add_key_bind(String p_name,String p_caption_name,int p_key,bool p_readonly=false);
+	void add_key_bind(String p_name,String p_caption_name,int p_key=NO_KEY,bool p_readonly=false,External *p_external=NULL);
+
 
 	int get_key_bind_count();
 
 	const Bind& get_key_bind(int p_idx);
         void set_key_bind_key(int p_idx,int p_key);
+	void set_key_bind_key_by_name(String p_name,int p_key);
 
 	int get_key_bind_by_name(String p_name);
 	int get_key_bind_key(int p_idx);

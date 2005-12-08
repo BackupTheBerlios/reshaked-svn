@@ -73,6 +73,18 @@ void BlockList::move_block(BlockList *p_from_track,int p_which,Tick p_to_pos) {
 	//move it
 }
 
+void BlockList::insert_block(Block *p_block, Tick p_pos) {
+	
+	ERR_FAIL_COND( !accepts_block( p_block ) );
+	
+	if (block_type!=BLOCK_TYPE_FREE_MOVING) {
+		ERR_FAIL_COND( !block_fits( p_pos, p_block->get_length() ) );
+	}
+	
+	bl_private.block_list.insert(p_pos,p_block);
+	
+}
+
 void BlockList::remove_block(int p_index) {
 
 	ERR_FAIL_INDEX( p_index , get_block_count() );
@@ -104,6 +116,34 @@ bool BlockList::block_fits(Tick p_pos,Tick p_size,int p_current) {
 
 	return prev_ok && next_ok;
 
+}
+
+
+bool BlockList::block_fits(Tick p_pos,Tick p_size,const std::list<int>& p_exclude_list) {
+	
+	/* not much choice, must check all */
+	int block_from,block_to;
+	if (get_blocks_in_rage( p_pos, p_pos+p_size-1, &block_from, &block_to ))
+		return true; //no blocks collide, hooray
+	
+	/* check if the blocks are in the list, if one of them is not, then we dont fit */
+	for (int i=block_from;i<=block_to;i++) {
+		
+		std::list<int>::const_iterator I=p_exclude_list.begin();
+		bool found=false;
+		for (;I!=p_exclude_list.end();I++) {
+			
+			if (i==*I)
+				found=true;
+		}
+		
+		if (found)
+			continue; //this block is no worries
+		
+		return false; //the block is not in the exclude list, means we dont fit here
+	}
+	
+	return true;
 }
 
 bool BlockList::is_move_block_allowed(int p_which,Tick p_to_new_pos) {

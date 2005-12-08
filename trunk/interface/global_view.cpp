@@ -304,6 +304,15 @@ void GlobalView::compute_moving_block_list() {
 		e.block=block;
 		e.list=list;
 		e.block_ptr=bl->get_block( block );
+		e.new_list=list;
+		e.new_tick=bl->get_block_pos(block);
+		if (bl->get_block_type()==BlockList::BLOCK_TYPE_FIXED_TO_BEAT) {
+		
+			e.can_move=(moving_block.operation==MovingBlock::OP_MOVE)?true:false;
+					
+		} else
+			e.can_move=true;
+		
 		moving_block.moving_element_list.push_back(e);
 		printf("adding %i,%i\n",block,list);
 	}
@@ -315,11 +324,9 @@ void GlobalView::compute_moving_block_list() {
 bool GlobalView::get_moving_block_pos_and_status(int p_list,int p_block,int &p_dst_list,Tick &p_dst_tick, float &p_free_x, bool &p_allowed) {
 
 	BlockList *bl = get_block_list( p_list);
-	if (!bl)
-		return true;
+	ERR_FAIL_COND_V( !bl , true);
 	BlockList::Block *b=bl->get_block( p_block );
-	if (!b)
-		return true;
+	ERR_FAIL_COND_V( !b , true);
 
 	/* Find offsets */
 
@@ -345,12 +352,29 @@ bool GlobalView::get_moving_block_pos_and_status(int p_list,int p_block,int &p_d
 		p_free_x=get_block_list_offset(list_under)*display.zoom_width-display.ofs_x;
 
 		if (bl->get_block_type()==BlockList::BLOCK_TYPE_FIXED_TO_BEAT) {
-			int current=-1;
-			if (list_under==p_list && moving_block.operation==MovingBlock::OP_MOVE)
-				current=p_block;
+			
+			
+			if (moving_block.operation==MovingBlock::OP_MOVE) {
+				/* have to compute the blocks moving in this blocklist so the block_fits checking is accurate */
+				std::list<int> exclude_list;
+			
+				std::list<MovingBlock::Element>::iterator I = moving_block.moving_element_list.begin();
+				for (;I!=moving_block.moving_element_list.end();I++) {
+				
+					if (I->list==p_list)
+						exclude_list.push_back(I->block);
+				}
+				
+				if (bl_under->block_fits( tick, b->get_length(),exclude_list)  )
+					can_move_to=true;
+				
+			} else {
+				
+				/* anything is an obstacle in block_fits */
 
-			if (bl_under->block_fits( tick, b->get_length(), current )  )
-				can_move_to=true;
+				if (bl_under->block_fits( tick, b->get_length())  )
+					can_move_to=true;
+			}
 		} else
 			can_move_to=true;
 
@@ -377,37 +401,55 @@ void GlobalView::commit_moving_block_list() {
 
 	for(;I!=moving_block.moving_element_list.end();I++) {
 
-		int dst_list;
-		Tick dst_tick;
-		float free_x;
-		bool allowed;
-
-		if (get_moving_block_pos_and_status(I->list,I->block,dst_list,dst_tick,free_x,allowed))
-			return; // Something invalid about this block
-		if (!allowed)
-			return; // Cant commit changes if a block is not allowed to move
+		if (!I->can_move)
+			return;
 
 	}
 
+	
+	
+	
 	/* If everythign is valid and movable, then go for it */
 
+	/* If moving, first remove the blocks, otherwise they may not fit in their respective positions */
+	
+	if (moving_block.operation==MovingBlock::OP_MOVE) {
+		
+		I=moving_block.moving_element_list.begin();
+		for(;I!=moving_block.moving_element_list.end();I++) {
+			
+			
+			BlockList *src_bl=get_block_list( I->list );
+			int block_idx=src_bl->get_block_index(I->block_ptr);
+			ERR_FAIL_COND(block_idx<0);
+			src_bl->remove_block( block_idx ); 
+			
+		}
+		
+	}
+	
+	/* ok, finally commit everything */
+	
 	I=moving_block.moving_element_list.begin();
 
 	std::list<NewBlock> new_block_list;
 	for(;I!=moving_block.moving_element_list.end();I++) {
 
-		int dst_list;
-		Tick dst_tick;
-		float free_x;
-		bool allowed;
-		BlockList *src_bl=get_block_list( I->list );
-		//search again as it may have moved!
-		int src_block_index=src_bl->get_block_index(I->block_ptr);
-		ERR_CONTINUE(src_block_index==-1);
-		//would be very fucked up if it fails again
-		ERR_FAIL_COND( get_moving_block_pos_and_status(I->list,src_block_index,dst_list,dst_tick,free_x,allowed) );
-
-
+		int dst_list=I->new_list;
+		Tick dst_tick=I->new_tick;
+		float free_x=I->free_x;
+		bool allowed=I->can_move;
+		BlockList *src_bl=NULL;
+		int src_block_index=-1;
+		
+		//if moving, the src blocks dont exist anymore in the blocklists by this step
+		if (moving_block.operation!=MovingBlock::OP_MOVE) {
+			src_bl=get_block_list( I->list );
+			//search again as it may have moved!
+			src_block_index=src_bl->get_block_index(I->block_ptr);
+			ERR_CONTINUE(src_block_index==-1);
+		}
+		
 
 		switch (moving_block.operation) {
 
@@ -418,8 +460,6 @@ void GlobalView::commit_moving_block_list() {
 				BlockList::Block *bl=src_bl->get_block( src_block_index );
 				BlockList *dst_bl=get_block_list( dst_list );
 				dst_bl->copy_block( bl, dst_tick, current);
-
-
 
 			} break;
 
@@ -435,7 +475,7 @@ void GlobalView::commit_moving_block_list() {
 			case MovingBlock::OP_MOVE: {
 
 				BlockList *dst_bl=get_block_list( dst_list );
-				dst_bl->move_block( src_bl, src_block_index, dst_tick );
+				dst_bl->insert_block( I->block_ptr, dst_tick );
 
 			} break;
 		};
@@ -444,8 +484,10 @@ void GlobalView::commit_moving_block_list() {
 
 	}
 
-
+	moving_block.moving_element_list.clear(); //save some mem
+	
 	/* one last pass to reselect! block index changes for each insert so this hack is needed*/
+	
 	clear_selection(); //clear selection
 	for (std::list<NewBlock>::iterator J=new_block_list.begin();J!=new_block_list.end();J++) {
 
@@ -455,6 +497,7 @@ void GlobalView::commit_moving_block_list() {
 		ERR_CONTINUE( bindex<0 );
 		add_block_to_selection( J->blocklist, bindex );
 	}
+	
 	
 	resize_check_consistency();
 
@@ -609,6 +652,26 @@ void GlobalView::mouseMoveEvent ( QMouseEvent * e ) {
 
 			moving_block.current_x=(float)e->x()/display.zoom_width+display.ofs_x;
 			moving_block.current_y=(float)e->y()/display.zoom_height+display.ofs_y;
+			
+			std::list<MovingBlock::Element>::iterator I=moving_block.moving_element_list.begin();
+			
+			for(;I!=moving_block.moving_element_list.end();I++) {
+
+				int dst_list;
+				Tick dst_tick;
+				float free_x;
+				bool allowed;
+
+				if (get_moving_block_pos_and_status(I->list,I->block,dst_list,dst_tick,free_x,allowed)) {
+					
+					I->can_move=false;
+					continue;
+				}
+				I->new_list=dst_list;
+				I->new_tick=dst_tick;
+				I->free_x=free_x;
+				I->can_move=allowed;
+			}
 		}
 
 		if (resizing_block.resizing)
@@ -982,17 +1045,10 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 
 	for(;I!=moving_block.moving_element_list.end();I++) {
 
-		int dst_list;
-		Tick dst_tick;
-		float free_x;
-		bool allowed;
+		float free_x=I->free_x-display.ofs_x*display.zoom_width;
+		float free_y=((double)I->new_tick/(double)TICKS_PER_BEAT-display.ofs_y)*display.zoom_height;
 
-		if (get_moving_block_pos_and_status(I->list,I->block,dst_list,dst_tick,free_x,allowed))
-			continue;
-		free_x-=display.ofs_x*display.zoom_width;
-		float free_y=((double)dst_tick/(double)TICKS_PER_BEAT-display.ofs_y)*display.zoom_height;
-
-		paint_block(p,(int)free_x,(int)free_y,I->list,I->block,true,!allowed);
+		paint_block(p,(int)free_x,(int)free_y,I->list,I->block,true,!I->can_move);
 
 	}
 

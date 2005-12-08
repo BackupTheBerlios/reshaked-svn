@@ -120,10 +120,9 @@ BlockList::Block *Automation::create_link_block(Block *p_block) {
 
 }
 
-void Automation::erase_block(int p_which) {
-
-
-
+bool Automation::accepts_block(Block *p_block) {
+	
+	return dynamic_cast<AutomationBlock*>(p_block)!=NULL;	
 }
 
 Automation::AutomationData *Automation::AutomationBlock::get_data() {

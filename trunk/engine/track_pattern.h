@@ -133,7 +133,7 @@ private:
 	void create_block(Tick p_pos,BlockCreationData *p_creation_data);
 	Block *create_duplicate_block(Block *p_block);
 	Block *create_link_block(Block *p_block);
-	void erase_block(int p_which);
+
 	BlockCreationBehavior get_block_creation_behavior();
 	DataPool *pool;
 
@@ -149,6 +149,7 @@ private:
 public:
 
 	bool shares_block_data(Block *p_block);
+	bool accepts_block(Block *p_block);
 	
 	
 	void set_note(const Position& p_pos,const Note& p_note);

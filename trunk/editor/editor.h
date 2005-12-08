@@ -91,7 +91,6 @@ public:
 	Tick get_song_max_len();
 	Tick get_block_list_max_len(BlockList *p_bl);
 	
-	
 	void undo();
 	void redo();
 	

@@ -307,7 +307,7 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 
 void BlockListUI_Pattern::paint_row_lines(QPainter &p) {
 
-	int visible_rows=editor->get_cursor().get_window_size();
+	int visible_rows=editor->get_cursor().get_window_size()+1;
 	int row_size=VisualSettings::get_singleton()->get_editing_row_height();
 
 	for (int i=0;i<visible_rows;i++) {
@@ -345,12 +345,21 @@ void BlockListUI_Pattern::paint_row_lines(QPainter &p) {
 
 }
 
+
+bool BlockListUI_Pattern::can_scroll() {
+	
+	return !hasFocus();
+}
+
 void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 
 	editor->get_cursor().set_window_size( height() / VisualSettings::get_singleton()->get_editing_row_height() );
 
 	QPainter p(this);
 
+	p.setClipping(true);
+	p.setClipRect(e->rect());
+	
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));
 
 	paint_frames(p);
@@ -385,6 +394,9 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 		paint_cursor( p, editor->get_cursor().get_pos()-editor->get_cursor().get_window_offset() );
 
 	}
+	
+	p.setClipping(false);
+	
 
 }
 

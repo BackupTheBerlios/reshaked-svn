@@ -29,6 +29,7 @@ public:
 		INTERPOLATION_SPLINE,
 	};
 	
+		
 	struct AutomationValue {
 		
 		float value;
@@ -43,6 +44,8 @@ public:
 	friend class Automation;
 		int length; //in beats
 		int refcount;
+		
+		
 	public:
 
 		float get_tick_val(Tick p_tick);
@@ -71,7 +74,7 @@ private:
 	Block *create_link_block(Block *p_block);
 	BlockCreationBehavior get_block_creation_behavior();
 	bool can_resize_from_begining();
-
+	bool accepts_block(Block *p_block);
 	Property *property;	
 	
 	DisplaySize display_size;
@@ -86,7 +89,7 @@ public:
 	float get_tick_val(Tick p_tick); // 0.0 - 1.0
 	
 	void create_block(Tick p_pos,BlockCreationData *p_creation_data=NULL);
-	void erase_block(int p_which);
+
 	
 	DisplaySize get_display_size();
 

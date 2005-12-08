@@ -51,7 +51,7 @@ void BlockListUI_Base::update_viewport_pos(int p_new_line) {
 	if (!can_scroll()) {
 		update();
 		current_line=p_new_line;
-		printf("cant scroll!\n");
+//		printf("cant scroll!\n");
 		return;
 		
 	}
@@ -59,7 +59,7 @@ void BlockListUI_Base::update_viewport_pos(int p_new_line) {
 	int diff=p_new_line-current_line;
 	fix_pre_scroll( diff );
 	int scroll_pixels=-VisualSettings::get_singleton()->get_editing_row_height()*diff;
-	printf("scroll %i pixels\n",scroll_pixels);
+//	printf("scroll %i pixels\n",scroll_pixels);
 	scroll(0,scroll_pixels);
 	
 	current_line=p_new_line;
