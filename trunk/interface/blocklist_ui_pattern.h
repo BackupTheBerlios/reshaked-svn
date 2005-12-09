@@ -27,8 +27,8 @@ class BlockListUI_Pattern : public BlockListUI_Base {
 	Song *song;
 	Editor *editor;
 	Track_Pattern *track;
-	int track_idx;
 	
+	int get_row_size();
 	void paint_note_event( QPainter& p, int p_row, Track_Pattern::NoteListElement & p_note );
 	void paint_multiple_note_events( QPainter& p, int p_row , const Track_Pattern::NoteList& p_list );
 	//void paint_multiple_nonvisible_events( QPainter& p, int p_row, const Track_Pattern::NoteList& p_list);
@@ -39,6 +39,7 @@ class BlockListUI_Pattern : public BlockListUI_Base {
 	void paint_cursor(QPainter& p, int p_row);
 	void focusInEvent ( QFocusEvent * event );
 	void mousePressEvent ( QMouseEvent * e );
+	void paint_selection(QPainter&p,int p_clip_from,int p_clip_to);
 	
 	bool event( QEvent * ev );
 	

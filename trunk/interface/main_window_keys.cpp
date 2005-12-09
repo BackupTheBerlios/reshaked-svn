@@ -71,6 +71,7 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("page_up","Page Up",Qt::Key_PageUp,true);
 	data.keyboard_codes.add_key_bind("page_down","Page Down",Qt::Key_PageDown,true);
 
+	
 //	data.keyboard_codes.add_key_bind("home","Home",Qt::ALT+Qt::Key_Home,true);
 	//data.keyboard_codes.add_key_bind("end","End",Qt::ALT+Qt::Key_End,true);
 
@@ -88,6 +89,13 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/selection_paste_mix","Selection Paste Mix",Qt::ALT+Qt::Key_M);
 	data.keyboard_codes.add_key_bind("editor/select_column_block_all","Select Column/Block/All",Qt::ALT+Qt::Key_L);
 	data.keyboard_codes.add_key_bind("editor/selection_disable","Selection Disable",Qt::ALT+Qt::Key_U);
+	
+	data.keyboard_codes.add_key_bind("editor/selection_up","Selection Move Up",Qt::SHIFT+Qt::Key_Up,true);
+	data.keyboard_codes.add_key_bind("editor/selection_down","Selection Move Down",Qt::SHIFT+Qt::Key_Down,true);
+	data.keyboard_codes.add_key_bind("editor/selection_left","Selection Move Left",Qt::SHIFT+Qt::Key_Left,true);
+	data.keyboard_codes.add_key_bind("editor/selection_right","Selection Move Right",Qt::SHIFT+Qt::Key_Right,true);
+	data.keyboard_codes.add_key_bind("editor/selection_page_up","Selection Page Up",Qt::SHIFT+Qt::Key_PageUp,true);
+	data.keyboard_codes.add_key_bind("editor/selection_page_down","Selection Page Down",Qt::SHIFT+Qt::Key_PageDown,true);
 	
 	
 	data.keyboard_codes.add_key_bind("editor/delete","Delete",Qt::Key_Delete);

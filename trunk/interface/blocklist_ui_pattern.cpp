@@ -51,6 +51,11 @@ int get_note_display_column_pos(int p_column_w,int p_note) {
 
 /* end of helpers */
 
+int BlockListUI_Pattern::get_row_size() {
+	
+	return VisualSettings::get_singleton()->get_editing_row_height();
+}
+
 void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Pattern::NoteListElement & p_note ) {
 
 	PixmapFont * font=VisualSettings::get_singleton()->get_pattern_font();
@@ -258,6 +263,65 @@ void BlockListUI_Pattern::paint_cursor(QPainter &p,int p_row) {
 	p.drawPixmap(xofs,textofs,cursor);
 }
 
+void BlockListUI_Pattern::paint_selection(QPainter&p,int p_clip_from,int p_clip_to) {
+	
+	if (!editor->is_selection_active())
+		return;
+	
+	int sel_margin=VisualSettings::get_singleton()->get_selection_h_margin();
+	int current_bl=editor->find_blocklist(track);
+	int font_width=VisualSettings::get_singleton()->get_pattern_font()->get_width();
+	
+	if ( editor->get_selection_begin_blocklist() <= current_bl && editor->get_selection_end_blocklist() >= current_bl &&
+		    editor->get_selection_begin_row() <= (editor->get_cursor().get_window_size()+editor->get_cursor().get_window_offset()+1) && (editor->get_selection_end_row()+1)>=editor->get_cursor().get_window_offset() ) {
+		
+		/* SELECTION VISIBLE */
+		
+		int from_y=editor->get_selection_begin_row()-editor->get_cursor().get_window_offset();
+		
+		int to_y=(editor->get_selection_end_row()+1)-editor->get_cursor().get_window_offset();
+		
+		from_y*=get_row_size();
+		to_y*=get_row_size();
+		
+		if (from_y<0)
+			from_y=0;
+		if (to_y>height())
+			to_y=height();
+
+		//no point painting?
+		if (from_y>p_clip_to || to_y<p_clip_from)
+			return;
+		
+		if (from_y<p_clip_from)
+			from_y=p_clip_from;
+		
+		if (to_y>p_clip_to)
+			to_y=p_clip_to;
+		
+		int from_x=sel_margin;
+		int to_x=width()-sel_margin*2;
+		
+		if (editor->get_selection_begin_blocklist()==current_bl) {
+			
+			int col_from=editor->get_selection_begin_column();
+			from_x=sel_margin+4*font_width*col_from;
+		}
+		
+		if (editor->get_selection_end_blocklist()==current_bl) {
+		
+			int col_to=editor->get_selection_end_column();
+			to_x=(font_width-sel_margin)+4*font_width*(col_to+1);
+	
+		}
+		//printf("drawing from %i to %i\n",p_clip_from,p_clip_to);
+		p.fillRect(from_x,from_y,to_x-from_x,to_y-from_y,GET_QCOLOR(COLORLIST_EDITOR_SELECTION_PATTERN));
+	}
+		    
+	
+}
+
+
 void BlockListUI_Pattern::paint_frames(QPainter& p) {
 
 	int begin_pos=-1;
@@ -364,6 +428,8 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 
 	paint_frames(p);
 
+	paint_selection(p,e->rect().y(),e->rect().y()+e->rect().height());
+	
 	int visible_rows=editor->get_cursor().get_window_size();
 
 	for (int i=0;i<visible_rows;i++) {
@@ -386,7 +452,7 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 
 
 
-	if ( hasFocus() && editor->get_track_blocklist( track_idx) == editor->get_current_blocklist() &&
+	if ( hasFocus() && editor->get_track_blocklist( editor->find_track_idx( track) ) == editor->get_current_blocklist() &&
 		    editor->get_cursor().get_pos()>=editor->get_cursor().get_window_offset() &&
 		    editor->get_cursor().get_pos()<(editor->get_cursor().get_window_offset()+visible_rows)) {
 				/* cursor is here */
@@ -403,7 +469,7 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 void BlockListUI_Pattern::focusInEvent ( QFocusEvent * event ) {
 
 	
-	editor->set_current_blocklist( editor->get_track_blocklist( track_idx ) );
+	editor->set_current_blocklist( editor->get_track_blocklist( editor->find_track_idx( track) ) );
 	QWidget::focusInEvent(event);
 	
 }
@@ -468,7 +534,7 @@ BlockListUI_Pattern::BlockListUI_Pattern(QWidget *p_parent,Editor *p_editor, int
 	editor = p_editor;
 	song=editor->get_song();
 	track=dynamic_cast<Track_Pattern*>(song->get_track(p_track));
-	track_idx=p_track;
+
 	ERR_FAIL_COND(track==NULL);
 
 	setBackgroundRole(QPalette::NoRole);

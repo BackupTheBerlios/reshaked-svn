@@ -31,12 +31,16 @@ class Editor {
 	void enter_blocklist(EditorData::EnterBLDir p_dir);
 	bool handle_navigation_key_press(BlockList *p_blocklist,int p_event);
 	
+	void begin_check_shift_selection();
+	void end_check_shift_selection();
+	bool test_key_press_selecting(int &p_keypress);
 	void fix_selection();
 	
 friend class EditorCommands;	
 	
 	void revalidate_cursor();
 	EditorData::Selection::Pos get_cursor_selection_pos();
+	
 public:
 	
 	

@@ -1090,6 +1090,30 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 	QPainter p(this);
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));
 
+	/* paint lines */
+	
+	int beat_from=get_beat_at_pixel(0);
+	int beat_to=get_beat_at_pixel(height());
+	
+	PixmapFont *pf=VisualSettings::get_singleton()->get_global_bar_font();
+	
+	for (int i=beat_from;i<=beat_to;i++) {
+		
+		int line = get_beat_pixel( i );
+		if (song->get_bar_map().get_bar_beat( i )) { //regular beat
+			 
+			if (get_beat_pixel_size()<3) //dont paint it so small, make this constant later
+				continue;
+			p.setPen(GET_QCOLOR(COLORLIST_GLOBAL_VIEW_BEAT_LINE));
+			p.drawLine(0,line,width(),line);
+		} else { //bar 
+			p.setPen(GET_QCOLOR(COLORLIST_GLOBAL_VIEW_BAR_LINE));
+			p.drawLine(0,line,width(),line);
+		}
+	}
+	
+	/* paint blocks */
+	
 	float ofs=0;
 	int blocklist_count=get_block_list_count();
 	for (int i=0;i<blocklist_count;i++) {
@@ -1154,27 +1178,6 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 	}
 	
 	
-	/* paint lines */
-	
-	int beat_from=get_beat_at_pixel(0);
-	int beat_to=get_beat_at_pixel(height());
-	
-	PixmapFont *pf=VisualSettings::get_singleton()->get_global_bar_font();
-	
-	for (int i=beat_from;i<=beat_to;i++) {
-		
-		int line = get_beat_pixel( i );
-		if (song->get_bar_map().get_bar_beat( i )) { //regular beat
-			 
-			if (get_beat_pixel_size()<3) //dont paint it so small, make this constant later
-				continue;
-			p.setPen(GET_QCOLOR(COLORLIST_GLOBAL_VIEW_BEAT_LINE));
-			p.drawRect(0,line,width(),0);
-		} else { //bar 
-			p.setPen(GET_QCOLOR(COLORLIST_GLOBAL_VIEW_BAR_LINE));
-			p.drawRect(0,line,width(),0);
-		}
-	}
 }
 
 /******************************** CLASS API *************************************/

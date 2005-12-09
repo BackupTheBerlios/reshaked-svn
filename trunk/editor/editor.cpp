@@ -19,42 +19,57 @@ namespace ReShaked {
 bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int p_event) {
 	
 	bool handled=true;
+	bool selecting=test_key_press_selecting(p_event);
+	
 	SWITCH(p_event)
 	
 		CASE( KEYBIND("up") ) {
 
+			begin_check_shift_selection();
 			d->cursor.set_pos( d->cursor.get_pos() -1 );
+			end_check_shift_selection();
+			
 
 		}
 		CASE( KEYBIND("down") ) {
 
+			begin_check_shift_selection();
 			d->cursor.set_pos( d->cursor.get_pos() +1 );
+			end_check_shift_selection();
 
 		}
 		CASE( KEYBIND("page_up") ) {
 
+			begin_check_shift_selection();
 			d->cursor.set_pos( d->cursor.get_pos() - d->cursor.get_window_size()/2 );
+			end_check_shift_selection();
 
 		}
 		CASE( KEYBIND("page_down") ) {
 
+			begin_check_shift_selection();
 			d->cursor.set_pos( d->cursor.get_pos() + d->cursor.get_window_size()/2 );
+			end_check_shift_selection();
 
 		}
 		CASE( KEYBIND("home") ) {
 		
+			begin_check_shift_selection();
 			if (d->global_edit.current_blocklist==0) {
 				d->cursor.set_pos( 0 );
 			} else {
 				d->global_edit.current_blocklist=0;
 				enter_blocklist(EditorData::ENTER_LEFT);
 			}
+			end_check_shift_selection();
 
 		}
 		CASE( KEYBIND("end") ) {
 		
+			begin_check_shift_selection();
 			d->global_edit.current_blocklist=get_blocklist_count()-1;
 			enter_blocklist(EditorData::ENTER_RIGHT);
+			end_check_shift_selection();
 		
 		}
 

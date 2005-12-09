@@ -139,6 +139,8 @@ public:
 	QColor get_color(ColorList p_color);
 	QPixmap get_pixmap(PixmapList p_pixmap);
 
+	int get_selection_h_margin();
+	
 	VisualSettings();
 	~VisualSettings();
 

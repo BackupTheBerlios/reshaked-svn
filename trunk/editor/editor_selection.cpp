@@ -11,10 +11,48 @@
 //
 
 #include "editor.h"
+#include "keyboard_input.h"
 
 
 namespace ReShaked {
 
+
+void Editor::begin_check_shift_selection() {
+	
+	if (d->selection.enabled==false || d->selection.end!=get_cursor_selection_pos() || d->selection.begin!=get_cursor_selection_pos()) {
+		
+		d->selection.begin=get_cursor_selection_pos();
+		d->selection.end=get_cursor_selection_pos();
+		d->selection.enabled=true;
+	}
+}
+void Editor::end_check_shift_selection() {
+	
+	
+}
+
+
+bool Editor::test_key_press_selecting(int &p_keypress) {
+	
+	SWITCH(p_keypress)
+	
+		CASE( KEYBIND("editor/selection_up") ) p_keypress=KEYBIND("up");
+		CASE( KEYBIND("editor/selection_down") ) p_keypress=KEYBIND("down");
+		CASE( KEYBIND("editor/selection_left") ) p_keypress=KEYBIND("left");
+		CASE( KEYBIND("editor/selection_right") ) p_keypress=KEYBIND("right");
+		CASE( KEYBIND("editor/selection_page_up") ) p_keypress=KEYBIND("page_up");
+		CASE( KEYBIND("editor/selection_page_down") ) p_keypress=KEYBIND("page_down");
+		CASE( KEYBIND("editor/selection_home") ) p_keypress=KEYBIND("home");
+		CASE( KEYBIND("editor/selection_end") ) p_keypress=KEYBIND("end");
+		DEFAULT
+			return false;
+		
+	END_SWITCH
+			
+	return true;
+	
+	
+}
 
 void Editor::fix_selection() {
 	

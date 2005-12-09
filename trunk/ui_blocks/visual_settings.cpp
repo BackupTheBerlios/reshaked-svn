@@ -113,6 +113,11 @@ SkinBox * VisualSettings::get_skin_box(SkinBoxList p_which) {
 
 }
 
+int VisualSettings::get_selection_h_margin() {
+	
+	return 3;
+}
+
 QColor VisualSettings::get_color(ColorList p_color) {
 
 	ColorMap::iterator I=color_map.find(p_color);
@@ -164,10 +169,10 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,255,200,128);
 	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(150,200,150,64);
 	color_map[COLORLIST_AUTOMATION_ENVELOPE]=QColor(255,255,200,200);
-	color_map[COLORLIST_GLOBAL_VIEW_BAR_LINE]=QColor(200,255,200,128);
-	color_map[COLORLIST_GLOBAL_VIEW_BEAT_LINE]=QColor(150,200,150,64);
+	color_map[COLORLIST_GLOBAL_VIEW_BAR_LINE]=QColor(150,200,150);
+	color_map[COLORLIST_GLOBAL_VIEW_BEAT_LINE]=QColor(50,80,60);
 	color_map[COLORLIST_PATTERN_EDIT_BAR]=QColor(222,255,242,40);
-	color_map[COLORLIST_EDITOR_SELECTION_AUTOMATION]=QColor(0x85,0x8f,0x19);
+	color_map[COLORLIST_EDITOR_SELECTION_AUTOMATION]=QColor(0x75,0x7f,0x09);
 	color_map[COLORLIST_EDITOR_SELECTION_PATTERN]=QColor(0x28,0x7c,0x46);
 	
 	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);

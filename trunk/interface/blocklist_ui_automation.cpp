@@ -310,8 +310,12 @@ void BlockListUI_Automation::paint_cursor(QPainter &p) {
 
 void BlockListUI_Automation::paint_selection(QPainter&p,int p_clip_from,int p_clip_to) {
 	
+	if (!editor->is_selection_active())
+		return;
+
+	int sel_margin=VisualSettings::get_singleton()->get_selection_h_margin();
+
 	int current_bl=editor->find_blocklist(automation);
-	int font_width=	VisualSettings::get_singleton()->get_pattern_font()->get_width();
 	
 	if ( editor->get_selection_begin_blocklist() <= current_bl && editor->get_selection_end_blocklist() >= current_bl &&
 		    editor->get_selection_begin_row() <= (editor->get_cursor().get_window_size()+editor->get_cursor().get_window_offset()+1) && (editor->get_selection_end_row()+1)>=editor->get_cursor().get_window_offset() ) {
@@ -342,7 +346,7 @@ void BlockListUI_Automation::paint_selection(QPainter&p,int p_clip_from,int p_cl
 		
 	
 		//printf("drawing from %i to %i\n",p_clip_from,p_clip_to);
-		p.fillRect(font_width,from_y,width()-font_width*2,to_y-from_y,GET_QCOLOR(COLORLIST_EDITOR_SELECTION_AUTOMATION));
+		p.fillRect(sel_margin,from_y,width()-sel_margin*2,to_y-from_y,GET_QCOLOR(COLORLIST_EDITOR_SELECTION_AUTOMATION));
 	}
 		    
 	
