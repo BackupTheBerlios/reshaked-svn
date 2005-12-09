@@ -167,6 +167,8 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_GLOBAL_VIEW_BAR_LINE]=QColor(200,255,200,128);
 	color_map[COLORLIST_GLOBAL_VIEW_BEAT_LINE]=QColor(150,200,150,64);
 	color_map[COLORLIST_PATTERN_EDIT_BAR]=QColor(222,255,242,40);
+	color_map[COLORLIST_EDITOR_SELECTION_AUTOMATION]=QColor(0x85,0x8f,0x19);
+	color_map[COLORLIST_EDITOR_SELECTION_PATTERN]=QColor(0x28,0x7c,0x46);
 	
 	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);
 	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);

@@ -308,6 +308,46 @@ void BlockListUI_Automation::paint_cursor(QPainter &p) {
 	cursor->paint_into(p,xofs,textofs,width()-(xofs*2),rowsize);
 }
 
+void BlockListUI_Automation::paint_selection(QPainter&p,int p_clip_from,int p_clip_to) {
+	
+	int current_bl=editor->find_blocklist(automation);
+	int font_width=	VisualSettings::get_singleton()->get_pattern_font()->get_width();
+	
+	if ( editor->get_selection_begin_blocklist() <= current_bl && editor->get_selection_end_blocklist() >= current_bl &&
+		    editor->get_selection_begin_row() <= (editor->get_cursor().get_window_size()+editor->get_cursor().get_window_offset()+1) && (editor->get_selection_end_row()+1)>=editor->get_cursor().get_window_offset() ) {
+		
+		/* SELECTION VISIBLE */
+		
+		int from_y=editor->get_selection_begin_row()-editor->get_cursor().get_window_offset();
+		
+		int to_y=(editor->get_selection_end_row()+1)-editor->get_cursor().get_window_offset();
+		
+		from_y*=get_row_size();
+		to_y*=get_row_size();
+		
+		if (from_y<0)
+			from_y=0;
+		if (to_y>height())
+			to_y=height();
+
+		//no point painting?
+		if (from_y>p_clip_to || to_y<p_clip_from)
+			return;
+		
+		if (from_y<p_clip_from)
+			from_y=p_clip_from;
+		
+		if (to_y>p_clip_to)
+			to_y=p_clip_to;
+		
+	
+		//printf("drawing from %i to %i\n",p_clip_from,p_clip_to);
+		p.fillRect(font_width,from_y,width()-font_width*2,to_y-from_y,GET_QCOLOR(COLORLIST_EDITOR_SELECTION_AUTOMATION));
+	}
+		    
+	
+}
+
 void BlockListUI_Automation::fix_pre_scroll(int p_scroll) {
 	
 	/* repaint name */  // REMOVED there was really no way to implement this	
@@ -349,9 +389,9 @@ void BlockListUI_Automation::paintEvent(QPaintEvent *pe) {
 
 	p.fillRect(0,row_size*row_from,width(),(row_to-row_from)*row_size,QColor(0,0,0));
 	paint_frames(p,row_from,row_to); //paint all by default
+	paint_selection(p, pe->rect().y(),pe->rect().y()+pe->rect().height());
 	paint_envelopes( p,row_from,row_to );
 	paint_row_lines( p,row_from,row_to );
-	
 	//printf("paint from %i to %i, screen is %i lines to paint\n",row_from,row_to,(height()/row_size)+1);
 	
 	//if (paint_name_enabled)
@@ -552,6 +592,8 @@ void BlockListUI_Automation::cancel_motion() {
 }
 void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 	
+	if (e->button()==Qt::LeftButton)
+		   editor->lock_undo_stream();
 	if (e->button()==Qt::RightButton && moving_point.moving ) {
 	
 		/* Cancel motion */
@@ -633,6 +675,9 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 
 }
 void BlockListUI_Automation::mouseReleaseEvent ( QMouseEvent * e ) {
+	
+	if (e->button()==Qt::LeftButton)
+		editor->unlock_undo_stream();
 	
 	if (moving_point.moving) { /* we were moving a point */
 		

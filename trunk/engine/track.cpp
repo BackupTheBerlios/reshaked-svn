@@ -92,7 +92,7 @@ void Track::show_automation(String p_path) {
 		base_private.property_list[ idx ]->automated->visible=true;
 	} else {
 		
-		base_private.automations.push_back(new TrackAutomation(automation_pool,p_path,get_property(idx)));
+		base_private.automations.push_back(new TrackAutomation(p_path,get_property(idx)));
 		base_private.property_list[idx]->automated=base_private.automations[ base_private.automations.size()-1 ];
 		base_private.automations[ base_private.automations.size()-1 ]->visible=true;
 	}
@@ -203,11 +203,6 @@ void Track::process(int p_frames) {
 
 
 	process_track(base_private.input_plug->get_buffer(),base_private.output_plug->get_buffer(),p_frames);
-}
-
-void Track::set_automation_pool(DataPool *p_pool) {
-	
-	automation_pool=p_pool;	
 }
 
 

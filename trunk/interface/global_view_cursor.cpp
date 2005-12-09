@@ -47,7 +47,14 @@ GlobalViewCursor::GlobalViewCursor(QWidget *p_parent) : CHBox(p_parent) {
 	add_button(GlobalView::EDIT_MODE_ADD_BLOCK,ICON_GLOBAL_VIEW_ADD_BLOCK);
 	add_button(GlobalView::EDIT_MODE_COPY_BLOCK,ICON_GLOBAL_VIEW_COPY_BLOCK);
 	add_button(GlobalView::EDIT_MODE_COPY_LINK_BLOCK,ICON_GLOBAL_VIEW_COPY_LINK_BLOCK);
-	add_button(GlobalView::EDIT_MODE_ERASE_BLOCK,ICON_GLOBAL_VIEW_ERASE_BLOCK);
+	delete_selected=new QPushButton(this);
+	QPixmap delete_px=GET_QPIXMAP(ICON_GLOBAL_VIEW_ERASE_BLOCK);
+	delete_selected->setIcon(delete_px);
+	delete_selected->setIconSize(delete_px.size());
+	delete_selected->setFocusPolicy(Qt::NoFocus);
+	delete_selected->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	QObject::connect(delete_selected,SIGNAL(clicked()),this,SIGNAL(delete_clicked_signal()));
+	
 	(new QFrame(this))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);	
 	layout()->setMargin(2);
 	layout()->setSpacing(0);

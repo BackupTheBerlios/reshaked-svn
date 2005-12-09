@@ -65,24 +65,13 @@ Track_Pattern::NoteList Track_Pattern::get_notes_in_range(Tick p_from, Tick p_to
 /****************************************************************************/
 /****************************************************************************/
 
-void Track_Pattern::create_block(Tick p_pos,BlockCreationData *p_creation_data) {
+BlockList::Block* Track_Pattern::create_block(BlockCreationData *p_creation_data) {
 
-	if (!block_fits(p_pos,TICKS_PER_BEAT))
-		return; //cant add thing
 
 	Pattern *p = new Pattern;
 	PatternBlock *pb = new PatternBlock(p);
-
-	if (add_block(pb,p_pos)) { //no add? fuck must be a bug!?
-
-		delete p;
-		delete pb;
-		ERR_PRINT("Failed adding pattern after previous check? WTF?");
-		return;
-	}
-
-
-	pool->add_data(p);
+	
+	return pb;
 
 }
 
@@ -101,10 +90,9 @@ BlockList::Block *Track_Pattern::create_duplicate_block(Block *p_block) {
 	//new pattern
 	Pattern *np = new Pattern;
 	*np=*b->get_pattern(); //copy
-	np->refcount=0; //refcount to zero
+	np->reset_refcount();
 
 	//new block
-	pool->add_data(np);
 	PatternBlock *nb = new PatternBlock(np);
 
 	return nb;
@@ -144,7 +132,7 @@ Track_Pattern::Pattern *Track_Pattern::PatternBlock::get_pattern() {
 
 Track_Pattern::Pattern::Pattern() {
 	length=1;
-	refcount=0;
+	
 }
 Tick Track_Pattern::PatternBlock::get_length() {
 
@@ -168,7 +156,7 @@ void Track_Pattern::PatternBlock::set_length(Tick p_length) {
 
 bool Track_Pattern::PatternBlock::is_shared() {
 
-	return pattern->refcount>1;
+	return pattern->get_refcount()>1;
 
 }
 
@@ -187,6 +175,8 @@ Track_Pattern::Note Track_Pattern::PatternBlock::get_note(int p_index) {
 	return pattern->data.get_index_value( p_index );
 	
 }
+
+
 Track_Pattern::Position Track_Pattern::PatternBlock::get_note_pos(int p_index) {
 	
 	ERR_FAIL_INDEX_V(p_index,pattern->data.get_stream_size(),Position());
@@ -197,10 +187,15 @@ Track_Pattern::Position Track_Pattern::PatternBlock::get_note_pos(int p_index) {
 Track_Pattern::PatternBlock::PatternBlock(Pattern* p) {
 
 	pattern = p;
-	p->refcount++;
+	p->reference();
 
 }
 
+Track_Pattern::PatternBlock::~PatternBlock() {
+	
+	pattern->dereference();
+	
+}
 Track_Pattern::PatternBlock* Track_Pattern::get_block(int p_index) {
 
 	PatternBlock *pb=dynamic_cast<PatternBlock*>( BlockList::get_block( p_index ) );
@@ -294,9 +289,8 @@ bool Track_Pattern::accepts_block(Block *p_block) {
 	return dynamic_cast<PatternBlock*>(p_block)!=NULL;	
 }
 
-Track_Pattern::Track_Pattern(int p_channels,DataPool *p_pool) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT) {
+Track_Pattern::Track_Pattern(int p_channels) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT) {
 
-	pool=p_pool;
 	data.visible_columns=1;
 }
 

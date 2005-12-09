@@ -132,6 +132,7 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	QObject::connect(v_scroll,SIGNAL(valueChanged(int)),this,SLOT(v_scollbar_changed_slot( int )));
 	QObject::connect(zoom,SIGNAL(valueChanged(int)),this,SLOT(zoom_changed_slot( int )));
 	QObject::connect(cursor_op,SIGNAL(edit_mode_changed_signal( GlobalView::EditMode )),global_view,SLOT(set_edit_mode( EditMode )));
+	QObject::connect(cursor_op,SIGNAL(delete_clicked_signal()),global_view,SLOT(delete_selected_blocks()));
 	
 	l->setMargin(0);
 	l->setSpacing(0);

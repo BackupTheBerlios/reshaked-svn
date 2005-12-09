@@ -5,6 +5,7 @@ Automation:
 -LFO edit
 -Interpolation Edit
 -Move left/right
+-more mouse support in widegt
 
 BUG:
 *-Fix Screen-Screen Copy in automation, add in pattern
@@ -13,15 +14,17 @@ Shortcuts:
 *-Make compatible with QActions
 
 Undo/Redo:
--Make block undoredo system
-
+*-Make block undoredo system
+-Clean the ret/createdata stuff
 
 Global View
 -Make selecting block with mouse drag/createarea
--Fix block MOVING
--Add undo/redo to all block operations
+*-Fix block MOVING
+*-Add undo/redo to all block operations
 -Optimize painting a bit using clip regions
-
+-display linked blocks differently
+-select other linked blocks
+*?-delete blocks gdannit
 
 Selection
 -Make selection :)

@@ -407,11 +407,32 @@ void GlobalView::commit_moving_block_list() {
 	}
 
 	
-	
-	
 	/* If everythign is valid and movable, then go for it */
 
 	/* If moving, first remove the blocks, otherwise they may not fit in their respective positions */
+	
+	/* Begin meta undo operation */
+	switch (moving_block.operation) {
+		
+		case MovingBlock::OP_COPY: {
+
+			editor->begin_meta_undo_block("Copy Block(s)");
+
+		} break;
+
+		case MovingBlock::OP_COPY_LINK: {
+
+			editor->begin_meta_undo_block("Copy Link Block(s)");
+				
+		} break;
+		case MovingBlock::OP_MOVE: {
+
+			editor->begin_meta_undo_block("Move Block(s)");
+
+		} break;
+		
+		
+	}
 	
 	if (moving_block.operation==MovingBlock::OP_MOVE) {
 		
@@ -421,8 +442,8 @@ void GlobalView::commit_moving_block_list() {
 			
 			BlockList *src_bl=get_block_list( I->list );
 			int block_idx=src_bl->get_block_index(I->block_ptr);
-			ERR_FAIL_COND(block_idx<0);
-			src_bl->remove_block( block_idx ); 
+			ERR_CONTINUE(block_idx<0);
+			editor->blocklist_remove_block( src_bl, block_idx );
 			
 		}
 		
@@ -455,27 +476,24 @@ void GlobalView::commit_moving_block_list() {
 
 			case MovingBlock::OP_COPY: {
 
-				int current=(I->list==dst_list)?src_block_index:-1;
-
-				BlockList::Block *bl=src_bl->get_block( src_block_index );
+				BlockList::Block *bl=src_bl->create_duplicate_block( src_bl->get_block( src_block_index ) );
 				BlockList *dst_bl=get_block_list( dst_list );
-				dst_bl->copy_block( bl, dst_tick, current);
+				editor->blocklist_insert_block(dst_bl,bl, dst_tick);
+
 
 			} break;
 
 			case MovingBlock::OP_COPY_LINK: {
 
-				int current=(I->list==dst_list)?src_block_index:-1;
-				BlockList::Block *bl=src_bl->get_block( src_block_index );
+				BlockList::Block *bl=src_bl->create_link_block( src_bl->get_block( src_block_index ) );
 				BlockList *dst_bl=get_block_list( dst_list );
-				dst_bl->copy_block_link( bl, dst_tick, current);
-
-
+				editor->blocklist_insert_block(dst_bl,bl, dst_tick);
+				
 			} break;
 			case MovingBlock::OP_MOVE: {
 
 				BlockList *dst_bl=get_block_list( dst_list );
-				dst_bl->insert_block( I->block_ptr, dst_tick );
+				editor->blocklist_insert_block(dst_bl,I->block_ptr, dst_tick);
 
 			} break;
 		};
@@ -484,7 +502,10 @@ void GlobalView::commit_moving_block_list() {
 
 	}
 
+	
 	moving_block.moving_element_list.clear(); //save some mem
+	
+	editor->end_meta_undo_block();
 	
 	/* one last pass to reselect! block index changes for each insert so this hack is needed*/
 	
@@ -502,8 +523,59 @@ void GlobalView::commit_moving_block_list() {
 	resize_check_consistency();
 
 }
+/* bleh */
+struct DeleteData {
+	
+	BlockList *blocklist;
+	BlockList::Block *block;		
+};
 
+void GlobalView::delete_selected_blocks() {
+	
+	
+	if (selection.empty())
+		return; //nothing to delete
+	
+	editor->begin_meta_undo_block("Delete Block(s)");
+	
+	
+	std::list<DeleteData> delete_list;
+	
+	std::set<int>::iterator I=selection.begin();
+	
+	
+	for (;I!=selection.end();I++) {
 
+		int list=*I%MAX_LISTS;
+		int block=*I/MAX_LISTS;
+
+		DeleteData d;
+		
+		d.blocklist=get_block_list( list );
+		
+		ERR_CONTINUE(!d.blocklist);
+		
+		d.block=d.blocklist->get_block(block);
+		ERR_CONTINUE(!d.block);
+		delete_list.push_back(d);
+		
+	}
+
+	std::list<DeleteData>::iterator J=delete_list.begin();
+	for (;J!=delete_list.end();J++) {
+	
+		int which=J->blocklist->get_block_index(J->block);
+		ERR_CONTINUE(which<0);
+		editor->blocklist_remove_block( J->blocklist, which );
+		
+	}
+	
+	selection.clear();
+	editor->end_meta_undo_block();
+
+	editor->get_ui_update_notify()->block_layout_changed();
+	
+}
 void GlobalView::get_resizing_block_data(Tick* p_new_len,bool *allowed) {
 
 	double yofs=resizing_block.current_y-mouse_data.click_y_from;
@@ -543,16 +615,25 @@ void GlobalView::commit_resizing_block() {
     switch(resizing_block.operation) {
 	case ResizingBlock::RESIZE_CREATE_NEW: {
 
-		bl->create_block(resizing_block.from,NULL);
-		int idx=bl->get_block_idx_at_pos(resizing_block.from);
-		ERR_FAIL_COND(idx<0);
-		BlockList::Block *b = bl->get_block(idx);
-		b->set_length(new_len);
+		
+		BlockList::Block *block=bl->create_block(NULL);
+		
+		if (editor->blocklist_insert_block(bl,block, resizing_block.from )) {
+			
+			delete block;
+			
+		} else {
+		
+			int idx=bl->get_block_idx_at_pos(resizing_block.from);
+			ERR_FAIL_COND(idx<0);
+			BlockList::Block *b = bl->get_block(idx);
+			b->set_length(new_len);
+		}
 
 	} break;
 	case ResizingBlock::RESIZE: {
 
-		bl->get_block(resizing_block.block)->set_length(new_len);
+		editor->blocklist_resize_block( bl, resizing_block.block, new_len);
 	} break;
     }
 
@@ -751,6 +832,8 @@ void GlobalView::mousePressEvent ( QMouseEvent * e ) {
 
 	if (e->button()!=Qt::LeftButton)
 		return;
+	
+	editor->lock_undo_stream();
 
 	mouse_data.click_x_from=(float)e->x()/display.zoom_width+display.ofs_x;
 	mouse_data.click_y_from=(float)e->y()/display.zoom_height+display.ofs_y;
@@ -845,6 +928,8 @@ void GlobalView::mouseReleaseEvent ( QMouseEvent * e ) {
 	if (e->button()!=Qt::LeftButton)
 		return;
 
+	editor->unlock_undo_stream();
+	
 	if (mouse_data.deselecting) {
 
 		if (mouse_data.shift_when_deselecting) //actual deselect
@@ -1182,6 +1267,13 @@ int GlobalView::get_beat_at_pixel(int p_pix) {
 float GlobalView::get_beat_pixel_size() {
 	
 	return display.zoom_height;
+}
+
+void GlobalView::block_layout_changed_slot() {
+	
+	selection.clear();
+	update();
+	resize_check_consistency();
 }
 
 GlobalView::GlobalView(QWidget *p_widget,Editor *p_editor) : QWidget(p_widget)

@@ -210,6 +210,7 @@ CommandFunc* EditorCommands::move_automation_point(bool p_no_undo,Automation *p_
 	return ret;
 	
 }
+
 CommandFunc* EditorCommands::remove_automation_point(bool p_no_undo,Automation *p_automation,int p_block,int p_point) {
 	
 	
@@ -237,6 +238,79 @@ CommandFunc* EditorCommands::remove_automation_point(bool p_no_undo,Automation *
 	if (!d->global_edit.automation_point_dont_update) 
 		editor->update_blocklists_sharing_block( p_automation->get_block(p_block) );
 	
+	
+	return ret;
+	
+}
+
+
+CommandFunc* EditorCommands::blocklist_insert_block(bool p_no_undo,BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos) {
+	
+	
+	//failed to insert block?
+	ERR_FAIL_COND_V( p_blocklist->insert_block( p_block, p_pos ) , NULL );
+
+	int block_idx=p_blocklist->get_block_index( p_block );
+	
+	ERR_FAIL_COND_V( block_idx<0 , NULL );
+	
+	CommandFunc *ret=NULL;
+	if (!p_no_undo) {
+		
+		ret=Command2(this,&EditorCommands::blocklist_remove_block,p_blocklist, block_idx);
+		ret->add_create_data( p_block );
+	}
+	
+
+	d->ui_update_notify->block_layout_changed();
+	return ret;
+	
+	
+	
+}
+CommandFunc* EditorCommands::blocklist_remove_block(bool p_no_undo,BlockList *p_blocklist,int p_which) {
+	
+	//block doesnt exist
+	ERR_FAIL_INDEX_V(p_which, p_blocklist->get_block_count(), NULL );
+	
+	//remember block and pos
+	BlockList::Block *block_ptr=p_blocklist->get_block( p_which );
+	Tick block_pos=p_blocklist->get_block_pos(p_which);
+			
+	p_blocklist->remove_block( p_which );
+
+	CommandFunc *ret=NULL;
+	if (!p_no_undo) {
+		
+		ret=Command3(this,&EditorCommands::blocklist_insert_block,p_blocklist,block_ptr,block_pos);
+		ret->add_delete_data( block_ptr );
+	}
+	
+
+	d->ui_update_notify->block_layout_changed();
+	return ret;
+	
+		
+}
+
+CommandFunc* EditorCommands::blocklist_set_block_length(bool p_no_undo,BlockList *p_blocklist,int p_which,Tick p_length) {
+	
+	//block doesnt exist
+	ERR_FAIL_INDEX_V(p_which, p_blocklist->get_block_count(), NULL );
+	ERR_FAIL_COND_V(p_length<=0,NULL);
+	
+	//block
+	BlockList::Block *block=p_blocklist->get_block( p_which );
+	
+	
+	CommandFunc *ret=NULL;
+	if (!p_no_undo) {
+		
+		ret=Command3(this,&EditorCommands::blocklist_set_block_length,p_blocklist,p_which,block->get_length());
+	}
+	
+	block->set_length( p_length );
+	d->ui_update_notify->block_layout_changed();
 	
 	return ret;
 	

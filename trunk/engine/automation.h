@@ -39,12 +39,10 @@ public:
 	};
 
 
-	struct AutomationData : public ValueStream<Tick,AutomationValue> , public DataPool::Data {
+	struct AutomationData : public ValueStream<Tick,AutomationValue> , public SharedData {
 	friend class AutomationBlock;
 	friend class Automation;
 		int length; //in beats
-		int refcount;
-		
 		
 	public:
 
@@ -65,10 +63,11 @@ public:
 
 		AutomationData *get_data();
 		AutomationBlock(AutomationData *p_data);
+		~AutomationBlock();
 	};
 
 private:
-	DataPool *pool;
+	
 	String get_type_name();
 	Block *create_duplicate_block(Block *p_block);
 	Block *create_link_block(Block *p_block);
@@ -88,12 +87,12 @@ public:
 	
 	float get_tick_val(Tick p_tick); // 0.0 - 1.0
 	
-	void create_block(Tick p_pos,BlockCreationData *p_creation_data=NULL);
+	Block* create_block(BlockCreationData *p_creation_data=NULL);
 
 	
 	DisplaySize get_display_size();
 
-	Automation(DataPool *p_pool,Property *property);
+	Automation(Property *property);
 };
 
 }; /* end of namespace */

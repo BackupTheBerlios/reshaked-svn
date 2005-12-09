@@ -28,7 +28,6 @@ public:
 		EDIT_MODE_ADD_BLOCK,
 		EDIT_MODE_COPY_BLOCK,
 		EDIT_MODE_COPY_LINK_BLOCK,
-		EDIT_MODE_ERASE_BLOCK,
 	};
 private:
 	
@@ -139,7 +138,7 @@ private:
 	MouseData::BlockPositionAction get_block_position_action(int p_blocklist,Tick p_pos);
 	//selection
 
-	std::set<int> selection;
+	std::set<int> selection; //should just be a list of pointers
 
 	//helpers
 	BlockList* get_block_list(int p_idx);
@@ -174,6 +173,8 @@ signals:
 public slots:
 			
 	void set_edit_mode(EditMode p_edit_mode);
+	void block_layout_changed_slot();
+	void delete_selected_blocks();
 public:
 	
 	int get_total_pixel_width();

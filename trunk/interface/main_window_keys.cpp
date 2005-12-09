@@ -74,18 +74,30 @@ void MainWindow::create_keybindings() {
 //	data.keyboard_codes.add_key_bind("home","Home",Qt::ALT+Qt::Key_Home,true);
 	//data.keyboard_codes.add_key_bind("end","End",Qt::ALT+Qt::Key_End,true);
 
-	data.keyboard_codes.add_key_bind("page_up_blocksnap","Page Up BlockSnapped",Qt::ALT+Qt::Key_Up,true);
-	data.keyboard_codes.add_key_bind("page_down_blocksnap","Page Down BlockSnapped",Qt::ALT+Qt::Key_Down,true);
+	data.keyboard_codes.add_key_bind("editor/page_up_blocksnap","Page Up BlockSnapped",Qt::ALT+Qt::Key_Up);
+	data.keyboard_codes.add_key_bind("editor/page_down_blocksnap","Page Down BlockSnapped",Qt::ALT+Qt::Key_Down);
 	
-	data.keyboard_codes.add_key_bind("insert","Insert",Qt::Key_Insert,true);
-	data.keyboard_codes.add_key_bind("delete","Delete",Qt::Key_Delete,true);
+	data.keyboard_codes.add_key_bind("editor/insert","Insert",Qt::Key_Insert);
+	data.keyboard_codes.add_key_bind("editor/delete","Delete",Qt::Key_Delete);
 
-	data.keyboard_codes.add_key_bind("move_note_up","Move Note Up",Qt::CTRL+Qt::Key_Up,true);
-	data.keyboard_codes.add_key_bind("move_note_down","Move Note Down",Qt::CTRL+Qt::Key_Down,true);
+	data.keyboard_codes.add_key_bind("editor/selection_begin","Selection Begin",Qt::ALT+Qt::Key_B);
+	data.keyboard_codes.add_key_bind("editor/selection_end","Selection Begin",Qt::ALT+Qt::Key_E);
+	data.keyboard_codes.add_key_bind("editor/selection_copy","Selection Copy",Qt::ALT+Qt::Key_C);
+	data.keyboard_codes.add_key_bind("editor/selection_paste_insert","Selection Paste Insert",Qt::ALT+Qt::Key_C);
+	data.keyboard_codes.add_key_bind("editor/selection_paste_overwrite","Selection Paste Overwrite",Qt::ALT+Qt::Key_O);
+	data.keyboard_codes.add_key_bind("editor/selection_paste_mix","Selection Paste Mix",Qt::ALT+Qt::Key_M);
+	data.keyboard_codes.add_key_bind("editor/select_column_block_all","Select Column/Block/All",Qt::ALT+Qt::Key_L);
+	data.keyboard_codes.add_key_bind("editor/selection_disable","Selection Disable",Qt::ALT+Qt::Key_U);
+	
+	
+	data.keyboard_codes.add_key_bind("editor/delete","Delete",Qt::Key_Delete);
+	
+	data.keyboard_codes.add_key_bind("editor/move_note_up","Move Note Up",Qt::CTRL+Qt::Key_Up,true);
+	data.keyboard_codes.add_key_bind("editor/move_note_down","Move Note Down",Qt::CTRL+Qt::Key_Down,true);
 
-	data.keyboard_codes.add_key_bind("navigation/next_pattern","Next Pattern",Qt::Key_Plus);
+	data.keyboard_codes.add_key_bind("editor/next_pattern","Next Pattern",Qt::Key_Plus);
 
-	data.keyboard_codes.add_key_bind("navigation/previous_pattern","Prev Pattern",Qt::Key_Minus);
+	data.keyboard_codes.add_key_bind("editor/previous_pattern","Prev Pattern",Qt::Key_Minus);
 
 
 	data.keyboard_codes.add_key_bind("global/raise_octave","Raise Octave",Qt::Key_Asterisk);

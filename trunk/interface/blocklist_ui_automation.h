@@ -42,6 +42,7 @@ class BlockListUI_Automation : public BlockListUI_Base {
 	void paint_row_lines(QPainter &p,int p_from_row=-1, int p_to_row=-1);
 	void paint_name(QPainter&p);
 	void paint_cursor(QPainter &p);
+	void paint_selection(QPainter&p,int p_clip_from,int p_clip_to);
 
 	bool find_closest_point(int p_x,int p_y,int p_radius, int *r_block, int *r_point);
 	bool screen_to_tick_and_val(int p_x,int p_y,Tick *p_tick, float *p_val);

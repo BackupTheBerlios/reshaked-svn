@@ -62,19 +62,18 @@ protected:
 
 	virtual bool accepts_block(Block *p_block)=0;
 
-	virtual Block *create_duplicate_block(Block *p_block)=0;
-	virtual Block *create_link_block(Block *p_block)=0;
 
 
 public:
 
+	/* used for duplicating a block or dupli-linking it */
+	virtual Block *create_duplicate_block(Block *p_block)=0;
+	virtual Block *create_link_block(Block *p_block)=0;
+	
 	virtual bool shares_block_data(Block *p_block)=0;
 	
-	virtual void create_block(Tick p_pos,BlockCreationData *p_creation_data=NULL)=0;
-	virtual void copy_block(Block *p_from,Tick p_to_where,int p_existing=-1);
-	virtual void copy_block_link(Block *p_from,Tick p_to_where,int p_existing=-1);
-	virtual void move_block(BlockList *p_from_track,int p_which,Tick p_to_pos);
-	virtual void insert_block(Block *p_block, Tick p_pos);
+	virtual Block* create_block(BlockCreationData *p_creation_data=NULL)=0;
+	virtual bool insert_block(Block *p_block, Tick p_pos);
 	virtual bool is_move_block_allowed(int p_which,Tick p_to_new_pos);
 	virtual void remove_block(int p_index);
 	virtual BlockCreationBehavior get_block_creation_behavior()=0;

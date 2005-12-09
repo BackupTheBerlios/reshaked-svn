@@ -10,28 +10,44 @@
 //
 //
 #include "data_pool.h"
+#include "error_macros.h"
 
 namespace ReShaked {
 
-
-
-void DataPool::add_data(Data* p_data) {
+void SharedData::reference() {
 	
-	data_array.push_back(p_data);
+	refcount++;
+}
+void SharedData::dereference() {
+	
+	ERR_FAIL_COND(refcount<=0); //bug if it happens
+		return;
+		
+	refcount--;
+	
+	if (refcount==0)
+		delete this;
 	
 }
 
-DataPool::DataPool()
-{
-}
-
-
-DataPool::~DataPool()
-{
+int SharedData::get_refcount() {
 	
-	for (int i=0;i<data_array.size();i++)
-		delete data_array[i];
+	return refcount;
+}
+void SharedData::reset_refcount() {
+	
+	refcount=0;
+}
+SharedData::SharedData() {
+	
+	reset_refcount();
+	
 }
 
+SharedData::~SharedData() {
+	
+	ERR_FAIL_COND(refcount!=0); //just in case
+	
+}
 
 }

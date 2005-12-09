@@ -128,6 +128,9 @@ void UndoStream::redo_group(UndoGroup *p_group) {
 
 void UndoStream::undo() {
 	
+	
+	if (lock_count)
+		return;
 	if (current_index<0)
 		return;
 	ERR_FAIL_COND(inside_count>0);
@@ -142,6 +145,9 @@ void UndoStream::undo() {
 
 void UndoStream::redo() {
 
+	if (lock_count)
+		return;
+	
 	if (current_index>=(int)(undo_stream.size()-1)) //no redo
 		return;
 	
@@ -152,8 +158,21 @@ void UndoStream::redo() {
 	current_index++;
 }
 
+void UndoStream::lock() {
+	lock_count++;
+
+	
+}
+void UndoStream::unlock() {
+	
+	ERR_FAIL_COND(lock_count==0);
+	lock_count--;
+	
+}
+
 UndoStream::UndoStream() {
 
+	lock_count=0;
 	current_index=-1;
 	inside_count=0;
 }

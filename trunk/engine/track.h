@@ -34,7 +34,7 @@ public:
 		void *private_data;
 		String path;
 		bool visible;
-		TrackAutomation(DataPool *p_pool,String p_path,Property *p_property) : Automation(p_pool,p_property) { private_data=NULL; path=p_path; }
+		TrackAutomation(String p_path,Property *p_property) : Automation(p_property) { private_data=NULL; path=p_path; }
 	};
 	
 	
@@ -73,7 +73,7 @@ public:
 	AudioPlug *get_output_plug(int p_index);
 	
 	void process(int p_frames);
-	DataPool *automation_pool;
+
 	
 protected:
 
@@ -109,7 +109,6 @@ public:
 	bool has_property_automation(int p_index);
 	bool has_property_visible_automation(int p_index);
 	
-	void set_automation_pool(DataPool *p_pool);
 	
 	void set_name(String p_name);
 	String get_name();

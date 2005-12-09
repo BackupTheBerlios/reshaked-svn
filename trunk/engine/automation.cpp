@@ -62,24 +62,13 @@ float Automation::get_tick_val(Tick p_tick) {
 	
 }
 
-void Automation::create_block(Tick p_pos,BlockCreationData *p_creation_data) {
+BlockList::Block* Automation::create_block(BlockCreationData *p_creation_data) {
 
-	if (!block_fits(p_pos,TICKS_PER_BEAT))
-		return; //cant add thing
 
 	AutomationData *a = new AutomationData;
 	AutomationBlock *ab = new AutomationBlock(a);
 
-	if (add_block(ab,p_pos)) { //no add? fuck must be a bug!?
-
-		delete a;
-		delete ab;
-		ERR_PRINT("Failed adding pattern after previous check? WTF?");
-		return;
-	}
-
-	pool->add_data(a);
-
+	return ab;
 }
 
 BlockList::BlockCreationBehavior Automation::get_block_creation_behavior() {
@@ -96,10 +85,9 @@ BlockList::Block *Automation::create_duplicate_block(Block *p_block) {
 	//new data
 	AutomationData *nd = new AutomationData;
 	*nd=*b->get_data(); //copy
-	nd->refcount=0; //refcount to zero
+	nd->reset_refcount();
 
 	//new block
-	pool->add_data(nd);
 	AutomationBlock *nb = new AutomationBlock(nd);
 
 	return nb;
@@ -133,7 +121,6 @@ Automation::AutomationData *Automation::AutomationBlock::get_data() {
 
 Automation::AutomationData::AutomationData() {
 
-	refcount=0;
 	length=5;
 }
 
@@ -161,7 +148,7 @@ void Automation::AutomationBlock::set_length(Tick p_length) {
 
 bool Automation::AutomationBlock::is_shared() {
 
-	return data->refcount>1;
+	return data->get_refcount()>1;
 }
 String Automation::get_type_name() {
 
@@ -200,12 +187,17 @@ bool Automation::shares_block_data(Block *p_block) {
 Automation::AutomationBlock::AutomationBlock(AutomationData *p_data) {
 
 	data=p_data;
-	p_data->refcount++;
+	p_data->reference();
 	
 	
 }
-Automation::Automation(DataPool *p_pool,Property *p_property) : BlockList(BLOCK_TYPE_FIXED_TO_BEAT) {
-	pool=p_pool;
+
+Automation::AutomationBlock::~AutomationBlock() {
+
+	data->dereference();
+}
+Automation::Automation(Property *p_property) : BlockList(BLOCK_TYPE_FIXED_TO_BEAT) {
+
 	property=p_property;
 	display_size=DISPLAY_SIZE_SMALL;
 }

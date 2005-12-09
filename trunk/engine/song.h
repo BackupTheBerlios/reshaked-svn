@@ -16,16 +16,11 @@ class Song {
 private:
 	std::vector<Track*> track_list;
 	AudioGraph track_graph;
-	DataPool *pattern_pool;
-	DataPool *automation_pool;
 
 	BarMap bar_map;
 public:
 
 	BarMap& get_bar_map();
-	
-	DataPool *get_pattern_pool();
-	DataPool *get_automation_pool();
 	
 	void add_track(Track* p_track,int p_at_pos=-1); ///< pos, or -1 for at end (default)
 	int get_track_count();

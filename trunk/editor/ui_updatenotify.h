@@ -32,6 +32,8 @@ public:
 	
 	virtual void update_blocklist_list(const std::list<int>& p_which)=0;
 	
+	virtual void block_layout_changed()=0;
+	
 	virtual ~UI_UpdateNotify(){}
 	
 };

@@ -15,16 +15,7 @@ void Song::add_track(Track* p_track,int p_at_pos) {
 		p_at_pos=track_list.size();
 	
 	track_list.insert(track_list.begin()+p_at_pos,p_track);
-	p_track->set_automation_pool(automation_pool);
-	
-}
-DataPool *Song::get_pattern_pool() {
-	
-	return pattern_pool;
-}
-DataPool *Song::get_automation_pool() {
-	
-	return automation_pool;
+
 	
 }
 
@@ -50,14 +41,10 @@ void Song::remove_track(int p_idx) { /* remove but dont delete */
 
 Song::Song()  {
 	
-	pattern_pool = new DataPool;	
-	automation_pool = new DataPool;	
 }
 
 Song::~Song() {
 	
-	delete pattern_pool;
-	delete automation_pool;
 }
 
 };

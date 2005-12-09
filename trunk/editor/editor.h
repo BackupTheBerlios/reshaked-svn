@@ -31,13 +31,16 @@ class Editor {
 	void enter_blocklist(EditorData::EnterBLDir p_dir);
 	bool handle_navigation_key_press(BlockList *p_blocklist,int p_event);
 	
+	void fix_selection();
+	
 friend class EditorCommands;	
 	
 	void revalidate_cursor();
+	EditorData::Selection::Pos get_cursor_selection_pos();
 public:
 	
-	Cursor &get_cursor();
-	/** PATTERN EDIT */
+	
+	/** PATTERN EDIT (editor_pattern.cpp) */
 	
 	void set_pattern_note_edit_mode(EditorData::PatternNoteEditMode p_mode);
 	EditorData::PatternNoteEditMode get_pattern_note_edit_mode();
@@ -48,25 +51,13 @@ public:
 	void set_pattern_edit_field(int p_field);
 	int get_pattern_edit_field();
 	
+	void track_pattern_add_column(int p_which=-1);
+	void track_pattern_remove_column(int p_which=-1);
+	
 	bool pattern_edit_key_press(int p_key_value); ///< return true if it must repaint / grab event
-	bool automation_edit_key_press(int p_key_value); ///< return true if it must repaint / grab event
-		
-	
-	/* global abstraction to a blocklist array */
-	int get_track_blocklist(int p_track);
-	int get_blocklist_track(int p_blocklist);
-	int get_current_blocklist();
-	void set_current_blocklist(int p_which);
-	int get_current_track();
-	int find_Track(Track *p_track);
-	void set_track_name(int p_track,String p_name);
-	
-	void move_track_left(int p_which);
-	void move_track_right(int p_which);
-	
-	int get_blocklist_count();
-	BlockList* get_blocklist(int p_idx);
-		
+	 
+	/** AUTOMATION EDIT (editor_automation.cpp) */		 
+			 
 	void show_automation(String p_path);
 	void hide_automation(String p_path);
 	
@@ -74,28 +65,89 @@ public:
 	void move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val);
 	void remove_automation_point(Automation *p_automation,int p_block,int p_point);
 	
-	Song* get_song();
+			 
+	bool automation_edit_key_press(int p_key_value); ///< return true if it must repaint / grab event
+		
 	
-	void track_pattern_add_column(int p_which=-1);
-	void track_pattern_remove_column(int p_which=-1);
+	/** BLOCK LIST ACCESS ABSTRACTION (editor_blocklist.cpp) */
+	
+	int get_track_blocklist(int p_track); ///< Get which blocklist idx is a track
+	int get_blocklist_track(int p_blocklist); ///< Get which track contains a blocklist 
+	
+	int get_current_blocklist();
+	void set_current_blocklist(int p_which);
+	
+	int get_current_track();
+	int find_track_idx(Track *p_track); //
+
+	int get_blocklist_count();
+	BlockList* get_blocklist(int p_idx);
+	int find_blocklist(BlockList *p_blocklist);
+	
+	/** BLOCKLIST EDITING (editor_blocklist.cpp) */
+	
+	bool blocklist_insert_block(BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos);
+	void blocklist_remove_block(BlockList *p_blocklist,int p_which);
+	void blocklist_resize_block(BlockList *p_blocklist,int p_which,Tick p_new_size);
+	
+	void get_blocklists_sharing_block(BlockList::Block * p_block, std::list<int> *p_blocklist);
+	void update_blocklists_sharing_block(BlockList::Block * p_block);
+	
+	Tick get_block_list_max_len(BlockList *p_bl);
+	
+	/** TRACK EDITING (editor_track.cpp) */
+	
+	
+	void set_track_name(int p_track,String p_name);
+	
+	void move_track_left(int p_which);
+	void move_track_right(int p_which);
 	
 	void add_track(TrackType p_type,int p_channels,String p_name);
 	void remove_track(int p_which);
 	
+	/** SELECTION EDITING */
+	
+	int get_selection_begin_column();
+	int get_selection_begin_row();
+	int get_selection_begin_blocklist();
+	
+	int get_selection_end_column();
+	int get_selection_end_row();
+	int get_selection_end_blocklist();
+	
+	bool is_selection_active();
+	void disable_selection();
+	
+	/** CURSOR EDITING (editor.cpp) */	
+	
+	
 	void set_snap(int p_new_snap);
 	void set_editing_octave(int p_octave);
 	int get_editing_octave();
-	void get_blocklists_sharing_block(BlockList::Block * p_block, std::list<int> *p_blocklist);
-	void update_blocklists_sharing_block(BlockList::Block * p_block);
 	
 	Tick get_song_max_len();
-	Tick get_block_list_max_len(BlockList *p_bl);
+	
+	/** UNDO SYSTEM (edit.cpp) */
+	
+	void begin_meta_undo_block(String p_name);
+	void end_meta_undo_block();
+
+	void lock_undo_stream();
+	void unlock_undo_stream();
 	
 	void undo();
 	void redo();
 	
-	Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify);
+	/** INTERNAL DATA (editor.cpp) */
 	
+	Cursor &get_cursor();
+	Song* get_song();
+	UI_UpdateNotify *get_ui_update_notify();
+	
+	/** INITIALIZATION (editor.cpp) */
+
+	Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify);
 	~Editor();
 
 };

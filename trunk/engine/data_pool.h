@@ -12,33 +12,32 @@
 #ifndef RESHAKEDDATA_POOL_H
 #define RESHAKEDDATA_POOL_H
 
-#include <vector>
 
 namespace ReShaked {
 
 /**
 	
 */
-class DataPool {
-public:
-		
-	class Data {
-	public:		
-		
-		virtual ~Data() {};
-	};
-	
-private:
-	std::vector<Data*> data_array;
 
-	
-public:
-	void add_data(Data* p_data);
-	
-	DataPool();
-	~DataPool();
 
+class SharedData {
+	
+	int refcount;
+	
+public:	
+	
+	void reference();
+	void dereference();
+	
+	void reset_refcount();
+	int get_refcount();
+	
+	SharedData();
+	virtual ~SharedData();
+	
 };
+
+
 
 }
 

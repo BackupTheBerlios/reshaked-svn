@@ -104,6 +104,7 @@ public:
 		
 		int get_note_count();
 		Note get_note(int p_index);
+		
 		Position get_note_pos(int p_index);
 		
 		Pattern *get_pattern();
@@ -111,18 +112,16 @@ public:
 		void set_length(Tick p_length);
 		bool is_shared();
 		PatternBlock(Pattern*);
+		~PatternBlock();
 	};
 	
 private:
 
-	struct Pattern : public DataPool::Data {
+	struct Pattern : public SharedData {
 
 		int length; //length in beats
 
 		ValueStream<Position,Note> data;
-
-		int refcount;
-
 
 		Pattern();
 	};
@@ -130,12 +129,11 @@ private:
 
 	void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames);
 
-	void create_block(Tick p_pos,BlockCreationData *p_creation_data);
 	Block *create_duplicate_block(Block *p_block);
 	Block *create_link_block(Block *p_block);
 
 	BlockCreationBehavior get_block_creation_behavior();
-	DataPool *pool;
+
 
 	String get_type_name();
 	bool can_resize_from_begining();
@@ -148,6 +146,8 @@ private:
 	
 public:
 
+	Block* create_block(BlockCreationData *p_creation_data);
+	
 	bool shares_block_data(Block *p_block);
 	bool accepts_block(Block *p_block);
 	
@@ -164,7 +164,7 @@ public:
 	NoteList get_notes_in_range(Tick p_from, Tick p_to);
 	
 	
-	Track_Pattern(int p_channels,DataPool *p_pool);
+	Track_Pattern(int p_channels);
 	~Track_Pattern();
 
 };

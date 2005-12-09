@@ -68,7 +68,8 @@ friend class EditorCommands;
 	struct Selection {
 
 		struct Pos {
-			int blocklist,column,row;
+			int blocklist,column;
+			Tick tick; //using tick so resizing works
 		} begin,end;
 		bool enabled;
 

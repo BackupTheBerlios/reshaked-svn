@@ -34,6 +34,7 @@ signals:
 	void editing_octave_changed();
 	void update_blocklist_list(const std::list<int>& p_which);	
 	void current_automation_status_changed();
+	void block_layout_changed();
 public:
 	
 	

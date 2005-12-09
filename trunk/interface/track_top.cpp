@@ -82,7 +82,7 @@ void TrackTop::rename() {
 	QString res=QInputDialog::getText( this, "Rename Track", "Set Track Name:", QLineEdit::Normal, track_name, &ok);
 	if (!ok)
 		return;
-	editor->set_track_name( editor->find_Track( track ), DeQStrify(res ) );
+	editor->set_track_name( editor->find_track_idx( track ), DeQStrify(res ) );
 
 	update();
 }
@@ -97,23 +97,23 @@ void TrackTop::action_slot(QAction *p_action) {
 		/* for pattern tracks */
 		case ACTION_PATTERN_ADD_COLUMN: {
 			
-			editor->track_pattern_add_column( editor->find_Track( track ) );
+			editor->track_pattern_add_column( editor->find_track_idx( track ) );
 		} break;
 		case ACTION_PATTERN_REMOVE_COLUMN: {
 			
-			editor->track_pattern_remove_column( editor->find_Track( track ) );
+			editor->track_pattern_remove_column( editor->find_track_idx( track ) );
 			
 		} break;
 		
 		/* track generic */
 		case ACTION_MOVE_TRACK_LEFT: {
 			
-			editor->move_track_left( editor->find_Track( track ) );
+			editor->move_track_left( editor->find_track_idx( track ) );
 			
 		} break;
 		case ACTION_MOVE_TRACK_RIGHT: {
 			
-			editor->move_track_right( editor->find_Track( track ) );
+			editor->move_track_right( editor->find_track_idx( track ) );
 			
 		} break;
 		
@@ -128,7 +128,7 @@ void TrackTop::action_slot(QAction *p_action) {
 	
 		case ACTION_DELETE: {
 			
-			editor->remove_track( editor->find_Track( track ) );
+			editor->remove_track( editor->find_track_idx( track ) );
 			
 			
 		} break;

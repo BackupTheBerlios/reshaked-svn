@@ -328,7 +328,10 @@ MainWindow::MainWindow() {
 	settings_dock->layout()->addWidget(track_settings);
 	
 	navigation_toolbar = addToolBar("Navigation");
+	//create this one on bottom
 	track_toolbar = addToolBar("Track");
+	removeToolBar(track_toolbar);
+	addToolBar(Qt::BottomToolBarArea,track_toolbar);
 	editing_toolbar = addToolBar("Editing");
 	
 	editing_toolbar->addWidget(new QLabel(" Octave: ",editing_toolbar));
@@ -369,6 +372,10 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(update_blocklist_list( const std::list< int >& )),blui_list,SLOT(update_blocklist_list(const std::list<int>&)));
 	
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),this,SLOT(track_list_changed_slot()));
+	
+	QObject::connect(update_notify,SIGNAL(block_layout_changed()),global_view_frame->get_global_view(),SLOT(block_layout_changed_slot()));
+	
+	QObject::connect(update_notify,SIGNAL(block_layout_changed()),blui_list,SLOT(repaint_track_list()));
 	
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 	setMinimumSize(750,550); //dont mess with my app!

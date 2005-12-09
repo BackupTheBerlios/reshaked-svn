@@ -34,54 +34,12 @@ bool BlockList::add_block(Block *p_block,Tick p_pos) {
 }
 
 
-void BlockList::copy_block(Block *p_from,Tick p_to_where,int p_existing) {
 
-	ERR_FAIL_COND( p_from==NULL );
-
-	if (block_type!=BLOCK_TYPE_FREE_MOVING)
-		ERR_FAIL_COND( !block_fits(p_to_where,p_from->get_length(),p_existing) );
-
-
-	Block *b = create_duplicate_block(p_from);
-
-	add_block( b, p_to_where );
-
-}
-void BlockList::copy_block_link(Block *p_from,Tick p_to_where,int p_existing) {
-
-
-	ERR_FAIL_COND( p_from==NULL );
-
-	if (block_type!=BLOCK_TYPE_FREE_MOVING)
-		ERR_FAIL_COND( !block_fits(p_to_where,p_from->get_length(),p_existing) );
-
-
-	Block *b = create_link_block(p_from);
-
-	add_block( b, p_to_where );
-}
-
-void BlockList::move_block(BlockList *p_from_track,int p_which,Tick p_to_pos) {
-
-	Block * block = p_from_track->get_block( p_which );
-	int current=(p_from_track==this)?p_which:-1;
-	if (block_type!=BLOCK_TYPE_FREE_MOVING)
-		ERR_FAIL_COND( !block_fits(p_to_pos, block->get_length(), current) );
-
-	p_from_track->remove_block(p_which); //remove first so index doenst change
-	add_block( block, p_to_pos);
-	//move it
-}
-
-void BlockList::insert_block(Block *p_block, Tick p_pos) {
+bool BlockList::insert_block(Block *p_block, Tick p_pos) {
 	
-	ERR_FAIL_COND( !accepts_block( p_block ) );
+	ERR_FAIL_COND_V( !accepts_block( p_block ) , true );
 	
-	if (block_type!=BLOCK_TYPE_FREE_MOVING) {
-		ERR_FAIL_COND( !block_fits( p_pos, p_block->get_length() ) );
-	}
-	
-	bl_private.block_list.insert(p_pos,p_block);
+	return add_block(p_block,p_pos);
 	
 }
 

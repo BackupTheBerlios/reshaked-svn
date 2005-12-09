@@ -203,11 +203,17 @@ class UndoStream {
 	int current_index;
 		
 	void delete_redo_history();	
+	
+	int lock_count;
 public:	
 	
 	void begin(String p_name);
 	void add_command( CommandFunc *p_command );
 	void end();
+	
+	/* no undo/redo is permitted if locked */
+	void lock();
+	void unlock();
 	
 	void undo();
 	void redo();
