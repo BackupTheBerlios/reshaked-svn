@@ -21,8 +21,10 @@ namespace ReShaked {
 	@author Juan Linietsky <reduzio@gmail.com>
 */
 class Editor;
+			       
 class EditorCommands {
 friend class Editor;
+
 	EditorData *d;
 	Editor *editor;
 	

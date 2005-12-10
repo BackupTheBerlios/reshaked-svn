@@ -54,11 +54,6 @@ static const int default_pianokey_bind[MAX_KEYS] = {
 void MainWindow::create_keybindings() {
 
 
-
-
-
-
-
 	for (int i=0;i<10;i++)
 		data.keyboard_codes.set_number(i,Qt::Key_0+i);
 
@@ -70,10 +65,8 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("prev_track","Prev Track",Qt::Key_Backtab,true);
 	data.keyboard_codes.add_key_bind("page_up","Page Up",Qt::Key_PageUp,true);
 	data.keyboard_codes.add_key_bind("page_down","Page Down",Qt::Key_PageDown,true);
-
-	
-//	data.keyboard_codes.add_key_bind("home","Home",Qt::ALT+Qt::Key_Home,true);
-	//data.keyboard_codes.add_key_bind("end","End",Qt::ALT+Qt::Key_End,true);
+	data.keyboard_codes.add_key_bind("home","Home",Qt::Key_Home,true);
+	data.keyboard_codes.add_key_bind("end","End",Qt::Key_End,true);
 
 	data.keyboard_codes.add_key_bind("editor/page_up_blocksnap","Page Up BlockSnapped",Qt::ALT+Qt::Key_Up);
 	data.keyboard_codes.add_key_bind("editor/page_down_blocksnap","Page Down BlockSnapped",Qt::ALT+Qt::Key_Down);
@@ -84,7 +77,7 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/selection_begin","Selection Begin",Qt::ALT+Qt::Key_B);
 	data.keyboard_codes.add_key_bind("editor/selection_end","Selection Begin",Qt::ALT+Qt::Key_E);
 	data.keyboard_codes.add_key_bind("editor/selection_copy","Selection Copy",Qt::ALT+Qt::Key_C);
-	data.keyboard_codes.add_key_bind("editor/selection_paste_insert","Selection Paste Insert",Qt::ALT+Qt::Key_C);
+	data.keyboard_codes.add_key_bind("editor/selection_paste_insert","Selection Paste Insert",Qt::ALT+Qt::Key_P);
 	data.keyboard_codes.add_key_bind("editor/selection_paste_overwrite","Selection Paste Overwrite",Qt::ALT+Qt::Key_O);
 	data.keyboard_codes.add_key_bind("editor/selection_paste_mix","Selection Paste Mix",Qt::ALT+Qt::Key_M);
 	data.keyboard_codes.add_key_bind("editor/select_column_block_all","Select Column/Block/All",Qt::ALT+Qt::Key_L);
@@ -96,6 +89,8 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/selection_right","Selection Move Right",Qt::SHIFT+Qt::Key_Right,true);
 	data.keyboard_codes.add_key_bind("editor/selection_page_up","Selection Page Up",Qt::SHIFT+Qt::Key_PageUp,true);
 	data.keyboard_codes.add_key_bind("editor/selection_page_down","Selection Page Down",Qt::SHIFT+Qt::Key_PageDown,true);
+	data.keyboard_codes.add_key_bind("editor/selection_move_home","Selection Home",Qt::SHIFT+Qt::Key_Home,true);
+	data.keyboard_codes.add_key_bind("editor/selection_move_end","Selection End",Qt::SHIFT+Qt::Key_End,true);
 	
 	
 	data.keyboard_codes.add_key_bind("editor/delete","Delete",Qt::Key_Delete);

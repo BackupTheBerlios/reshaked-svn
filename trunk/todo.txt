@@ -7,6 +7,9 @@ Automation:
 -Move left/right
 -more mouse support in widegt
 
+Pattern:
+-add/remove track column has no undo/redo
+
 BUG:
 *-Fix Screen-Screen Copy in automation, add in pattern
 

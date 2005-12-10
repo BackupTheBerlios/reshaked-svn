@@ -69,7 +69,7 @@ void TrackTop::mousePressEvent(QMouseEvent *e) {
 	
 	QPixmap px = VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS );
 	if (e->x()<px.width())
-		menu->popup(mapToGlobal( QPoint(0,0) ) );
+		menu->popup(mapToGlobal( QPoint(0,height()) ) );
 	else
 		rename();
 }

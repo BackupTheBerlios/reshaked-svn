@@ -14,13 +14,16 @@
 
 
 
-#include "editor/editor_data.h"
 #include "editor/editor_commands.h"
+
 namespace ReShaked {
 
 /**
 	@author red <red@killy>
 */
+				    
+class EditorData;
+		    
 class Editor {
 
 	
@@ -29,12 +32,15 @@ class Editor {
 	EditorCommands commands;
 	
 	void enter_blocklist(EditorData::EnterBLDir p_dir);
-	bool handle_navigation_key_press(BlockList *p_blocklist,int p_event);
+	bool handle_navigation_key_press(BlockList *p_blocklist,int &p_event);
 	
 	void begin_check_shift_selection();
 	void end_check_shift_selection();
 	bool test_key_press_selecting(int &p_keypress);
 	void fix_selection();
+	bool selection_can_paste_at(EditorData::Selection::Pos p_pos);
+	void selection_paste_at(EditorData::Selection::Pos p_pos);
+	void selection_clear_area(EditorData::Selection::Pos p_from,EditorData::Selection::Pos p_to);
 	
 friend class EditorCommands;	
 	
@@ -122,6 +128,8 @@ public:
 	
 	bool is_selection_active();
 	void disable_selection();
+	
+	void selection_copy();
 	
 	/** CURSOR EDITING (editor.cpp) */	
 	

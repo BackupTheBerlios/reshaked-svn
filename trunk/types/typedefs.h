@@ -47,6 +47,6 @@ enum TrackType {
 	TRACK_TYPE_BUS,
 };
 
-
+#define CMP2_MIN(m_s1,m_s2,m_d1,m_d2) ((m_s1>m_d1)?false:((m_s1<m_d1)?true:(m_s2<m_d2)))		
 
 #endif

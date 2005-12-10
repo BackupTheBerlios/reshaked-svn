@@ -15,6 +15,7 @@
 #include "engine/song.h"
 #include "editor/cursor.h"
 #include "editor/undo_stream.h"
+#include "editor/selection_data.h"
 
 namespace ReShaked {
 
@@ -48,7 +49,6 @@ friend class EditorCommands;
 
 	struct PatternEdit {
 
-
 		PatternNoteEditMode note_edit_mode;
 		int column;
 		int field;
@@ -63,6 +63,7 @@ friend class EditorCommands;
 		bool setnote_dont_update;
 		bool automation_point_dont_update;
 
+		
 	} global_edit;
 
 	struct Selection {
@@ -70,9 +71,28 @@ friend class EditorCommands;
 		struct Pos {
 			int blocklist,column;
 			Tick tick; //using tick so resizing works
+			
+			bool operator==(const Pos& p_pos) { return (blocklist==p_pos.blocklist && column==p_pos.column && tick==p_pos.tick); }
+			bool operator!=(const Pos& p_pos) { return (!(*this==p_pos)); }
 		} begin,end;
 		bool enabled;
 
+		enum ShiftSelectingChanging {
+			CHANGE_BEGIN,
+			CHANGE_END
+		};
+
+		enum PasteMode {
+			PASTE_OVERWRITE,
+			PASTE_MIX,
+		};
+		
+		bool shift_selecting;
+		ShiftSelectingChanging shift_selecton_change_tick;
+		ShiftSelectingChanging shift_selecton_change_blocklist_column;
+		
+		SelectionData data;
+		
 	} selection;
 
 	UndoStream undo_stream;

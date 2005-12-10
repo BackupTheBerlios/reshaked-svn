@@ -16,11 +16,13 @@
 namespace ReShaked {
 
 
-bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int p_event) {
+bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 	
 	bool handled=true;
-	bool selecting=test_key_press_selecting(p_event);
 	
+	test_key_press_selecting(p_event);
+	
+	printf("pevent %x left %x right %x\n",p_event,p_event,KEYBIND("left"),KEYBIND("right"));
 	SWITCH(p_event)
 	
 		CASE( KEYBIND("up") ) {
@@ -206,11 +208,11 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int p_event) {
 		}
 		CASE( KEYBIND("editor/selection_copy") ) {
 		
-			
+			selection_copy();
 		}
 		CASE( KEYBIND("editor/selection_paste_insert") ) {
 		
-			
+			printf("can paste: %i\n",selection_can_paste_at( get_cursor_selection_pos() ) );
 		}
 		CASE( KEYBIND("editor/selection_paste_overwrite") ) {
 		

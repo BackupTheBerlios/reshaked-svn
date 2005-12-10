@@ -46,6 +46,7 @@ CommandFunc* EditorCommands::add_track(bool p_no_undo,Track *p_track,int p_at_po
 	editor->revalidate_cursor();
 	printf("trying to add track!\n");		
 	d->ui_update_notify->track_list_changed();
+	editor->disable_selection();
 	return ret;
 }
 CommandFunc* EditorCommands::remove_track(bool p_no_undo,int p_pos) {
@@ -61,6 +62,7 @@ CommandFunc* EditorCommands::remove_track(bool p_no_undo,int p_pos) {
 	editor->revalidate_cursor();
 	
 	d->ui_update_notify->track_list_changed();
+	editor->disable_selection();
 	
 	
 	return ret;
@@ -83,6 +85,7 @@ CommandFunc* EditorCommands::track_move_left(bool p_no_undo,int p_which) {
 	editor->revalidate_cursor();
 	
 	d->ui_update_notify->track_list_changed();
+	editor->disable_selection();
 	
 	return ret;
 		
@@ -105,6 +108,7 @@ CommandFunc* EditorCommands::track_move_right(bool p_no_undo,int p_which) {
 	editor->revalidate_cursor();
 	
 	d->ui_update_notify->track_list_changed();
+	editor->disable_selection();
 	
 	return ret;
 	
@@ -123,6 +127,7 @@ CommandFunc* EditorCommands::automation_show(bool p_no_undo,Track *p_track,Strin
 	if (d->song->get_track(editor->get_current_track())==p_track)
 		d->ui_update_notify->current_automation_status_changed();
 	
+	editor->disable_selection();
 	return ret;
 	
 }
@@ -140,7 +145,7 @@ CommandFunc* EditorCommands::automation_hide(bool p_no_undo,Track *p_track,Strin
 	if (d->song->get_track(editor->get_current_track())==p_track)
 		d->ui_update_notify->current_automation_status_changed();
 
-
+	editor->disable_selection();
 	
 	return ret;
 	

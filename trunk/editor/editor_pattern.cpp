@@ -68,7 +68,9 @@ bool Editor::pattern_edit_key_press(int p_event) {
 	SWITCH(p_event)
 			
 		CASE( KEYBIND("left") ) {
-	
+		
+			begin_check_shift_selection();
+
 			if (d->pattern_edit.field==1)
 				d->pattern_edit.field=0;
 			else if (d->pattern_edit.column>0) {
@@ -82,9 +84,12 @@ bool Editor::pattern_edit_key_press(int p_event) {
 				}				
 					
 			}
-					//song_edit->move_editing_left();
+			end_check_shift_selection();
+			//song_edit->move_editing_left();
 		}
 		CASE( KEYBIND("right") ) {
+			
+			begin_check_shift_selection();
 			if (d->pattern_edit.field==0)
 				d->pattern_edit.field=1;
 			else if (d->pattern_edit.column<(pattern_track->get_visible_columns()-1)) {
@@ -98,6 +103,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			
 			
 			}
+			end_check_shift_selection();
 			//song_edit->move_editing_right();
 		}
 		CASE( KEYBIND("note_entry/clear_field") ) {
