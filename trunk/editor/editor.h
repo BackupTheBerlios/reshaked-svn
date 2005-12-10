@@ -41,6 +41,7 @@ class Editor {
 	bool selection_can_paste_at(EditorData::Selection::Pos p_pos);
 	void selection_paste_at(EditorData::Selection::Pos p_pos);
 	void selection_clear_area(EditorData::Selection::Pos p_from,EditorData::Selection::Pos p_to);
+	EditorData::Selection::Pos get_selection_end_from_pos(EditorData::Selection::Pos p_pos);
 	
 friend class EditorCommands;	
 	
@@ -71,7 +72,7 @@ public:
 	void show_automation(String p_path);
 	void hide_automation(String p_path);
 	
-	void add_automation_point(Automation *p_automation,Tick p_tick, float p_val);
+	void add_automation_point(Automation *p_automation,Tick p_tick, float p_val,float p_lfo_depth=0);
 	void move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val);
 	void remove_automation_point(Automation *p_automation,int p_block,int p_point);
 	

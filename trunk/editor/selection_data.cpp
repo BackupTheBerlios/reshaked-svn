@@ -46,6 +46,18 @@ bool SelectionData::empty() {
 	
 	return column_list.size()==0;
 }
+
+void SelectionData::set_length(Tick p_length) {
+	
+	length=p_length;
+}
+
+Tick SelectionData::get_length() {
+	
+	return length;
+}
+
+
 SelectionData::SelectionData()
 {
 }

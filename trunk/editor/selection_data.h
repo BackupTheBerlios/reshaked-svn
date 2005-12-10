@@ -64,12 +64,15 @@ struct ColumnDataAutomation : public ColumnData {
 class SelectionData {
 
 	std::vector<ColumnData*> column_list;
+	Tick length;
 public:
 	void add_column_data(ColumnData* p_data);
 	int get_column_count();
 	ColumnData* get_column(int p_which);
 	void clear();
 	bool empty();
+	void set_length(Tick p_length);
+	Tick get_length();
 	
 	SelectionData();
    	~SelectionData();

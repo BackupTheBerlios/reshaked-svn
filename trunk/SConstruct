@@ -17,6 +17,7 @@ env = Environment(CCFLAGS=['-Wall','-g3','-I.','-Wno-sign-compare'], tools=['def
 print env['TOOLS']
 env.Append(LIBS=['QtGui','QtCore']);
 env.Append(LIBS=['pthread']);
+env.Append(CXXFLAGS=['-DQT_NO_KEYWORDS']);
 #env.Append(CPPPATH=['#types/','#engine/','#interface/','#ui_blocks/']);
 env.Append(CPPPATH=['#types/','#engine/','#interface/','#ui_blocks/','#pixmaps/']);
 env["QT_LIB"]="";

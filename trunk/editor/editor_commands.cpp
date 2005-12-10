@@ -321,4 +321,32 @@ CommandFunc* EditorCommands::blocklist_set_block_length(bool p_no_undo,BlockList
 	
 }
 
+CommandFunc* EditorCommands::track_pattern_add_column(bool p_no_undo,Track_Pattern *p_pattern) {
+	
+	CommandFunc *ret=NULL;
+	if (!p_no_undo) {
+		
+		ret=Command1(this,&EditorCommands::track_pattern_remove_column, p_pattern);
+	}
+	
+	p_pattern->set_visible_columns( p_pattern->get_visible_columns() + 1);
+	d->ui_update_notify->track_list_changed();	
+	return ret;
+	
+}
+CommandFunc* EditorCommands::track_pattern_remove_column(bool p_no_undo,Track_Pattern *p_pattern) {
+	
+	CommandFunc *ret=NULL;
+	if (!p_no_undo) {
+		
+		ret=Command1(this,&EditorCommands::track_pattern_add_column, p_pattern);
+	}
+	
+	p_pattern->set_visible_columns( p_pattern->get_visible_columns() - 1);
+	
+	d->ui_update_notify->track_list_changed();
+	return ret;
+	
+}
+
 }

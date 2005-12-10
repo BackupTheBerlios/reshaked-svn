@@ -53,6 +53,7 @@ void GlobalBeatBarColumn::paintEvent(QPaintEvent *pe) {
 		}			
 			
 	}
+	
 	p.setPen(QColor(150,150,150));
 	int line_pos=width()-bf->get_width()*5/2;
 	p.drawLine(line_pos,0,line_pos,height());

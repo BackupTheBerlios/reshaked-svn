@@ -216,11 +216,22 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		}
 		CASE( KEYBIND("editor/selection_paste_overwrite") ) {
 		
-			
+			if (selection_can_paste_at( get_cursor_selection_pos() )) {
+				
+				d->undo_stream.begin("Paste Overwrite");
+				selection_clear_area( get_cursor_selection_pos(), get_selection_end_from_pos( get_cursor_selection_pos()) );
+				selection_paste_at( get_cursor_selection_pos() );
+				d->undo_stream.end();
+			}
 		}
 		CASE( KEYBIND("editor/selection_paste_mix") ) {
 		
+			if (selection_can_paste_at( get_cursor_selection_pos() )) {
 			
+				d->undo_stream.begin("Paste Mix");
+				selection_paste_at( get_cursor_selection_pos() );
+				d->undo_stream.end();
+			}
 		}
 		CASE( KEYBIND("editor/select_column_block_all") ) {
 		

@@ -18,20 +18,20 @@ Shortcuts:
 
 Undo/Redo:
 *-Make block undoredo system
--Clean the ret/createdata stuff
+*-Clean the ret/createdata stuff
 
 Global View
 -Make selecting block with mouse drag/createarea
 *-Fix block MOVING
 *-Add undo/redo to all block operations
--Optimize painting a bit using clip regions
+*-Optimize painting a bit using clip regions ikk
 -display linked blocks differently
 -select other linked blocks
 *?-delete blocks gdannit
 
 Selection
 -Make selection :)
--Select blocks in global_view
+-Select blocks in global_view (?)
 
 
 Goals for 60% 

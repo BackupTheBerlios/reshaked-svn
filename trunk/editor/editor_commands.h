@@ -36,6 +36,7 @@ friend class Editor;
 	CommandFunc* track_move_left(bool p_no_undo,int p_which);
 	CommandFunc* track_move_right(bool p_no_undo,int p_which);
 	
+	
 	CommandFunc* automation_show(bool p_no_undo,Track *p_track,String p_which);
 	CommandFunc* automation_hide(bool p_no_undo,Track *p_track,String p_which);
 	
@@ -51,6 +52,9 @@ friend class Editor;
 	
 	CommandFunc* set_note(bool p_no_undo,Track_Pattern *p_pattern,Track_Pattern::Position,Track_Pattern::Note);
 
+	CommandFunc* track_pattern_add_column(bool p_no_undo,Track_Pattern *p_pattern);
+	CommandFunc* track_pattern_remove_column(bool p_no_undo,Track_Pattern *p_pattern);
+	
 };
 
 }

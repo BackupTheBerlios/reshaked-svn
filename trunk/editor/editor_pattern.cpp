@@ -345,8 +345,12 @@ void Editor::track_pattern_add_column(int p_which) {
 	if (!p)
 		return;
 	
-	p->set_visible_columns( p->get_visible_columns() +1 );
-	d->ui_update_notify->track_list_changed();
+	
+	d->undo_stream.begin("Add Pattern Column");
+	d->undo_stream.add_command( Command1(&commands,&EditorCommands::track_pattern_add_column,p));
+
+	d->undo_stream.end();
+	
 
 }
 
@@ -357,9 +361,13 @@ void Editor::track_pattern_remove_column(int p_which) {
 	Track_Pattern * p = dynamic_cast<Track_Pattern*>(d->song->get_track(track_idx));	
 	if (!p)
 		return;
+
+	d->undo_stream.begin("Remove Pattern Column");
 	
-	p->set_visible_columns( p->get_visible_columns() -1 );
-	d->ui_update_notify->track_list_changed();
+	d->undo_stream.add_command( Command1(&commands,&EditorCommands::track_pattern_remove_column,p));
+
+	d->undo_stream.end();
+	
 	
 }
 

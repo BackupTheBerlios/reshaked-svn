@@ -19,6 +19,58 @@ namespace ReShaked {
 static Track_Pattern::Note _fix_macro(const Track_Pattern::Note &p_note) { return p_note; } //fix template annoyance
 #define SET_NOTE(m_pos,m_note) d->undo_stream.add_command( Command3(&commands,&EditorCommands::set_note,pattern_track,m_pos,_fix_macro(m_note)) )
 
+
+EditorData::Selection::Pos Editor::get_selection_end_from_pos(EditorData::Selection::Pos p_pos) {
+	
+	EditorData::Selection::Pos end_pos=p_pos;
+	
+	ERR_FAIL_COND_V( d->selection.data.empty(), end_pos );
+	
+	
+	int column=p_pos.column;
+	int blocklist=p_pos.blocklist;
+	
+	end_pos.tick=p_pos.tick+d->selection.data.get_length();
+	
+	
+	
+	
+	ERR_FAIL_COND_V( blocklist>=get_blocklist_count(), end_pos );
+	
+	for (int i=0;i<d->selection.data.get_column_count();i++) {
+		
+		ERR_FAIL_COND_V( blocklist>=get_blocklist_count(), end_pos );
+		
+		BlockList *bl=get_blocklist(blocklist);
+		
+		if (dynamic_cast<Track_Pattern*>(bl)) {
+		
+			ERR_FAIL_COND_V( d->selection.data.get_column( i)->get_type()!=ColumnData::TYPE_PATTERN, end_pos );
+			end_pos.column=column;
+			end_pos.blocklist=blocklist;
+			
+			column++;	
+			
+			if (column>=dynamic_cast<Track_Pattern*>(bl)->get_visible_columns()) {
+				column=0;
+				blocklist++;
+			}
+			
+		} else if (dynamic_cast<Automation*>(bl)) {
+			
+			ERR_FAIL_COND_V( d->selection.data.get_column( i)->get_type()!=ColumnData::TYPE_AUTOMATION, end_pos );
+			
+			end_pos.column=column;
+			end_pos.blocklist=blocklist;
+			column=0;
+			blocklist++;
+		}
+	}
+	
+	return end_pos;
+}
+
+
 bool Editor::selection_can_paste_at(EditorData::Selection::Pos p_pos) {
 	
 	if (d->selection.data.empty())
@@ -93,8 +145,11 @@ void Editor::selection_copy() {
 						ColumnDataPattern::NoteData nd;
 						nd.note=pb->get_note( l );
 						nd.tick=pb->get_note_pos( l ).tick+tp->get_block_pos(k);
+						if (pb->get_note_pos( l ).column!=j)
+							continue;
 						if (nd.tick<tick_from || nd.tick >tick_to)
 							continue;
+						
 						nd.tick-=tick_from;
 						cdp->notes.push_back(nd);						
 					}
@@ -135,6 +190,8 @@ void Editor::selection_copy() {
 			
 		}
 	}
+	
+	d->selection.data.set_length( tick_to-tick_from );
 }
 
 void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::Selection::Pos p_to) {
@@ -144,7 +201,7 @@ void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::
 	
 	d->undo_stream.begin("Selection Zap");
 	
-	d->selection.data.clear(); //byebye old data
+
 	for (int i=p_from.blocklist;i<=p_to.blocklist;i++) {
 		
 		BlockList *bl=get_blocklist(i);
@@ -230,7 +287,7 @@ void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::
 
 
 void Editor::selection_paste_at(EditorData::Selection::Pos p_pos) {
-	/*
+	
 	if (d->selection.data.empty())
 		return;
 	
@@ -238,19 +295,36 @@ void Editor::selection_paste_at(EditorData::Selection::Pos p_pos) {
 	int blocklist=p_pos.blocklist;
 	
 	if (blocklist>=get_blocklist_count())
-		return false;
+		return; 
+	
+	d->undo_stream.begin("Selection Paste");
 	
 	for (int i=0;i<d->selection.data.get_column_count();i++) {
 		
 		if (blocklist>=get_blocklist_count())
-			return false;
+			break;
 		
 		BlockList *bl=get_blocklist(blocklist);
 		
 		if (dynamic_cast<Track_Pattern*>(bl)) {
 		
-			if (d->selection.data.get_column( i)->get_type()!=ColumnData::TYPE_PATTERN)
-				return false;
+			Track_Pattern *pattern_track=dynamic_cast<Track_Pattern*>(bl);
+			ERR_CONTINUE(!pattern_track);
+			
+			ColumnDataPattern *cdp = dynamic_cast<ColumnDataPattern *>(d->selection.data.get_column( i ));
+			
+			ERR_CONTINUE( cdp==NULL );
+			
+			foreach(I,cdp->notes) {
+				
+				if (pattern_track->get_block_idx_at_pos( I->tick+p_pos.tick )<0)
+					continue; //nowhere to set note
+				Track_Pattern::Position pp;
+				pp.tick=I->tick+p_pos.tick;
+				pp.column=column;
+				SET_NOTE( pp, I->note);
+			}
+			
 			column++;	
 			if (column>=dynamic_cast<Track_Pattern*>(bl)->get_visible_columns()) {
 				column=0;
@@ -259,13 +333,29 @@ void Editor::selection_paste_at(EditorData::Selection::Pos p_pos) {
 			
 		} else if (dynamic_cast<Automation*>(bl)) {
 			
-			if (d->selection.data.get_column( i)->get_type()!=ColumnData::TYPE_AUTOMATION)
-				return false;
+			
+			Automation *au=dynamic_cast<Automation*>(bl);
+			ERR_CONTINUE(au==NULL);
+			
+			ColumnDataAutomation *cda = dynamic_cast<ColumnDataAutomation *>(d->selection.data.get_column( i ));
+			
+			ERR_CONTINUE( cda==NULL );
+			
+			foreach(I,cda->points) {
+				
+				int block_idx=au->get_block_idx_at_pos( I->tick+p_pos.tick );
+				if (block_idx<0)
+					continue; //nowhere to set note
+
+				add_automation_point(au,I->tick+p_pos.tick,I->point.value,I->point.lfo_depth);
+			}
+			
 			column=0;
 			blocklist++;
 		}
 	}
-	*/
+	
+	d->undo_stream.end();
 	
 }
 
