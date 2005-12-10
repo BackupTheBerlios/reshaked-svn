@@ -16,6 +16,8 @@
 
 namespace ReShaked {
 
+static Track_Pattern::Note _fix_macro(const Track_Pattern::Note &p_note) { return p_note; } //fix template annoyance
+#define SET_NOTE(m_pos,m_note) d->undo_stream.add_command( Command3(&commands,&EditorCommands::set_note,pattern_track,m_pos,_fix_macro(m_note)) )
 
 bool Editor::selection_can_paste_at(EditorData::Selection::Pos p_pos) {
 	
@@ -90,7 +92,7 @@ void Editor::selection_copy() {
 				
 						ColumnDataPattern::NoteData nd;
 						nd.note=pb->get_note( l );
-						nd.tick=pb->get_note_pos( l ).tick;
+						nd.tick=pb->get_note_pos( l ).tick+tp->get_block_pos(k);
 						if (nd.tick<tick_from || nd.tick >tick_to)
 							continue;
 						nd.tick-=tick_from;
@@ -119,7 +121,7 @@ void Editor::selection_copy() {
 				
 					ColumnDataAutomation::PointData pd;
 					pd.point=ad->get_index_value( l );
-					pd.tick=ad->get_index_pos( l );
+					pd.tick=ad->get_index_pos( l )+au->get_block_pos(k);
 					if (pd.tick<tick_from || pd.tick >tick_to)
 						continue;
 					pd.tick-=tick_from;
@@ -135,11 +137,12 @@ void Editor::selection_copy() {
 	}
 }
 
-
 void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::Selection::Pos p_to) {
-	/*
+	
 	Tick tick_from=p_from.tick;
-	Tick tick_to=p_to.tick+TICKS_PER_BEAT/d->cursor.get_snap();
+	Tick tick_to=p_to.tick+TICKS_PER_BEAT/d->cursor.get_snap()-1; //until next row, but not next row
+	
+	d->undo_stream.begin("Selection Zap");
 	
 	d->selection.data.clear(); //byebye old data
 	for (int i=p_from.blocklist;i<=p_to.blocklist;i++) {
@@ -147,15 +150,17 @@ void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::
 		BlockList *bl=get_blocklist(i);
 		
 		if (dynamic_cast<Track_Pattern*>(bl)) {
+			
 			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
 			int columns=tp->get_visible_columns();
 			int column_from=(i==0)?p_from.column:0;
 			int column_to=(i==p_to.blocklist)?p_to.column:(columns-1);
 						
+			std::list<Track_Pattern::Position> note_list;
+			
 			for (int j=column_from;j<=column_to;j++) {
 				
-				ColumnDataPattern *cdp = new ColumnDataPattern;
-				d->selection.data.add_column_data( cdp );
+				
 				
 				int block_from,block_to;
 				if (tp->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
@@ -167,23 +172,28 @@ void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::
 					for (int l=0;l<pb->get_note_count();l++) {
 								
 				
-						ColumnDataPattern::NoteData nd;
-						nd.note=pb->get_note( l );
-						nd.tick=pb->get_note_pos( l ).tick;
-						if (nd.tick<tick_from || nd.tick >tick_to)
+						Track_Pattern::Position notepos;
+						notepos=pb->get_note_pos( l );
+						notepos.tick+=tp->get_block_pos(k);
+						if (notepos.tick<tick_from || notepos.tick >tick_to)
 							continue;
-						nd.tick-=tick_from;
-						cdp->notes.push_back(nd);						
+						
+						note_list.push_back(notepos);
 					}
 				}
+			}
+			
+			Track_Pattern *pattern_track=tp; //needed for macro
+			std::list<Track_Pattern::Position>::iterator I=note_list.begin();
+			for (;I!=note_list.end();I++) {
+				
+				SET_NOTE(*I,Track_Pattern::Note());
 			}
 			
 		} else if (dynamic_cast<Automation*>(bl)) {
 			
 			Automation *au=dynamic_cast<Automation*>(bl);
 			
-			ColumnDataAutomation *cda = new ColumnDataAutomation;
-			d->selection.data.add_column_data( cda );
 			
 			int block_from,block_to;
 			if (au->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
@@ -195,26 +205,26 @@ void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::
 					
 				for (int l=0;l<ad->get_stream_size();l++) {
 								
-				
-					ColumnDataAutomation::PointData pd;
-					pd.point=ad->get_index_value( l );
-					pd.tick=ad->get_index_pos( l );
-					if (pd.tick<tick_from || pd.tick >tick_to)
+					Tick tick=ad->get_index_pos( l );
+					tick+=au->get_block_pos(k);
+					if (tick<tick_from || tick >tick_to)
 						continue;
-					pd.tick-=tick_from;
-					cda->points.push_back(pd);						
+					d->undo_stream.add_command( Command3(&commands,&EditorCommands::remove_automation_point,au,k,l) );
+
+					l--; //since we deleted, size is minus one
 				}
 			}
+			
 		} else {
-			d->selection.data.clear();
+			
+			d->undo_stream.end();
 			ERR_PRINT("Unknown BlockList Type");
 			return;
 			
 		}
 	}
 	
-	*/
-	
+	d->undo_stream.end();
 	
 }
 

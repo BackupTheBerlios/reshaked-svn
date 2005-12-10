@@ -51,7 +51,7 @@ void RowListDisplay::paintEvent(QPaintEvent *pe) {
 			xofs=width()-(str.length()+1)*pfont->get_width();
 			bfont->render_string( p, xofs,i*rowsize+fontofs , str.toAscii().data() );
 		} else if (song->get_bar_map().get_bar_beat( beat)==0) { //bar
-			str=QString::number(song->get_bar_map().get_bar_at_beat( beat) );
+			str=QString::number(song->get_bar_map().get_bar_at_beat( beat)+1 );
 			str="*"+str+"*";
 			xofs=0;//width()-(str.length())*pfont->get_width();
 			rfont->render_string( p, xofs,i*rowsize+fontofs , str.toAscii().data() );

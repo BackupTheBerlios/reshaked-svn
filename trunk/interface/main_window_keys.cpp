@@ -82,6 +82,7 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/selection_paste_mix","Selection Paste Mix",Qt::ALT+Qt::Key_M);
 	data.keyboard_codes.add_key_bind("editor/select_column_block_all","Select Column/Block/All",Qt::ALT+Qt::Key_L);
 	data.keyboard_codes.add_key_bind("editor/selection_disable","Selection Disable",Qt::ALT+Qt::Key_U);
+	data.keyboard_codes.add_key_bind("editor/selection_zap","Erase Data Under Selection",Qt::ALT+Qt::Key_Z);
 	
 	data.keyboard_codes.add_key_bind("editor/selection_up","Selection Move Up",Qt::SHIFT+Qt::Key_Up,true);
 	data.keyboard_codes.add_key_bind("editor/selection_down","Selection Move Down",Qt::SHIFT+Qt::Key_Down,true);

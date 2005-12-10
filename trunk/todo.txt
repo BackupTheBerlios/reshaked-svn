@@ -6,7 +6,7 @@ Automation:
 -Interpolation Edit
 -Move left/right
 -more mouse support in widegt
-
+-RESIZE still miss automation
 Pattern:
 -add/remove track column has no undo/redo
 

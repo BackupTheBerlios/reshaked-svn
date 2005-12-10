@@ -226,6 +226,14 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		
 			
 		}
+		CASE( KEYBIND("editor/selection_zap") ) {
+		
+			if (d->selection.enabled) {
+				
+				selection_clear_area( d->selection.begin, d->selection.end );
+			}
+			
+		}
 		CASE( KEYBIND("editor/selection_disable") ) {
 		
 			d->selection.enabled=false;

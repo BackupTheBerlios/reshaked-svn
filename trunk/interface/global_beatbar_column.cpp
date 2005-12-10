@@ -47,7 +47,7 @@ void GlobalBeatBarColumn::paintEvent(QPaintEvent *pe) {
 		
 		if (!bar_map->get_bar_beat( i )) { // paint bar
 			
-			QString s = QString::number(bar_map->get_bar_at_beat( i) );
+			QString s = QString::number(bar_map->get_bar_at_beat( i)+1 );
 			int ofs=width()-(s.length()+3)*pf->get_width();
 			pf->render_string( p, ofs, global_view->get_beat_pixel( i ), s.toAscii().data() );
 		}			

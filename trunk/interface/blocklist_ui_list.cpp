@@ -148,18 +148,23 @@ void BlockListUIList::repaint_track_list() {
 }
 void BlockListUIList::update_track_list() {
 
-	if (hbox)
+	setUpdatesEnabled(false);
+	
+	if (hbox) {
+		hbox->hide();
 		delete hbox; //all widgets die!
+	}
 
 	hbox = new QWidget(this);
+	
+	//hbox->hide();
+	
 	hbox_layout = new QHBoxLayout(hbox);
 	hbox->setLayout(hbox_layout);
 
 	scrollarea->setWidget(hbox);
 	scrollarea->setWidgetResizable(true);
 
-
-	hbox->show();
 
 	block_list_ui_list.clear();
 	track_tops.clear();
@@ -225,6 +230,10 @@ void BlockListUIList::update_track_list() {
 	hbox->adjustSize();
 
 	update_h_scroll();
+	hbox->show();
+	setUpdatesEnabled(true);
+	
+	
 }
 
 void BlockListUIList::snap_changed_slot(int p_to_idx) {
@@ -324,7 +333,11 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p
 
 	scrollarea->setFocusPolicy(Qt::NoFocus);
 	scrollarea->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-
+	scrollarea->setBackgroundRole(QPalette::NoRole);
+	scrollarea->viewport()->setBackgroundRole(QPalette::NoRole);
+	QPalette p=scrollarea->viewport()->palette();
+	p.setColor(QPalette::Background,QColor(0,0,0));
+	scrollarea->viewport()->setPalette(p);
 	
 	l->setSpacing(0);
 	l->setMargin(0);
