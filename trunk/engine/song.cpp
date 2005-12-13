@@ -8,6 +8,10 @@ BarMap& Song::get_bar_map() {
 	
 	return bar_map;	
 }
+AudioGraph& Song::get_track_graph() {
+	
+	return track_graph;
+}
 
 void Song::add_track(Track* p_track,int p_at_pos) {
 	

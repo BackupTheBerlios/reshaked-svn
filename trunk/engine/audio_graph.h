@@ -4,6 +4,7 @@
 #include "engine/audio_node.h"
 #include "engine/audio_graph_process.h"
 #include <vector>
+#include <list>
 /**
  * The core of the modular nature of this sequencer
  * It was programmed with simplicity of use and code,
@@ -41,8 +42,9 @@ public:
 	
 	int get_node_count();
 	AudioNode* get_node(int p_fromdex);
-	void add_node(AudioNode *p_node);
-	void erase_node(int p_fromdex);
+	int get_node_index(AudioNode* p_fromnode);
+	void add_node(AudioNode *p_node,std::list<Connection> *p_node_connections=NULL);
+	void erase_node(int p_fromdex,std::list<Connection> *p_connections_lost=NULL);
 	
 	ConnectError connect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to);
 	void disconnect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to);

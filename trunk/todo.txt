@@ -37,12 +37,12 @@ Selection
 Goals for 60% 
 -Basic audio system working and routing, using JACK driver
 -Add audio locks everywhere
--Global stuff (tempo)
+-Routing Working
 
 Goals for 70% 
+-Global Stuff (tempo)
 -Rack working
 -Synth working
--Routing working
 
 Goals for 80%
 -Simple synth

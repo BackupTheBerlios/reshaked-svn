@@ -1,6 +1,6 @@
 
 #include "audio_graph.h"
-
+#include "error_macros.h"
 
 namespace ReShaked {
 
@@ -101,11 +101,32 @@ AudioNode* AudioGraph::get_node(int p_index) {
 	return nodes[p_index];
 }
 
-void AudioGraph::add_node(AudioNode *p_node) {
+void AudioGraph::add_node(AudioNode *p_node,std::list<Connection> *p_node_connections) {
 
 	nodes.push_back(p_node);
+	if (p_node_connections) {
+		
+		foreach(I,(*p_node_connections)) {
+			
+			if (I->node_from==-1)
+				I->node_from=nodes.size()-1;
+			if (I->node_to==-1)
+				I->node_to=nodes.size()-1;
+			
+			ERR_CONTINUE( connect_plugs( I->node_from,I->plug_from,I->node_to,I->plug_to) );
+		}
+		
+	}
 }
 
+
+/**
+ * Helper to adjust an index from the array, according to a deleted node. If the index
+ * is greater than the deleted note, the index is decremented by 1
+ * @param p_index index to adjust
+ * @param p_deleted index being deleted
+ * @return true if index to adjust equals index being deleted
+ */
 static bool index_adjust(int &p_index,int p_deleted) {
 	if (p_index>p_deleted)
 		p_index--;
@@ -115,7 +136,7 @@ static bool index_adjust(int &p_index,int p_deleted) {
 	return false;
 }
 
-void AudioGraph::erase_node(int p_index) {
+void AudioGraph::erase_node(int p_index,std::list<Connection> *p_connections_lost) {
 
 	ERR_FAIL_INDEX(p_index,(int)nodes.size());
 
@@ -126,16 +147,33 @@ void AudioGraph::erase_node(int p_index) {
 	/* Erase connections with that node */
 	while (i<(int)connections.size()) {
 	
-		bool erased=false;
+		bool from_erased=false;
+		bool to_erased=false;
 		
 		if (index_adjust(connections[i].node_from,p_index))
-			erased=true;
+			from_erased=true;
 		if (index_adjust(connections[i].node_to,p_index))
-			erased=true;
+			to_erased=true;
 			
-		if (erased)
+		if (from_erased || to_erased) {
+			
+			/* this connection was lost, report loss if asked to */
+			/* This is useful if we want to undo or redo the action */
+			
+			if (p_connections_lost) { //want report of connections lost?
+				
+				Connection lost_conn=connections[i];
+				if (from_erased) 
+					lost_conn.node_from=-1; //means it connected FROM this
+				if (to_erased) 
+					lost_conn.node_to=-1; //means it connected TO this
+					
+				p_connections_lost->push_back(lost_conn);			
+			}
 			connections.erase( connections.begin() + i );
-		else
+			
+			ERR_CONTINUE(from_erased && to_erased); //should never happen!
+		} else
 			i++;
 	}
 	
@@ -228,6 +266,14 @@ const AudioGraph::Connection* AudioGraph::get_connection(int p_index) {
 	return &connections[p_index];
 }
 
+int AudioGraph::get_node_index(AudioNode* p_fromnode) {
+	
+	for (int i=0;i<nodes.size();i++)
+		if (nodes[i]==p_fromnode)
+			return i;
+	
+	return -1;
+}
 void AudioGraph::process(int p_frames) {
 	
 	graph_process.process(p_frames);	

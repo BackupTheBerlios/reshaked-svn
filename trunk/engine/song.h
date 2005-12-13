@@ -21,6 +21,7 @@ private:
 public:
 
 	BarMap& get_bar_map();
+	AudioGraph& get_track_graph();
 	
 	void add_track(Track* p_track,int p_at_pos=-1); ///< pos, or -1 for at end (default)
 	int get_track_count();
