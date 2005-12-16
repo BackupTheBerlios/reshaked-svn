@@ -53,7 +53,10 @@
 #include "pixmaps/global_edit_select_block.xpm"
 
 #include "pixmaps/cursor_add_block.xpm"
+#include "pixmaps/connection_panel_bg.xpm"
+#include "pixmaps/connection_panel_system.xpm"
 
+#include "pixmaps/jack_hole.xpm"
 
 #include <iostream>
 
@@ -160,9 +163,10 @@ VisualSettings::VisualSettings() {
 	skin_box_map[SKINBOX_EDITING_PATTERN_SELECTED]=new SkinBox((const char**)pattern_bg_sel_xpm,4,4,4,4);
 	skin_box_map[SKINBOX_EDITING_AUTOMATION]=new SkinBox((const char**)automation_bg_xpm,4,4,4,4);
 	skin_box_map[SKINBOX_EDITING_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_bg_sel_xpm,4,4,4,4);
-	skin_box_map[SKINBOX_EDITING_RESIZABLE_CURSOR]=new SkinBox((const char**)pattern_cursor_xpm,3,3,3,3,true);
-
-
+	skin_box_map[SKINBOX_EDITING_RESIZABLE_CURSOR]=new SkinBox((const char**)pattern_cursor_xpm,3,3,3,3,true); 
+	skin_box_map[SKINBOX_RACK_NORMAL]=new SkinBox((const char**)connection_panel_bg_xpm,26,31,20,33,true);
+	skin_box_map[SKINBOX_RACK_SYSTEM]=new SkinBox((const char**)connection_panel_system_xpm,26,31,20,33,true);
+	
 	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0,33,0);
 	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(255,190,170);
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
@@ -184,6 +188,7 @@ VisualSettings::VisualSettings() {
 	pixmap_map[PIXMAP_TRACK_SETTINGS_EFFECTS]=QPixmap((const char**)track_settings_effects_xpm);
 	pixmap_map[PIXMAP_TRACK_SETTINGS_CONNECTIONS]=QPixmap((const char**)track_settings_connections_xpm);
 	pixmap_map[PIXMAP_ENVELOPE_POINT]=QPixmap((const char**)envelope_point_xpm);
+	pixmap_map[PIXMAP_RACK_JACK_HOLE]=QPixmap((const char**)jack_hole_xpm);
 
 
 	pixmap_map[ICON_TRACK_MOVE_LEFT]=QPixmap((const char**)track_move_left_xpm);

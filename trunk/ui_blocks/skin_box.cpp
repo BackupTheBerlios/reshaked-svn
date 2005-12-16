@@ -14,6 +14,25 @@
 
 namespace ReShaked {
 
+
+int SkinBox::get_top() {
+	
+	return top;
+}
+int SkinBox::get_left() {
+	
+	return left;
+}
+int SkinBox::get_right() {
+	
+	return right;
+}
+int SkinBox::get_bottom() {
+
+	return bottom;
+}
+
+
 void SkinBox::paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h) {
 
 	int center_w=p_w-left-right;

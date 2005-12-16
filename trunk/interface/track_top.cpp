@@ -150,6 +150,12 @@ TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor) :QWidget(p
 	menu->addAction(new IndexedAction(ACTION_PATTERN_ADD_COLUMN,"Add Column",GET_QPIXMAP(ICON_COLUMN_ADD),this));
 	menu->addAction(new IndexedAction(ACTION_PATTERN_REMOVE_COLUMN,"Remove Column",GET_QPIXMAP(ICON_COLUMN_REMOVE),this));
 	menu->addSeparator();
+	
+	menu->addAction(new IndexedAction(ACTION_AUTOMATIONS,"Automations...",GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS),this));
+	menu->addAction(new IndexedAction(ACTION_EFFECTS,"Add Sound Effect",GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS),this));
+	
+	menu->addSeparator();
+	
 	menu->addAction(new IndexedAction(ACTION_MOVE_TRACK_LEFT,"Move Track Left",GET_QPIXMAP(ICON_TRACK_MOVE_LEFT),this));
 	menu->addAction(new IndexedAction(ACTION_MOVE_TRACK_RIGHT,"Move Track Right",GET_QPIXMAP(ICON_TRACK_MOVE_RIGHT),this));
 	menu->addSeparator();

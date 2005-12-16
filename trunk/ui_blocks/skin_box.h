@@ -37,6 +37,11 @@ class SkinBox {
 	bool stretch;
 public:
 	
+	int get_top();
+	int get_left();
+	int get_right();
+	int get_bottom();
+	
 	void paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h);
 	void load_from_xpm(const char** p_xpm,int p_top, int p_left, int p_bottom, int p_right,bool p_stretchable=false);
 	void load_from_pixmap(const QPixmap& p_pixmap,int p_top, int p_left, int p_bottom, int p_right,bool p_stretchable=false);

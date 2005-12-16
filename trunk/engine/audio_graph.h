@@ -40,6 +40,7 @@ private:
 	AudioGraphProcess graph_process;
 public:
 	
+	int get_ordered_node(int p_index);
 	int get_node_count();
 	AudioNode* get_node(int p_fromdex);
 	int get_node_index(AudioNode* p_fromnode);
