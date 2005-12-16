@@ -13,12 +13,13 @@ AudioGraph& Song::get_track_graph() {
 	return track_graph;
 }
 
-void Song::add_track(Track* p_track,int p_at_pos) {
+void Song::add_track(Track* p_track,int p_at_pos,std::list<AudioGraph::Connection> *p_node_connections) {
 	
 	if (p_at_pos==-1)
 		p_at_pos=track_list.size();
 	
 	track_list.insert(track_list.begin()+p_at_pos,p_track);
+	track_graph.add_node( p_track, p_node_connections);
 
 	
 }
@@ -34,10 +35,12 @@ Track* Song::get_track(int p_idx) {
 	return track_list[p_idx];
 }
 
-void Song::remove_track(int p_idx) { /* remove but dont delete */
+void Song::remove_track(int p_idx,std::list<AudioGraph::Connection> *p_node_connections) { /* remove but dont delete */
 
 	ERR_FAIL_INDEX(p_idx,track_list.size());
+	Track *t=track_list[p_idx];
 	track_list.erase( track_list.begin() + p_idx );
+	track_graph.erase_node(track_graph.get_node_index(t),p_node_connections);
 	
 
 };
