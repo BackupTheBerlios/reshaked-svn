@@ -257,6 +257,11 @@ String Track::get_name() {
 	return base_private.name;
 }
 
+String Track::get_caption() {
+	
+	return get_name();	
+}
+
 Track::Track(int p_channels,BlockType p_type) : BlockList(p_type) {
 	
 	base_private.seq_events=NULL;

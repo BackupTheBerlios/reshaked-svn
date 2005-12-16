@@ -16,6 +16,8 @@
 
 #include <Qt/qwidget.h>
 
+#include "editor/editor.h"
+
 namespace ReShaked {
 
 /**
@@ -32,13 +34,34 @@ class ConnectionRack : public QWidget {
 	
 	int get_node_width(AudioNode *p_node);
 
+	void paintEvent(QPaintEvent *pe);
+	
+//change depending on what we implement
+	
+protected:
+	
+	Editor *editor;
+	AudioGraph *graph;
+	 
+	virtual AudioNode *get_node_at_pos(int p_node)=0;
 	
 public:
-	ConnectionRack(QWidget *p_parent);
+	ConnectionRack(QWidget *p_parent,Editor *p_editor,AudioGraph *p_graph);
 	~ConnectionRack();
 
 };
 
-}
 
+class ConnectionRackTracks : public ConnectionRack {
+
+	
+	virtual AudioNode *get_node_at_pos(int p_node);
+public:
+	
+	ConnectionRackTracks(QWidget *p_parent,Editor *p_editor);
+	
+};
+
+
+}
 #endif

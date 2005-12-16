@@ -86,6 +86,8 @@ void MainWindow::set_track_settings_page(TrackSettings::TrackSettingsPage p_page
 		get_action(TRACK_EFFECTS)->setChecked(false);
 	if (p_page!=TrackSettings::TRACK_SETTINGS_CONNECTIONS)
 		get_action(TRACK_CONNECTIONS)->setChecked(false);
+	if (p_page!=TrackSettings::TRACK_SETTINGS_TRACKLIST_CONNECTIONS)
+		get_action(TRACK_LIST_CONNECTIONS)->setChecked(false);
 	
 	
 }
@@ -117,6 +119,7 @@ void MainWindow::menu_action_callback(int p_action) {
 				get_action(TRACK_AUTOMATIONS)->setEnabled(true);
 				get_action(TRACK_EFFECTS)->setEnabled(true);
 				get_action(TRACK_CONNECTIONS)->setEnabled(true);
+				get_action(TRACK_LIST_CONNECTIONS)->setEnabled(true);
 			}
 
 		} break;
@@ -163,6 +166,11 @@ void MainWindow::menu_action_callback(int p_action) {
 
 			settings_dock->setVisible( get_action( item )->isChecked() );
 			set_track_settings_page(TrackSettings::TRACK_SETTINGS_CONNECTIONS);	
+		} break;
+		case TRACK_LIST_CONNECTIONS: {
+
+			settings_dock->setVisible( get_action( item )->isChecked() );
+			set_track_settings_page(TrackSettings::TRACK_SETTINGS_TRACKLIST_CONNECTIONS);	
 		} break;
 		
 		/*
@@ -253,16 +261,22 @@ void MainWindow::add_menus() {
 	create_action(TRACK_EFFECTS,"Edit Effects","edit_effects_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS));
 	create_action(TRACK_CONNECTIONS,"Edit Connections","edit_connections_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONNECTIONS));
 
+	track_toolbar->addSeparator();
+	
+	create_action(TRACK_LIST_CONNECTIONS,"Track List Connections","edit_track_list_connections_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONNECTIONS));
+	
 	get_action(TRACK_SYNTH)->setCheckable(true);
 	get_action(TRACK_CONTROLS)->setCheckable(true);
 	get_action(TRACK_AUTOMATIONS)->setCheckable(true);
 	get_action(TRACK_EFFECTS)->setCheckable(true);
 	get_action(TRACK_CONNECTIONS)->setCheckable(true);
+	get_action(TRACK_LIST_CONNECTIONS)->setCheckable(true);
 	get_action(TRACK_SYNTH)->setEnabled(false);
 	get_action(TRACK_CONTROLS)->setEnabled(false);
 	get_action(TRACK_AUTOMATIONS)->setEnabled(false);
 	get_action(TRACK_EFFECTS)->setEnabled(false);
 	get_action(TRACK_CONNECTIONS)->setEnabled(false);
+	get_action(TRACK_LIST_CONNECTIONS)->setEnabled(false);
 
 
 }
@@ -276,11 +290,14 @@ void MainWindow::track_list_changed_slot() {
 		get_action(TRACK_AUTOMATIONS)->setEnabled(false);
 		get_action(TRACK_EFFECTS)->setEnabled(false);
 		get_action(TRACK_CONNECTIONS)->setEnabled(false);
+		get_action(TRACK_LIST_CONNECTIONS)->setEnabled(false);
 		get_action(TRACK_SYNTH)->setChecked(false);
 		get_action(TRACK_CONTROLS)->setChecked(false);
 		get_action(TRACK_AUTOMATIONS)->setChecked(false);
 		get_action(TRACK_EFFECTS)->setChecked(false);
 		get_action(TRACK_CONNECTIONS)->setChecked(false);
+		get_action(TRACK_LIST_CONNECTIONS)->setChecked(false);
+		
 		settings_dock->hide();
 	} else {
 		blocklist_changed_slot();
@@ -288,6 +305,7 @@ void MainWindow::track_list_changed_slot() {
 		get_action(TRACK_AUTOMATIONS)->setEnabled(true);
 		get_action(TRACK_EFFECTS)->setEnabled(false);
 		get_action(TRACK_CONNECTIONS)->setEnabled(true);
+		get_action(TRACK_LIST_CONNECTIONS)->setEnabled(true);
 	}
 		
 	

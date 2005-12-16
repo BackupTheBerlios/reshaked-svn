@@ -81,8 +81,11 @@ protected:
 	const EventBuffer& get_seq_event_buffer();
 
 	virtual void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames)=0;
+	
 	void add_property(String p_path,Property *p_prop);
 
+	String get_caption();
+	
 public:
 
 	Property &swing();

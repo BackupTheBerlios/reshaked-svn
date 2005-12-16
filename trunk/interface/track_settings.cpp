@@ -137,6 +137,11 @@ TrackSettings::TrackSettings(QWidget *p_parent,Editor * p_editor) :CVBox(p_paren
 	widgets[TRACK_SETTINGS_AUTOMATION]=automation_settings;
 	stack->addWidget(automation_settings);
 	
+	tracks_rack = new ConnectionRackTracks(stack,p_editor);
+	widgets[TRACK_SETTINGS_TRACKLIST_CONNECTIONS]=tracks_rack;
+	stack->addWidget(tracks_rack);
+	tracks_rack->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	
 	hbox->layout()->setSpacing(20);
 	editor=p_editor;
 	

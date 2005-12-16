@@ -74,6 +74,7 @@ class MainWindow : public QMainWindow {
 		TRACK_AUTOMATIONS,
 		TRACK_EFFECTS,
 		TRACK_CONNECTIONS,
+		TRACK_LIST_CONNECTIONS,
 
 		MAX_ITEMS
 	};

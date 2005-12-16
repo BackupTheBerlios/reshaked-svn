@@ -18,6 +18,7 @@
 #include <Qt/qlineedit.h>
 #include "interface/track_control_settings.h"
 #include "interface/automation_tree.h"
+#include "interface/connection_rack.h"
 
 namespace ReShaked {
 
@@ -35,6 +36,8 @@ public:
 		TRACK_SETTINGS_AUTOMATION,
 		TRACK_SETTINGS_EFFECTS,	
 		TRACK_SETTINGS_CONNECTIONS,	
+		
+		TRACK_SETTINGS_TRACKLIST_CONNECTIONS,	
 		TRACK_SETTINGS_MAX,	
 	};	
 private:			    
@@ -43,6 +46,7 @@ private:
 	
 	TrackControlSettings *control_settings;
 	AutomationTree *automation_settings;
+	ConnectionRackTracks *tracks_rack; //inter track connections
 	QWidget *widgets[TRACK_SETTINGS_MAX];
 	CVBox *vb;
 	CHBox *hbox;
