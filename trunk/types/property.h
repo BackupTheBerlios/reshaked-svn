@@ -27,7 +27,8 @@ public:
 		DISPLAY_SLIDER,
 		DISPLAY_SPIN,
 		DISPLAY_COMBO,
-				
+		DISPLAY_CHECKBOX,
+			
 	};
 	
 	

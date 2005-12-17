@@ -34,6 +34,8 @@ class ConnectionRack : public QWidget {
 	
 	int get_node_width(AudioNode *p_node);
 
+	void paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,QString p_name);
+	void paint_node(QPainter&p,int p_offset,AudioNode *p_node);
 	void paintEvent(QPaintEvent *pe);
 	
 //change depending on what we implement

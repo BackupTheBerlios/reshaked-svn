@@ -121,6 +121,10 @@ int VisualSettings::get_selection_h_margin() {
 	return 3;
 }
 
+int VisualSettings::get_rack_panel_h_margin() {
+	
+	return 22;
+}
 QColor VisualSettings::get_color(ColorList p_color) {
 
 	ColorMap::iterator I=color_map.find(p_color);

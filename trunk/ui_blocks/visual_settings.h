@@ -145,6 +145,7 @@ public:
 	QPixmap get_pixmap(PixmapList p_pixmap);
 
 	int get_selection_h_margin();
+	int get_rack_panel_h_margin();
 	
 	VisualSettings();
 	~VisualSettings();
