@@ -24,12 +24,12 @@ public:
 	};
 
 	enum ConnectError {
-		CONNECT_OK,
-		CONNECT_INVALID_PLUG,
-		CONNECT_INVALID_NODE,
-		CONNECT_CHANNELS_DIFFER,
-		CONNECT_ALREADY_EXISTS,
-		CONNECT_CYCLIC_LINK,
+		CONNECT_OK, ///< Connection Performed Succesfully
+		CONNECT_INVALID_PLUG, ///< An invalid plug (not in range of the node) was specified
+		CONNECT_INVALID_NODE, ///< An invalid node (not in 0 .. get_node_count()-1 ) was specified
+		CONNECT_CHANNELS_DIFFER, ///< The plugs being connected handle different amount of channels (ie stereo/mono)
+		CONNECT_ALREADY_EXISTS, ///< The connection already exists and cant be made twice
+		CONNECT_CYCLIC_LINK, ///< The connection will create a cyclic link in the graph, so it will fail
 	};
 private:	
 	std::vector<AudioNode*> nodes;
@@ -44,8 +44,22 @@ public:
 	int get_node_count();
 	AudioNode* get_node(int p_fromdex);
 	int get_node_index(AudioNode* p_fromnode);
+	
+	/**
+	 * Add a node to the Audio Graph.
+	 * A list of connections can be optionally set. This is useful for Undo/Redo operations, as well sound driver switching.
+	 * @param p_node Audio Node
+	 * @param p_node_connections Connections to be set to this node upon creation (NULL for none)
+	 */
 	void add_node(AudioNode *p_node,std::list<Connection> *p_node_connections=NULL);
-	void erase_node(int p_fromdex,std::list<Connection> *p_connections_lost=NULL);
+	/**
+	 * Remove a node from the Audio Graph
+	 * A list of connections that the node had before being deleted can be optionally retrieved. 
+	 * This is useful for Undo/Redo operations, as well sound driver switching.
+	 * @param p_index Node Index
+	 * @param p_connections_lost Connections that will be lost upon deleting (NULL for not retrieving)
+	 */
+	void erase_node(int p_index,std::list<Connection> *p_connections_lost=NULL);
 	
 	ConnectError connect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to);
 	void disconnect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to);
