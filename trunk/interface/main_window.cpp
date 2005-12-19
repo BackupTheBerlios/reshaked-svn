@@ -23,7 +23,7 @@
 #include "pixmaps/view_edit.xpm"
 #include "pixmaps/view_controls.xpm"
 #include "visual_settings.h"
-
+#include "engine/sound_driver_list.h"
 
 
 namespace ReShaked {
@@ -322,6 +322,7 @@ void MainWindow::blocklist_changed_slot() {
 
 MainWindow::MainWindow() {
 
+	SoundDriverList::get_singleton()->set_song(&data.song);
 	update_notify = new Qt_UpdateNotify(this);
 
 	data.editor = new Editor( &data.song, update_notify );

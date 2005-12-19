@@ -7,11 +7,7 @@ namespace ReShaked {
 
 
 class AudioControl {
-
-
-
 	static AudioControl *singleton_instance;
-
 
 public:
 
@@ -22,9 +18,9 @@ public:
 	float get_sample_rate();
 	
 	/* Audio Mutex */
-	void mutex_lock();
-	bool mutex_try_lock();
-	void mutex_unlock();
+	static void mutex_lock();
+	static bool mutex_try_lock();
+	static void mutex_unlock();
 	
 
 };

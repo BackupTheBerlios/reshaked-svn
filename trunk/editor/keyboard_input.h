@@ -58,7 +58,7 @@ public:
 					
 		virtual void set_bind(int p_key)=0;
 		
-		~External() {}
+		virtual ~External() {}
 	};	
 	
 	static Keyboard_Input *singleton_instance;

@@ -8,6 +8,15 @@ namespace ReShaked {
 
 
 
+bool AudioNode::is_input_plug_enabled(int p_idx) {
+	
+	return true;
+}
+
+bool AudioNode::is_output_plug_enabled(int p_idx) {
+	
+	return true;
+}
 
 String AudioNode::get_input_plug_caption(int p_which) {
 	
@@ -27,7 +36,10 @@ String AudioNode::get_output_plug_caption(int p_which) {
 	
 }
 
-
+bool AudioNode::is_system() {
+	
+	return false;	
+}
 
 }
 

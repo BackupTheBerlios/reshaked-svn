@@ -98,10 +98,10 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 			}
 		}
 		
-		paint_jack(p,p_offset,y_offset,p_node->get_output_plug( i),QStrify(p_node->get_input_plug_caption( i)));
+		paint_jack(p,p_offset,y_offset,p_node->get_input_plug( i),QStrify(p_node->get_input_plug_caption( i)));
 	}
 	
-	if (p_node->get_output_plug_count()) {
+	if (p_node->get_input_plug_count()) {
 		
 		p_offset+=get_plug_size().width();
 	}
@@ -135,7 +135,10 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 			
 		AudioNode *node=get_node_at_pos( i );
 		int paint_width=get_node_width( node );
-		skin()->paint_into( p, ofs, 0, paint_width, height() );
+		if (node->is_system())
+			skin(true)->paint_into( p, ofs, 0, paint_width, height() );
+		else
+			skin()->paint_into( p, ofs, 0, paint_width, height() );
 		paint_node( p, ofs, node);
 				
 		ofs+=paint_width;
@@ -160,9 +163,13 @@ ConnectionRack::~ConnectionRack() {
 
 AudioNode *ConnectionRackTracks::get_node_at_pos(int p_node) {
 	
-	ERR_FAIL_INDEX_V(p_node,editor->get_song()->get_track_count(),NULL);
-	return editor->get_song()->get_track( p_node );
-	
+	ERR_FAIL_INDEX_V(p_node,editor->get_song()->get_track_count()+2,NULL);
+	if (p_node==0)
+		return editor->get_song()->get_input_node();
+	else if (p_node==(editor->get_song()->get_track_count()+1))
+		return editor->get_song()->get_output_node();
+	else 
+		return editor->get_song()->get_track( p_node-1 );
 }
 
 ConnectionRackTracks::ConnectionRackTracks(QWidget *p_parent,Editor *p_editor) : ConnectionRack(p_parent,p_editor,&p_editor->get_song()->get_track_graph()) {

@@ -22,7 +22,6 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 	
 	test_key_press_selecting(p_event);
 	
-	printf("pevent %x left %x right %x\n",p_event,p_event,KEYBIND("left"),KEYBIND("right"));
 	SWITCH(p_event)
 	
 		CASE( KEYBIND("up") ) {

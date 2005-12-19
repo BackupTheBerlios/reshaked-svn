@@ -12,16 +12,17 @@
 #ifndef RESHAKEDAUDIO_PORT_LAYOUT_H
 #define RESHAKEDAUDIO_PORT_LAYOUT_H
 
+#include <vector>
+
 namespace ReShaked {
 
 /**
 	@author red <red@killy>
 */
 class AudioPortLayout{
-public:
-    AudioPortLayout();
-
-    ~AudioPortLayout();
+public:	
+	std::vector<int> port_out_info;
+	std::vector<int> port_in_info;
 
 };
 

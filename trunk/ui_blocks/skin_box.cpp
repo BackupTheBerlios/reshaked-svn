@@ -50,11 +50,14 @@ void SkinBox::paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h) {
 		p.setClipping(true);
 		p.setClipRect(p_x,p_y,p_w,p_h);
 	}
-	/* Corners */
+	/* Corner TOP LEFT */
 	p.drawPixmap(p_x,p_y,pix_top_left);	
-	p.drawPixmap(p_x+left+center_w,p_y,pix_top_right);	
-	p.drawPixmap(p_x,p_y+top+center_h,pix_bottom_left);	
-	p.drawPixmap(p_x+left+center_w,p_y+top+center_h,pix_bottom_right);	
+	
+	/* center */
+	if (stretch) 
+		p.drawPixmap(p_x+left,p_y+top,center_w,center_h,pix_center);
+	else		
+		p.drawTiledPixmap(p_x+left,p_y+top,center_w,center_h,pix_center);
 	
 	/* Margins */
 	
@@ -71,12 +74,13 @@ void SkinBox::paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h) {
 		p.drawTiledPixmap(p_x+left,p_y+top+center_h,center_w,bottom,pix_bottom);
 		p.drawTiledPixmap(p_x+left+center_w,p_y+top,right,center_h,pix_right);
 	}	
-	/* center */
-	if (stretch) 
-		p.drawPixmap(p_x+left,p_y+top,center_w,center_h,pix_center);
-	else		
-		p.drawTiledPixmap(p_x+left,p_y+top,center_w,center_h,pix_center);
+	
 
+	/* corners not topleft */
+	p.drawPixmap(p_x+left+center_w,p_y,pix_top_right);	
+	p.drawPixmap(p_x,p_y+top+center_h,pix_bottom_left);	
+	p.drawPixmap(p_x+left+center_w,p_y+top+center_h,pix_bottom_right);	
+	
 	if (disable_clipping)
 		p.setClipping(false);
 	

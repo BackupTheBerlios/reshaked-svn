@@ -13,14 +13,6 @@
 
 namespace ReShaked {
 
-AudioPortLayout::AudioPortLayout()
-{
-}
-
-
-AudioPortLayout::~AudioPortLayout()
-{
-}
 
 
 }
