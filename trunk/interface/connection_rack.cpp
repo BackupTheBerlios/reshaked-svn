@@ -12,8 +12,65 @@
 #include "connection_rack.h"
 #include "ui_blocks/visual_settings.h"
 #include "ui_blocks/helpers.h"
+#include <Qt/qevent.h>
+
 namespace ReShaked {
 
+
+static unsigned int rand_state=0;
+bool ConnectionRack::fast_draw=true;
+
+
+
+bool ConnectionRack::get_plug_data_at_pos(int p_x,int p_y,PlugData* p_data) {
+	
+	int jack_sqr_len=(POW2(jack_hole().height())+POW2(jack_hole().width()))/2;
+	
+	for (int i=0;i<graph->get_node_count();i++) {
+		
+		for (int j=0;j<graph->get_node(i)->get_input_plug_count();j++) {
+			
+			QPoint p = get_input_plug_pos( i, j);
+			
+			int sqr_distance=POW2(p_x-p.x())+POW2(p_y-p.y());
+			printf("Compare input %i,%i against %i,%i - %i<%i\n",p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
+			if (sqr_distance>jack_sqr_len)
+				continue;
+			
+			p_data->channels=graph->get_node(i)->get_input_plug(j)->get_channels();
+			p_data->graph_node=i;
+			p_data->plug=j;
+			p_data->type=graph->get_node(i)->get_input_plug(j)->get_type();
+			return false;				
+			
+		}
+		
+	}
+	
+	for (int i=0;i<graph->get_node_count();i++) {
+		
+		for (int j=0;j<graph->get_node(i)->get_output_plug_count();j++) {
+			
+			QPoint p = get_output_plug_pos( i, j);
+			
+			int sqr_distance=POW2(p_x-p.x())+POW2(p_y-p.y());
+			printf("Compare output %i,%i against %i,%i - %i<%i\n",p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
+			if (sqr_distance>jack_sqr_len)
+				continue;
+			
+			p_data->channels=graph->get_node(i)->get_output_plug(j)->get_channels();
+			p_data->graph_node=i;
+			p_data->plug=j;
+			p_data->type=graph->get_node(i)->get_output_plug(j)->get_type();
+			return false;				
+			
+		}
+		
+	}
+	
+	return true; //nothing found
+	
+}
 
 SkinBox *ConnectionRack::skin(bool p_system) {
 	
@@ -55,15 +112,164 @@ int ConnectionRack::get_node_width(AudioNode *p_node) {
 	return iwidth;
 }
 
+QPoint ConnectionRack::get_input_plug_pos(int p_node,int p_plug) {
+	
+	ERR_FAIL_INDEX_V(p_node,graph->get_node_count(),QPoint(-1,-1));
+	int ofs=0;
+	for (int i=0;i<graph->get_node_count();i++) {
+		if (graph->get_node(p_node)==get_node_at_pos(i))
+			break;
+		ofs+=get_node_width( get_node_at_pos( i ) );
+	}
+	
+	
+	ofs+=skin()->get_left();
+	int y_ofs=skin()->get_top();
+	
+	int column=p_plug/get_plugs_for_height();
+	int row=p_plug%get_plugs_for_height();
+	
+	ofs+=column*jack_hole().width()*2;
+	y_ofs+=row*jack_hole().height()*2;
+	
+	ofs+=jack_hole().width()/2;
+	y_ofs+=jack_hole().height()*3/2;
+	
+	return QPoint( ofs, y_ofs );
+	
+}
+
+QPoint ConnectionRack::get_output_plug_pos(int p_node,int p_plug) {
+	
+	ERR_FAIL_INDEX_V(p_node,graph->get_node_count(),QPoint(-1,-1));
+	int ofs=0;
+	
+	for (int i=0;i<graph->get_node_count();i++) {
+		
+		if (graph->get_node(p_node)==get_node_at_pos(i))
+			break;
+		ofs+=get_node_width( get_node_at_pos( i ) );
+	}
+	
+	ofs+=skin()->get_left();
+	int y_ofs=skin()->get_top();
+	
+	int input_plugs=get_node_at_pos( p_node )->get_input_plug_count();
+	int input_columns=input_plugs?((input_plugs-1)/get_plugs_for_height()+1):0;
+
+	ofs+=jack_hole().width()*2*input_columns;
+	
+	int column=p_plug/get_plugs_for_height();
+	int row=p_plug%get_plugs_for_height();
+	
+	ofs+=column*jack_hole().width()*2;
+	y_ofs+=row*jack_hole().height()*2;
+	
+	ofs+=jack_hole().width()/2;
+	y_ofs+=jack_hole().height()*3/2;
+	
+	return QPoint( ofs, y_ofs );
+	
+	
+}
+
+
+void ConnectionRack::paint_curve(QPainter &p,int p_src_x,int p_src_y,int p_dst_x,int p_dst_y,int p_bottom) {
+
+	int dist=(POW2(p_src_x-p_dst_x) + POW2(p_src_y-p_dst_y));
+	int steps=dist/POW2(STEPS_DIVISOR); //squared stuff :)
+	if (steps<0)
+		steps=3;
+
+	
+	int x_prev=p_src_x;
+	int y_prev=p_src_y;
+	
+	QPointF points[steps+1]; //i guess using stack is wiser
+	points[0]=QPointF(p_src_x,p_src_y);
+
+	for (int i=1;i<=steps;i++) {
+		
+		float x=(float)p_src_x+(float)(i*(p_dst_x-p_src_x))/(float)steps;
+		int y_src=p_src_y+i*((p_bottom-p_src_y)*2)/steps;
+		int y_dst=p_dst_y+(steps-i)*((p_bottom-p_dst_y)*2)/steps;
+		float ratio=(float)i/(float)steps;
+		float y=ratio*(float)y_dst+(1.0-ratio)*(float)y_src;
+		points[i]=QPointF(x,y);
+	}
+	
+	p.drawPolyline(points,steps+1);
+	
+} 
+
+void ConnectionRack::paint_cable(QPainter &p,int p_src_x,int p_src_y,int p_dst_x,int p_dst_y) {
+	
+	if (p_src_x==p_dst_x)
+		return;
+	if (p_dst_x<p_src_x) {
+		
+		SWAP(p_src_x,p_dst_x);
+		SWAP(p_src_y,p_dst_y);
+	}
+	
+	int dist=(POW2(p_src_x-p_dst_x) + POW2(p_src_y-p_dst_y));
+	
+	int bottom=(p_src_y>p_dst_y)?p_src_y:p_dst_y;
+	bottom+=BOTTOM_BASE_OFFSET+dist/POW2(BOTTOM_DIVISOR);
+	
+	if (bottom>height())
+		bottom=height();
+	
+	if (!fast_draw)
+		p.setRenderHint(QPainter::Antialiasing,true);
+	
+	QColor c;
+	QPen pn;
+	pn.setWidth(4);
+	/* draw shadow first */	
+	
+	if (fast_draw)
+		pn.setColor(QColor(33,33,33));
+	else
+		pn.setColor(QColor(0,0,0,84));
+	
+	p.setPen(pn);
+	paint_curve(p,p_src_x,p_src_y+3,p_dst_x,p_dst_y+3,bottom+12);	
+	
+	
+	int h=rand_r(&rand_state)%255;
+	c.setHsv(h,120,240);
+	
+	
+	pn.setWidth(2);
+	pn.setColor(c);
+	p.setPen(pn);
+	
+	
+	paint_curve(p,p_src_x,p_src_y,p_dst_x,p_dst_y,bottom);	
+	c.setHsv(h,220,140);
+	pn.setColor(c);
+	p.setPen(pn);
+	paint_curve(p,p_src_x,p_src_y+2,p_dst_x,p_dst_y+2,bottom+2);	
+	
+	if (!fast_draw)
+		p.setRenderHint(QPainter::Antialiasing,false);
+	
+}
+
+
 
 void ConnectionRack::paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,QString p_name) {
 	
 	QFont f;
 	f.setBold(true);
+	f.setPixelSize(10);
 	p.setFont(f);
 	p.setPen(QColor(255,255,255,120));
 	p.drawPixmap(p_x,p_y+jack_hole().height(),jack_hole());
 	p.drawText(p_x,p_y,jack_hole().width()*2,jack_hole().height(),Qt::AlignHCenter,p_name);
+	f.setPixelSize(13);
+	p.setFont(f);
 	p.drawText(p_x+jack_hole().width(),p_y+jack_hole().height(),jack_hole().width(),jack_hole().height(),Qt::AlignHCenter,QString::number(p_plug->get_channels()));
 	
 }
@@ -78,7 +284,15 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 	int node_width=get_node_width(p_node);
 	
 	int font_margin=VisualSettings::get_singleton()->get_rack_panel_h_margin();
-	p.drawText(p_offset+font_margin,0,node_width-font_margin*2,skin()->get_top(),Qt::AlignLeft,QStrify( p_node->get_caption() ) );
+	int text_area=node_width-font_margin*2;
+	int align_flags;
+	int str_len=QFontMetrics(p.font()).boundingRect(QStrify( p_node->get_caption() )).width();
+	if (str_len>=text_area)
+		align_flags=Qt::AlignLeft;
+	else
+		align_flags=Qt::AlignHCenter;
+	
+	p.drawText(p_offset+font_margin,0,text_area,skin()->get_top(),align_flags,QStrify( p_node->get_caption() ) );
 	
 	p_offset+=skin()->get_left();
 	int y_offset=skin()->get_top();
@@ -123,6 +337,50 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 	
 }
 
+
+
+void ConnectionRack::mouseMoveEvent ( QMouseEvent * e ) {
+	
+	
+	if (connecting.enabled) {
+		
+		connecting.to=QPoint(e->pos().x()+offset,e->pos().y());
+		update();
+	}
+	
+}
+void ConnectionRack::mousePressEvent ( QMouseEvent * e ) {
+	
+	if (e->button()==Qt::RightButton || (e->button()==Qt::LeftButton && e->modifiers()&Qt::ControlModifier)) {
+		
+		/* delete popup */
+		
+		
+		return;
+	}
+	
+	if (e->button()!=Qt::LeftButton)
+		return;
+
+	PlugData info;
+	if (get_plug_data_at_pos( e->x(),e->y(),&info)) 
+		return;
+	
+	printf("found node %i plug %i\n",info.graph_node,info.plug);
+	connecting.from=info;
+	connecting.enabled=true;
+	
+	
+}
+void ConnectionRack::mouseReleaseEvent ( QMouseEvent * e ) {
+	
+	connecting.enabled=false;
+	update();
+	
+}
+
+
+
 void ConnectionRack::paintEvent(QPaintEvent *pe) {
 	
 	
@@ -144,6 +402,29 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 		ofs+=paint_width;
 		
 	}
+	
+	rand_state=123; //anything goes
+	
+	for (int i=0;i<graph->get_connection_count();i++) {
+		
+		QPoint from=get_output_plug_pos(graph->get_connection(i)->node_from,graph->get_connection(i)->plug_from);
+		QPoint to=get_input_plug_pos(graph->get_connection(i)->node_to,graph->get_connection(i)->plug_to);
+		paint_cable(p,from.x(),from.y(),to.x(),to.y());
+		
+	}
+	
+	if (connecting.enabled) {
+		
+		QPoint from;
+		if (connecting.from.type==AudioPlug::TYPE_INPUT)
+			from=get_input_plug_pos( connecting.from.graph_node, connecting.from.plug );
+		else
+			from=get_output_plug_pos( connecting.from.graph_node, connecting.from.plug );
+				 
+		QPoint to=connecting.to;
+		paint_cable(p,from.x(),from.y(),to.x(),to.y());
+		
+	}
 }
 
 ConnectionRack::ConnectionRack(QWidget *p_parent,Editor *p_editor,AudioGraph *p_graph) : QWidget(p_parent) {
@@ -151,6 +432,11 @@ ConnectionRack::ConnectionRack(QWidget *p_parent,Editor *p_editor,AudioGraph *p_
 	graph=p_graph;
 	editor=p_editor;
 	setBackgroundRole(QPalette::NoRole);
+	setMouseTracking(true);
+	
+	connecting.enabled=false;
+	offset=0;
+	
 }
 
 

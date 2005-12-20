@@ -33,13 +33,15 @@ CommandFunc* EditorCommands::set_note(bool p_no_undo,Track_Pattern *p_pattern,Tr
 	return ret;
 }
 
-CommandFunc* EditorCommands::add_track(bool p_no_undo,Track *p_track,int p_at_pos) {
+CommandFunc* EditorCommands::add_track(bool p_no_undo,Track *p_track,int p_at_pos,std::list<AudioGraph::Connection> *p_node_connections) {
 
 	CommandFunc *ret=NULL;
 	if (!p_no_undo) {
 		
 		ret=Command1(this,&EditorCommands::remove_track,p_at_pos);
 		ret->add_create_data( p_track );
+		if (p_node_connections)
+			ret->add_create_data( p_node_connections );
 	}
 	
 	d->song->add_track(p_track,p_at_pos);
@@ -51,14 +53,31 @@ CommandFunc* EditorCommands::add_track(bool p_no_undo,Track *p_track,int p_at_po
 }
 CommandFunc* EditorCommands::remove_track(bool p_no_undo,int p_pos) {
 	
-	CommandFunc *ret=NULL;
-	if (!p_no_undo) {
-		
-		ret=Command2(this,&EditorCommands::add_track,d->song->get_track(p_pos),p_pos);
-		ret->add_delete_data( d->song->get_track(p_pos) );
-	}
 	
-	d->song->remove_track(p_pos);
+	std::list<AudioGraph::Connection> *node_connections=NULL;
+	Track *t=d->song->get_track(p_pos);
+	CommandFunc *ret=NULL;
+	
+	
+	if (!p_no_undo)
+		node_connections=new std::list<AudioGraph::Connection>;
+	
+	d->song->remove_track(p_pos,node_connections);
+	
+	
+	
+	if (!p_no_undo) {
+		if (node_connections->empty()) {
+			delete node_connections;	
+			node_connections=NULL; //nothing to restore
+		}
+		ret=Command3(this,&EditorCommands::add_track,t,p_pos,node_connections);
+		ret->add_delete_data( d->song->get_track(p_pos) );
+		if (node_connections)
+			ret->add_delete_data( node_connections );
+	}
+
+	
 	editor->revalidate_cursor();
 	
 	d->ui_update_notify->track_list_changed();
@@ -346,6 +365,41 @@ CommandFunc* EditorCommands::track_pattern_remove_column(bool p_no_undo,Track_Pa
 	
 	d->ui_update_notify->track_list_changed();
 	return ret;
+	
+}
+
+CommandFunc* EditorCommands::connection_create(bool p_no_undo,AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to) {
+	
+	if (p_graph->connect_plugs( p_node_from, p_plug_from, p_node_to, p_plug_to ))
+		return NULL;
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+		
+		ret=Command5(this,&EditorCommands::connection_erase, p_graph, p_node_from, p_plug_from, p_node_to, p_plug_to);
+	}
+	
+	
+	d->ui_update_notify->rack_changed();
+	return ret;
+	
+	
+}
+CommandFunc* EditorCommands::connection_erase(bool p_no_undo,AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to) {
+	
+	p_graph->disconnect_plugs( p_node_from, p_plug_from, p_node_to, p_plug_to );
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+		
+		ret=Command5(this,&EditorCommands::connection_create, p_graph, p_node_from, p_plug_from, p_node_to, p_plug_to);
+	}
+	
+	d->ui_update_notify->rack_changed();
+	return ret;
+	
 	
 }
 

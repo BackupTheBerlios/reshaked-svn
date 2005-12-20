@@ -25,6 +25,10 @@ int AudioPlug::get_channels() {
 	return channels;
 }
 
+AudioPlug::Type AudioPlug::get_type() {
+	
+	return type;
+}
 AudioPlug::AudioPlug(int p_plug_channels,Type p_type,AudioNode* p_owner) {
 
 	channels=p_plug_channels;

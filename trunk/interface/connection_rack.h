@@ -26,6 +26,35 @@ namespace ReShaked {
 
 class ConnectionRack : public QWidget {
 
+				       
+	enum {
+		STEPS_DIVISOR=14,
+		BOTTOM_DIVISOR=80,
+		BOTTOM_BASE_OFFSET=20	
+		
+		
+	};
+				       
+	
+	struct PlugData {
+		
+		int graph_node;
+		int plug;
+		AudioPlug::Type type;
+		int channels;
+	};
+	
+	
+	struct Connecting {
+		
+		bool enabled;
+		PlugData from;
+		QPoint to;
+		
+	} connecting;
+	
+	static bool fast_draw;
+	
 	int offset;
 	SkinBox *skin(bool p_system=false);
 	QPixmap jack_hole();
@@ -34,9 +63,23 @@ class ConnectionRack : public QWidget {
 	
 	int get_node_width(AudioNode *p_node);
 
+	void paint_curve(QPainter &p,int p_src_x,int p_src_y,int p_dst_x,int p_dst_y,int p_bottom);
+	
+	void paint_cable(QPainter &p,int p_src_x,int p_src_y,int p_dst_x,int p_dst_y);
+	
 	void paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,QString p_name);
 	void paint_node(QPainter&p,int p_offset,AudioNode *p_node);
 	void paintEvent(QPaintEvent *pe);
+	
+	QPoint ConnectionRack::get_input_plug_pos(int p_node,int p_plug);
+	QPoint ConnectionRack::get_output_plug_pos(int p_node,int p_plug);
+	
+	
+	bool get_plug_data_at_pos(int p_x,int p_y,PlugData* p_data);
+	
+	void mouseMoveEvent ( QMouseEvent * e );
+	void mousePressEvent ( QMouseEvent * e );
+	void mouseReleaseEvent ( QMouseEvent * e );
 	
 //change depending on what we implement
 	

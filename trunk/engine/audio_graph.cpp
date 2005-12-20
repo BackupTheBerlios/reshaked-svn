@@ -198,13 +198,17 @@ AudioGraph::ConnectError AudioGraph::connect_plugs(int p_node_from,int p_plug_fr
 		Connection conn=connections[i];
 		
 		if (conn.node_from==p_node_from && conn.node_to==p_node_to &&
-				  conn.plug_from==p_plug_from && conn.plug_to == p_plug_to )
+				  conn.plug_from==p_plug_from && conn.plug_to == p_plug_to ) {
+			
+			last_error=CONNECT_ALREADY_EXISTS;
 			return CONNECT_ALREADY_EXISTS;
+		}
 	}
 		
 	if ( nodes[p_node_from]->get_output_plug(p_plug_from)->get_channels() !=
-		    nodes[p_node_to]->get_output_plug(p_plug_to)->get_channels() ) {
+		    nodes[p_node_to]->get_input_plug(p_plug_to)->get_channels() ) {
 		
+		last_error=CONNECT_CHANNELS_DIFFER;
 		return CONNECT_CHANNELS_DIFFER;
 	}
 	
@@ -228,11 +232,13 @@ AudioGraph::ConnectError AudioGraph::connect_plugs(int p_node_from,int p_plug_fr
 		}
 		
 		recompute_graph();
+		last_error=CONNECT_CYCLIC_LINK;
 		return CONNECT_CYCLIC_LINK;
 		
 	}
 	
 	recompute_graph();
+	last_error=CONNECT_OK;
 	return CONNECT_OK;
 }
 

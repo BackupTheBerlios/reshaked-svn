@@ -117,6 +117,7 @@ public:
 	void add_track(TrackType p_type,int p_channels,String p_name);
 	void remove_track(int p_which);
 	
+	
 	/** SELECTION EDITING */
 	
 	int get_selection_begin_column();

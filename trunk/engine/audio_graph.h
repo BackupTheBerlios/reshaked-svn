@@ -38,6 +38,7 @@ private:
 	bool recompute_process_order(); /* return true if cyclic connection found */
 	void recompute_graph();
 	AudioGraphProcess graph_process;
+	ConnectError last_error;
 public:
 	
 	int get_ordered_node(int p_index);

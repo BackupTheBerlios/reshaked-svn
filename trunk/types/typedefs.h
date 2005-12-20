@@ -54,5 +54,12 @@ enum TrackType {
         m_itname!=m_container.end() ; \
         m_itname++ )
 
+template<class T>
+inline void SWAP(T&a, T&b) {
+	
+	T c=b;
+	b=a;
+	a=c;
+}
 
 #endif

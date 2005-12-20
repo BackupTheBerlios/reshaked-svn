@@ -54,10 +54,10 @@ String SoundDriver::InputNode::get_input_plug_caption(int p_which) {
 String SoundDriver::InputNode::get_output_plug_caption(int p_which) {
 	
 	if (p_which==0)
-		return "Main In";
+		return "Main";
 	else {
 		
-		return "Aux In "+String::num( p_which);
+		return "Aux "+String::num( p_which);
 	}
 }
 
@@ -106,10 +106,10 @@ String SoundDriver::OutputNode::get_output_plug_caption(int p_which) {
 String SoundDriver::OutputNode::get_input_plug_caption(int p_which) {
 	
 	if (p_which==0)
-		return "Main Out";
+		return "Main";
 	else {
 		
-		return "Aux Out "+String::num( p_which);
+		return "Aux "+String::num( p_which);
 	}
 }
 

@@ -182,6 +182,9 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_PATTERN_EDIT_BAR]=QColor(222,255,242,40);
 	color_map[COLORLIST_EDITOR_SELECTION_AUTOMATION]=QColor(0x75,0x7f,0x09);
 	color_map[COLORLIST_EDITOR_SELECTION_PATTERN]=QColor(0x28,0x7c,0x46);
+	color_map[COLORLIST_RACK_CABLE]=QColor(0x97,0xd5,0x2b);
+	color_map[COLORLIST_RACK_CABLE_DARK]=QColor(0x2b,0x8f,0x1a);
+
 	
 	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);
 	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);

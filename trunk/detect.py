@@ -18,7 +18,7 @@ def check_pkg_config():
 	errorval=os.system("pkg-config --version > /dev/null");
 
 	if (errorval):
-		print "Error: cant execute pkg-config, please install pkg-config!"
+		print "**Error: cant execute pkg-config, please install pkg-config!"
 		sys.exit(1);
 
 def check_pkg( p_env, p_pkg_name, p_pkg_version, p_pkg_vital=False):
@@ -27,11 +27,11 @@ def check_pkg( p_env, p_pkg_name, p_pkg_version, p_pkg_vital=False):
 	errorval=os.system("pkg-config " + p_pkg_name +" --atleast-version " + p_pkg_version);
 
 	if (errorval):
-		libdata.has_sndfile=0;
-		print("Error: " + p_pkg_name + " of at least version " + p_pkg_version + " was not found in pkg-config");
+		print("**Error: " + p_pkg_name + " of at least version " + p_pkg_version + " was not found in pkg-config");
 		if (p_pkg_vital):
 			sys.exit(1);
 		else:
+			print("**Error: " + p_pkg_name + " support disabled.");
 			return False; # Not detected!
 
 	p_env.ParseConfig("pkg-config --cflags --libs " + p_pkg_name);
@@ -122,8 +122,8 @@ def check_qtdir(version_major,version_minor):
 		if (try_qtdir(x,version_major,version_minor)):
 			return x;
 
-	print "Error: QT version at least: " + str(version_major) + "." + str(version_minor) + ".0 not found.";
-	print "Please set the QTDIR environment variable pointing tot he place where it is located";
+	print "**Error: QT version at least: " + str(version_major) + "." + str(version_minor) + ".0 not found.";
+	print "**Please set the QTDIR environment variable pointing tot he place where it is located";
 	sys.exit(1);
 	
 

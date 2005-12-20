@@ -30,7 +30,9 @@ friend class Editor;
 	
 	
 	
-	CommandFunc* add_track(bool p_no_undo,Track *p_track,int p_at_pos);
+	
+	
+	CommandFunc* add_track(bool p_no_undo,Track *p_track,int p_at_pos,std::list<AudioGraph::Connection> *p_node_connections=NULL);
 	CommandFunc* remove_track(bool p_no_undo,int p_which);
 	
 	CommandFunc* track_move_left(bool p_no_undo,int p_which);
@@ -54,6 +56,11 @@ friend class Editor;
 
 	CommandFunc* track_pattern_add_column(bool p_no_undo,Track_Pattern *p_pattern);
 	CommandFunc* track_pattern_remove_column(bool p_no_undo,Track_Pattern *p_pattern);
+	
+	CommandFunc* connection_create(bool p_no_undo,AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
+	CommandFunc* connection_erase(bool p_no_undo,AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
+	
+	
 	
 };
 

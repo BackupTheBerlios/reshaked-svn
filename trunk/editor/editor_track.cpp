@@ -41,7 +41,17 @@ void Editor::add_track(TrackType p_type,int p_channels,String p_name) {
 	}
 	
 	d->undo_stream.begin("Add Track");
-	d->undo_stream.add_command(Command2(&commands,&EditorCommands::add_track,track,d->song->get_track_count()));
+	d->undo_stream.add_command(Command3(&commands,&EditorCommands::add_track,track,d->song->get_track_count(),(std::list<AudioGraph::Connection>*)NULL));
+	int track_idx=d->song->get_track_graph().get_node_index( track );
+	int out_idx=d->song->get_track_graph().get_node_index( d->song->get_output_node() );
+	if (track_idx>=0 && out_idx>=0) {
+		
+		d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_create,&d->song->get_track_graph(),track_idx,0,out_idx,0));
+		
+	} else {
+		ERR_PRINT("NO TRACK IDX or OUT IDX?! o_O");
+	}
+	
 	d->undo_stream.end();
 	
 	/* select the newly added track */
