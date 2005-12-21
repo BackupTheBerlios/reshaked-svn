@@ -54,6 +54,7 @@ class ConnectionRack : public QWidget {
 		
 	} connecting;
 	
+	
 	static bool fast_draw;
 	
 	int offset;
@@ -82,7 +83,6 @@ class ConnectionRack : public QWidget {
 	void mousePressEvent ( QMouseEvent * e );
 	void mouseReleaseEvent ( QMouseEvent * e );
 	
-	QMenu *menu;
 	
 //change depending on what we implement
 	

@@ -55,7 +55,7 @@ bool ConnectionRack::get_plug_data_at_pos(int p_x,int p_y,PlugData* p_data) {
 			QPoint p = get_output_plug_pos( i, j);
 			
 			int sqr_distance=POW2(p_x-p.x())+POW2(p_y-p.y());
-			printf("Compare output %i,%i against %i,%i - %i<%i\n",p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
+			//printf("Compare output %i,%i against %i,%i - %i<%i\n",p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
 			if (sqr_distance>jack_sqr_len)
 				continue;
 			
@@ -267,10 +267,13 @@ void ConnectionRack::paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,Q
 	f.setPixelSize(10);
 	p.setFont(f);
 	p.setPen(QColor(255,255,255,120));
+	
 	p.drawPixmap(p_x,p_y+jack_hole().height(),jack_hole());
 	p.drawText(p_x,p_y,jack_hole().width()*2,jack_hole().height(),Qt::AlignHCenter,p_name);
+	
 	f.setPixelSize(13);
 	p.setFont(f);
+	
 	p.drawText(p_x+jack_hole().width(),p_y+jack_hole().height(),jack_hole().width(),jack_hole().height(),Qt::AlignHCenter,QString::number(p_plug->get_channels()));
 	
 }
@@ -353,10 +356,95 @@ void ConnectionRack::mouseMoveEvent ( QMouseEvent * e ) {
 void ConnectionRack::mousePressEvent ( QMouseEvent * e ) {
 	
 	if (e->button()==Qt::RightButton || (e->button()==Qt::LeftButton && e->modifiers()&Qt::ControlModifier)) {
+		/* DISCONNECT! */
+		/* check if we are in some plug */
+		PlugData info;
+		if (get_plug_data_at_pos( e->x(),e->y(),&info)) 
+			return;
 		
-		/* delete popup */
+		/* make list */
+		
+		std::vector<AudioGraph::Connection> connections;
+		connections.clear();
+		
+		for (int i=0;i<graph->get_connection_count();i++) {
+			
+			AudioGraph::Connection c=*graph->get_connection( i );
+			/* Just check if this connection uses the clicked plug */
+			if ( (info.type==AudioPlug::TYPE_INPUT && c.node_to==info.graph_node && c.plug_to==info.plug) || (info.type==AudioPlug::TYPE_OUTPUT && c.node_from==info.graph_node && c.plug_from==info.plug) ) {
+				
+				
+				connections.push_back(c);
+			} 
+
+		}
+		
+		if (connections.empty())
+			return;
+		else if (connections.size()==1) {
+			/* if it's only one, just erase it */
+		
+			AudioGraph::Connection c=connections[0];
+			editor->connection_erase( graph,  c.node_from, c.plug_from, c.node_to, c.plug_to );
+			return;
+		}
 		
 		
+		QList<QAction*> actions;			
+		
+		foreach(I, connections) {
+			
+			QString node_from=QStrify(graph->get_node( I->node_from )->get_caption() );
+			QString node_to=QStrify(graph->get_node( I->node_to )->get_caption() );
+			QString plug_from=QStrify(graph->get_node( I->node_from )->get_output_plug_caption(I->plug_from)  );
+			QString plug_to=QStrify(graph->get_node( I->node_to )->get_input_plug_caption(I->plug_to)  );
+			
+			QString conn_text=node_from+"-"+plug_from+"   ->   "+node_to+"-"+plug_to;
+			
+			actions.push_back( new QAction(conn_text,this) );
+		}
+		
+		actions.push_back( new QAction("Disconnect All",this) );
+		
+		QAction *which=QMenu::exec(actions,mapToGlobal(e->pos()));
+		
+		if (which) {
+			
+			int index=0;
+			
+			foreach(I,actions) {
+				
+				if (*I==which)
+					break;
+						
+				index++;
+			}
+			if (index==connections.size()) { //disconnect all
+				
+				editor->begin_meta_undo_block("Delete ALL Connections");
+				
+				for (int i=0;i<connections.size();i++) {
+					AudioGraph::Connection c=connections[i];
+					editor->connection_erase( graph,  c.node_from, c.plug_from, c.node_to, c.plug_to );
+				}
+				
+				editor->end_meta_undo_block();
+				
+			} else if (index<connections.size()) { //disconnect one
+				
+				AudioGraph::Connection c=connections[index];
+				editor->connection_erase( graph,  c.node_from, c.plug_from, c.node_to, c.plug_to );
+				
+			} else {
+				ERR_PRINT("WTF?");
+			}
+		}
+		
+		foreach(I,actions) {
+			
+			delete *I;
+		}
+	
 		return;
 	}
 	
