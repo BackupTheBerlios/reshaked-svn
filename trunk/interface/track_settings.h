@@ -77,6 +77,7 @@ public slots:
 	void automation_add_slot(String p_path);
 	void automation_remove_slot(String p_path);
 	void automation_update_status();
+	void connection_rack_changed();
 	
 signals:
 	void update_track_names_signal();	

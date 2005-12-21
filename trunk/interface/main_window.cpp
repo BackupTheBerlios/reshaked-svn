@@ -395,7 +395,8 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(block_layout_changed()),global_view_frame->get_global_view(),SLOT(block_layout_changed_slot()));
 	
 	QObject::connect(update_notify,SIGNAL(block_layout_changed()),blui_list,SLOT(repaint_track_list()));
-	
+	QObject::connect(update_notify,SIGNAL(rack_changed()),track_settings,SLOT(connection_rack_changed()));
+		
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 	setMinimumSize(750,550); //dont mess with my app!
 }

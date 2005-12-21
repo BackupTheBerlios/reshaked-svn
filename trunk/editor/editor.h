@@ -117,6 +117,9 @@ public:
 	void add_track(TrackType p_type,int p_channels,String p_name);
 	void remove_track(int p_which);
 	
+	AudioGraph::ConnectError connection_create(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
+	void connection_erase(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
+		
 	
 	/** SELECTION EDITING */
 	

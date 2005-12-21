@@ -32,12 +32,12 @@ void AudioBuffer::clear() { ///< just clear the contents
 
 AudioBuffer::AudioBuffer(int p_channels,int p_size) {
 
+
 	size=0;
 
-	if (p_channels==0)
-		return;
-	if (p_size==0)
-		return;
+	ERR_FAIL_COND(p_channels==0);
+
+	ERR_FAIL_COND(p_size==0);
 
 	size=p_size;
 	

@@ -116,6 +116,11 @@ void TrackSettings::automation_update_status() {
 	automation_settings->update_item_status();
 }
 
+void TrackSettings::connection_rack_changed() {
+	
+	tracks_rack->update();
+}
+
 TrackSettings::TrackSettings(QWidget *p_parent,Editor * p_editor) :CVBox(p_parent) {
 	
 	

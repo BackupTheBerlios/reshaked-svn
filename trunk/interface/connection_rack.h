@@ -15,6 +15,7 @@
 #include "ui_blocks/skin_box.h"
 
 #include <Qt/qwidget.h>
+#include <Qt/qmenu.h>
 
 #include "editor/editor.h"
 
@@ -80,6 +81,8 @@ class ConnectionRack : public QWidget {
 	void mouseMoveEvent ( QMouseEvent * e );
 	void mousePressEvent ( QMouseEvent * e );
 	void mouseReleaseEvent ( QMouseEvent * e );
+	
+	QMenu *menu;
 	
 //change depending on what we implement
 	

@@ -42,7 +42,7 @@ AudioBuffer* AudioGraphProcess::get_trash_buffer_for_given_channels(int p_channe
 		}
 	}
 	/* if not, give what we have */
-	AudioBuffer * new_buffer = new AudioBuffer(BUFFER_SIZE,p_channels);
+	AudioBuffer * new_buffer = new AudioBuffer(p_channels,BUFFER_SIZE);
 	thrash_buffers.push_back(new_buffer);
 	
 	return new_buffer;
@@ -57,7 +57,7 @@ void AudioGraphProcess::add_node(AudioNode *p_node) {
 	/* add channel input buffers */
 	for (int i=0;i<p_node->get_input_plug_count();i++) {
 		
-		AudioBuffer * in_buff=new AudioBuffer(BUFFER_SIZE,p_node->get_input_plug(i)->get_channels());
+		AudioBuffer * in_buff=new AudioBuffer(p_node->get_input_plug(i)->get_channels(),BUFFER_SIZE);
 		process_node->input_buffers.push_back(in_buff);
 		p_node->get_input_plug(i)->set_buffer(in_buff);
 		

@@ -62,13 +62,25 @@ public:
 	 */
 	void erase_node(int p_index,std::list<Connection> *p_connections_lost=NULL);
 	
+	/**
+	 *  Make a connection between too nodes, from an OUTPUT plug to an INPUT plug.
+	 * @param p_node_from Source Node
+	 * @param p_plug_from Output Plug in source node
+	 * @param p_node_to Destination Node
+	 * @param p_plug_to Input Plug in destination node.
+	 * @return  CONNECT_OK (equal zero) or a ConnectError otherwise
+	 */
 	ConnectError connect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to);
 	void disconnect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to);
+	
+	ConnectError get_last_conect_error();
 	
 	int get_connection_count();
 	const Connection* get_connection(int p_fromdex);
 
 	void process(int p_frames);
+	
+	AudioGraph();
 
 };
 

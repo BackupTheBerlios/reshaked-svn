@@ -103,6 +103,22 @@ void Editor::move_track_right(int p_which) {
 }
 
 
+AudioGraph::ConnectError Editor::connection_create(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to) {
+	
+	d->undo_stream.begin("Connect Plugs");
+	d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_create,p_graph,p_node_from,p_plug_from,p_node_to,p_plug_to));
+	d->undo_stream.end();
+	
+	return p_graph->get_last_conect_error();
+}
+void Editor::connection_erase(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to) {
+	
+	d->undo_stream.begin("Disconnect Plugs");
+	d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_erase,p_graph,p_node_from,p_plug_from,p_node_to,p_plug_to));
+	d->undo_stream.end();
+	
+	
+}
 
 
 

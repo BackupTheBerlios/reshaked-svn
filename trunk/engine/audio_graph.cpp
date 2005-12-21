@@ -23,8 +23,11 @@ bool AudioGraph::recompute_process_order() {
 	int iterations=0;
 	int swaps;
 	
+	int worst_case=POW2(connections.size()); //worst case of a bubblesort is pow2
 	do {
 		swaps=0;
+		
+		
 		for (int i=0;i<(int)connections.size();i++) {
 			
 			Connection conn=connections[i];
@@ -32,6 +35,7 @@ bool AudioGraph::recompute_process_order() {
 			if (inv_process_order[conn.node_from] > inv_process_order[conn.node_to]) {
 				
 				/* Swap */
+			
 				int aux=inv_process_order[conn.node_from];
 				inv_process_order[conn.node_from]=inv_process_order[conn.node_to];
 				inv_process_order[conn.node_to]=aux;
@@ -41,16 +45,16 @@ bool AudioGraph::recompute_process_order() {
 		
 		iterations++;
 	
-	} while (iterations<=(int)nodes.size() && swaps==0);
+	} while (iterations<=worst_case && swaps>0);
 	/* I'm guessing as a worst case that the maximum iterations (worst case) 
-	   is the amount of nodes to process, just like the bubble sort, and if it
+	   is the amount of connections to process, just like the bubble sort, and if it
 	   goes beyond this, then there must be a cyclic link. Another possibility
 	   to detect cyclic links may be comparing if the input and output are the same 
 	   and swaps>0.
 	
 	*/
 	
-	printf("Iterations needed to solve graph: %i ( %i nodes )\n",iterations,nodes.size());
+	printf("Iterations needed to solve graph: %i ( %i being worst case  )\n",iterations,worst_case);
 	
 	if (iterations>=(int)nodes.size()) {
 		
@@ -280,9 +284,18 @@ int AudioGraph::get_node_index(AudioNode* p_fromnode) {
 	
 	return -1;
 }
+
+AudioGraph::ConnectError AudioGraph::get_last_conect_error() {
+	
+	return last_error;
+}
 void AudioGraph::process(int p_frames) {
 	
 	graph_process.process(p_frames);	
 }
 
+AudioGraph::AudioGraph() {
+	
+	last_error=CONNECT_OK;
+}
 };

@@ -12,6 +12,7 @@
 #include "connection_rack.h"
 #include "ui_blocks/visual_settings.h"
 #include "ui_blocks/helpers.h"
+#include <Qt/qmessagebox.h>
 #include <Qt/qevent.h>
 
 namespace ReShaked {
@@ -33,7 +34,7 @@ bool ConnectionRack::get_plug_data_at_pos(int p_x,int p_y,PlugData* p_data) {
 			QPoint p = get_input_plug_pos( i, j);
 			
 			int sqr_distance=POW2(p_x-p.x())+POW2(p_y-p.y());
-			printf("Compare input %i,%i against %i,%i - %i<%i\n",p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
+			//printf("Compare input %i,%i against %i,%i - %i<%i\n",p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
 			if (sqr_distance>jack_sqr_len)
 				continue;
 			
@@ -374,6 +375,52 @@ void ConnectionRack::mousePressEvent ( QMouseEvent * e ) {
 }
 void ConnectionRack::mouseReleaseEvent ( QMouseEvent * e ) {
 	
+	if (connecting.enabled) {
+		
+		PlugData dest_plug;
+	
+		if (!get_plug_data_at_pos( e->x(),e->y(),&dest_plug)) {
+			
+			PlugData src_plug=connecting.from;
+			if (src_plug.graph_node!=dest_plug.graph_node && src_plug.type!=dest_plug.type) {
+					
+				if (dest_plug.type==AudioPlug::TYPE_OUTPUT) {
+					
+					SWAP(dest_plug,src_plug);
+				}
+				
+				switch(editor->connection_create( graph,src_plug.graph_node, src_plug.plug, dest_plug.graph_node, dest_plug.plug)) {
+					
+					case AudioGraph::CONNECT_CHANNELS_DIFFER: {
+						
+						QMessageBox::critical(this,"Can't Connect",QString("The amount of channels differ between plugs. (")+QString::number(src_plug.channels)+","+QString::number(dest_plug.channels)+")");
+						
+					} break;
+					case AudioGraph::CONNECT_ALREADY_EXISTS: {
+						
+						QMessageBox::critical(this,"Can't Connect","The connection attempted already exists!");
+						
+					} break;
+					case AudioGraph::CONNECT_CYCLIC_LINK: {
+						
+						
+						QMessageBox::critical(this,"Can't Connect","The connection attempted would create a Cyclic Link. Cyclic infinite flow of data. Audio data must go from input to output without any feedback.");
+						
+					} break;
+					case AudioGraph::CONNECT_INVALID_NODE:
+					case AudioGraph::CONNECT_INVALID_PLUG: {
+						
+						QMessageBox::critical(this,"Can't Connect","Invalid Node or Plug. This is most probably a bug, so please report it.");
+						
+					} break;
+					
+					default: {};
+				}
+			}
+		}
+
+	}
+	
 	connecting.enabled=false;
 	update();
 	
@@ -388,7 +435,7 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));
 	
 	int ofs=0;
-	printf("nodes %i\n",graph->get_connection_count());
+	//printf("nodes %i\n",graph->get_connection_count());
 	for (int i=0;i<graph->get_node_count();i++) {
 			
 		AudioNode *node=get_node_at_pos( i );
