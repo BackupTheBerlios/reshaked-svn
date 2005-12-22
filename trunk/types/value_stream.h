@@ -17,6 +17,9 @@
 #include "error_macros.h"
 #define INVALID_STREAM_INDEX -50
 
+extern void value_stream_global_lock();
+extern void value_stream_global_unlock();
+
 template<class T, class V>
 class ValueStream {
 private:
@@ -89,6 +92,9 @@ int ValueStream<T,V>::find_pos(T p_pos,bool &p_exact) {
 template<class T, class V>
 void ValueStream<T,V>::insert(T p_pos,V p_value) {
 
+	
+	value_stream_global_lock();
+	
 	bool exact;
 	int pos=find_pos(p_pos,exact);
 	if (pos==INVALID_STREAM_INDEX) { //it's empty!
@@ -104,6 +110,8 @@ void ValueStream<T,V>::insert(T p_pos,V p_value) {
 	stream[pos].val=p_value; /* Assign */
 	stream[pos].pos=p_pos; /* Assign */
 
+	value_stream_global_unlock();
+	
 }
 
 template<class T, class V>
@@ -180,8 +188,10 @@ template<class T, class V>
 void ValueStream<T,V>::erase_index(int p_index) {
 
     ERR_FAIL_INDEX(p_index,stream.size());
+    value_stream_global_lock();
     stream.erase( stream.begin() + p_index );
-
+    value_stream_global_unlock();
+	
 }
 
 template<class T, class V>

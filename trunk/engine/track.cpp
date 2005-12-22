@@ -10,6 +10,7 @@
 //
 //
 #include "track.h"
+#include "engine/audio_control.h"
 
 namespace ReShaked {
 
@@ -17,6 +18,7 @@ namespace ReShaked {
 
 void Track::add_property(String p_path,Property *p_prop) {
 	
+	AudioControl::mutex_lock();
 	
 	if (p_path.length()==0 || p_path[0]!='/')
 		p_path="/"+p_path;
@@ -29,8 +31,12 @@ void Track::add_property(String p_path,Property *p_prop) {
 			
 		if (base_private.property_list[i]->path==p_path) {
 			//trying to add the same property twice?
-			ERR_FAIL_COND( p_prop==base_private.property_list[i]->property );
-			//@TODO rename to p_path+(num)
+			if (p_prop==base_private.property_list[i]->property) {
+				
+				ERR_PRINT( "p_prop==base_private.property_list[i]->property" );
+				AudioControl::mutex_unlock();
+				//@TODO rename to p_path+(num)
+			}
 		}
 		
 	}
@@ -40,6 +46,8 @@ void Track::add_property(String p_path,Property *p_prop) {
 	p->property=p_prop;
 	p->automated=NULL; //not automated!
 	base_private.property_list.push_back(p);
+	
+	AudioControl::mutex_unlock();
 	
 }
 
@@ -87,6 +95,8 @@ void Track::show_automation(String p_path) {
 	if (idx==-1)
 		return;
 			
+	AudioControl::mutex_lock();
+	
 	if (has_property_automation(idx)) { //already has automation 
 		
 		base_private.property_list[ idx ]->automated->visible=true;
@@ -96,6 +106,9 @@ void Track::show_automation(String p_path) {
 		base_private.property_list[idx]->automated=base_private.automations[ base_private.automations.size()-1 ];
 		base_private.automations[ base_private.automations.size()-1 ]->visible=true;
 	}
+	
+	AudioControl::mutex_unlock();
+	
 }
 
 void Track::hide_automation(String p_path) {
@@ -104,8 +117,11 @@ void Track::hide_automation(String p_path) {
 	if (idx==-1)
 		return;
 			
+	
 	if (!has_property_automation(idx))
 		return; //nothing to do
+	
+	AudioControl::mutex_lock();
 	
 	if (base_private.property_list[ idx ]->automated->get_block_count()==0) { //no block
 		
@@ -131,6 +147,8 @@ void Track::hide_automation(String p_path) {
 		
 		
 	}
+	
+	AudioControl::mutex_unlock();
 	
 }
 

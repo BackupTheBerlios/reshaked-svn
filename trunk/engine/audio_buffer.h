@@ -15,7 +15,7 @@ public:
 	float *get_buffer(int p_channel); ///< buffer for a defined channel
 	int get_size(); ///< size in frames
 	int get_channels(); ///< channels the buffer uses
-	void clear(); ///< just clear the contents
+	void clear(int p_frames=-1); ///< just clear the contents, or specify how much
 	AudioBuffer(int p_channels,int p_size);
 };
 

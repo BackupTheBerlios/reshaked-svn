@@ -25,14 +25,14 @@ void SoundDriverList::add_driver(SoundDriver* p_driver) {
 	driver_list.push_back(p_driver);
 	current=driver_list.size()-1;
 }
-void SoundDriverList::init_driver(int p_index,bool p_internal_init) {
+bool SoundDriverList::init_driver(int p_index,bool p_internal_init) {
 	
-	ERR_FAIL_COND(song==NULL);
+	ERR_FAIL_COND_V(song==NULL,true);
 	
 	if (p_index==-1)
 		p_index=current;
 	
-	ERR_FAIL_INDEX(p_index,driver_list.size());
+	ERR_FAIL_INDEX_V(p_index,driver_list.size(),true);
 	
 	AudioControl::mutex_lock();
 	
@@ -43,6 +43,7 @@ void SoundDriverList::init_driver(int p_index,bool p_internal_init) {
 	
 	current=p_index;
 	
+	driver_list[current]->set_audio_graph(&song->get_track_graph());
 	driver_list[current]->set_port_layout(&song->get_audio_port_layout());
 	song->set_input_node( driver_list[current]->get_input_node() );
 	song->set_output_node( driver_list[current]->get_output_node() );
@@ -53,6 +54,8 @@ void SoundDriverList::init_driver(int p_index,bool p_internal_init) {
 	song->set_mix_rate( driver_list[current]->get_mix_rate() );
 	
 	AudioControl::mutex_unlock();
+	
+	return (p_internal_init && driver_list[current]->get_status()==SoundDriver::STATUS_DISABLED);
 	
 }
 void SoundDriverList::finish_driver() {

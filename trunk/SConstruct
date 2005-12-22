@@ -15,8 +15,17 @@ os.environ["QTDIR"]=qtdir;
 
 env = Environment(CCFLAGS=['-Wall','-g3','-I.','-Wno-sign-compare'], tools=['default','qt']);
 print env['TOOLS']
-env.Append(LIBS=['QtGui','QtCore']);
-env.Append(LIBS=['pthread']);
+
+if (os.name=='nt'): #WINDOWS
+
+	env.Append(LIBS=['QtGui4','QtCore4']);
+	env.Append(CXXFLAGS=['-DWIN32_ENABLED']);
+
+else: #POSIX
+	env.Append(LIBS=['QtGui','QtCore']);
+	env.Append(LIBS=['pthread']);
+	env.Append(CXXFLAGS=['-DPOSIX_ENABLED']);
+
 env.Append(CXXFLAGS=['-DQT_NO_KEYWORDS']);
 #env.Append(CPPPATH=['#types/','#engine/','#interface/','#ui_blocks/']);
 env.Append(CPPPATH=['#types/','#engine/','#interface/','#ui_blocks/','#pixmaps/']);

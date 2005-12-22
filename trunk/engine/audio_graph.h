@@ -71,14 +71,42 @@ public:
 	 * @return  CONNECT_OK (equal zero) or a ConnectError otherwise
 	 */
 	ConnectError connect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to);
+	
+	
+	/**
+	 * Disconnect two plugs.
+	 * @param p_node_from Source Node
+	 * @param p_plug_from Output Plug in source node
+	 * @param p_node_to Destination Node
+	 * @param p_plug_to Input Plug in destination node.
+	 */
 	void disconnect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to);
 	
+	/**
+	 * Get the last error code from a call to connect_plugs()
+	 * @return CONNECT_OK (equal zero) or a ConnectError otherwise
+	 */
 	ConnectError get_last_conect_error();
 	
+	/**
+	 * Get amount of connections in graph
+	 * @return Amount of connections.
+	 */
 	int get_connection_count();
+	
+	/**
+	 * Get a connection
+	 * @param p_fromdex Connection index, from 0 to get_connection_count()
+	 * @return the connection, or NULL on inalid connection.
+	 */
 	const Connection* get_connection(int p_fromdex);
 
-	void process(int p_frames);
+	/**
+	 *  Process the graph This is called from the audio thread.
+	 * @param p_frames Amount of frames to process
+	 * @return Amount of frames actually processed, equal or less to p_frames
+	 */
+	int process(int p_frames);
 	
 	AudioGraph();
 

@@ -6,7 +6,7 @@
 
 
 #include "block_list.h"
-
+#include "audio_control.h"
 namespace ReShaked {
 
 
@@ -28,8 +28,13 @@ bool BlockList::add_block(Block *p_block,Tick p_pos) {
 
 		ERR_FAIL_COND_V( !block_fits(p_pos,p_block->get_length()), true );
 	}
+	
+	AudioControl::mutex_lock();
+	
 	bl_private.block_list.insert(p_pos,p_block);
 
+	AudioControl::mutex_unlock();
+	
 	return false;
 }
 
@@ -47,8 +52,12 @@ void BlockList::remove_block(int p_index) {
 
 	ERR_FAIL_INDEX( p_index , get_block_count() );
 
+	AudioControl::mutex_lock();
+	
 	bl_private.block_list.erase_index( p_index );
 
+	AudioControl::mutex_unlock();
+	
 }
 bool BlockList::block_fits(Tick p_pos,Tick p_size,int p_current) {
 

@@ -1,6 +1,7 @@
 
 #include "song.h"
 #include "track_pattern.h"
+#include "audio_control.h"
 
 namespace ReShaked {
 
@@ -23,9 +24,11 @@ void Song::add_track(Track* p_track,int p_at_pos,std::list<AudioGraph::Connectio
 	if (p_at_pos==-1)
 		p_at_pos=track_list.size();
 	
+	AudioControl::mutex_lock();
 	track_list.insert(track_list.begin()+p_at_pos,p_track);
 	track_graph.add_node( p_track, p_node_connections);
-
+	AudioControl::mutex_unlock();
+	
 	
 }
 
@@ -44,13 +47,17 @@ void Song::remove_track(int p_idx,std::list<AudioGraph::Connection> *p_node_conn
 
 	ERR_FAIL_INDEX(p_idx,track_list.size());
 	Track *t=track_list[p_idx];
+	
+	AudioControl::mutex_lock();
 	track_list.erase( track_list.begin() + p_idx );
 	track_graph.erase_node(track_graph.get_node_index(t),p_node_connections);
-	
+	AudioControl::mutex_unlock();	
 
 };
 
 void Song::set_input_node(AudioNode *p_node) {
+	
+	AudioControl::mutex_lock();
 	
 	if (input_node) {
 	
@@ -70,9 +77,13 @@ void Song::set_input_node(AudioNode *p_node) {
 	}
 	
 	input_node=p_node;	
+	AudioControl::mutex_unlock();
+	
 	
 }
 void Song::set_output_node(AudioNode *p_node) {
+	
+	AudioControl::mutex_lock();
 	
 	if (output_node) {
 		
@@ -92,6 +103,8 @@ void Song::set_output_node(AudioNode *p_node) {
 	}
 	
 	output_node=p_node;	
+	AudioControl::mutex_unlock();
+	
 }
 
 AudioNode *Song::get_input_node() {

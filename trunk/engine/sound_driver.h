@@ -15,6 +15,7 @@
 #include "typedefs.h"
 #include "engine/audio_node.h"
 #include "engine/audio_port_layout.h"
+#include "engine/audio_graph.h"
 #include "property.h"
 #include <vector>
 
@@ -70,21 +71,30 @@ class SoundDriver{
 	InputNode input_node;
 	OutputNode output_node;
 	const AudioPortLayout *port_layout;
+	AudioGraph *graph;
 	
 protected:	
 
-	
+	/* INTERNAL API */
 	int get_input_count();
 	AudioPlug *get_input_plug(int p_input);
 	int get_output_count();
 	AudioPlug *get_output_plug(int p_output);
+	const AudioPortLayout *get_port_layout();
 	
-	virtual void write_to_inputs()=0;
-	virtual void read_from_outputs()=0;
+	/**
+	 * Ask the graph to process a given amount of frames.
+	 * @param p_frames Amount of frames to process
+	 * @return Frames actually processed
+	 */
+	int process_graph(int p_frames);
+	/* OVERRIDES */
+	
+	virtual void write_to_inputs(int p_frames)=0;
+	virtual void read_from_outputs(int p_frames)=0;
 	virtual bool is_input_enabled(int p_input)=0;
 	virtual bool is_output_enabled(int p_output)=0;
 	
-	const AudioPortLayout *get_port_layout();
 public:
 	
 	
@@ -113,6 +123,8 @@ public:
 	
 	
 	void set_port_layout(const AudioPortLayout *p_layout);
+	void set_audio_graph(AudioGraph *p_graph);
+	
 	AudioNode *get_input_node();
 	AudioNode *get_output_node();
 	

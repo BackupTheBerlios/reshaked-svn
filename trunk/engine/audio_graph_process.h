@@ -46,7 +46,7 @@ friend class AudioGraph;
 	void configure_connections(); 
 		
 	/* process */
-	void process(int p_frames);
+	int process(int p_frames);
 };
 
 

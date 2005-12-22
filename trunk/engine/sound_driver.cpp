@@ -68,7 +68,7 @@ String SoundDriver::InputNode::get_caption() {
 
 void SoundDriver::InputNode::process(int p_frames) {
 	
-	driver->write_to_inputs();
+	driver->write_to_inputs(p_frames);
 }
 	
 int SoundDriver::OutputNode::get_output_plug_count() {
@@ -120,12 +120,16 @@ String SoundDriver::OutputNode::get_caption() {
 
 void SoundDriver::OutputNode::process(int p_frames) {
 	
-	driver->read_from_outputs();
+	driver->read_from_outputs(p_frames);
 }
 
 
 /****************** INTERNAL *********************/
 
+int SoundDriver::process_graph(int p_frames) {
+	
+	return graph->process(p_frames);
+}
 int SoundDriver::get_input_count() {
 	
 	return input_node.input_plugs.size();
@@ -145,6 +149,10 @@ AudioPlug *SoundDriver::get_output_plug(int p_output) {
 	return output_node.get_input_plug( p_output );
 }
 
+void SoundDriver::set_audio_graph(AudioGraph *p_graph) {
+	
+	graph=p_graph;
+}
 
 AudioNode *SoundDriver::get_input_node() {
 	
@@ -159,11 +167,15 @@ void SoundDriver::set_port_layout(const AudioPortLayout *p_layout) {
 	
 	ERR_FAIL_COND(get_status()!=STATUS_DISABLED);
 	
+	input_node.driver=this;
+	
 	for (int i=0;i<input_node.input_plugs.size();i++) {
 		
 		delete input_node.input_plugs[i];
 	}
 	input_node.input_plugs.clear();
+	
+	output_node.driver=this;
 	
 	for (int i=0;i<output_node.output_plugs.size();i++) {
 		

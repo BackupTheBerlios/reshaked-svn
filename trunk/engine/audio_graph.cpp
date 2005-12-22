@@ -1,6 +1,7 @@
 
 #include "audio_graph.h"
 #include "error_macros.h"
+#include "engine/audio_control.h"
 
 namespace ReShaked {
 
@@ -76,6 +77,7 @@ bool AudioGraph::recompute_process_order() {
 
 void AudioGraph::recompute_graph() {
 
+	
 	graph_process.clear();
 	for (int i=0;i<nodes.size();i++)
 		graph_process.add_node(nodes[i]);
@@ -89,6 +91,7 @@ void AudioGraph::recompute_graph() {
 			);
 	
 	graph_process.configure_connections();
+	
 	
 }
 
@@ -107,6 +110,8 @@ AudioNode* AudioGraph::get_node(int p_index) {
 
 void AudioGraph::add_node(AudioNode *p_node,std::list<Connection> *p_node_connections) {
 
+	AudioControl::mutex_lock();
+	
 	nodes.push_back(p_node);
 	if (p_node_connections) {
 		
@@ -121,6 +126,9 @@ void AudioGraph::add_node(AudioNode *p_node,std::list<Connection> *p_node_connec
 		}
 		
 	}
+	
+	AudioControl::mutex_unlock();
+	
 }
 
 
@@ -144,6 +152,8 @@ void AudioGraph::erase_node(int p_index,std::list<Connection> *p_connections_los
 
 	ERR_FAIL_INDEX(p_index,(int)nodes.size());
 
+	AudioControl::mutex_lock();
+	
 	int i=0;
 	/* simple algorithm for erasing nodes */	
 	
@@ -187,6 +197,8 @@ void AudioGraph::erase_node(int p_index,std::list<Connection> *p_connections_los
 	recompute_process_order();
 	recompute_graph();
 	
+	AudioControl::mutex_unlock();
+	
 }
 
 AudioGraph::ConnectError AudioGraph::connect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to) {
@@ -195,6 +207,8 @@ AudioGraph::ConnectError AudioGraph::connect_plugs(int p_node_from,int p_plug_fr
 	ERR_FAIL_INDEX_V(p_node_to,(int)nodes.size(),CONNECT_INVALID_NODE);
 	ERR_FAIL_INDEX_V(p_plug_from,nodes[p_node_from]->get_output_plug_count(),CONNECT_INVALID_PLUG);
 	ERR_FAIL_INDEX_V(p_plug_to,nodes[p_node_to]->get_input_plug_count(),CONNECT_INVALID_PLUG);
+	
+	AudioControl::mutex_lock();
 	
 	/* Check if connection exists first */
 	for (int i=0;i<(int)connections.size();i++) {
@@ -243,11 +257,16 @@ AudioGraph::ConnectError AudioGraph::connect_plugs(int p_node_from,int p_plug_fr
 	
 	recompute_graph();
 	last_error=CONNECT_OK;
+	
+	AudioControl::mutex_unlock();
+	
 	return CONNECT_OK;
 }
 
 void AudioGraph::disconnect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to) {
 
+	AudioControl::mutex_lock();
+	
 	for (int i=0;i<(int)connections.size();i++) {
 		
 		Connection conn=connections[i];
@@ -261,8 +280,16 @@ void AudioGraph::disconnect_plugs(int p_node_from,int p_plug_from,int p_node_to,
 		
 	}
 
-	ERR_FAIL_COND( recompute_process_order() );
+	if ( recompute_process_order() ) {
+		ERR_PRINT("recompute_process_order()");
+		AudioControl::mutex_unlock();
+		return;
+	}
+	
 	recompute_graph();
+	
+	AudioControl::mutex_unlock();
+	
 }
 
 int AudioGraph::get_connection_count() {
@@ -289,9 +316,9 @@ AudioGraph::ConnectError AudioGraph::get_last_conect_error() {
 	
 	return last_error;
 }
-void AudioGraph::process(int p_frames) {
+int AudioGraph::process(int p_frames) {
 	
-	graph_process.process(p_frames);	
+	return graph_process.process(p_frames);	
 }
 
 AudioGraph::AudioGraph() {

@@ -23,10 +23,13 @@ int AudioBuffer::get_channels() {
 }
 
 
-void AudioBuffer::clear() { ///< just clear the contents
+void AudioBuffer::clear(int p_frames) { ///< just clear the contents
 
+	if (p_frames==-1 || p_frames>size)
+		p_frames=size;
+	
 	for (int i=0;i<(int)data.size();i++)
-		memset(&data[i][0],0,sizeof(float)*size);
+		memset(&data[i][0],0,sizeof(float)*p_frames);
 		 
 }
 

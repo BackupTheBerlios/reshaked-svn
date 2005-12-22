@@ -13,26 +13,115 @@
 
 #ifdef DRIVER_JACK_ENABLED
 
+#include "engine/audio_control.h"
+
 namespace ReShaked {
 
 /**** STATIC FUNCS *****/
 
 int SoundDriver_JACK::process_jack_callback(jack_nframes_t nframes,void *arg) {
 	
+	SoundDriver_JACK* _this=(SoundDriver_JACK*)arg;
+	_this->process(nframes);
 	
 }
 int SoundDriver_JACK::jack_set_mixfreq(jack_nframes_t nframes,void *arg) {
 	
-	
+	/* todo */
 }
 int SoundDriver_JACK::jack_set_buffsize(jack_nframes_t nframes,void *arg) {
 	
-	
+	/* todo*/
 }
 void SoundDriver_JACK::jack_shutdown(void *arg) {
 	
+	SoundDriver_JACK* _this=(SoundDriver_JACK*)arg;
+	_this->finish();
 }
+
+/* PROCESS Functions */
+
+void SoundDriver_JACK::process(int p_frames) {
+	
+	if (AudioControl::mutex_try_lock())
+		return;
+	
+	process_offset=0;
+	process_nframes=p_frames;
+	
+	process_graph(p_frames);
+	
+	AudioControl::mutex_unlock();
+}
+
+void SoundDriver_JACK::write_to_inputs(int p_frames) {
+	
+	ERR_FAIL_COND( get_input_count()!=input_port_list.size() );
+	for(int i=0;i<get_input_count();i++) {
+		
+		AudioBuffer *buff=get_input_plug(p_frames)->get_buffer();
+		
+		ERR_CONTINUE(buff==NULL);
+		ERR_CONTINUE(buff->get_channels()!=input_port_list[i].ports.size() );
+		
+		for(int j=0;j<buff->get_channels();j++) {
+			
+			float *audio_ptr=buff->get_buffer(j);
+			
+			/* this condition will disapear in compile time */
+			/* this is done in case jack audio sample is not float anymore */
+			
+			jack_default_audio_sample_t*jack_ptr = (jack_default_audio_sample_t *)jack_port_get_buffer(input_port_list[i].ports[j], process_nframes); 
+			
+			if (sizeof(jack_default_audio_sample_t)==sizeof(float)) { 
+				
+				memcpy(audio_ptr,&jack_ptr[process_offset],sizeof(float)*p_frames);
+			} else {
+				
+				for (int k=0;k<p_frames;k++)
+					audio_ptr[k]=jack_ptr[k+process_offset];
+			}
+
+		}			
+	}
+}
+			    
+void SoundDriver_JACK::read_from_outputs(int p_frames) {
+	
+	
+	ERR_FAIL_COND( get_output_count()!=output_port_list.size() );
+	for(int i=0;i<get_output_count();i++) {
+		
+		AudioBuffer *buff=get_output_plug(p_frames)->get_buffer();
+		
+		ERR_CONTINUE(buff==NULL);
+		ERR_CONTINUE(buff->get_channels()!=output_port_list[i].ports.size() );
+		
+		for(int j=0;j<buff->get_channels();j++) {
+			
+			float *audio_ptr=buff->get_buffer(j);
+			
+			/* this condition will disapear in compile time */
+			/* this is done in case jack audio sample is not float anymore */
+			
+			jack_default_audio_sample_t*jack_ptr = (jack_default_audio_sample_t *)jack_port_get_buffer(output_port_list[i].ports[j], process_nframes); 
+			
+			if (sizeof(jack_default_audio_sample_t)==sizeof(float)) { 
+				
+				
+				memcpy(&jack_ptr[process_offset],audio_ptr,sizeof(float)*p_frames);
+			} else {
+				
+				for (int k=0;k<p_frames;k++)
+					jack_ptr[k+process_offset]=audio_ptr[k];
+			}
+		}			
+	}	
+}
+
 /* Regular Functions */
+
+
 
 int SoundDriver_JACK::get_settings_count() {
 	
@@ -94,22 +183,26 @@ bool SoundDriver_JACK::init() {
 	jack_set_sample_rate_callback (client, jack_set_mixfreq, this);
 	jack_on_shutdown (client, jack_shutdown, this);
 	mixing_frequency=jack_get_sample_rate (client);
-	/*
+	
+	
 	input_port_list.clear();
 	
-	for (int i=0;i<port_layout->port_in_info.size();i++) {
+	
+	for (int i=0;i<get_input_count();i++) {
 		
 		PortList pl;
 		std::string name=(i==0)?"_MainIn":"_AuxIn";
 		
-		for (int j=0;j<port_layout->port_in_info[i];j++) {
+		AudioPlug *out=get_input_plug(i);
+		
+		for (int j=0;j<out->get_channels();j++) {
 			std::string post;
 			
-			if (port_layout->port_in_info[i]==2 &&j==0)
+			if (out->get_channels()==2 &&j==0)
 				post="_L";
-			else if (port_layout->port_in_info[i]==2 &&j==1)
+			else if (out->get_channels()==2 &&j==1)
 				post="_R";
-			else if (port_layout->port_in_info[i]>2) {
+			else if (out->get_channels()>2) {
 				char postdigit[2]={0,0};
 				postdigit[0]='0'+j+1;
 				post+="_";
@@ -117,13 +210,13 @@ bool SoundDriver_JACK::init() {
 			}
 			name+=post;
 			jack_port_t *p=jack_port_register (client, name.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-			pl.ports.push_bck(p);
+			pl.ports.push_back(p);
 		}
 		
 		input_port_list.push_back(pl);
 	}
-	*/
 	
+	output_port_list.clear();
 	
 	for (int i=0;i<get_output_count();i++) {
 		
@@ -209,15 +302,6 @@ void SoundDriver_JACK::finish() {
 
 /********* VIRTUALS ***********/
 
-void SoundDriver_JACK::write_to_inputs() {
-	
-	
-}
-void SoundDriver_JACK::read_from_outputs() {
-	
-	
-	
-}
 bool SoundDriver_JACK::is_input_enabled(int p_input) {
 	
 	/* everything can be enabled under jack */

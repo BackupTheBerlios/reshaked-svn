@@ -1,15 +1,22 @@
 
 #include "audio_control.h"
+#include "error_macros.h"
 
+
+void value_stream_global_lock() {
+	
+	ReShaked::AudioControl::mutex_lock();
+}
+
+void value_stream_global_unlock() {
+	
+	ReShaked::AudioControl::mutex_unlock();
+}
 
 namespace ReShaked {
 
-AudioControl* AudioControl::singleton_instance=0;
 
-AudioControl *AudioControl::singleton() {
-	
-	return singleton_instance;
-}
+MutexLock *AudioControl::audio_mutex=0;
 
 
 
@@ -22,20 +29,24 @@ float AudioControl::get_sample_rate() {
 /* Audio Mutex */
 void AudioControl::mutex_lock() {
 	
-	
+	audio_mutex->grab();
 	
 }
 bool AudioControl::mutex_try_lock() {
 	
-	
-	return false;	
+	return audio_mutex->try_grab();
+
 }
 void AudioControl::mutex_unlock() {
 	
+	audio_mutex->release();
 	
 	
 }
 
+void AudioControl::init() {
 	
+	audio_mutex=MutexLock::create_mutex();
+}
 	
 };

@@ -48,9 +48,13 @@ class SoundDriver_JACK : public SoundDriver {
 	std::vector<PortList> output_port_list;
 	
 	bool active;
+	int process_offset;
+	int process_nframes;
+	void process(int p_frames);
 	
-	virtual void write_to_inputs();
-	virtual void read_from_outputs();
+	
+	virtual void write_to_inputs(int p_frames);
+	virtual void read_from_outputs(int p_frames);
 	virtual bool is_input_enabled(int p_input);
 	virtual bool is_output_enabled(int p_output);
 

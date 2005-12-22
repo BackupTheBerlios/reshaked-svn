@@ -30,7 +30,7 @@ public:
 	static SoundDriverList* get_singleton();
 	
 	void add_driver(SoundDriver* p_driver);
-	void init_driver(int p_index=-1,bool p_internal_init=true); //-1 for current
+	bool init_driver(int p_index=-1,bool p_internal_init=true); //-1 for current
 	void finish_driver();
 	
 

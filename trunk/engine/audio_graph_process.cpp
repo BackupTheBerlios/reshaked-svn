@@ -96,15 +96,19 @@ void AudioGraphProcess::configure_connections() {
 	
 }
 
-void AudioGraphProcess::process(int p_frames) {
+int AudioGraphProcess::process(int p_frames) {
 	 
 	if (unconfigured)
-		return;
+		return 0;
+	
+	if (p_frames>BUFFER_SIZE)
+		p_frames=BUFFER_SIZE;
+	
 	
 	/* pass 1, clean the input buffers */
 	for (int i=0;i<(int)process_nodes.size();i++)
 		for (int j=0;j<(int)process_nodes[i]->input_buffers.size();j++)
-			process_nodes[i]->input_buffers[j]->clear();
+			process_nodes[i]->input_buffers[j]->clear(p_frames);
 					
 	
 	/* pass 2, process the audio in the topologically solved graph */
@@ -114,6 +118,7 @@ void AudioGraphProcess::process(int p_frames) {
 
 	/* done ! */
 		
+	return p_frames;
 }
 
 
