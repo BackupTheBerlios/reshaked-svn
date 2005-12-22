@@ -33,7 +33,8 @@ public:
 	};
 private:	
 	std::vector<AudioNode*> nodes;
-	std::vector<int> process_order; /* process order of audionodes*/
+	std::vector<int> process_order; /* process order of audionodes position -> node*/
+	std::vector<int> inv_process_order; /* process order of audionodes, node -> position*/
 	std::vector<Connection> connections;
 	bool recompute_process_order(); /* return true if cyclic connection found */
 	void recompute_graph();

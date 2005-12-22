@@ -15,7 +15,6 @@ bool AudioGraph::recompute_process_order() {
 	   this list maps node->order, this is why it must
 	   be filled with the inverted numbers */
 	
-	std::vector<int> inv_process_order; 
 	inv_process_order.resize(nodes.size());
 	for (int i=0;i<(int)nodes.size();i++)
 		inv_process_order[i]=i;
@@ -79,16 +78,24 @@ void AudioGraph::recompute_graph() {
 
 	
 	graph_process.clear();
-	for (int i=0;i<nodes.size();i++)
-		graph_process.add_node(nodes[i]);
+	for (int i=0;i<nodes.size();i++) {
+		//printf("%i: %lls\n",i, nodes[process_order[i]]->get_caption().c_str() );
+		graph_process.add_node(nodes[process_order[i]]);
+	}
 	
-	for (int i=0;i<connections.size();i++)
+	for (int i=0;i<connections.size();i++) {
+		
+		//printf("**connecting %lls,%i to %lls,%i\n",nodes[connections[i].node_from]->get_caption().c_str(),connections[i].plug_from,nodes[connections[i].node_to]->get_caption().c_str(),connections[i].plug_to);
+		
 		graph_process.add_connection(
-			connections[i].node_from,
+			inv_process_order[connections[i].node_from],
 			connections[i].plug_from,
-			connections[i].node_to,
+			inv_process_order[connections[i].node_to],
 			connections[i].plug_to
 			);
+		
+	}
+	
 	
 	graph_process.configure_connections();
 	

@@ -8,14 +8,14 @@
 
 #define ERR_FAIL_INDEX(m_index,m_size) \
 	 {if ((m_index)<0 || (m_index)>=(m_size)) { \
-		std::cout << " *** ERROR *** " << __FILE__ << ":" << __LINE__ << " - " << "index out of size " << std::endl;	\
+		std::cout << " *** ERROR *** " << __FILE__ << ":" << __LINE__ << " - " << "index out of size: " << m_index << "(" << m_size << ")" << std::endl;	\
 		RAISE_SIGNAL \
 		return;	\
 	}}	\
 
 #define ERR_FAIL_INDEX_V(m_index,m_size,m_retval) \
 	 {if ((m_index)<0 || (m_index)>=(m_size)) { \
-		std::cout << " *** ERROR *** " << __FILE__ << ":" << __LINE__ << " - " << "index out of size " << std::endl;	\
+		std::cout << " *** ERROR *** " << __FILE__ << ":" << __LINE__ << " - " << "index out of size: " << m_index << "(" << m_size << ")" << std::endl;	\
 		RAISE_SIGNAL \
 		return (m_retval);	\
 	}}	\

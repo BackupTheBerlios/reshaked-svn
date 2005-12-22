@@ -77,7 +77,9 @@ void AudioGraphProcess::add_node(AudioNode *p_node) {
 /* Then Add Connections */
 void AudioGraphProcess::add_connection(int p_node_from, int p_plug_from, int p_node_to,int p_plug_to) {
 	
-	ERR_FAIL_INDEX(p_node_from,(int)process_nodes.size());
+	//printf("connecting %lls %i to %lls %i\n",process_nodes[p_node_from]->node->get_caption().c_str(),p_plug_from,process_nodes[p_node_to]->node->get_caption().c_str(),p_plug_to);
+	
+	ERR_FAIL_INDEX(p_node_from,(int)process_nodes.size()); 
 	ERR_FAIL_INDEX(p_node_to,(int)process_nodes.size());
 	ERR_FAIL_INDEX(p_plug_from,process_nodes[p_node_from]->node->get_output_plug_count());
 	ERR_FAIL_INDEX(p_plug_to,(int)process_nodes[p_node_to]->input_buffers.size());
@@ -89,7 +91,7 @@ void AudioGraphProcess::add_connection(int p_node_from, int p_plug_from, int p_n
 	
 }
 
-/* Then Add Connections */
+
 void AudioGraphProcess::configure_connections() {
 	
 	unconfigured=false;
@@ -121,7 +123,11 @@ int AudioGraphProcess::process(int p_frames) {
 	return p_frames;
 }
 
+AudioGraphProcess::AudioGraphProcess() {
+	
+	unconfigured=true;
 
 
-
+}
+	
 };

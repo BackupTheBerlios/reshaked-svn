@@ -59,7 +59,7 @@ void SoundDriver_JACK::write_to_inputs(int p_frames) {
 	ERR_FAIL_COND( get_input_count()!=input_port_list.size() );
 	for(int i=0;i<get_input_count();i++) {
 		
-		AudioBuffer *buff=get_input_plug(p_frames)->get_buffer();
+		AudioBuffer *buff=get_input_plug(i)->get_buffer();
 		
 		ERR_CONTINUE(buff==NULL);
 		ERR_CONTINUE(buff->get_channels()!=input_port_list[i].ports.size() );
@@ -92,7 +92,7 @@ void SoundDriver_JACK::read_from_outputs(int p_frames) {
 	ERR_FAIL_COND( get_output_count()!=output_port_list.size() );
 	for(int i=0;i<get_output_count();i++) {
 		
-		AudioBuffer *buff=get_output_plug(p_frames)->get_buffer();
+		AudioBuffer *buff=get_output_plug(i)->get_buffer();
 		
 		ERR_CONTINUE(buff==NULL);
 		ERR_CONTINUE(buff->get_channels()!=output_port_list[i].ports.size() );
