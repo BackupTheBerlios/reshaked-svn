@@ -28,7 +28,7 @@ else: #POSIX
 
 env.Append(CXXFLAGS=['-DQT_NO_KEYWORDS']);
 #env.Append(CPPPATH=['#types/','#engine/','#interface/','#ui_blocks/']);
-env.Append(CPPPATH=['#types/','#engine/','#interface/','#ui_blocks/','#pixmaps/']);
+env.Append(CPPPATH=['#','#types/','#engine/','#interface/','#ui_blocks/','#pixmaps/','#editor/']);
 env["QT_LIB"]="";
 #Enable the make_targets helper
 #env.__class__.make_targets = detect.make_targets

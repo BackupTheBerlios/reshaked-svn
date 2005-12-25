@@ -5,6 +5,11 @@
 
 namespace ReShaked {
 
+GlobalTrack& Song::get_global_track() {
+	
+	return global_track;
+}
+
 BarMap& Song::get_bar_map() {
 	
 	return bar_map;	
@@ -18,6 +23,12 @@ AudioPortLayout& Song::get_audio_port_layout() {
 	
 	return audio_port_layout;	
 }
+
+GlobalProperties& Song::get_global_properties() {
+	
+	return global_properties;
+}
+
 
 void Song::add_track(Track* p_track,int p_at_pos,std::list<AudioGraph::Connection> *p_node_connections) {
 	
@@ -120,8 +131,7 @@ void Song::set_mix_rate(float p_mix_rate) {
 	
 	
 }
-
-Song::Song()  {
+Song::Song() : global_track(&global_properties) {
 	
 	input_node=NULL;
 	output_node=NULL;

@@ -8,6 +8,7 @@
 #include "engine/data_pool.h"
 #include "engine/bar_map.h"
 #include "engine/audio_port_layout.h"
+#include "engine/global_track.h"
 
 
 namespace ReShaked {
@@ -19,11 +20,15 @@ private:
 	AudioGraph track_graph;
 	BarMap bar_map;
 	AudioPortLayout audio_port_layout;
+	GlobalProperties global_properties;
+	GlobalTrack global_track;
 	
 	AudioNode *input_node; ///< Global Input Node
 	AudioNode *output_node; ///< Global Output Node
 public:
 
+	GlobalProperties& get_global_properties();
+	GlobalTrack& get_global_track();
 	BarMap& get_bar_map();
 	AudioGraph& get_track_graph();
 	AudioPortLayout& get_audio_port_layout();

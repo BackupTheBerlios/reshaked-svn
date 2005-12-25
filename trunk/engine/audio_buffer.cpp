@@ -33,6 +33,23 @@ void AudioBuffer::clear(int p_frames) { ///< just clear the contents
 		 
 }
 
+void AudioBuffer::add_from(AudioBuffer *p_src,int p_frames) {
+	
+	ERR_FAIL_COND(p_frames>size);///< check if frames are valid
+	ERR_FAIL_COND(p_src->data.size()!=data.size()); ///check if channels are valid
+	
+	for (int i=0;i<data.size();i++) {
+		
+		float *dst=&data[i][0];
+		float *src=&p_src->data[i][0];
+		
+		for (int j=0;j<p_frames;j++)
+			dst[j]+=src[j];
+		
+	}
+	
+}
+
 AudioBuffer::AudioBuffer(int p_channels,int p_size) {
 
 

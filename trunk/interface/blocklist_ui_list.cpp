@@ -18,6 +18,7 @@
 #include <Qt/qscrollbar.h>
 #include <Qt/qpainter.h>
 #include "interface/blocklist_separator.h"
+#include "ui_blocks/visual_settings.h"
 
 //@TODO SOFT SCROLL when ensuring cursor visible
 namespace ReShaked {
@@ -168,6 +169,31 @@ void BlockListUIList::update_track_list() {
 
 	block_list_ui_list.clear();
 	track_tops.clear();
+	
+	for (int i=0;i<editor->get_song()->get_global_track().get_visible_automation_count();i++) {
+		
+		CVBox *vb = new CVBox(hbox);
+		hbox_layout->addWidget(vb);
+		
+		(new BlackWidget(vb))->setFixedHeight(VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS ).height());
+		
+		CHBox *hb = new CHBox(vb);
+		
+		Automation *a=editor->get_song()->get_global_track().get_visible_automation(i);
+		block_list_ui_list.push_back( new BlockListUI_Automation(hb,editor,a) );
+			
+		BlockList_Separator *s = new BlockList_Separator(hb,QStrify(a->get_property()->get_caption()));
+				
+		hb->layout()->setSpacing(0);
+		hb->layout()->setMargin(0);
+		vb->layout()->setSpacing(0);
+		vb->layout()->setMargin(0);
+		vb->show();		
+		printf("CACAS\n");
+		
+	}
+	
+	VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS ).height();
 
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
 
@@ -177,7 +203,7 @@ void BlockListUIList::update_track_list() {
 		QVBoxLayout *vl=new QVBoxLayout(vb);
 		vb->setLayout(vl);
 		
-		TrackTop *top = new TrackTop(vb,editor->get_song()->get_track(i),editor);
+		TrackTop *top = new TrackTop(vb,editor->get_song()->get_track(i),editor,TrackTop::TYPE_PATTERN);
 		track_tops.push_back(top);
 		vl->addWidget(top);
 		
@@ -204,10 +230,10 @@ void BlockListUIList::update_track_list() {
 
 		for (int j=0;j<editor->get_song()->get_track(i)->get_visible_automation_count();j++) {
 
-			block_list_ui_list.push_back( new BlockListUI_Automation(hb,editor,i,j) );
+			Automation *a=editor->get_song()->get_track(i)->get_visible_automation(j);
+			block_list_ui_list.push_back( new BlockListUI_Automation(hb,editor,a) );
 			hl->addWidget(block_list_ui_list [block_list_ui_list.size() -1] );
 			
-			Automation *a=editor->get_song()->get_track(i)->get_visible_automation(j);
 			BlockList_Separator *s = new BlockList_Separator(hb,QStrify(a->get_property()->get_caption()));
 			hl->addWidget(s);
 
@@ -303,7 +329,7 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	
 	
 	CVBox *cvb = new CVBox(hb);
-	new TrackTop(cvb,NULL,NULL); //this is only remporary
+	new TrackTop(cvb,&editor->get_song()->get_global_track(),editor,TrackTop::TYPE_GLOBAL); // Global Track
 	row_display = new RowListDisplay(cvb ,editor);
 	cvb->layout()->setMargin(0);
 	cvb->layout()->setSpacing(0);

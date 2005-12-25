@@ -66,90 +66,39 @@ void GlobalView::clear_selection() {
 
 BlockList* GlobalView::get_block_list(int p_idx) {
 
-	int blocks=0;
-	for (int i=0;i<song->get_track_count();i++) {
-		Track * t = song->get_track(i);
-		if (blocks==p_idx)
-			return t;
-		blocks++;
-
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-
-			if (blocks==p_idx)
-				return t->get_visible_automation(j);
-			blocks++;
-		}
-	}
-
-	return NULL;
+	
+	return editor->get_blocklist( p_idx );
 
 }
 int GlobalView::get_block_list_count() {
 
-	int blocks=0;
-	for (int i=0;i<song->get_track_count();i++) {
-		Track * t = song->get_track(i);
-		blocks++;
-
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-
-			blocks++;
-		}
-	}
-
-	return blocks;
+	
+	return editor->get_blocklist_count();
+	
 }
 int GlobalView::get_block_list_at_offset(float p_offset) {
 
 	float offset=0;
-	int block=0;
-	for (int i=0;i<song->get_track_count();i++) {
-		Track * t = song->get_track(i);
-
-		offset+=1;
-
+	for (int i=0;i<get_block_list_count();i++) {
+		
+		offset+=get_block_list_width( get_block_list( i ) );
 		if (offset>=p_offset)
-			return block;
-
-		block++;
-
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-
-			offset+=0.5;
-			if (offset>=p_offset)
-				return block;
-
-			block++;
-
-		}
+			return i;
 	}
-
-
+	
 	return -1;
 }
 float GlobalView::get_block_list_offset(int p_index) {
 
 	float offset=0;
-	int block=0;
-	for (int i=0;i<song->get_track_count();i++) {
-		Track * t = song->get_track(i);
-		if (p_index==block)
+	for (int i=0;i<get_block_list_count();i++) {
+		
+		if (i==p_index)
 			return offset;
-		block++;
-		offset+=1;
-
-
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-
-			if (p_index==block)
-				return offset;
-			block++;
-			offset+=0.5;
-		}
+		offset+=get_block_list_width( get_block_list( i ) );
 	}
-
-
-	return offset; //total size
+	
+	return offset;
 }
 
 float GlobalView::get_block_list_width(BlockList *p_block) {
@@ -1193,15 +1142,9 @@ void GlobalView::set_edit_mode(EditMode p_edit_mode) {
 int GlobalView::get_total_pixel_width() {
 	
 	float width_accum=0;
-	for (int i=0;i<song->get_track_count();i++) {
-		Track * t = song->get_track(i);
-		width_accum+=get_block_list_width( t);
-
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-
-			width_accum+=get_block_list_width(t->get_visible_automation( j ));
-			
-		}
+	for (int i=0;i<get_block_list_count();i++) {
+		
+		width_accum+=get_block_list_width(get_block_list(i) );
 	}
 	
 	width_accum*=display.zoom_width;

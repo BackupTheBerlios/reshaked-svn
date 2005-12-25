@@ -20,6 +20,7 @@
 #include "ui_blocks/helpers.h"
 #include "interface/indexed_action.h"
 
+
 namespace ReShaked {
 
 void TrackTop::paintEvent(QPaintEvent *e) {
@@ -68,14 +69,18 @@ void TrackTop::paintEvent(QPaintEvent *e) {
 void TrackTop::mousePressEvent(QMouseEvent *e) {
 	
 	QPixmap px = VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS );
-	if (e->x()<px.width())
+	if (e->x()<px.width()) {
+		
+		automation_menu->rebuild();
 		menu->popup(mapToGlobal( QPoint(0,height()) ) );
-	else
+	} else
 		rename();
 }
 
 void TrackTop::rename() {
 	
+	if (!can_rename)
+		return;
 	QString track_name = QStrify( track->get_name() );
 	bool ok=false;
 	
@@ -89,8 +94,12 @@ void TrackTop::rename() {
 
 void TrackTop::action_slot(QAction *p_action) {
 	
+	if (automation_menu->check_action( p_action ))
+		return; //handled by it
+	
 	IndexedAction *ia=dynamic_cast<IndexedAction*>(p_action);
-	ERR_FAIL_COND(ia==NULL);
+	if (ia==NULL)
+		return; //probably from the automation submenu
 	
 	switch (ia->get_index()) {
 		
@@ -139,7 +148,19 @@ void TrackTop::action_slot(QAction *p_action) {
 	
 }
 
-TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor) :QWidget(p_parent) {
+void TrackTop::automation_add_slot(String p_path) {
+
+	editor->show_automation( p_path, track );
+
+}
+void TrackTop::automation_remove_slot(String p_path) {
+
+	editor->hide_automation( p_path, track );
+	
+}
+
+
+TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p_type) :QWidget(p_parent) {
 	track=p_track;
 	editor=p_editor;
 	int wheight=VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS ).height();
@@ -147,26 +168,42 @@ TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor) :QWidget(p
 	setBackgroundRole(QPalette::NoRole);
 	
 	menu =new QMenu("Track Options",this);
-	menu->addAction(new IndexedAction(ACTION_PATTERN_ADD_COLUMN,"Add Column",GET_QPIXMAP(ICON_COLUMN_ADD),this));
-	menu->addAction(new IndexedAction(ACTION_PATTERN_REMOVE_COLUMN,"Remove Column",GET_QPIXMAP(ICON_COLUMN_REMOVE),this));
-	menu->addSeparator();
 	
-	menu->addAction(new IndexedAction(ACTION_AUTOMATIONS,"Automations...",GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS),this));
-	menu->addAction(new IndexedAction(ACTION_EFFECTS,"Add Sound Effect",GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS),this));
+	if (p_type==TYPE_PATTERN) {
+		menu->addAction(new IndexedAction(ACTION_PATTERN_ADD_COLUMN,"Add Column",GET_QPIXMAP(ICON_COLUMN_ADD),this));
+		menu->addAction(new IndexedAction(ACTION_PATTERN_REMOVE_COLUMN,"Remove Column",GET_QPIXMAP(ICON_COLUMN_REMOVE),this));
+		menu->addSeparator();
+	}
 	
-	menu->addSeparator();
+	automation_menu=new AutomationPopup(this,track);
+	QAction *amenu = menu->addMenu(automation_menu);
+	amenu->setText("Automations..");
+	amenu->setIcon(GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS));
 	
-	menu->addAction(new IndexedAction(ACTION_MOVE_TRACK_LEFT,"Move Track Left",GET_QPIXMAP(ICON_TRACK_MOVE_LEFT),this));
-	menu->addAction(new IndexedAction(ACTION_MOVE_TRACK_RIGHT,"Move Track Right",GET_QPIXMAP(ICON_TRACK_MOVE_RIGHT),this));
-	menu->addSeparator();
+	if (p_type!=TYPE_GLOBAL) {
+		menu->addAction(new IndexedAction(ACTION_EFFECTS,"Add Sound Effect",GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS),this));
 	
-	menu->addAction(new IndexedAction(ACTION_RENAME,"Rename Track",this));
-	menu->addAction(new IndexedAction(ACTION_DUPLICATE,"Duplicate Track",GET_QPIXMAP(ICON_GLOBAL_VIEW_COPY_BLOCK),this));
-	menu->addSeparator();
 	
-	menu->addAction(new IndexedAction(ACTION_DELETE,"Remove Track",GET_QPIXMAP(ICON_TRACK_DELETE),this));
 	
+		menu->addSeparator();
+	
+		menu->addAction(new IndexedAction(ACTION_MOVE_TRACK_LEFT,"Move Track Left",GET_QPIXMAP(ICON_TRACK_MOVE_LEFT),this));
+		menu->addAction(new IndexedAction(ACTION_MOVE_TRACK_RIGHT,"Move Track Right",GET_QPIXMAP(ICON_TRACK_MOVE_RIGHT),this));
+	
+		menu->addSeparator();
+	
+		menu->addAction(new IndexedAction(ACTION_RENAME,"Rename Track",this));
+		menu->addAction(new IndexedAction(ACTION_DUPLICATE,"Duplicate Track",GET_QPIXMAP(ICON_GLOBAL_VIEW_COPY_BLOCK),this));
+		menu->addSeparator();
+	
+		menu->addAction(new IndexedAction(ACTION_DELETE,"Remove Track",GET_QPIXMAP(ICON_TRACK_DELETE),this));
+	}
 	QObject::connect(menu,SIGNAL(triggered(QAction*)),this,SLOT(action_slot( QAction* )),Qt::QueuedConnection);
+	QObject::connect(automation_menu,SIGNAL(attempt_automation_add_signal( String )),this,SLOT(automation_add_slot( String )));
+	QObject::connect(automation_menu,SIGNAL(attempt_automation_remove_signal( String )),this,SLOT(automation_remove_slot( String )));
+	
+	can_rename=p_type!=TYPE_GLOBAL;
+
 			
 }
 

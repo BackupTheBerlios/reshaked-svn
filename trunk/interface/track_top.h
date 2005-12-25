@@ -16,6 +16,7 @@
 #include <Qt/qmenu.h>
 
 #include "editor/editor.h"
+#include "interface/automation_dialog.h"
 
 
 namespace ReShaked {
@@ -40,8 +41,6 @@ class TrackTop : public QWidget {
 		
 		ACTION_RENAME,
 		ACTION_DUPLICATE,
-	
-		ACTION_AUTOMATIONS,
 			
 		ACTION_EFFECTS,
 			
@@ -51,17 +50,27 @@ class TrackTop : public QWidget {
 	Track *track;
 	Editor *editor;
 
+	AutomationPopup *automation_menu;
 	QMenu *menu;
 	void paintEvent(QPaintEvent *e);
 	
 	void mousePressEvent(QMouseEvent *e);
 	void rename();
+	bool can_rename;
 	
 protected slots:
 			
 	void action_slot(QAction *p_action);
+	void automation_add_slot(String p_path);
+	void automation_remove_slot(String p_path);
+	
 public:
-	TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor);
+	enum TrackType {
+		TYPE_PATTERN,
+		TYPE_GLOBAL,
+	};
+	
+	TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p_type);
 	~TrackTop();
 
 };

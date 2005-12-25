@@ -106,7 +106,7 @@ void TrackSettings::automation_add_slot(String p_path) {
 
 }
 void TrackSettings::automation_remove_slot(String p_path) {
-
+ 
 	editor->hide_automation( p_path );
 	
 }

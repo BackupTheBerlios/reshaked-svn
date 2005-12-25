@@ -141,11 +141,19 @@ private:
 	struct Data {
 		
 		int visible_columns;	
+		LocalProperty swing;
+		LocalProperty volume;
+		LocalProperty balance;
 		
 	} data;
 	
+	
 public:
 
+	Property &swing();
+	Property &volume();
+	Property &balance();
+	
 	Block* create_block(BlockCreationData *p_creation_data);
 	
 	bool shares_block_data(Block *p_block);
@@ -164,7 +172,7 @@ public:
 	NoteList get_notes_in_range(Tick p_from, Tick p_to);
 	
 	
-	Track_Pattern(int p_channels);
+	Track_Pattern(int p_channels,GlobalProperties *p_global_props);
 	~Track_Pattern();
 
 };

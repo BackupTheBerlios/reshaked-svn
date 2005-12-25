@@ -16,6 +16,7 @@ public:
 	int get_size(); ///< size in frames
 	int get_channels(); ///< channels the buffer uses
 	void clear(int p_frames=-1); ///< just clear the contents, or specify how much
+	void add_from(AudioBuffer *p_src,int p_frames);
 	AudioBuffer(int p_channels,int p_size);
 };
 

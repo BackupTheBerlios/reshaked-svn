@@ -123,7 +123,7 @@ void Track_Pattern::process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,i
 	for (int i=0;i<p_in_buf->get_channels();i++) {
 		
 		for (int j=0;j<p_frames;j++)
-			p_out_buf->get_buffer( i)[j]+=p_in_buf->get_buffer( i)[j];
+			p_out_buf->get_buffer( i)[j]=p_in_buf->get_buffer( i)[j];
 
 
 	}
@@ -296,9 +296,33 @@ bool Track_Pattern::accepts_block(Block *p_block) {
 	return dynamic_cast<PatternBlock*>(p_block)!=NULL;	
 }
 
-Track_Pattern::Track_Pattern(int p_channels) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT) {
+Property &Track_Pattern::swing() {
+	
+	return data.swing;
+}
+Property &Track_Pattern::volume() {
+	
+	return data.volume;
+	
+}
+Property &Track_Pattern::balance() {
+	
+	return data.balance;
+	
+}
+
+
+Track_Pattern::Track_Pattern(int p_channels,GlobalProperties *p_global_props) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT,p_global_props) {
 
 	data.visible_columns=1;
+	data.swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "swing","Swing","%","Disabled");
+	data.volume.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "volume","Volume","dB");
+	data.balance.set_all( 0, -1.0, 1.0, 0, 0.01, Property::DISPLAY_KNOB,"balance","Balance","","Left","Right");
+	
+	add_property("track/",&data.swing);
+	add_property("track/",&data.volume);
+	add_property("track/",&data.balance);
+	
 }
 
 

@@ -34,11 +34,14 @@ void Editor::add_track(TrackType p_type,int p_channels,String p_name) {
 		case TRACK_TYPE_PATTERN: {
 			
 			
-			track =  new Track_Pattern(p_channels);
+			track =  new Track_Pattern(p_channels,&d->song->get_global_properties());
 			track->set_name(p_name);
 
 		} break;
 	}
+	
+	if (d->global_edit.current_blocklist<0)
+		d->global_edit.current_blocklist=0;
 	
 	d->undo_stream.begin("Add Track");
 	d->undo_stream.add_command(Command3(&commands,&EditorCommands::add_track,track,d->song->get_track_count(),(std::list<AudioGraph::Connection>*)NULL));

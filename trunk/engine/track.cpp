@@ -51,21 +51,6 @@ void Track::add_property(String p_path,Property *p_prop) {
 	
 }
 
-Property &Track::swing() {
-	
-	return base_private.swing;
-}
-Property &Track::volume() {
-	
-	return base_private.volume;
-	
-}
-Property &Track::balance() {
-	
-	return base_private.balance;
-	
-}
-
 void Track::set_sequencer_event_buffer(const EventBuffer *p_seq) {
 	
 	base_private.seq_events=p_seq;	
@@ -280,18 +265,21 @@ String Track::get_caption() {
 	return get_name();	
 }
 
-Track::Track(int p_channels,BlockType p_type) : BlockList(p_type) {
+bool Track::is_visible() {
+	
+	return true;
+}
+
+GlobalProperties &Track::get_global_props() {
+	
+	return *base_private.global_props;
+}
+
+Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props) : BlockList(p_type) {
 	
 	base_private.seq_events=NULL;
 	base_private.input_plug=new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	base_private.output_plug=new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
-	base_private.swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "swing","Swing","%","Disabled");
-	base_private.volume.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "volume","Volume","dB");
-	base_private.balance.set_all( 0, -1.0, 1.0, 0, 0.01, Property::DISPLAY_KNOB,"balance","Balance","","Left","Right");
-	
-	add_property("track/",&base_private.swing);
-	add_property("track/",&base_private.volume);
-	add_property("track/",&base_private.balance);
 }
 
 

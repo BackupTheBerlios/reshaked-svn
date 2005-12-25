@@ -18,8 +18,8 @@ namespace ReShaked {
 void TrackControlSettings::set_track(Track *p_track) {
 	
 	track=p_track;
-	edit_swing->set_property( & p_track->swing() );
-	edit_balance->set_property( & p_track->balance() );
+	//edit_swing->set_property( & p_track->swing() );
+	//edit_balance->set_property( & p_track->balance() );
 
 }
 

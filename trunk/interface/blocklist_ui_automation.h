@@ -90,7 +90,7 @@ class BlockListUI_Automation : public BlockListUI_Base {
 	
 	bool event( QEvent * ev );
 public:
-	BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, int p_track,int p_automation);
+	BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, Automation *p_automation);
 	~BlockListUI_Automation();
 
 };

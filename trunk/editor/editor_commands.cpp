@@ -62,6 +62,7 @@ CommandFunc* EditorCommands::remove_track(bool p_no_undo,int p_pos) {
 	if (!p_no_undo)
 		node_connections=new std::list<AudioGraph::Connection>;
 	
+
 	d->song->remove_track(p_pos,node_connections);
 	
 	
@@ -143,10 +144,11 @@ CommandFunc* EditorCommands::automation_show(bool p_no_undo,Track *p_track,Strin
 	}
 	
 	p_track->show_automation(p_which);
-	if (d->song->get_track(editor->get_current_track())==p_track)
-		d->ui_update_notify->current_automation_status_changed();
+	editor->revalidate_cursor();
+	
 	
 	editor->disable_selection();
+	d->ui_update_notify->track_list_changed();
 	return ret;
 	
 }
@@ -161,10 +163,11 @@ CommandFunc* EditorCommands::automation_hide(bool p_no_undo,Track *p_track,Strin
 	
 	p_track->hide_automation(p_which);
 	
-	if (d->song->get_track(editor->get_current_track())==p_track)
-		d->ui_update_notify->current_automation_status_changed();
+	editor->revalidate_cursor();
 
+	
 	editor->disable_selection();
+	d->ui_update_notify->track_list_changed();
 	
 	return ret;
 	

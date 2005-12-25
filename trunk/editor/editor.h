@@ -69,8 +69,8 @@ public:
 	 
 	/** AUTOMATION EDIT (editor_automation.cpp) */		 
 			 
-	void show_automation(String p_path);
-	void hide_automation(String p_path);
+	void show_automation(String p_path,Track *p_track=NULL);
+	void hide_automation(String p_path,Track *p_track=NULL);
 	
 	void add_automation_point(Automation *p_automation,Tick p_tick, float p_val,float p_lfo_depth=0);
 	void move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val);
@@ -119,6 +119,7 @@ public:
 	
 	AudioGraph::ConnectError connection_create(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
 	void connection_erase(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
+	
 		
 	
 	/** SELECTION EDITING */

@@ -22,27 +22,30 @@ namespace ReShaked {
 
 
 
-void Editor::show_automation(String p_path) {
+void Editor::show_automation(String p_path,Track *p_track) {
 	
 	
-	
-	int selected_track=get_current_track();
-	Track *t = d->song->get_track(selected_track);
+	if (p_track==NULL) {
+		
+		p_track=d->song->get_track(get_current_track());
+	}
 	
 	d->undo_stream.begin("Show Automation");
-	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_show,t,p_path) );
+	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_show,p_track,p_path) );
 	d->undo_stream.end();
 	
 	
 }
 
-void Editor::hide_automation(String p_path) {
+void Editor::hide_automation(String p_path,Track *p_track) {
 	
-	int selected_track=get_current_track();
-	Track *t = d->song->get_track(selected_track);
+	if (p_track==NULL) {
+		
+		p_track=d->song->get_track(get_current_track());
+	}
 	
 	d->undo_stream.begin("Hide Automation");
-	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_hide,t,p_path) );
+	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_hide,p_track,p_path) );
 	d->undo_stream.end();
 	
 }

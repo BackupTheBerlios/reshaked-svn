@@ -24,6 +24,15 @@ static Track_Pattern::Note _fix_macro(const Track_Pattern::Note &p_note) { retur
 BlockList* Editor::get_blocklist(int p_idx) {
 	
 	int blocks=0;
+	
+	for (int i=0;i<d->song->get_global_track().get_visible_automation_count();i++) {
+		
+		if (blocks==p_idx)
+			return d->song->get_global_track().get_visible_automation(i);
+		blocks++;
+		
+	}
+	
 	for (int i=0;i<d->song->get_track_count();i++) {
 		Track * t = d->song->get_track(i);
 		if (blocks==p_idx)
@@ -41,9 +50,11 @@ BlockList* Editor::get_blocklist(int p_idx) {
 	return NULL;
 	
 }
+
 int Editor::get_blocklist_count() {
 	
 	int blocks=0;
+	blocks+=d->song->get_global_track().get_visible_automation_count();
 	for (int i=0;i<d->song->get_track_count();i++) {
 		Track * t = d->song->get_track(i);
 		blocks++;
@@ -62,18 +73,11 @@ int Editor::get_blocklist_count() {
 int Editor::get_track_blocklist(int p_track) {
 	
 	ERR_FAIL_INDEX_V(p_track,d->song->get_track_count(),-1);
-	int blocks=0;
-	for (int i=0;i<d->song->get_track_count();i++) {
-		Track * t = d->song->get_track(i);
-		if (p_track==i)
-			return blocks;
+	int bl_count=get_blocklist_count();
+	for (int i=0;i<bl_count;i++) {
 		
-		blocks++;
-		
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-			
-			blocks++;
-		}
+		if (d->song->get_track(p_track)==get_blocklist(i))
+			return i;
 	}
 	
 	return -1;
@@ -81,44 +85,29 @@ int Editor::get_track_blocklist(int p_track) {
 
 int Editor::get_blocklist_track(int p_blocklist) {
 	
-	int blocks=0;
-	for (int i=0;i<d->song->get_track_count();i++) {
-		Track * t = d->song->get_track(i);
-		if (blocks==p_blocklist)
-			return i;
+	int bl_count=get_blocklist_count();
+	ERR_FAIL_INDEX_V(p_blocklist,bl_count,-1);
+	
+	
+	int track=-1;
+	
+	for (int i=0;i<bl_count;i++) {
 		
-		blocks++;
+		if (dynamic_cast<Track*>(get_blocklist(i)))
+			track++;
 		
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-			
-			if (blocks==p_blocklist)
-				return i;
-			blocks++;
-		}
+		if (p_blocklist==i)
+			return track;
+		
 	}
 	
 	return -1;
+	
 }
 
 int Editor::get_current_track() {
 	
-	int blocks=0;
-	for (int i=0;i<d->song->get_track_count();i++) {
-		Track * t = d->song->get_track(i);
-		if (d->global_edit.current_blocklist==blocks)
-			return i;
-		blocks++;
-		
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-			
-			if (d->global_edit.current_blocklist==blocks)
-				return i;
-			
-			blocks++;
-		}
-	}
-	
-	return -1;
+	return get_blocklist_track(d->global_edit.current_blocklist);
 	
 }
 void Editor::set_current_blocklist(int p_which) {
@@ -133,22 +122,13 @@ void Editor::set_current_blocklist(int p_which) {
 
 void Editor::get_blocklists_sharing_block(BlockList::Block * p_block,std::list<int> *p_blocklist) {
 	
-	int bl=0;
-	for (int i=0;i<d->song->get_track_count();i++) {
-		Track * t = d->song->get_track(i);
-		
-		if (t->shares_block_data(p_block))
-			p_blocklist->push_back(bl);
-		
-		bl++;
-		
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-			
-			if (t->get_visible_automation(j)->shares_block_data(p_block))
-				p_blocklist->push_back(bl);
-		
-			bl++;
-		}
+	int bl_count=get_blocklist_count();
+
+	for (int i=0;i<bl_count;i++) {
+	
+		if (get_blocklist(i)->shares_block_data(p_block))
+			p_blocklist->push_back(i);
+	
 	}
 }
 
@@ -308,26 +288,17 @@ int Editor::get_current_blocklist() {
 
 int Editor::find_blocklist(BlockList *p_blocklist) {
 	
-	int bl=0;
-	for (int i=0;i<d->song->get_track_count();i++) {
+	int bl_count=get_blocklist_count();
+	
+	
+	for (int i=0;i<bl_count;i++) {
 		
-		Track * t = d->song->get_track(i);
-		
-		if (t==p_blocklist)
-			return bl;
-		
-		bl++;
-		
-		for (int j=0;j<t->get_visible_automation_count();j++) {
-			
-			if (t->get_visible_automation(j)==p_blocklist)
-				return bl;
-		
-			bl++;
-		}
+		if (get_blocklist( i )==p_blocklist)
+			return i;
 	}
 	
 	return -1;
+
 }
 
 

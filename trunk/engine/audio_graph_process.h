@@ -21,18 +21,25 @@ class AudioGraphProcess {
 		/* Audio Node Being Processed */
 		AudioNode *node;
 	
-		/* Which buffer will the output copy+add to */
+		/* Buffer for each input/output. NULL unless connected */
+		
+		std::vector<AudioBuffer*> output_buffers; /* Buffer for each Output */
 		std::vector<AudioBuffer*> input_buffers; /* Buffer for each Input */
+		
+	
+		std::vector<std::vector<AudioBuffer*> > input_sources;
 	};
 
 
 	
 	std::vector<ProcessNode*> process_nodes;
 	std::vector<AudioBuffer*> thrash_buffers; /* Thrash Buffers, for sending unconnected outputs */
+	std::vector<AudioBuffer*> silence_buffers; /* Thrash Buffers, for sending unconnected outputs */
 
 	bool unconfigured;	
 
 	AudioBuffer* get_trash_buffer_for_given_channels(int p_channels);
+	AudioBuffer* get_silence_buffer_for_given_channels(int p_channels);
 	
 friend class AudioGraph;	
 	
@@ -49,6 +56,7 @@ friend class AudioGraph;
 	int process(int p_frames);
 	
 	AudioGraphProcess();
+	~AudioGraphProcess();
 };
 
 

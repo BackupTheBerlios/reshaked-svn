@@ -16,6 +16,7 @@
 #include "engine/event_buffer.h"
 #include "engine/automation.h"
 #include "engine/block_list.h"
+#include "engine/global_properties.h"
 
 #include "property.h"
 
@@ -57,13 +58,11 @@ public:
 		ValueStream<Tick,Block*> block_list;
 		
 		
-		LocalProperty swing;
-		LocalProperty volume;
-		LocalProperty balance;
-		
+	
 		std::vector<PropertyRef*> property_list;
 		
 		String name;
+		GlobalProperties *global_props;
 
 	} base_private;
 
@@ -79,6 +78,7 @@ protected:
 
 	
 	const EventBuffer& get_seq_event_buffer();
+	GlobalProperties &get_global_props();
 
 	virtual void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames)=0;
 	
@@ -86,11 +86,10 @@ protected:
 
 	String get_caption();
 	
+	virtual bool is_visible();
+	
 public:
 
-	Property &swing();
-	Property &volume();
-	Property &balance();
 	
 	
 	/* Sequencer Event Handling */
@@ -116,7 +115,7 @@ public:
 	void set_name(String p_name);
 	String get_name();
 	
-	Track(int p_channels,BlockType p_type);
+	Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props);
 	~Track();
 
 };

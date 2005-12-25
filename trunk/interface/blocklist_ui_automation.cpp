@@ -742,10 +742,10 @@ bool BlockListUI_Automation::event( QEvent * ev ) {
 	
 }
 
-BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, int p_track,int p_automation) : BlockListUI_Base(p_parent) {
+BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, Automation *p_automation) : BlockListUI_Base(p_parent) {
 	
 	editor = p_editor;
-	automation=editor->get_song()->get_track(p_track)->get_visible_automation(p_automation);
+	automation=p_automation;
 	
 	setBackgroundRole(QPalette::NoRole);
 

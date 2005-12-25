@@ -40,14 +40,33 @@ Goals for 60%
 -Routing Working
 
 Goals for 70% 
+-Buses
+-Global Track
 -Global Stuff (tempo)
--Rack working
--Synth working
+-Labels thru song (marks
 
 Goals for 80%
+-Rack working
+-Synth working
 -Simple synth
--Simple effects: filterbank, chorus, freeverb
+-Simple effect: (amp)
 
 Goals for 90%
 -Saving/Loading of project
+-Saving/Loading of Settings
 
+Goals for 100%
+-Settings dialog
+-Overal beautify/fix interface, make more intuitive
+-Big Mixer
+
+-=-=-=-=
+
+Goals after 100%
+-MIDI Out
+-Complex synths
+-LADSPA support
+-DSSI support
+
+Goals after Goals after 100%
+-good Windows/VST Support 

@@ -314,6 +314,8 @@ void MainWindow::track_list_changed_slot() {
 void MainWindow::blocklist_changed_slot() {
 	
 	
+	if (data.editor->get_current_track()<0)
+		return;
 	Track *t=data.song.get_track( data.editor->get_current_track () );
 	if (t==NULL)
 		return;
