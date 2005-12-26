@@ -31,8 +31,8 @@ void String::copy_on_write() {
 	
 	create_shared();
 	
-	shared->len=old->len;
-	shared->data=(CharType *)malloc((shared->len+1)*sizeof(CharType));
+	resize_shared(old->len);
+	
 	for (int i=0;i<shared->len;i++) {
 		
 		shared->data[i]=old->data[i];		
@@ -434,7 +434,8 @@ String::String(CharType p_char) {
 }
 
 String::String(const String &p_string) {
-	
+
+	shared=NULL;
 	create_shared();
 	String &str=(String&)p_string; /* remove Const-ness */
 	copy_from(str);	
@@ -453,6 +454,7 @@ String::String(const CharType *p_str) {
 
 String::String() {
 		
+	shared=NULL;
 	create_shared();
 }
 

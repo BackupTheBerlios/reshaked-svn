@@ -30,20 +30,20 @@ Global View
 *?-delete blocks gdannit
 
 Selection
--Make selection :)
--Select blocks in global_view (?)
+*Make selection :) )buggy)
+*Select blocks in global_view (?)
 
 
 Goals for 60% 
--Basic audio system working and routing, using JACK driver
--Add audio locks everywhere
--Routing Working
+*Basic audio system working and routing, using JACK driver
+*Add audio locks everywhere
+*Routing Working
 
 Goals for 70% 
 -Buses
--Global Track
--Global Stuff (tempo)
--Labels thru song (marks
+*Global Track
+*Global Stuff (tempo)
+*Labels thru song (marks
 
 Goals for 80%
 -Rack working
@@ -70,3 +70,11 @@ Goals after 100%
 
 Goals after Goals after 100%
 -good Windows/VST Support 
+
+
+
+BUGS:
+-Shift selection doesnt work
+-Move_COPYing blocks in global view can overlap two blocks, check for overlaps when seeing
+if the block is valid too.
+-While connecting cables, am i locking the undo system?

@@ -14,6 +14,7 @@
 
 #include <Qt/qwidget.h>
 #include "interface/global_view.h"
+#include "editor/editor.h"
 
 namespace ReShaked {
 
@@ -24,13 +25,17 @@ class GlobalBeatBarColumn : public QWidget {
 				       
 	GlobalView *global_view;
 	BarMap *bar_map;
-				       
+	Editor *editor;
+	ValueStream<int,String> *marker_list;
+	
+	void paint_marker(QPainter& p, int p_marker_idx);
 	void paintEvent(QPaintEvent *p);
+	void mousePressEvent(QMouseEvent *e);
 public:
 	
 	void set_global_view(GlobalView *p_global_view);
 	
-	GlobalBeatBarColumn(QWidget *p_parent,BarMap *p_bar_map);
+	GlobalBeatBarColumn(QWidget *p_parent,Editor *p_editor);
 	~GlobalBeatBarColumn();
 
 };

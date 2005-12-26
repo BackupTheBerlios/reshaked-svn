@@ -23,9 +23,10 @@ namespace ReShaked {
 class RowListDisplay : public QWidget {
 
 	enum {
-		CHAR_WIDTH=6
+		CHAR_WIDTH=8
 	};
 
+	void paint_marker(QPainter& p, int p_marker_idx,int p_row,bool p_paint_arrow=true,int p_check_next=-1);
 	void paintEvent(QPaintEvent *p);
 	Cursor *cursor;
 	Song *song;

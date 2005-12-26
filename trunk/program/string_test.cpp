@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <wchar.h>
 #include <string>
+#include <vector>
+
 
 
 //#define DEBUG
@@ -45,6 +47,21 @@ int main() {
   correct+="\n";
   wprintf(L"%s",correct.c_str());
 #endif
+  
+  std::vector<ReShaked::String> string_vec;
+  string_vec.push_back("Hoe");
+  string_vec.push_back("hie");
+  string_vec.push_back("torem");
+  string_vec.push_back("pohoi");
+  string_vec.erase(string_vec.begin()+2);
+  string_vec.insert(string_vec.begin()+1,"toadd!");
+  
+  
+  for (int i=0;i<string_vec.size();i++) {
+	  
+	  wprintf(L"%i: %lls\n",i,string_vec[i].c_str());	  
+  }
+  
   
   return 0;  
 }

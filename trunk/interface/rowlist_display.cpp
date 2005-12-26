@@ -12,9 +12,54 @@
 #include "rowlist_display.h"
 #include <Qt/qpainter.h>
 #include "ui_blocks/visual_settings.h"
+#include "ui_blocks/helpers.h"
 
 namespace ReShaked {
 
+
+void RowListDisplay::paint_marker(QPainter& p, int p_marker_idx,int p_row,bool p_paint_arrow,int p_check_next) {
+	
+	String marker_text=song->get_marker_list().get_index_value(p_marker_idx);
+	int beat=song->get_marker_list().get_index_pos(p_marker_idx);
+	int fontwidth=VisualSettings::get_singleton()->get_pattern_font()->get_width()*2/3;
+	int rowsize=VisualSettings::get_singleton()->get_editing_row_height();	
+	int pos=rowsize*p_row;
+	int beat_h=rowsize;
+	
+	
+	QFont f;
+	f.setPixelSize(fontwidth*2);
+	QFontMetrics m(f);
+	
+	if (p_check_next>=0 && (p_check_next*rowsize)<m.width(QStrify(marker_text)))
+		return;
+	
+	
+	p.save();
+	
+	/* Draw Arrow */
+	if (p_paint_arrow) {
+		p.setPen(QColor(150,150,150));
+		p.setBrush(QColor(150,150,150));
+		QPolygon arrow;
+		arrow.push_back(QPoint(0,pos-beat_h/2));
+		arrow.push_back(QPoint(0,pos+beat_h/2));
+		arrow.push_back(QPoint(m.descent(),pos));
+		
+		p.drawPolygon(arrow,Qt::WindingFill);
+	}	
+	/* Draw Text */
+	
+	
+	
+	p.setFont(f);
+	p.rotate(90.0); //90 degrees!
+	p.setPen(QColor(255,255,255));
+	p.drawText(pos+beat_h,-m.descent(), QStrify( marker_text ) );
+	
+	p.restore();
+	
+}
 
 
 void RowListDisplay::paintEvent(QPaintEvent *pe) {
@@ -28,6 +73,7 @@ void RowListDisplay::paintEvent(QPaintEvent *pe) {
 	int rowsize=VisualSettings::get_singleton()->get_editing_row_height();
 	int visible_rows=height()/rowsize;
 	int fontofs=(rowsize-pfont->get_height())/2;
+	int first_marker_at=-1;
 
 	for (int i=0;i<visible_rows;i++) {
 
@@ -53,7 +99,7 @@ void RowListDisplay::paintEvent(QPaintEvent *pe) {
 		} else if (song->get_bar_map().get_bar_beat( beat)==0) { //bar
 			str=QString::number(song->get_bar_map().get_bar_at_beat( beat)+1 );
 			str="*"+str+"*";
-			xofs=0;//width()-(str.length())*pfont->get_width();
+			xofs=2*pfont->get_width();
 			rfont->render_string( p, xofs,i*rowsize+fontofs , str.toAscii().data() );
 		} else  {
 				
@@ -64,27 +110,6 @@ void RowListDisplay::paintEvent(QPaintEvent *pe) {
 			xofs=width()-(str.length()+1)*pfont->get_width();
 			pfont->render_string( p, xofs,i*rowsize+fontofs , str.toAscii().data() );
 		} 
-		
-		/*
-		char str[5]={' ',' ',' ',' ',0};
-
-		int displaynum=(subbeat==0)?beat:subbeat;
-		PixmapFont *displayfont=(subbeat==0)?rfont:pfont;
-		int x=0;
-		if (subbeat>0)
-			x-=rfont->get_width();
-
-		if (displaynum/1000 || subbeat==0)
-			str[0]='0'+DIGIT_4(displaynum);
-		if (displaynum/100 || subbeat==0)
-			str[1]='0'+DIGIT_3(displaynum);
-		if (displaynum/10 || subbeat==0)
-			str[2]='0'+DIGIT_2(displaynum);
-		if (displaynum || subbeat==0)
-			str[3]='0'+DIGIT_1(displaynum);
-
-		displayfont->render_string( p, x,i*rowsize+fontofs , str );
-		*/
 		
 		if (subbeat==0) { //just paint subbeat
 		
@@ -98,7 +123,31 @@ void RowListDisplay::paintEvent(QPaintEvent *pe) {
 			p.fillRect(0,i*rowsize,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
 		}
 		
+		
+		if (subbeat==0) {
+			
+			int marker_idx=song->get_marker_list().get_exact_index(beat); //marker here?
+			if (marker_idx!=INVALID_STREAM_INDEX) {
+				
+				if (first_marker_at==-1)
+					first_marker_at=i;
+				
+				paint_marker(p,marker_idx,i);
+				
+			}
+			
+		}
+		
 	}
+	
+	/* Paint current marker */		
+	int beat=cursor->get_snapped_window_beat( 0 );
+	int marker_idx=song->get_marker_list().get_prev_index(beat);
+	if (marker_idx>=0) {
+			
+		paint_marker(p, marker_idx,0,false,first_marker_at);
+	}
+	
 
 }
 RowListDisplay::RowListDisplay(QWidget *p_parent,Editor *p_editor) : QWidget(p_parent) {

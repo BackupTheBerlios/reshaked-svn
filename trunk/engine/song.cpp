@@ -5,6 +5,12 @@
 
 namespace ReShaked {
 
+
+ValueStream<int,String>& Song::get_marker_list() {
+	
+	return marker_list;
+}
+
 GlobalTrack& Song::get_global_track() {
 	
 	return global_track;
@@ -137,6 +143,7 @@ Song::Song() : global_track(&global_properties) {
 	output_node=NULL;
 	audio_port_layout.port_out_info.push_back(2);
 	audio_port_layout.port_in_info.push_back(2);
+	marker_list.insert(0,"Markers");
 }
 
 Song::~Song() {

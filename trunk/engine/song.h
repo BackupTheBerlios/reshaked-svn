@@ -25,6 +25,9 @@ private:
 	
 	AudioNode *input_node; ///< Global Input Node
 	AudioNode *output_node; ///< Global Output Node
+
+ 
+	ValueStream<int,String> marker_list; ///< beat/name
 public:
 
 	GlobalProperties& get_global_properties();
@@ -32,6 +35,7 @@ public:
 	BarMap& get_bar_map();
 	AudioGraph& get_track_graph();
 	AudioPortLayout& get_audio_port_layout();
+	ValueStream<int,String>& get_marker_list();
 	
 	void add_track(Track* p_track,int p_at_pos=-1,std::list<AudioGraph::Connection> *p_node_connections=NULL); ///< pos, or -1 for at end (default)
 	int get_track_count();

@@ -91,7 +91,7 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	gb_frame->setFrameStyle(Panel+Sunken);
 	gb_frame->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	l->addWidget(gb_frame,1,0,1,2);
-	beat_bar_column = new GlobalBeatBarColumn(gb_frame,&editor->get_song()->get_bar_map());
+	beat_bar_column = new GlobalBeatBarColumn(gb_frame,editor);
 	gb_frame->layout()->addWidget(beat_bar_column);
 	global_view = new GlobalView( gb_frame, p_editor);
 	gb_frame->layout()->addWidget(global_view);

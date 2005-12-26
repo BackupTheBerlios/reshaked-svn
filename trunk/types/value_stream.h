@@ -95,20 +95,23 @@ void ValueStream<T,V>::insert(T p_pos,V p_value) {
 	
 	value_stream_global_lock();
 	
+	Value new_v;
+	new_v.pos=p_pos;
+	new_v.val=p_value;
+	
 	bool exact;
 	int pos=find_pos(p_pos,exact);
 	if (pos==INVALID_STREAM_INDEX) { //it's empty!
-	    stream.resize(1);
-            pos=0;
+		stream.push_back(new_v);
 	} else if (!exact) { /* no exact position found, make room */
-
-	    stream.resize(stream.size()+1);
-	    if (pos<stream.size()) //if it's not adding at the last element
-		memmove(&stream[pos+1],&stream[pos],sizeof(Value)*(stream.size()-pos-1));
+		if (pos==stream.size())
+			stream.push_back(new_v); //it's at the end, just pushit back
+		else
+			stream.insert(stream.begin()+pos,new_v);
+	} else {
+		
+		stream[pos]=new_v; /* Overwrite, sine exact position */
 	}
-
-	stream[pos].val=p_value; /* Assign */
-	stream[pos].pos=p_pos; /* Assign */
 
 	value_stream_global_unlock();
 	

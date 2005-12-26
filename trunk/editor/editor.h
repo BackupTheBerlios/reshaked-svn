@@ -146,6 +146,10 @@ public:
 	
 	Tick get_song_max_len();
 	
+	void marker_set(int p_beat,String p_text);
+	void marker_remove(int p_beat);
+	
+	
 	/** UNDO SYSTEM (edit.cpp) */
 	
 	void begin_meta_undo_block(String p_name);

@@ -16,6 +16,18 @@
 namespace ReShaked {
 
 
+
+void Editor::marker_set(int p_beat,String p_text) {
+	
+	d->song->get_marker_list().insert(p_beat,p_text);
+	
+}
+void Editor::marker_remove(int p_index) {
+	
+	d->song->get_marker_list().erase_index(p_index);
+}
+
+
 bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 	
 	bool handled=true;
