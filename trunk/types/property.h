@@ -28,6 +28,7 @@ public:
 		DISPLAY_SPIN,
 		DISPLAY_COMBO,
 		DISPLAY_CHECKBOX,
+		DISPLAY_VU,
 			
 	};
 	

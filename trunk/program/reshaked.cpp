@@ -5,6 +5,8 @@
 #include "engine/sound_driver_list.h"
 #include "engine/audio_control.h"
 #include "drivers/sound_driver_jack.h"
+#include "engine/sound_plugin_list.h"
+#include "plugins/amplifier_plugin.h"
 
 #ifdef POSIX_ENABLED
 
@@ -13,6 +15,9 @@
 #endif
 
 int main(int argc, char *argv[]) {
+
+	ReShaked::SoundPluginList sound_plugin_list;
+	sound_plugin_list.add_info( ReShaked::AmplifierPlugin::create_info() );
 
 #ifdef POSIX_ENABLED
 	

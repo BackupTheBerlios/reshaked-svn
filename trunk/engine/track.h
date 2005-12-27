@@ -17,7 +17,8 @@
 #include "engine/automation.h"
 #include "engine/block_list.h"
 #include "engine/global_properties.h"
-
+#include "engine/sound_plugin.h"
+#include "engine/audio_graph.h"
 #include "property.h"
 
 
@@ -45,7 +46,22 @@ public:
 		String path;
 		TrackAutomation *automated;
 	};
-
+	
+	struct PluginInsertData { /* crappy struct so undo/redo works */
+		
+		SoundPlugin *plugin;
+		int pos; //pos where to insert, -1 means default
+		struct AutomationTrack {
+			TrackAutomation *automation;
+			int pos;
+		};
+			
+		std::list<AutomationTrack> automated_tracks; //automations in use by the plugin
+		std::list<AudioGraph::Connection> connections; //connections of the plugin
+		PluginInsertData() { plugin=NULL; pos=-1; }
+	};
+private:
+	
 	struct BasePrivate {
 
 
@@ -60,6 +76,8 @@ public:
 		
 	
 		std::vector<PropertyRef*> property_list;
+		AudioGraph plugin_graph;
+		std::vector<SoundPlugin*> sound_plugins;
 		
 		String name;
 		GlobalProperties *global_props;
@@ -90,7 +108,12 @@ protected:
 	
 public:
 
+	/* plugins */
 	
+	int get_plugin_count();
+	SoundPlugin *get_plugin(int p_index);
+	void add_plugin(PluginInsertData* p_plugin);
+	void remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery);
 	
 	/* Sequencer Event Handling */
 	void set_sequencer_event_buffer(const EventBuffer *p_seq);

@@ -71,6 +71,8 @@ Goals after 100%
 Goals after Goals after 100%
 -good Windows/VST Support 
 
+-hmm interesting idea.. have your base thing, and
+excite harmonics to midi input.. good!
 
 
 BUGS:
@@ -78,3 +80,4 @@ BUGS:
 -Move_COPYing blocks in global view can overlap two blocks, check for overlaps when seeing
 if the block is valid too.
 -While connecting cables, am i locking the undo system?
+

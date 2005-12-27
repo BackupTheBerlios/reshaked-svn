@@ -15,7 +15,6 @@
 namespace ReShaked {
 
 
-
 void Track::add_property(String p_path,Property *p_prop) {
 	
 	AudioControl::mutex_lock();
@@ -274,6 +273,63 @@ GlobalProperties &Track::get_global_props() {
 	
 	return *base_private.global_props;
 }
+
+int Track::get_plugin_count() {
+	
+	return base_private.sound_plugins.size();
+}
+SoundPlugin *Track::get_plugin(int p_index) {
+	
+	ERR_FAIL_INDEX_V(p_index,get_plugin_count(),NULL);
+	return base_private.sound_plugins[p_index];
+		
+}
+void Track::add_plugin(PluginInsertData* p_plugin) {
+	
+	AudioControl::mutex_lock();
+	
+	/* insert */
+	if (p_plugin->pos==-1) {
+		base_private.sound_plugins.push_back(p_plugin->plugin);
+	} else {
+		base_private.sound_plugins.insert( base_private.sound_plugins.begin()+p_plugin->pos,p_plugin->plugin );
+	}
+	
+	/* determine path */
+	String path=p_plugin->plugin->get_info()->is_synth?"synth/":"effect/";
+	
+	/* add properties */
+	for (int i=0;i<p_plugin->plugin->get_port_count();i++) {
+		if (p_plugin->plugin->get_port_type(i)==SoundPlugin::TYPE_READ)
+			continue;
+		add_property(path,&p_plugin->plugin->get_port(i) );	
+	}
+	
+	/* restore automations (if pending) */
+	
+	foreach(I,p_plugin->automated_tracks) {
+		/* list was filled backwards as automations were removed, so they can be added in proper order */
+		base_private.automations.insert( base_private.automations.begin()+I->pos, I->automation);
+		
+		foreach(J,base_private.property_list) {
+			
+			if ( (*J)->property==I->automation->get_property() )
+				(*J)->automated=I->automation;				
+		}
+	}
+	
+	/* Finally, restore connections */
+	base_private.plugin_graph.add_node( p_plugin->plugin, &p_plugin->connections );
+	
+	AudioControl::mutex_unlock();
+	
+}
+
+void Track::remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery) {
+	
+	
+}
+
 
 Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props) : BlockList(p_type) {
 	

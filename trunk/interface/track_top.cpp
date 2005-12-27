@@ -181,7 +181,7 @@ TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p
 	amenu->setIcon(GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS));
 	
 	if (p_type!=TYPE_GLOBAL) {
-		menu->addAction(new IndexedAction(ACTION_EFFECTS,"Add Sound Effect",GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS),this));
+		menu->addAction(new IndexedAction(ACTION_EFFECTS,"Add Effect/Synth",GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS),this));
 	
 	
 	

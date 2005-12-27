@@ -123,7 +123,6 @@ struct Event {
 		TYPE_NONE, /* nothing */
 		TYPE_MIDI,
 		TYPE_SEQ_TEMPO,
-		TYPE_SEQ_SIGNATURE,
 		TYPE_SEQ_BEAT,
 		TYPE_SEQ_BAR,
 		TYPE_SEQ_SCALE,

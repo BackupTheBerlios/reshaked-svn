@@ -52,5 +52,6 @@ SConscript('editor/SCsub');
 SConscript('interface/SCsub');
 SConscript('ui_blocks/SCsub');
 SConscript('drivers/SCsub');
+SConscript('plugins/SCsub');
 SConscript('program/SCsub');
 
