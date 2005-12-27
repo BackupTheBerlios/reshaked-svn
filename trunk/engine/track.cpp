@@ -201,6 +201,17 @@ AudioPlug *Track::get_output_plug(int p_index) {
 
 }
 
+void Track::feed_input(int p_frames) {
+	
+	AudioBuffer *proxy_buff=base_private.input_proxy.get_output_plug(0)->get_buffer();
+	proxy_buff->copy_from( base_private.input_plug->get_buffer(), p_frames );
+}
+void Track::read_output(int p_frames) {
+	
+	AudioBuffer *output_buff=base_private.output_plug->get_buffer();
+	output_buff->copy_from( base_private.input_proxy.get_input_plug(0)->get_buffer(), p_frames );
+}
+
 void Track::process(int p_frames) {
 
 
@@ -399,6 +410,15 @@ Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props) :
 	base_private.seq_events=NULL;
 	base_private.input_plug=new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	base_private.output_plug=new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
+	
+	/* input <-> output flipping because we are OUTSIDE the graph */
+	base_private.input_proxy.add_output_plug( p_channels );
+	base_private.output_proxy.add_input_plug( p_channels);
+	base_private.plugin_graph.add_node( &base_private.input_proxy );
+	base_private.plugin_graph.add_node( &base_private.output_proxy );
+	base_private.input_proxy.set_process_method( this, (void (ProxyNodeBase::*)(int))&Track::feed_input );
+	base_private.output_proxy.set_process_method( this, (void (ProxyNodeBase::*)(int)) &Track::read_output );
+	
 }
 
 

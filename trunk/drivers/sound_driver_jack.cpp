@@ -23,15 +23,19 @@ int SoundDriver_JACK::process_jack_callback(jack_nframes_t nframes,void *arg) {
 	
 	SoundDriver_JACK* _this=(SoundDriver_JACK*)arg;
 	_this->process(nframes);
-	
+	return 0;
 }
 int SoundDriver_JACK::jack_set_mixfreq(jack_nframes_t nframes,void *arg) {
 	
 	/* todo */
+	return 0;
+	
 }
 int SoundDriver_JACK::jack_set_buffsize(jack_nframes_t nframes,void *arg) {
 	
 	/* todo*/
+	return 0;
+	
 }
 void SoundDriver_JACK::jack_shutdown(void *arg) {
 	

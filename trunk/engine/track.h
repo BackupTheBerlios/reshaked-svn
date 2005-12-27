@@ -19,6 +19,7 @@
 #include "engine/global_properties.h"
 #include "engine/sound_plugin.h"
 #include "engine/audio_graph.h"
+#include "engine/proxy_node.h"
 #include "property.h"
 
 
@@ -28,7 +29,7 @@ namespace ReShaked {
 @author Juan Linietsky
 */
 
-class Track : public AudioNode , public BlockList {
+class Track : public AudioNode , public BlockList, public ProxyNodeBase {
 public:
 
 	class TrackAutomation : public Automation {
@@ -81,7 +82,10 @@ private:
 		
 		String name;
 		GlobalProperties *global_props;
-
+		
+		ProxyNode input_proxy;
+		ProxyNode output_proxy;
+		
 	} base_private;
 
 	int get_input_plug_count();
@@ -90,7 +94,8 @@ private:
 	AudioPlug *get_output_plug(int p_index);
 	
 	void process(int p_frames);
-
+	void feed_input(int p_frames);
+	void read_output(int p_frames);
 	
 protected:
 
