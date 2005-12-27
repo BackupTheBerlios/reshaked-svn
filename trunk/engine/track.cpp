@@ -327,7 +327,70 @@ void Track::add_plugin(PluginInsertData* p_plugin) {
 
 void Track::remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery) {
 	
+	ERR_FAIL_INDEX(p_pos,get_plugin_count());
 	
+	AudioControl::mutex_lock();
+	
+	SoundPlugin *node=get_plugin( p_pos );
+	p_plugin_recovery->plugin=node;
+	p_plugin_recovery->pos=p_pos;
+	
+	/* Save Connections */
+	base_private.plugin_graph.erase_node( base_private.plugin_graph.get_node_index(node) , &p_plugin_recovery->connections );
+	
+	/* Save automations (in case anythnig has been "propertized as */
+	
+	for (int i=0;i<base_private.automations.size();i++) {
+		
+		int port=-1;
+		for (int j=0;j<node->get_port_count();j++) {
+			
+			if (node->get_port_type(j)==SoundPlugin::TYPE_READ)
+				continue;
+			if (&node->get_port(j)==base_private.automations[i]->get_property()) {
+				port=j;
+				break;
+			}
+		}
+				
+		if (port==-1) //no port
+			continue;
+		PluginInsertData::AutomationTrack atdata;
+		atdata.automation=base_private.automations[i];
+		atdata.pos=i;
+		p_plugin_recovery->automated_tracks.push_front(atdata); //push front since later we'll insert
+		
+		base_private.automations.erase( base_private.automations.begin()+i );
+		i--;
+		
+	}
+	
+	/* Erase properties */
+	
+	for (int i=0;i<base_private.property_list.size();i++) {
+	
+		int port=-1;
+		for (int j=0;j<node->get_port_count();j++) {
+			
+			if (node->get_port_type(j)==SoundPlugin::TYPE_READ)
+				continue;
+			if (&node->get_port(j)==base_private.property_list[i]->property) {
+				port=j;
+				break;
+			}
+		}
+	
+		if (port==-1)
+			continue;
+		
+		base_private.property_list.erase( base_private.property_list.begin() + i );
+		i--;
+		
+	}
+	
+	base_private.sound_plugins.erase( base_private.sound_plugins.begin() + p_pos );
+	
+	AudioControl::mutex_unlock();
 }
 
 
