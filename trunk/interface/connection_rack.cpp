@@ -186,7 +186,7 @@ void ConnectionRack::paint_curve(QPainter &p,int p_src_x,int p_src_y,int p_dst_x
 	int x_prev=p_src_x;
 	int y_prev=p_src_y;
 	
-	QPointF points[steps+1]; //i guess using stack is wiser
+	QPointF *points= new QPointF[steps+1]; //i guess using stack is wiser
 	points[0]=QPointF(p_src_x,p_src_y);
 
 	for (int i=1;i<=steps;i++) {
@@ -200,6 +200,7 @@ void ConnectionRack::paint_curve(QPainter &p,int p_src_x,int p_src_y,int p_dst_x
 	}
 	
 	p.drawPolyline(points,steps+1);
+	delete points;
 	
 } 
 

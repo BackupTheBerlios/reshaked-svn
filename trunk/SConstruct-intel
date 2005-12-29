@@ -13,7 +13,7 @@ QT_VERSION_MINOR_NEEDED = 0
 qtdir=detect.check_qtdir(QT_VERSION_MAJOR_NEEDED,QT_VERSION_MINOR_NEEDED);
 os.environ["QTDIR"]=qtdir;
 
-env = Environment(CXX="gcc-3.3",CCFLAGS=['-Wall','-g3','-I.','-Wno-sign-compare'], tools=['default','qt']);
+env = Environment(CXX='/opt/intel/cc/9.0/bin/icpc',CCFLAGS=['-w1','-cxxlib-icc','-g3','-I.'], tools=['default','qt']);
 print env['TOOLS']
 
 if (os.name=='nt'): #WINDOWS
@@ -24,6 +24,7 @@ if (os.name=='nt'): #WINDOWS
 else: #POSIX
 	env.Append(LIBS=['QtGui','QtCore']);
 	env.Append(LIBS=['pthread']);
+	env.Append(LINKFLAGS=['-cxxlib-icc']);
 	env.Append(CXXFLAGS=['-DPOSIX_ENABLED']);
 
 env.Append(CXXFLAGS=['-DQT_NO_KEYWORDS']);
