@@ -1,3 +1,4 @@
+
 //
 // C++ Implementation: main_window
 //
@@ -71,7 +72,7 @@ void MainWindow::set_top_screen(TopScreenList p_list) {
 	}
 
 }
-
+/*
 void MainWindow::set_track_settings_page(TrackSettings::TrackSettingsPage p_page) {
 	
 	track_settings->set_page( p_page );
@@ -91,7 +92,7 @@ void MainWindow::set_track_settings_page(TrackSettings::TrackSettingsPage p_page
 	
 	
 }
-
+*/
 void MainWindow::menu_action_callback(int p_action) {
 
 	if (p_action<0 || p_action>=MAX_ITEMS)
@@ -113,6 +114,7 @@ void MainWindow::menu_action_callback(int p_action) {
 			blui_list->update_track_list();
 			delete new_dialog;
 
+			/*
 			if (data.song.get_track_count()) {
 
 				get_action(TRACK_CONTROLS)->setEnabled(true);
@@ -121,7 +123,7 @@ void MainWindow::menu_action_callback(int p_action) {
 				get_action(TRACK_CONNECTIONS)->setEnabled(true);
 				get_action(TRACK_LIST_CONNECTIONS)->setEnabled(true);
 			}
-
+			*/
 		} break;
 
 		case ITEM_EDIT_UNDO: {
@@ -142,7 +144,7 @@ void MainWindow::menu_action_callback(int p_action) {
 			set_top_screen(TOP_SCREEN_EDIT_VIEW);
 
 		} break;
-		
+		/*		
 		case TRACK_SYNTH: {
 			settings_dock->setVisible( get_action( item )->isChecked() );
 			track_settings->set_page( TrackSettings::TRACK_SETTINGS_PATTERN );
@@ -172,7 +174,7 @@ void MainWindow::menu_action_callback(int p_action) {
 			settings_dock->setVisible( get_action( item )->isChecked() );
 			set_track_settings_page(TrackSettings::TRACK_SETTINGS_TRACKLIST_CONNECTIONS);	
 		} break;
-		
+		*/
 		/*
 		case NAVIGATION_CONTROLS_VIEW: {
 			settings_dock->setVisible(get_action(NAVIGATION_CONTROLS_VIEW)->isChecked());
@@ -253,6 +255,7 @@ void MainWindow::add_menus() {
 	navigation_toolbar->addSeparator();
 	get_action(NAVIGATION_EDIT_VIEW)->setCheckable(true);
 	
+	/*
 	track->addSeparator();
 	
 	create_action(TRACK_SYNTH,"Edit Synth Tab","edit_synth_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_PATTERN));
@@ -277,14 +280,15 @@ void MainWindow::add_menus() {
 	get_action(TRACK_EFFECTS)->setEnabled(false);
 	get_action(TRACK_CONNECTIONS)->setEnabled(false);
 	get_action(TRACK_LIST_CONNECTIONS)->setEnabled(false);
-
+	*/
 
 }
 
 void MainWindow::track_list_changed_slot() {
-
+	/*
 	if ( data.editor->get_current_track ()<0 || data.editor->get_current_track ()>=data.song.get_track_count() ) {
 
+		
 		get_action(TRACK_SYNTH)->setEnabled(false);
 		get_action(TRACK_CONTROLS)->setEnabled(false);
 		get_action(TRACK_AUTOMATIONS)->setEnabled(false);
@@ -308,7 +312,7 @@ void MainWindow::track_list_changed_slot() {
 		get_action(TRACK_LIST_CONNECTIONS)->setEnabled(true);
 	}
 		
-	
+	*/
 	
 }
 void MainWindow::blocklist_changed_slot() {
@@ -338,15 +342,18 @@ MainWindow::MainWindow() {
 	main_stack->setCurrentWidget(blui_list);
 
 	setCentralWidget(main_stack);
-	settings_dock = new QDockWidget("Track Properties",this);
+	settings_dock = new QDockWidget("Virtual Rack",this);
 	settings_dock->setAllowedAreas(Qt::TopDockWidgetArea|Qt::BottomDockWidgetArea);
 	settings_dock->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable);
 	addDockWidget(Qt::BottomDockWidgetArea,settings_dock);
-	settings_dock->hide();
+
 	
 	//settings_dock->setLayout(new QHBoxLayout(settings_dock));
-	track_settings = new TrackSettings(settings_dock,data.editor);
-	settings_dock->layout()->addWidget(track_settings);
+	//track_settings = new TrackSettings(settings_dock,data.editor);
+	//settings_dock->layout()->addWidget(track_settings);
+	rack = new RackUI(settings_dock,data.editor);
+	settings_dock->layout()->addWidget(rack);
+	
 	
 	navigation_toolbar = addToolBar("Navigation");
 	//create this one on bottom
@@ -377,17 +384,18 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),this,SLOT(blocklist_changed_slot()));
 	QObject::connect(update_notify,SIGNAL(cursor_moved()),blui_list,SLOT(ensure_cursor_visible()));
 
-	QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),track_settings,SLOT(track_changed_slot()));
-	QObject::connect(update_notify,SIGNAL(current_automation_status_changed()),track_settings,SLOT(automation_update_status()),Qt::QueuedConnection);
+	//QObject::connect(update_notify,SIGNAL(cursor_changed_blocklist()),track_settings,SLOT(track_changed_slot()));
+	//QObject::connect(update_notify,SIGNAL(current_automation_status_changed()),track_settings,SLOT(automation_update_status()),Qt::QueuedConnection);
 	QObject::connect(update_notify,SIGNAL(current_automation_status_changed()),blui_list,SLOT(update_track_list()));
 	QObject::connect(update_notify,SIGNAL(current_automation_status_changed()),global_view_frame,SLOT(update()));
 
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),blui_list,SLOT(update_track_list()));
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),global_view_frame,SLOT(update()));
+	QObject::connect(update_notify,SIGNAL(track_list_changed()),rack,SLOT(update_rack()));
 	QObject::connect(update_notify,SIGNAL(editing_octave_changed()),this,SLOT(octave_changed_external_slot()));
 	
-	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),global_view_frame,SLOT(update()));
-	QObject::connect(track_settings,SIGNAL(update_track_names_signal()),blui_list,SLOT(repaint_names()));
+	//QObject::connect(track_settings,SIGNAL(update_track_names_signal()),global_view_frame,SLOT(update()));
+	//QObject::connect(track_settings,SIGNAL(update_track_names_signal()),blui_list,SLOT(repaint_names()));
 	
 	QObject::connect(global_view_frame,SIGNAL(global_view_changed_blocks_signal()),blui_list,SLOT(update_h_scroll()));
 	QObject::connect(update_notify,SIGNAL(update_blocklist_list( const std::list< int >& )),blui_list,SLOT(update_blocklist_list(const std::list<int>&)));
@@ -397,7 +405,8 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(block_layout_changed()),global_view_frame->get_global_view(),SLOT(block_layout_changed_slot()));
 	
 	QObject::connect(update_notify,SIGNAL(block_layout_changed()),blui_list,SLOT(repaint_track_list()));
-	QObject::connect(update_notify,SIGNAL(rack_changed()),track_settings,SLOT(connection_rack_changed()));
+	//QObject::connect(update_notify,SIGNAL(rack_changed()),track_settings,SLOT(connection_rack_changed()));
+	QObject::connect(update_notify,SIGNAL(track_names_changed()),rack,SLOT(update_rack_combo_names_slot()));
 		
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 	setMinimumSize(750,550); //dont mess with my app!

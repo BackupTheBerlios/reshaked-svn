@@ -13,7 +13,7 @@ QT_VERSION_MINOR_NEEDED = 0
 qtdir=detect.check_qtdir(QT_VERSION_MAJOR_NEEDED,QT_VERSION_MINOR_NEEDED);
 os.environ["QTDIR"]=qtdir;
 
-env = Environment(CXX="gcc-3.3",CCFLAGS=['-Wall','-g3','-I.','-Wno-sign-compare'], tools=['default','qt']);
+env = Environment(CCFLAGS=['-Wall','-g3','-I.','-Wno-sign-compare'], tools=['default','qt']);
 print env['TOOLS']
 
 if (os.name=='nt'): #WINDOWS

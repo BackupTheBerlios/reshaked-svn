@@ -12,7 +12,7 @@
 
 #include "editor.h"
 #include "keyboard_input.h"
-
+#include "editor_data.h"
 
 namespace ReShaked {
 

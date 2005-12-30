@@ -127,7 +127,6 @@ private:
 	};
 
 
-	void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames);
 
 	Block *create_duplicate_block(Block *p_block);
 	Block *create_link_block(Block *p_block);

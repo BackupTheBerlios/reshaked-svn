@@ -91,10 +91,12 @@ protected:
 	Editor *editor;
 	AudioGraph *graph;
 	 
-	virtual AudioNode *get_node_at_pos(int p_node)=0;
+	virtual AudioNode *get_node_at_pos(int p_node);
 	
 public:
-	ConnectionRack(QWidget *p_parent,Editor *p_editor,AudioGraph *p_graph);
+	
+	void set_audio_graph(AudioGraph *p_graph);
+	ConnectionRack(QWidget *p_parent,Editor *p_editor);
 	~ConnectionRack();
 
 };

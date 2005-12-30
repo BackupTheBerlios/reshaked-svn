@@ -346,6 +346,8 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 
 void ConnectionRack::mouseMoveEvent ( QMouseEvent * e ) {
 	
+	if (!graph)
+		return;
 	
 	if (connecting.enabled) {
 		
@@ -355,6 +357,9 @@ void ConnectionRack::mouseMoveEvent ( QMouseEvent * e ) {
 	
 }
 void ConnectionRack::mousePressEvent ( QMouseEvent * e ) {
+	
+	if (!graph)
+		return;
 	
 	if (e->button()==Qt::RightButton || (e->button()==Qt::LeftButton && e->modifiers()&Qt::ControlModifier)) {
 		/* DISCONNECT! */
@@ -464,6 +469,9 @@ void ConnectionRack::mousePressEvent ( QMouseEvent * e ) {
 }
 void ConnectionRack::mouseReleaseEvent ( QMouseEvent * e ) {
 	
+	if (!graph)
+		return;
+	
 	if (connecting.enabled) {
 		
 		PlugData dest_plug;
@@ -519,6 +527,8 @@ void ConnectionRack::mouseReleaseEvent ( QMouseEvent * e ) {
 
 void ConnectionRack::paintEvent(QPaintEvent *pe) {
 	
+	if (graph==NULL)
+		return;
 	
 	QPainter p(this);
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));
@@ -563,9 +573,18 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 	}
 }
 
-ConnectionRack::ConnectionRack(QWidget *p_parent,Editor *p_editor,AudioGraph *p_graph) : QWidget(p_parent) {
+
+void ConnectionRack::set_audio_graph(AudioGraph *p_graph) {
 	
 	graph=p_graph;
+	update();
+	
+}
+
+
+ConnectionRack::ConnectionRack(QWidget *p_parent,Editor *p_editor) : QWidget(p_parent) {
+	
+	graph=NULL;
 	editor=p_editor;
 	setBackgroundRole(QPalette::NoRole);
 	setMouseTracking(true);
@@ -575,6 +594,11 @@ ConnectionRack::ConnectionRack(QWidget *p_parent,Editor *p_editor,AudioGraph *p_
 	
 }
 
+AudioNode *ConnectionRack::get_node_at_pos(int p_node) {
+	
+	
+	return graph->get_node( p_node );
+}
 
 ConnectionRack::~ConnectionRack() {
 }
@@ -594,7 +618,7 @@ AudioNode *ConnectionRackTracks::get_node_at_pos(int p_node) {
 		return editor->get_song()->get_track( p_node-1 );
 }
 
-ConnectionRackTracks::ConnectionRackTracks(QWidget *p_parent,Editor *p_editor) : ConnectionRack(p_parent,p_editor,&p_editor->get_song()->get_track_graph()) {
+ConnectionRackTracks::ConnectionRackTracks(QWidget *p_parent,Editor *p_editor) : ConnectionRack(p_parent,p_editor) {
 
 		
 	

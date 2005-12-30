@@ -36,6 +36,7 @@ public:
 	
 	virtual void block_layout_changed()=0;
 	
+	virtual void track_names_changed()=0;
 	virtual ~UI_UpdateNotify(){}
 	
 };

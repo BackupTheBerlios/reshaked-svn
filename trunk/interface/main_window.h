@@ -30,7 +30,7 @@
 #include <Qt/qcombobox.h>
 #include "editor/keyboard_input.h"
 #include "interface/qt_updatenotify.h"
-#include "interface/track_settings.h"
+#include "interface/rackui.h"
 #include "ui_blocks/qaction_keybind.h"
 
 namespace ReShaked {
@@ -68,14 +68,14 @@ class MainWindow : public QMainWindow {
 
 		NAVIGATION_GLOBAL_VIEW,
 		NAVIGATION_EDIT_VIEW,
-		
+		/*		
 		TRACK_SYNTH,
 		TRACK_CONTROLS,
 		TRACK_AUTOMATIONS,
 		TRACK_EFFECTS,
 		TRACK_CONNECTIONS,
 		TRACK_LIST_CONNECTIONS,
-
+		*/
 		MAX_ITEMS
 	};
 
@@ -114,10 +114,11 @@ class MainWindow : public QMainWindow {
 
 	Qt_UpdateNotify *update_notify;
 	
-	TrackSettings *track_settings;
+	//TrackSettings *track_settings;
+	RackUI *rack;
 
 	void set_top_screen(TopScreenList p_list);
-	void set_track_settings_page(TrackSettings::TrackSettingsPage p_page);
+	//void set_track_settings_page(TrackSettings::TrackSettingsPage p_page);
 
 	bool updating_octave;
 	

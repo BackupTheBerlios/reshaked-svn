@@ -36,6 +36,7 @@ signals:
 	void current_automation_status_changed();
 	void block_layout_changed();
 	void rack_changed();
+	void track_names_changed();
 public:
 	
 	

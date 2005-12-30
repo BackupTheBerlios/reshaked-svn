@@ -118,18 +118,6 @@ bool Track_Pattern::can_resize_from_begining() {
 
 	return false;
 }
-void Track_Pattern::process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames) {
-
-	for (int i=0;i<p_in_buf->get_channels();i++) {
-		
-		for (int j=0;j<p_frames;j++)
-			p_out_buf->get_buffer( i)[j]=p_in_buf->get_buffer( i)[j];
-
-
-	}
-
-
-}
 
 Track_Pattern::Pattern *Track_Pattern::PatternBlock::get_pattern() {
 

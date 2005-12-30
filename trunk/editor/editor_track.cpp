@@ -23,6 +23,7 @@ void Editor::set_track_name(int p_track,String p_name) {
 	Track *t=d->song->get_track(p_track);
 	ERR_FAIL_COND(t==NULL);
 	t->set_name( p_name );
+	d->ui_update_notify->track_names_changed();
 }
 
 void Editor::add_track(TrackType p_type,int p_channels,String p_name) {

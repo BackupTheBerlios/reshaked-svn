@@ -59,6 +59,7 @@ Goals for 100%
 -Settings dialog
 -Overal beautify/fix interface, make more intuitive
 -Big Mixer
+-hints (yellow little boxes) over most buttons
 
 -=-=-=-=
 
