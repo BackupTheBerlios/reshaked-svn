@@ -1,0 +1,9 @@
+Import('env');
+
+env_plugin_UIs = env.Copy();
+env_plugin_UIs.target_list=[];
+
+
+env_plugin_UIs.find_source_files(env_plugin_UIs.target_list,"*.cpp");
+
+env.Library('plugin_UIs', env_plugin_UIs.target_list)
