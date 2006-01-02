@@ -12,16 +12,24 @@
 #ifndef RESHAKEDSOUND_PLUGIN_CHOOSER_H
 #define RESHAKEDSOUND_PLUGIN_CHOOSER_H
 
+
+#include <Qt/qtreewidget.h>
+#include <Qt/qdialog.h>
+
 namespace ReShaked {
 
 /**
 	@author red <red@killy>
 */
-class SoundPluginChooser{
-public:
-    SoundPluginChooser();
+class SoundPluginChooser : public QDialog {
 
-    ~SoundPluginChooser();
+	Q_OBJECT
+			    
+	QTreeWidget *tree;
+		
+public:
+	SoundPluginChooser(QWidget *p_parent);
+	~SoundPluginChooser();
 
 };
 
