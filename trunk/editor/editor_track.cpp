@@ -15,6 +15,26 @@
 
 namespace ReShaked {
 
+void Editor::add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin) {
+	
+	Track::PluginInsertData data;
+	data.plugin=p_plugin;
+	data.pos=-1;
+
+	d->undo_stream.begin("Add Plugin - " + p_plugin->get_info()->caption);
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_add,p_track,data));
+	d->undo_stream.end();
+	
+}
+void Editor::remove_plugin_from_track(Track *p_track,int p_which) {
+	
+	ERR_FAIL_INDEX(p_which,p_track->get_plugin_count());
+	
+	d->undo_stream.begin("Remove Plugin");
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_remove,p_track,p_which));
+	d->undo_stream.end();
+	
+}
 
 
 

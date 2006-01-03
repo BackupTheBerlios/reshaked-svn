@@ -32,6 +32,7 @@ const SoundPluginInfo* SoundPluginList::get_plugin_info(int p_idx) {
 	
 	ERR_FAIL_INDEX_V(p_idx,info_list.size(),NULL);	
 	
+	return info_list[p_idx];
 }
 SoundPlugin *SoundPluginList::instance_plugin(int p_idx,int p_channels) {
 	

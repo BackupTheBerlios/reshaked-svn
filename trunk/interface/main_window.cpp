@@ -405,7 +405,8 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(block_layout_changed()),global_view_frame->get_global_view(),SLOT(block_layout_changed_slot()));
 	
 	QObject::connect(update_notify,SIGNAL(block_layout_changed()),blui_list,SLOT(repaint_track_list()));
-	//QObject::connect(update_notify,SIGNAL(rack_changed()),track_settings,SLOT(connection_rack_changed()));
+	QObject::connect(update_notify,SIGNAL(rack_changed()),rack,SLOT(update_rack()));
+	QObject::connect(update_notify,SIGNAL(rack_connections_changed()),rack,SLOT(repaint_rack()));
 	QObject::connect(update_notify,SIGNAL(track_names_changed()),rack,SLOT(update_rack_combo_names_slot()));
 		
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);

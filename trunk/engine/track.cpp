@@ -407,8 +407,15 @@ AudioGraph& Track::get_plugin_graph() {
 	
 	return base_private.plugin_graph;
 }
+
+int Track::get_channels() {
+	
+	return base_private.channels;
+}
+
 Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props) : BlockList(p_type) {
 	
+	base_private.channels=p_channels;
 	base_private.seq_events=NULL;
 	base_private.input_plug=new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	base_private.output_plug=new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
@@ -420,6 +427,8 @@ Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props) :
 	base_private.plugin_graph.add_node( &base_private.output_proxy );
 	base_private.input_proxy.set_process_method( this, (void (ProxyNodeBase::*)(int))&Track::feed_input );
 	base_private.output_proxy.set_process_method( this, (void (ProxyNodeBase::*)(int)) &Track::read_output );
+	
+	
 	
 }
 

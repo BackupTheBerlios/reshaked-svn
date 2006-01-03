@@ -55,6 +55,7 @@ public slots:
 	void rack_selected_slot(int p_selected_rack);
 	
 	void update_rack();
+	void repaint_rack();
 public:
 	
 	

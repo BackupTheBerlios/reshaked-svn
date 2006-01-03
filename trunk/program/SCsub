@@ -1,6 +1,6 @@
 Import('env')
 
-reshaked_libs = ['#drivers/libdrivers.a','#plugins/libplugins.a','#plugins_UIs/libplugin_UIs.a','#interface/libinterface.a','#ui_blocks/libui_blocks.a','#editor/libeditor.a','#engine/libengine.a','#types/libtypes.a'];
+reshaked_libs = ['#drivers/libdrivers.a','#plugins/libplugins.a','#plugin_UIs/libplugin_UIs.a','#interface/libinterface.a','#ui_blocks/libui_blocks.a','#editor/libeditor.a','#engine/libengine.a','#types/libtypes.a'];
 
 env.Program('reshaked', ['reshaked.cpp'] + reshaked_libs);
 env.Program('string_test', ['string_test.cpp'] + ['#types/libtypes.a']);

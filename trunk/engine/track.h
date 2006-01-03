@@ -141,6 +141,7 @@ public:
 	
 	void set_name(String p_name);
 	String get_name();
+	int get_channels();
 	
 	Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props);
 	~Track();

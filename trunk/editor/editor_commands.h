@@ -60,6 +60,8 @@ friend class Editor;
 	CommandFunc* connection_create(bool p_no_undo,AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
 	CommandFunc* connection_erase(bool p_no_undo,AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
 	
+	CommandFunc* track_plugin_add(bool p_no_undo,Track *p_track,Track::PluginInsertData p_data);
+	CommandFunc* track_plugin_remove(bool p_no_undo,Track *p_track,int p_which);
 	
 	
 };

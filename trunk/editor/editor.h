@@ -108,7 +108,6 @@ public:
 	
 	/** TRACK EDITING (editor_track.cpp) */
 	
-	
 	void set_track_name(int p_track,String p_name);
 	
 	void move_track_left(int p_which);
@@ -120,7 +119,9 @@ public:
 	AudioGraph::ConnectError connection_create(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
 	void connection_erase(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
 	
-		
+	void add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin);
+	void remove_plugin_from_track(Track *p_track,int p_which);
+	
 	
 	/** SELECTION EDITING */
 	

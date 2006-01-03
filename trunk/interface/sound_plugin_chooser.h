@@ -25,10 +25,20 @@ class SoundPluginChooser : public QDialog {
 
 	Q_OBJECT
 			    
-	QTreeWidget *tree;
+	enum ItemRole {
+		ROLE_ID=1,
+		ROLE_INDEX=2,
+	};
 		
+	QTreeWidget *tree;
+	
+	int selected_idx;
+		
+	virtual void accept();
 public:
-	SoundPluginChooser(QWidget *p_parent);
+	int get_selected_plugin_idx();
+	
+	SoundPluginChooser(QWidget *p_parent, bool p_show_synths);
 	~SoundPluginChooser();
 
 };

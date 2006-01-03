@@ -11,7 +11,7 @@
 //
 #include "editor_commands.h"
 #include "editor.h"
-
+#include "typedefs.h"
 namespace ReShaked {
 
 
@@ -384,7 +384,7 @@ CommandFunc* EditorCommands::connection_create(bool p_no_undo,AudioGraph *p_grap
 	}
 	
 	
-	d->ui_update_notify->rack_changed();
+	d->ui_update_notify->rack_connections_changed();
 	return ret;
 	
 	
@@ -400,10 +400,64 @@ CommandFunc* EditorCommands::connection_erase(bool p_no_undo,AudioGraph *p_graph
 		ret=Command5(this,&EditorCommands::connection_create, p_graph, p_node_from, p_plug_from, p_node_to, p_plug_to);
 	}
 	
-	d->ui_update_notify->rack_changed();
+	d->ui_update_notify->rack_connections_changed();
 	return ret;
 	
 	
 }
+
+CommandFunc* EditorCommands::track_plugin_add(bool p_no_undo,Track *p_track,Track::PluginInsertData p_data) {
+	
+	ERR_FAIL_COND_V(p_data.pos < -1 || p_data.pos >= p_track->get_plugin_count(), NULL );
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+		
+		int remove_pos=(p_data.pos>=0)?p_data.pos:p_track->get_plugin_count();
+		ret=Command2(this,&EditorCommands::track_plugin_remove,p_track,remove_pos);
+		ret->add_create_data( p_data.plugin );
+		foreach(I,p_data.automated_tracks) {
+			
+			ret->add_create_data( I->automation );
+		}
+		
+	}
+	
+	p_track->add_plugin( &p_data );	
+	if (!p_data.automated_tracks.empty())
+		d->ui_update_notify->track_list_changed();
+	d->ui_update_notify->rack_changed();
+	
+	return ret;
+}
+
+CommandFunc* EditorCommands::track_plugin_remove(bool p_no_undo,Track *p_track,int p_which) {
+	
+	ERR_FAIL_INDEX_V(p_which,p_track->get_plugin_count(),NULL);
+	
+	CommandFunc *ret=NULL;
+	
+	Track::PluginInsertData remove_data;
+	p_track->remove_plugin( p_which, &remove_data );
+	
+	if (!p_no_undo) {
+		
+		ret=Command2(this,&EditorCommands::track_plugin_add,p_track,remove_data);
+		ret->add_delete_data( remove_data.plugin );
+		foreach(I,remove_data.automated_tracks) {
+			
+			ret->add_delete_data( I->automation );
+		}
+		
+	}
+	
+	if (!remove_data.automated_tracks.empty())
+		d->ui_update_notify->track_list_changed();
+	
+	d->ui_update_notify->rack_changed();
+	return ret;
+}
+
 
 }

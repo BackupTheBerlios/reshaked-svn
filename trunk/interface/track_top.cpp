@@ -19,7 +19,9 @@
 #include <Qt/qinputdialog.h>
 #include "ui_blocks/helpers.h"
 #include "interface/indexed_action.h"
+#include "interface/sound_plugin_chooser.h"
 
+#include "engine/sound_plugin_list.h"
 
 namespace ReShaked {
 
@@ -126,6 +128,32 @@ void TrackTop::action_slot(QAction *p_action) {
 			
 		} break;
 		
+		case ACTION_EFFECTS: {
+		
+			SoundPluginChooser *plugin_chooser = new SoundPluginChooser(this,can_synths);
+			plugin_chooser->exec();
+			int plugin_idx=plugin_chooser->get_selected_plugin_idx();
+			delete plugin_chooser;
+			if (plugin_chooser->get_selected_plugin_idx()<0)
+				break; //nothing selected
+			int custom_channels=-1;
+			if (SoundPluginList::get_singleton()->get_plugin_info(plugin_idx)->can_custom_channels) {
+				int default_channels=track->get_channels();
+
+				bool ok;
+				int channels=QInputDialog::getInteger ( this, "Channels Instanced", "Channels to Instance?", default_channels, 1, 8, 1, &ok);
+				if (!ok)
+					break;
+				
+				custom_channels=channels;
+				
+			}
+			     
+			SoundPlugin *plugin = SoundPluginList::get_singleton()->instance_plugin(plugin_idx,custom_channels);
+			editor->add_plugin_to_track(track,plugin);
+					
+		} break;
+			
 		case ACTION_RENAME: {
 			
 			rename();
@@ -203,7 +231,7 @@ TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p
 	QObject::connect(automation_menu,SIGNAL(attempt_automation_remove_signal( String )),this,SLOT(automation_remove_slot( String )));
 	
 	can_rename=p_type!=TYPE_GLOBAL;
-
+	can_synths=p_type==TYPE_PATTERN;
 			
 }
 

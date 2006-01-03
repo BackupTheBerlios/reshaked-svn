@@ -16,10 +16,16 @@
 namespace ReShaked {
 
 
+void RackUI::repaint_rack() {
+	
+	connections->update();
+}
+
 void RackUI::update_rack() {
 	
 	update_rack_combo_slot();
 	update_selected_rack_slot();
+	connections->update();
 }
 
 void RackUI::update_rack_combo_names_slot() {
@@ -48,6 +54,7 @@ void RackUI::update_rack_combo_slot() {
 	if (selected_rack>=rack_choose->count())
 		selected_rack=rack_choose->count()-1;
 	
+	rack_choose->setCurrentIndex(selected_rack);
 }
 
 void RackUI::rack_selected_slot(int p_selected_rack) {
