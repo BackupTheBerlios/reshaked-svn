@@ -29,11 +29,11 @@ class AutomationTree : public CHBox {
 					    
 	class QTreeAutomationItem : public QTreeWidgetItem {
 				    
-		String path;
+		int property_idx;
 	public:
-		String get_path();
-		QTreeAutomationItem(QTreeWidgetItem * p_parent,String p_path); //construct with this parent
-		QTreeAutomationItem(QTreeWidget * p_parent,String p_path); //construct with this parent
+		int get_property_idx();
+		QTreeAutomationItem(QTreeWidgetItem * p_parent,int p_property_idx); //construct with this parent
+		QTreeAutomationItem(QTreeWidget * p_parent,int p_property_idx); //construct with this parent
 				    
 	};				    
 			    
@@ -48,8 +48,8 @@ public slots:
 	void update_item_status();
 signals:
 		
-	void attempt_automation_add_signal(String p_path);	
-	void attempt_automation_remove_signal(String p_path);	
+	void attempt_automation_add_signal(int p_index);	
+	void attempt_automation_remove_signal(int p_index);	
 public:
 	void update_automation_tree();
 

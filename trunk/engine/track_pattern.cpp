@@ -307,9 +307,9 @@ Track_Pattern::Track_Pattern(int p_channels,GlobalProperties *p_global_props) : 
 	data.volume.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "volume","Volume","dB");
 	data.balance.set_all( 0, -1.0, 1.0, 0, 0.01, Property::DISPLAY_KNOB,"balance","Balance","","Left","Right");
 	
-	add_property("track/",&data.swing);
-	add_property("track/",&data.volume);
-	add_property("track/",&data.balance);
+	add_property("Track/",&data.swing);
+	add_property("Track/",&data.volume);
+	add_property("Track/",&data.balance);
 	
 }
 

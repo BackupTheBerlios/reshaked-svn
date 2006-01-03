@@ -15,39 +15,36 @@
 namespace ReShaked {
 
 
-void Track::add_property(String p_path,Property *p_prop) {
+void Track::add_property(String p_visual_path,Property *p_prop) {
 	
 	AudioControl::mutex_lock();
 	
-	if (p_path.length()==0 || p_path[0]!='/')
-		p_path="/"+p_path;
+	if (p_visual_path.length()==0 || p_visual_path[0]!='/')
+		p_visual_path="/"+p_visual_path;
 	
-	if (p_path[p_path.length()-1]!='/')
-		p_path+="/";
-	p_path+=p_prop->get_name();
+	if (p_visual_path[p_visual_path.length()-1]!='/')
+		p_visual_path+="/";
+	p_visual_path+=p_prop->get_name();
 	
 	for (int i=0;i<base_private.property_list.size();i++) {
 			
-		if (base_private.property_list[i]->path==p_path) {
-			//trying to add the same property twice?
-			if (p_prop==base_private.property_list[i]->property) {
-				
-				ERR_PRINT( "p_prop==base_private.property_list[i]->property" );
-				AudioControl::mutex_unlock();
-				//@TODO rename to p_path+(num)
-			}
+		if (p_prop==base_private.property_list[i]->property) {
+			
+			ERR_PRINT( "p_prop==base_private.property_list[i]->property" );
+			AudioControl::mutex_unlock();
+			return;
+			//@TODO rename to p_visual_path+(num)
 		}
 		
 	}
 	
 	PropertyRef * p = new PropertyRef;
-	p->path=p_path;
+	p->visual_path=p_visual_path;
 	p->property=p_prop;
 	p->automated=NULL; //not automated!
 	base_private.property_list.push_back(p);
 	
-	AudioControl::mutex_unlock();
-	
+	AudioControl::mutex_unlock();	
 }
 
 void Track::set_sequencer_event_buffer(const EventBuffer *p_seq) {
@@ -62,22 +59,10 @@ const EventBuffer& Track::get_seq_event_buffer() {
 }
 
 
-/* Automations */
-int Track::get_idx_by_path(String p_path) {
-		
-	for (int i=0;i<get_property_count();i++) 
-		if (get_property_path(i)==p_path)
-			return i;
-	 
-	return -1;
-		
-}
-void Track::show_automation(String p_path) {
+void Track::property_show_automation(int p_idx) {
 
-	
-	int idx=get_idx_by_path(p_path);
-	if (idx==-1)
-		return;
+	ERR_FAIL_INDEX(p_idx,get_property_count());
+	int idx=p_idx;
 			
 	AudioControl::mutex_lock();
 	
@@ -86,7 +71,7 @@ void Track::show_automation(String p_path) {
 		base_private.property_list[ idx ]->automated->visible=true;
 	} else {
 		
-		base_private.automations.push_back(new TrackAutomation(p_path,get_property(idx)));
+		base_private.automations.push_back(new TrackAutomation(get_property(idx)));
 		base_private.property_list[idx]->automated=base_private.automations[ base_private.automations.size()-1 ];
 		base_private.automations[ base_private.automations.size()-1 ]->visible=true;
 	}
@@ -95,12 +80,11 @@ void Track::show_automation(String p_path) {
 	
 }
 
-void Track::hide_automation(String p_path) {
+void Track::property_hide_automation(int p_idx) {
 	
-	int idx=get_idx_by_path(p_path);
-	if (idx==-1)
-		return;
-			
+	
+	ERR_FAIL_INDEX(p_idx,get_property_count());
+	int idx=p_idx;
 	
 	if (!has_property_automation(idx))
 		return; //nothing to do
@@ -252,11 +236,11 @@ bool Track::has_property_visible_automation(int p_idx) {
 
 }
 
-String Track::get_property_path(int p_idx) {
+String Track::get_property_visual_path(int p_idx) {
 	
 	ERR_FAIL_INDEX_V(p_idx,get_property_count(),"");
 	
-	return base_private.property_list[p_idx]->path;
+	return base_private.property_list[p_idx]->visual_path;
 	
 }	
 
@@ -306,7 +290,13 @@ void Track::add_plugin(PluginInsertData* p_plugin) {
 	}
 	
 	/* determine path */
-	String path=p_plugin->plugin->get_info()->is_synth?"synth/":"effect/";
+	String path=p_plugin->plugin->get_info()->is_synth?"Synths/":"Effects/";
+	
+	String desired_name=p_plugin->plugin->get_info()->caption;
+	
+	
+	path+=desired_name+"/";
+		
 	
 	/* add properties */
 	for (int i=0;i<p_plugin->plugin->get_port_count();i++) {

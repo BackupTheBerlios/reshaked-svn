@@ -25,7 +25,7 @@ bool AutomationPopup::check_action(QAction *p_action)  {
 		return false;
 	
 	bool checked=item->isChecked();
-	int idx=track->get_idx_by_path( item->get_path() );
+	int idx=item->get_property_idx();
 	if (idx==-1)
 		return true;;
 	
@@ -35,9 +35,9 @@ bool AutomationPopup::check_action(QAction *p_action)  {
 		return true; //nothing to do
 	
 	if (checked)
-		attempt_automation_add_signal(item->get_path());	
+		attempt_automation_add_signal(idx);	
 	else
-		attempt_automation_remove_signal(item->get_path());		
+		attempt_automation_remove_signal(idx);		
 	
 	return true;
 }
@@ -51,7 +51,7 @@ void AutomationPopup::rebuild() {
 		
 	for (int i=0;i<track->get_property_count();i++) {
 		
-		QString path=QStrify(track->get_property_path( i));
+		QString path=QStrify(track->get_property_visual_path( i));
 		
 		QString dir=path.left( path.lastIndexOf("/") );
 		QString name=path.right( path.length()-(path.lastIndexOf("/")+1) );
@@ -63,7 +63,7 @@ void AutomationPopup::rebuild() {
 		QActionAutomation * item;
 		if (dir=="") { //toplevelAutomationTree( 
 			
-			item  = new QActionAutomation(this,track->get_property_path( i));
+			item  = new QActionAutomation(this,i);
 			addAction(item);
 
 		} else {
@@ -71,7 +71,7 @@ void AutomationPopup::rebuild() {
 			// have the path for this dir somewhere?
 			PathMap::iterator I =hashmap.find(dir);
 			if (I!=hashmap.end()) {
-				item = new QActionAutomation(I.value(),track->get_property_path( i));
+				item = new QActionAutomation(I.value(),i);
 				I.value()->addAction(item);
 				
 			} else {
@@ -122,7 +122,7 @@ void AutomationPopup::rebuild() {
 					}
 				}
 				
-				item = new QActionAutomation(parent,track->get_property_path( i));
+				item = new QActionAutomation(parent,i);
 				parent->addAction(item);
 			}
 				

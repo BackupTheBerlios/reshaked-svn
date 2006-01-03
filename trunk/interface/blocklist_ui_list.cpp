@@ -127,7 +127,8 @@ void BlockListUIList::cursor_changed_blocklist() {
 	/* find new blocklist, adjust focus */
 
 	int current_blocklist=editor->get_current_blocklist();
-	ERR_FAIL_INDEX(current_blocklist,block_list_ui_list.size());
+	if (current_blocklist<0 || current_blocklist>=block_list_ui_list.size())
+		return; //cursot cant be displayed.
 
 	block_list_ui_list[current_blocklist]->setFocus();
 

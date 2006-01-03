@@ -176,14 +176,14 @@ void TrackTop::action_slot(QAction *p_action) {
 	
 }
 
-void TrackTop::automation_add_slot(String p_path) {
+void TrackTop::automation_add_slot(int p_prop_idx) {
 
-	editor->show_automation( p_path, track );
+	editor->show_automation( p_prop_idx, track );
 
 }
-void TrackTop::automation_remove_slot(String p_path) {
+void TrackTop::automation_remove_slot(int p_prop_idx) {
 
-	editor->hide_automation( p_path, track );
+	editor->hide_automation( p_prop_idx, track );
 	
 }
 
@@ -227,8 +227,8 @@ TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p
 		menu->addAction(new IndexedAction(ACTION_DELETE,"Remove Track",GET_QPIXMAP(ICON_TRACK_DELETE),this));
 	}
 	QObject::connect(menu,SIGNAL(triggered(QAction*)),this,SLOT(action_slot( QAction* )),Qt::QueuedConnection);
-	QObject::connect(automation_menu,SIGNAL(attempt_automation_add_signal( String )),this,SLOT(automation_add_slot( String )));
-	QObject::connect(automation_menu,SIGNAL(attempt_automation_remove_signal( String )),this,SLOT(automation_remove_slot( String )));
+	QObject::connect(automation_menu,SIGNAL(attempt_automation_add_signal( int )),this,SLOT(automation_add_slot(int)));
+	QObject::connect(automation_menu,SIGNAL(attempt_automation_remove_signal( int )),this,SLOT(automation_remove_slot(int)));
 	
 	can_rename=p_type!=TYPE_GLOBAL;
 	can_synths=p_type==TYPE_PATTERN;

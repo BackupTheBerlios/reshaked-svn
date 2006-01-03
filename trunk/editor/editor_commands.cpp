@@ -45,9 +45,11 @@ CommandFunc* EditorCommands::add_track(bool p_no_undo,Track *p_track,int p_at_po
 	}
 	
 	d->song->add_track(p_track,p_at_pos);
-	editor->revalidate_cursor();
-	printf("trying to add track!\n");		
+	
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
 	d->ui_update_notify->track_list_changed();
+	/* THEN, NOTIFY IT */
+	editor->revalidate_cursor();
 	editor->disable_selection();
 	return ret;
 }
@@ -79,9 +81,10 @@ CommandFunc* EditorCommands::remove_track(bool p_no_undo,int p_pos) {
 	}
 
 	
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
+	d->ui_update_notify->track_list_changed();	
+	/* THEN, NOTIFY IT */
 	editor->revalidate_cursor();
-	
-	d->ui_update_notify->track_list_changed();
 	editor->disable_selection();
 	
 	
@@ -102,9 +105,10 @@ CommandFunc* EditorCommands::track_move_left(bool p_no_undo,int p_which) {
 	Track *t=d->song->get_track(p_which);
 	d->song->remove_track(p_which);
 	d->song->add_track(t,p_which-1);
-	editor->revalidate_cursor();
-	
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
 	d->ui_update_notify->track_list_changed();
+	/* THEN, NOTIFY IT */
+	editor->revalidate_cursor();
 	editor->disable_selection();
 	
 	return ret;
@@ -125,9 +129,11 @@ CommandFunc* EditorCommands::track_move_right(bool p_no_undo,int p_which) {
 	Track *t=d->song->get_track(p_which);
 	d->song->remove_track(p_which);
 	d->song->add_track(t,p_which+1);
-	editor->revalidate_cursor();
 	
-	d->ui_update_notify->track_list_changed();
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
+	d->ui_update_notify->track_list_changed(); 
+	/* THEN, NOTIFY IT */
+	editor->revalidate_cursor();
 	editor->disable_selection();
 	
 	return ret;
@@ -135,39 +141,42 @@ CommandFunc* EditorCommands::track_move_right(bool p_no_undo,int p_which) {
 }
 
 
-CommandFunc* EditorCommands::automation_show(bool p_no_undo,Track *p_track,String p_which) {
+CommandFunc* EditorCommands::automation_show(bool p_no_undo,Track *p_track,int p_property) {
 	
 	CommandFunc *ret=NULL;
 	if (!p_no_undo) {
 		
-		ret=Command2(this,&EditorCommands::automation_hide,p_track,p_which);
+		ret=Command2(this,&EditorCommands::automation_hide,p_track,p_property);
 	}
 	
-	p_track->show_automation(p_which);
+	p_track->property_show_automation(p_property);
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
+	d->ui_update_notify->track_list_changed();	
+	/* THEN, NOTIFY IT */
 	editor->revalidate_cursor();
-	
-	
 	editor->disable_selection();
-	d->ui_update_notify->track_list_changed();
+
 	return ret;
 	
 }
-CommandFunc* EditorCommands::automation_hide(bool p_no_undo,Track *p_track,String p_which) {
+CommandFunc* EditorCommands::automation_hide(bool p_no_undo,Track *p_track,int p_property) {
 	
 	CommandFunc *ret=NULL;
 	
 	if (!p_no_undo) {
 		
-		ret=Command2(this,&EditorCommands::automation_show,p_track,p_which);
+		ret=Command2(this,&EditorCommands::automation_show,p_track,p_property);
 	}
 	
-	p_track->hide_automation(p_which);
 	
-	editor->revalidate_cursor();
-
+	p_track->property_hide_automation(p_property);
 	
-	editor->disable_selection();
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
 	d->ui_update_notify->track_list_changed();
+	/* THEN, NOTIFY IT */
+	editor->revalidate_cursor();
+	editor->disable_selection();
+	
 	
 	return ret;
 	
@@ -352,7 +361,9 @@ CommandFunc* EditorCommands::track_pattern_add_column(bool p_no_undo,Track_Patte
 	}
 	
 	p_pattern->set_visible_columns( p_pattern->get_visible_columns() + 1);
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
 	d->ui_update_notify->track_list_changed();	
+	/* THEN, NOTIFY IT */
 	return ret;
 	
 }
@@ -366,6 +377,7 @@ CommandFunc* EditorCommands::track_pattern_remove_column(bool p_no_undo,Track_Pa
 	
 	p_pattern->set_visible_columns( p_pattern->get_visible_columns() - 1);
 	
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
 	d->ui_update_notify->track_list_changed();
 	return ret;
 	
@@ -425,6 +437,7 @@ CommandFunc* EditorCommands::track_plugin_add(bool p_no_undo,Track *p_track,Trac
 	}
 	
 	p_track->add_plugin( &p_data );	
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
 	if (!p_data.automated_tracks.empty())
 		d->ui_update_notify->track_list_changed();
 	d->ui_update_notify->rack_changed();
@@ -452,9 +465,10 @@ CommandFunc* EditorCommands::track_plugin_remove(bool p_no_undo,Track *p_track,i
 		
 	}
 	
+	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
 	if (!remove_data.automated_tracks.empty())
 		d->ui_update_notify->track_list_changed();
-	
+	/* THEN, NOTIFY IT */
 	d->ui_update_notify->rack_changed();
 	return ret;
 }

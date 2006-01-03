@@ -22,7 +22,7 @@ namespace ReShaked {
 
 
 
-void Editor::show_automation(String p_path,Track *p_track) {
+void Editor::show_automation(int p_property,Track *p_track) {
 	
 	
 	if (p_track==NULL) {
@@ -31,13 +31,13 @@ void Editor::show_automation(String p_path,Track *p_track) {
 	}
 	
 	d->undo_stream.begin("Show Automation");
-	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_show,p_track,p_path) );
+	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_show,p_track,p_property) );
 	d->undo_stream.end();
 	
 	
 }
 
-void Editor::hide_automation(String p_path,Track *p_track) {
+void Editor::hide_automation(int p_property,Track *p_track) {
 	
 	if (p_track==NULL) {
 		
@@ -45,7 +45,7 @@ void Editor::hide_automation(String p_path,Track *p_track) {
 	}
 	
 	d->undo_stream.begin("Hide Automation");
-	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_hide,p_track,p_path) );
+	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_hide,p_track,p_property) );
 	d->undo_stream.end();
 	
 }

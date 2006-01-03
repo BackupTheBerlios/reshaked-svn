@@ -35,16 +35,15 @@ public:
 	class TrackAutomation : public Automation {
 	friend class Track;	// will add more stuff later
 		void *private_data;
-		String path;
 		bool visible;
-		TrackAutomation(String p_path,Property *p_property) : Automation(p_property) { private_data=NULL; path=p_path; }
+		TrackAutomation(Property *p_property) : Automation(p_property) { private_data=NULL; }
 	};
 	
 	
 	struct PropertyRef {
 		
 		Property *property; //pointer to property
-		String path;
+		String visual_path;
 		TrackAutomation *automated;
 	};
 	
@@ -103,7 +102,7 @@ protected:
 	const EventBuffer& get_seq_event_buffer();
 	GlobalProperties &get_global_props();
 
-	void add_property(String p_path,Property *p_prop);
+	void add_property(String p_visual_path,Property *p_prop);
 
 	String get_caption();
 	
@@ -125,14 +124,12 @@ public:
 	/* Automations/Props */
 
 	int get_property_count();
-	int get_idx_by_path(String p_path);
+	//int get_idx_by_path(String p_path);
 	Property *get_property(int p_idx);
 	Automation *get_property_automation(int p_idx);
-	String get_property_path(int p_idx);
-
-	
-	void show_automation(String p_path);
-	void hide_automation(String p_path);
+	String get_property_visual_path(int p_idx);
+	void property_show_automation(int p_idx);
+	void property_hide_automation(int p_idx);
 	int get_visible_automation_count();
 	Automation *get_visible_automation(int p_index);
 	bool has_property_automation(int p_index);

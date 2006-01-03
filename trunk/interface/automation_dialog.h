@@ -26,18 +26,18 @@ class AutomationPopup : public QMenu {
 			    
 	class QActionAutomation : public QAction {
 				    
-		String path;
+		int property_idx;
 	public:
-		String get_path() { return path; }
-		QActionAutomation(QMenu* p_menu,String p_path) : QAction(p_menu) { path=p_path; }; //construct with this parent
+		int get_property_idx() { return property_idx; }
+		QActionAutomation(QMenu* p_menu,int p_property_idx) : QAction(p_menu) { property_idx=p_property_idx; }; //construct with this parent
 				    
 	};				    
 			    
 	
 	Track *track;
 signals:
-	void attempt_automation_add_signal(String p_path);	
-	void attempt_automation_remove_signal(String p_path);	
+	void attempt_automation_add_signal(int p_property_idx);	
+	void attempt_automation_remove_signal(int p_property_idx);	
 			
 public:
 	bool check_action(QAction *p_action);	

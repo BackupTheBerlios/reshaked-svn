@@ -16,18 +16,18 @@ namespace ReShaked {
 
 
 
-String AutomationTree::QTreeAutomationItem::get_path() {
+int AutomationTree::QTreeAutomationItem::get_property_idx() {
 	
-	return path;
+	return property_idx;
 }
-AutomationTree::QTreeAutomationItem::QTreeAutomationItem(QTreeWidgetItem * p_parent,String p_path) :QTreeWidgetItem(p_parent) {
+AutomationTree::QTreeAutomationItem::QTreeAutomationItem(QTreeWidgetItem * p_parent,int p_property_idx) :QTreeWidgetItem(p_parent) {
 	
-	path=p_path;
+	property_idx=p_property_idx;
 }
 
-AutomationTree::QTreeAutomationItem::QTreeAutomationItem(QTreeWidget * p_parent,String p_path) :QTreeWidgetItem(p_parent) {
+AutomationTree::QTreeAutomationItem::QTreeAutomationItem(QTreeWidget * p_parent,int p_property_idx) :QTreeWidgetItem(p_parent) {
 	
-	path=p_path;	
+	property_idx=p_property_idx;
 }
 
 
@@ -43,7 +43,7 @@ void AutomationTree::update_automation_tree() {
 	
 	for (int i=0;i<track->get_property_count();i++) {
 		
-		QString path=QStrify(track->get_property_path( i));
+		QString path=QStrify(track->get_property_visual_path( i));
 		
 		QString dir=path.left( path.lastIndexOf("/") );
 		QString name=path.right( path.length()-(path.lastIndexOf("/")+1) );
@@ -55,14 +55,14 @@ void AutomationTree::update_automation_tree() {
 		QTreeAutomationItem * item;
 		if (dir=="") { //toplevelAutomationTree( 
 			
-			item  = new QTreeAutomationItem(tree,track->get_property_path( i));
+			item  = new QTreeAutomationItem(tree,i);
 
 		} else {
 			
 			// have the path for this dir somewhere?
 			PathMap::iterator I =hashmap.find(dir);
 			if (I!=hashmap.end()) {
-				item = new QTreeAutomationItem(I.value(),track->get_property_path( i));
+				item = new QTreeAutomationItem(I.value(),i);
 				
 			} else {
 				
@@ -108,7 +108,7 @@ void AutomationTree::update_automation_tree() {
 					}
 				}
 				
-				item = new QTreeAutomationItem(parent,track->get_property_path( i));
+				item = new QTreeAutomationItem(parent,i);
 			}
 				
 				
@@ -145,7 +145,7 @@ void AutomationTree::update_item_status() {
 	
 	for (int i=0;i<item_array.size();i++) {
 		
-		int idx=track->get_idx_by_path( item_array[i]->get_path() );
+		int idx=item_array[i]->get_property_idx();
 		if (idx<0)
 			continue;
 		
@@ -180,7 +180,7 @@ void AutomationTree::item_clicked( QTreeWidgetItem * p_item, int column ) {
 	if (!item)
 		return;
 	bool checked=(item->checkState(0)==Qt::Checked);
-	int idx=track->get_idx_by_path( item->get_path() );
+	int idx=item->get_property_idx();
 	if (idx==-1)
 		return;
 	
@@ -190,9 +190,9 @@ void AutomationTree::item_clicked( QTreeWidgetItem * p_item, int column ) {
 		return; //nothing to do
 	
 	if (checked)
-		attempt_automation_add_signal(item->get_path());	
+		attempt_automation_add_signal(idx);	
 	else
-		attempt_automation_remove_signal(item->get_path());	
+		attempt_automation_remove_signal(idx);	
 
 
 	

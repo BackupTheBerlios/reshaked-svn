@@ -276,7 +276,12 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 
 void Editor::revalidate_cursor() {
 	
-	if (d->global_edit.current_blocklist>=get_blocklist_count()) {
+	
+	if (get_blocklist_count()==0) { //special case
+		
+		d->global_edit.current_blocklist=0; //and that's all
+	
+	} else if (d->global_edit.current_blocklist>=get_blocklist_count()) {
 		d->global_edit.current_blocklist=get_blocklist_count()-1;
 		if (d->global_edit.current_blocklist<0)
 			d->global_edit.current_blocklist=0;
