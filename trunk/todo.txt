@@ -51,6 +51,12 @@ Goals for 80%
 -Simple synth
 -Simple effect: (amp)
 
+Goals for 85%
+-Song play
+-Song Loop
+-Sounds when editing
+-Virtual pianito?
+
 Goals for 90%
 -Saving/Loading of project
 -Saving/Loading of Settings
