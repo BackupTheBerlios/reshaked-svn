@@ -36,7 +36,8 @@ public:
 	friend class Track;	// will add more stuff later
 		void *private_data;
 		bool visible;
-		TrackAutomation(Property *p_property) : Automation(p_property) { private_data=NULL; }
+	public:
+		TrackAutomation(Property *p_property) : Automation(p_property) { private_data=NULL; visible=false; }
 	};
 	
 	
@@ -44,7 +45,9 @@ public:
 		
 		Property *property; //pointer to property
 		String visual_path;
-		TrackAutomation *automated;
+		TrackAutomation *automation;
+		bool automation_visible;
+		
 	};
 	
 	struct PluginInsertData { /* crappy struct so undo/redo works */
@@ -67,7 +70,7 @@ private:
 
 		int channels;
 		const EventBuffer * seq_events;
-		std::vector<TrackAutomation*> automations;
+		//std::vector<TrackAutomation*> automations;
 		AudioPlug *input_plug;
 		AudioPlug *output_plug;
 
@@ -102,11 +105,12 @@ protected:
 	const EventBuffer& get_seq_event_buffer();
 	GlobalProperties &get_global_props();
 
-	void add_property(String p_visual_path,Property *p_prop);
+	void add_property(String p_visual_path,Property *p_prop,TrackAutomation *p_automation=NULL,int p_pos=-1);
 
 	String get_caption();
 	
 	virtual bool is_visible();
+	
 	
 public:
 
@@ -132,7 +136,6 @@ public:
 	void property_hide_automation(int p_idx);
 	int get_visible_automation_count();
 	Automation *get_visible_automation(int p_index);
-	bool has_property_automation(int p_index);
 	bool has_property_visible_automation(int p_index);
 	
 	

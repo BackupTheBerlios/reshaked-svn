@@ -452,7 +452,9 @@ CommandFunc* EditorCommands::track_plugin_remove(bool p_no_undo,Track *p_track,i
 	CommandFunc *ret=NULL;
 	
 	Track::PluginInsertData remove_data;
+	
 	p_track->remove_plugin( p_which, &remove_data );
+		
 	
 	if (!p_no_undo) {
 		

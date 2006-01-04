@@ -17,10 +17,26 @@ namespace ReShaked {
 
 void Editor::add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin) {
 	
+	
+	
+	
 	Track::PluginInsertData data;
 	data.plugin=p_plugin;
 	data.pos=-1;
-
+	
+	/* For plugins, the automations must be created here, otherwise, no undo/redo is possible */
+	
+	for (int i=0;i<p_plugin->get_port_count();i++) {
+		
+		if (p_plugin->get_port_type(i)==SoundPlugin::TYPE_READ)
+			continue;
+		
+		Track::PluginInsertData::AutomationTrack atrack;
+		atrack.pos=-1; //insert at end
+		atrack.automation = new Track::TrackAutomation(&p_plugin->get_port(i));
+		data.automated_tracks.push_back(atrack);
+	}
+	
 	d->undo_stream.begin("Add Plugin - " + p_plugin->get_info()->caption);
 	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_add,p_track,data));
 	d->undo_stream.end();

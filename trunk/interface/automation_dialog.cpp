@@ -129,7 +129,7 @@ void AutomationPopup::rebuild() {
 				
 		}
 		
-		if (track->has_property_automation( i ) && track->get_property_automation(i)->get_block_count()) {
+		if (track->get_property_automation(i)->get_block_count()) {
 				
 			item->setText( QStrify( track->get_property( i)->get_caption()+"(*)" ) );
 		
@@ -143,7 +143,7 @@ void AutomationPopup::rebuild() {
 		//item->setText( 0, QStrify( track->get_property( i)->get_caption() ) );
 		//item->setText( 1, QStrify( track->get_property( i)->get_text_value( track->get_property( i)->get_min() ) ) );
 		//item->setText( 2, QStrify( track->get_property( i)->get_text_value( track->get_property( i)->get_max() ) ) );
-		item->setChecked(track->has_property_automation(i)?Qt::Checked:Qt::Unchecked);
+		item->setChecked(track->has_property_visible_automation(i)?Qt::Checked:Qt::Unchecked);
 		
 		
 	}

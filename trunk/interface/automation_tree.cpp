@@ -114,7 +114,7 @@ void AutomationTree::update_automation_tree() {
 				
 		}
 		
-		if (track->has_property_automation( i ) && track->get_property_automation(i)->get_block_count()) {
+		if (track->get_property_automation(i)->get_block_count()) {
 				
 			item->setText( 0, QStrify( track->get_property( i)->get_caption()+"(*)" ) );
 		
@@ -128,7 +128,7 @@ void AutomationTree::update_automation_tree() {
 		item->setText( 1, QStrify( track->get_property( i)->get_text_value( track->get_property( i)->get_min() ) ) );
 		item->setText( 2, QStrify( track->get_property( i)->get_text_value( track->get_property( i)->get_max() ) ) );
 		item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-		item->setCheckState(0,track->has_property_automation(i)?Qt::Checked:Qt::Unchecked);
+		item->setCheckState(0,track->has_property_visible_automation(i)?Qt::Checked:Qt::Unchecked);
 		tree->expandItem(item);
 		item_array.push_back(item);
 //		for (int j=0;j
@@ -149,7 +149,7 @@ void AutomationTree::update_item_status() {
 		if (idx<0)
 			continue;
 		
-		if (track->has_property_automation( idx ) && track->get_property_automation(idx)->get_block_count()) {
+		if (track->get_property_automation(i)->get_block_count()) {
 				
 			item_array[i]->setText( 0, QStrify( track->get_property( idx)->get_caption()+"(*)" ) );
 		
@@ -159,7 +159,7 @@ void AutomationTree::update_item_status() {
 		
 		}
 		
-		item_array[i]->setCheckState(0,track->has_property_automation(idx)?Qt::Checked:Qt::Unchecked);
+		item_array[i]->setCheckState(0,track->has_property_visible_automation(idx)?Qt::Checked:Qt::Unchecked);
 	}
 	
 }

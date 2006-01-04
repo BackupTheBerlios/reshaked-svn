@@ -154,6 +154,7 @@ void UndoStream::redo() {
 	
 	std::list<UndoGroup>::iterator I=get_block_iterator( current_index+1 );
 	ERR_FAIL_COND(I==undo_stream.end());
+	printf("REDO: %lls\n",I->name.c_str());
 	redo_group( &(*I) );
 	current_index++;
 }

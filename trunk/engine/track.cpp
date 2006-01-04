@@ -15,7 +15,7 @@
 namespace ReShaked {
 
 
-void Track::add_property(String p_visual_path,Property *p_prop) {
+void Track::add_property(String p_visual_path,Property *p_prop,TrackAutomation *p_automation,int p_pos) {
 	
 	AudioControl::mutex_lock();
 	
@@ -41,8 +41,16 @@ void Track::add_property(String p_visual_path,Property *p_prop) {
 	PropertyRef * p = new PropertyRef;
 	p->visual_path=p_visual_path;
 	p->property=p_prop;
-	p->automated=NULL; //not automated!
-	base_private.property_list.push_back(p);
+	p->automation=p_automation?p_automation:(new TrackAutomation(p_prop));
+	if (p_pos<0 && p_pos>=base_private.property_list.size()) {
+		
+		base_private.property_list.push_back(p);	
+	} else {
+		
+		base_private.property_list.insert(base_private.property_list.begin()+p_pos,p);	
+		
+	}
+	
 	
 	AudioControl::mutex_unlock();	
 }
@@ -66,15 +74,8 @@ void Track::property_show_automation(int p_idx) {
 			
 	AudioControl::mutex_lock();
 	
-	if (has_property_automation(idx)) { //already has automation 
-		
-		base_private.property_list[ idx ]->automated->visible=true;
-	} else {
-		
-		base_private.automations.push_back(new TrackAutomation(get_property(idx)));
-		base_private.property_list[idx]->automated=base_private.automations[ base_private.automations.size()-1 ];
-		base_private.automations[ base_private.automations.size()-1 ]->visible=true;
-	}
+	base_private.property_list[ idx ]->automation->visible=true;
+	
 	
 	AudioControl::mutex_unlock();
 	
@@ -86,16 +87,19 @@ void Track::property_hide_automation(int p_idx) {
 	ERR_FAIL_INDEX(p_idx,get_property_count());
 	int idx=p_idx;
 	
-	if (!has_property_automation(idx))
-		return; //nothing to do
-	
 	AudioControl::mutex_lock();
 	
-	if (base_private.property_list[ idx ]->automated->get_block_count()==0) { //no block
+	
+	base_private.property_list[ idx ]->automation->visible=false;
+	
+	/*
+	if (base_private.property_list[ idx ]->automation->get_block_count()==0) { //no block
 		
-		/* This doesnt have any blocks, so simply we screw it */
+		// This doesnt have any blocks, so simply we screw it 
 		
 		for (int i=0;i<base_private.automations.size();i++) {
+			
+			
 			
 			if (base_private.automations[i]==base_private.property_list[ idx ]->automated) {
 				
@@ -115,7 +119,7 @@ void Track::property_hide_automation(int p_idx) {
 		
 		
 	}
-	
+*/
 	AudioControl::mutex_unlock();
 	
 }
@@ -123,9 +127,9 @@ void Track::property_hide_automation(int p_idx) {
 int Track::get_visible_automation_count() {
 	
 	int count=0;
-	for (int i=0;i<base_private.automations.size();i++) {
+	for (int i=0;i<base_private.property_list.size();i++) {
 		
-		if (base_private.automations[i]->visible)
+		if (base_private.property_list[i]->automation->visible)
 			count++;
 	}
 	
@@ -134,12 +138,12 @@ int Track::get_visible_automation_count() {
 Automation *Track::get_visible_automation(int p_index) {
 	
 	int count=0;
-	for (int i=0;i<base_private.automations.size();i++) {
+	for (int i=0;i<base_private.property_list.size();i++) {
 		
 		
-		if (base_private.automations[i]->visible) {
+		if (base_private.property_list[i]->automation->visible) {
 			if (count==p_index)
-				return base_private.automations[i];
+				return base_private.property_list[i]->automation;
 			count++;
 		}
 	}
@@ -217,14 +221,7 @@ Automation *Track::get_property_automation(int p_idx) {
 	
 	ERR_FAIL_INDEX_V(p_idx,get_property_count(),NULL);
 	
-	return base_private.property_list[p_idx]->automated;
-	
-}
-bool Track::has_property_automation(int p_idx) {
-	
-	ERR_FAIL_INDEX_V(p_idx,get_property_count(),false);
-	
-	return (base_private.property_list[p_idx]->automated!=NULL);
+	return base_private.property_list[p_idx]->automation;
 	
 }
 	
@@ -232,7 +229,7 @@ bool Track::has_property_visible_automation(int p_idx) {
 
 	ERR_FAIL_INDEX_V(p_idx,get_property_count(),false);
 
-	return (base_private.property_list[p_idx]->automated!=NULL && base_private.property_list[p_idx]->automated->visible);
+	return (base_private.property_list[p_idx]->automation->visible);
 
 }
 
@@ -298,27 +295,29 @@ void Track::add_plugin(PluginInsertData* p_plugin) {
 	path+=desired_name+"/";
 		
 	
-	/* add properties */
+	/* add properties and automations */
 	for (int i=0;i<p_plugin->plugin->get_port_count();i++) {
 		if (p_plugin->plugin->get_port_type(i)==SoundPlugin::TYPE_READ)
 			continue;
-		add_property(path,&p_plugin->plugin->get_port(i) );	
-	}
-	
-	/* restore automations (if pending) */
-	
-	foreach(I,p_plugin->automated_tracks) {
-		/* list was filled backwards as automations were removed, so they can be added in proper order */
-		base_private.automations.insert( base_private.automations.begin()+I->pos, I->automation);
 		
-		foreach(J,base_private.property_list) {
-			
-			if ( (*J)->property==I->automation->get_property() )
-				(*J)->automated=I->automation;				
+		TrackAutomation *automation=NULL;
+		int pos=-1;
+		Property *prop=&p_plugin->plugin->get_port(i);
+		foreach(I,p_plugin->automated_tracks) {
+		
+			if (I->automation->get_property()==prop) {
+				automation=I->automation;
+				pos=I->pos;
+				break;
+			}
 		}
+		ERR_CONTINUE(automation==NULL); //no automation for prop?!
+		add_property(path,&p_plugin->plugin->get_port(i),automation,pos );	
 	}
 	
+
 	/* Finally, restore connections */
+	
 	base_private.plugin_graph.add_node( p_plugin->plugin, &p_plugin->connections );
 	
 	AudioControl::mutex_unlock();
@@ -332,40 +331,15 @@ void Track::remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery) {
 	AudioControl::mutex_lock();
 	
 	SoundPlugin *node=get_plugin( p_pos );
-	p_plugin_recovery->plugin=node;
-	p_plugin_recovery->pos=p_pos;
 	
 	/* Save Connections */
+	
+	p_plugin_recovery->plugin=node;
+	p_plugin_recovery->pos=p_pos;
 	base_private.plugin_graph.erase_node( base_private.plugin_graph.get_node_index(node) , &p_plugin_recovery->connections );
 	
-	/* Save automations (in case anythnig has been "propertized as */
 	
-	for (int i=0;i<base_private.automations.size();i++) {
-		
-		int port=-1;
-		for (int j=0;j<node->get_port_count();j++) {
-			
-			if (node->get_port_type(j)==SoundPlugin::TYPE_READ)
-				continue;
-			if (&node->get_port(j)==base_private.automations[i]->get_property()) {
-				port=j;
-				break;
-			}
-		}
-				
-		if (port==-1) //no port
-			continue;
-		PluginInsertData::AutomationTrack atdata;
-		atdata.automation=base_private.automations[i];
-		atdata.pos=i;
-		p_plugin_recovery->automated_tracks.push_front(atdata); //push front since later we'll insert
-		
-		base_private.automations.erase( base_private.automations.begin()+i );
-		i--;
-		
-	}
-	
-	/* Erase properties */
+	/* Erase properties and save automations*/
 	
 	for (int i=0;i<base_private.property_list.size();i++) {
 	
@@ -383,7 +357,14 @@ void Track::remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery) {
 		if (port==-1)
 			continue;
 		
-		base_private.property_list.erase( base_private.property_list.begin() + i );
+
+		PluginInsertData::AutomationTrack atdata;
+		atdata.pos=i;
+		atdata.automation=base_private.property_list[i]->automation;
+		p_plugin_recovery->automated_tracks.push_front(atdata);
+		
+		delete base_private.property_list[i]; //erase property ref
+		base_private.property_list.erase( base_private.property_list.begin() + i ); //and erase from array
 		i--;
 		
 	}
