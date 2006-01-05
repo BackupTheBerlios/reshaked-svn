@@ -44,6 +44,7 @@ void SoundPluginRack::update_rack() {
 		RackElement e;
 		e.plugin_ui=ui;
 		rack_elements.push_back(e);
+		
 	}	
 	
 	QFrame *spacer = new QFrame(rack_box);

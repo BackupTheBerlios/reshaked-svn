@@ -11,6 +11,7 @@
 //
 #include "sound_plugin_ui_generic.h"
 #include <Qt/qpushbutton.h>
+#include <Qt/qlayout.h>
 #include "ui_blocks/helpers.h"
 namespace ReShaked {
 
@@ -22,8 +23,12 @@ SoundPluginUI* SoundPluginUI_Generic::create_this(SoundPlugin *p_plugin,QWidget 
 
 SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_parent,p_plugin) {
 	
-	(new QPushButton(QStrify(p_plugin->get_info()->caption ),this))->setMinimumSize(80,20);
+	
+	new QHBoxLayout(this);
+	QPushButton *pb=new QPushButton(QStrify(p_plugin->get_info()->caption ),this);
+	pb->setMinimumSize(80,20);
 	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	layout()->addWidget(pb);
 	//setFixedSize(80,20);
 	
 }

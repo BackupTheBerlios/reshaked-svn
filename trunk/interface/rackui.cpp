@@ -26,6 +26,7 @@ void RackUI::update_rack() {
 	update_rack_combo_slot();
 	update_selected_rack_slot();
 	connections->update();
+	plugins->update_rack();
 }
 
 void RackUI::update_rack_combo_names_slot() {
