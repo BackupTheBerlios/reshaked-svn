@@ -22,7 +22,9 @@ SoundPluginUI* SoundPluginUI_Generic::create_this(SoundPlugin *p_plugin,QWidget 
 
 SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_parent,p_plugin) {
 	
-	new QPushButton(QStrify(p_plugin->get_info()->caption ),this);
+	(new QPushButton(QStrify(p_plugin->get_info()->caption ),this))->setMinimumSize(80,20);
+	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	//setFixedSize(80,20);
 	
 }
 

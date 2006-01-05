@@ -46,6 +46,11 @@ void SoundPluginRack::update_rack() {
 		rack_elements.push_back(e);
 	}	
 	
+	QFrame *spacer = new QFrame(rack_box);
+	spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	
+	rack_box->layout()->setMargin(0);
+	rack_box->layout()->setSpacing(0);
 	rack_box->show();
 }
 
@@ -53,6 +58,11 @@ SoundPluginRack::SoundPluginRack(QWidget *p_parent) : QScrollArea(p_parent) {
 	
 	rack_box=NULL;
 	track=NULL;
+	QPalette p=viewport()->palette();
+	p.setColor(QPalette::Background,QColor(0,0,0));
+	viewport()->setPalette(p);
+	setLineWidth(5);
+	
 }
 
 
