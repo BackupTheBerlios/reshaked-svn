@@ -7,18 +7,38 @@
 #include "drivers/sound_driver_jack.h"
 #include "engine/sound_plugin_list.h"
 #include "plugins/amplifier_plugin.h"
+#include "plugin_UIs/sound_plugin_ui_generic.h"
 
+#include "interface/sound_plugin_ui_list.h"
 #ifdef POSIX_ENABLED
 
 #include "drivers/mutex_lock_pthreads.h"
 
 #endif
 
+
+ReShaked::SoundPluginList sound_plugin_list;
+
+static void init_sound_plugin_list() {
+	
+	sound_plugin_list.add_info( ReShaked::AmplifierPlugin::create_info() );
+	
+}
+
+
+ReShaked::SoundPluginUI_List sound_plugin_UI_list;
+
+static void init_sound_plugin_UI_list() {
+		
+	sound_plugin_UI_list.add_creator(    ReShaked::SoundPluginUI_Generic::create_this );
+	
+}
+
 int main(int argc, char *argv[]) {
 
-	ReShaked::SoundPluginList sound_plugin_list;
-	sound_plugin_list.add_info( ReShaked::AmplifierPlugin::create_info() );
-
+	init_sound_plugin_list();
+	init_sound_plugin_UI_list();
+	
 #ifdef POSIX_ENABLED
 	
 	MutexLock::create_mutex=MutexLock_Pthreads::create_mutex_pthreads;

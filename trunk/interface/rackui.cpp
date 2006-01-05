@@ -71,11 +71,25 @@ void RackUI::update_selected_rack_slot() {
 	if (selected_rack==0) {
 		
 		connections->set_audio_graph( &editor->get_song()->get_track_graph() );
-		
+		plugins->set_track( NULL );
 	} else {
 		
 		connections->set_audio_graph( &editor->get_song()->get_track(selected_rack-1)->get_plugin_graph() );		
+		plugins->set_track( editor->get_song()->get_track(selected_rack-1) );
 	}
+	
+}
+void RackUI::rack_front_selected() {
+	
+	stack->setCurrentWidget(plugins);
+	rack_back->setChecked(false);	
+	rack_front->setChecked(true);	
+}
+void RackUI::rack_back_selected() {
+	
+	rack_back->setChecked(true);	
+	rack_front->setChecked(false);	
+	stack->setCurrentWidget(connections);
 	
 }
 
@@ -92,8 +106,12 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor) : CVBox(p_parent) {
 
 	rack_front = new QPushButton(hbox_top);
 	rack_front->setIcon(GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS)); 
+	rack_front->setCheckable(true);
+	rack_front->setChecked(true);
 	rack_back = new QPushButton(hbox_top);
 	rack_back->setIcon(GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONNECTIONS)); 
+	rack_back->setCheckable(true);
+	rack_back->setChecked(false);
 	
 	QFrame *separate = new QFrame(hbox_top);
 	separate->setFrameStyle(QFrame::VLine+QFrame::Sunken);
@@ -106,13 +124,14 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor) : CVBox(p_parent) {
 	rack_load = new QPushButton(hbox_top);
 	rack_save = new QPushButton(hbox_top);
 	
-	
-	
 	stack = new QStackedWidget(this);
 	
 	connections = new ConnectionRack(stack,editor);
 	stack->addWidget(connections);
-	stack->setCurrentWidget(connections);
+	
+	plugins = new SoundPluginRack(stack);
+	stack->addWidget(plugins);
+	stack->setCurrentWidget(plugins);
 	
 	QObject::connect(rack_choose,SIGNAL(activated(int)),this,SLOT(rack_selected_slot( int )));
 	
@@ -120,6 +139,9 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor) : CVBox(p_parent) {
 	
 	selected_rack=0;
 	update_rack();
+	
+	QObject::connect(rack_back,SIGNAL(clicked()),this,SLOT(rack_back_selected()));
+	QObject::connect(rack_front,SIGNAL(clicked()),this,SLOT(rack_front_selected()));
 	
 }
 

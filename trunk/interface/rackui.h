@@ -13,6 +13,7 @@
 #define RESHAKEDRACKUI_H
 
 #include "interface/connection_rack.h"
+#include "interface/sound_plugin_rack.h"
 #include "editor/editor.h"
 #include "ui_blocks/helpers.h"
 #include <Qt/qlineedit.h>
@@ -45,8 +46,12 @@ class RackUI : public CVBox {
 	QStackedWidget *stack;
 	
 	ConnectionRack *connections;
+	SoundPluginRack *plugins;
 	
 public slots:	
+	
+	void rack_front_selected();
+	void rack_back_selected();
 	
 	void update_rack_combo_names_slot(); //probably a renaming?
 	void update_rack_combo_slot();
