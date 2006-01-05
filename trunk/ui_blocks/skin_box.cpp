@@ -32,6 +32,14 @@ int SkinBox::get_bottom() {
 	return bottom;
 }
 
+int SkinBox::get_center_w() {
+	
+	return pix_center.width();
+}
+int SkinBox::get_center_h() {
+	
+	return pix_center.height();
+}
 
 void SkinBox::paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h) {
 
@@ -95,13 +103,21 @@ void SkinBox::load_from_pixmap(const QPixmap& p_pixmap,int p_top, int p_left, in
 	int center_height=p_pixmap.height()-p_top-p_bottom;
 	
 	pix_top_left=p_pixmap.copy(0,0,p_left,p_top);
-	pix_top=p_pixmap.copy(p_left,0,center_width,p_top);
+	if (center_width>0)
+		pix_top=p_pixmap.copy(p_left,0,center_width,p_top);
 	pix_top_right=p_pixmap.copy(p_left+center_width,0,p_right,p_top);
-	pix_left=p_pixmap.copy(0,p_top,p_left,center_height);
-	pix_center=p_pixmap.copy(p_left,p_top,center_width,center_height);
-	pix_right=p_pixmap.copy(p_left+center_width,p_top,p_right,center_height);
+	if (center_height>0)
+		
+		pix_left=p_pixmap.copy(0,p_top,p_left,center_height);
+	if (center_width>0 && center_height>0) {
+		pix_center=p_pixmap.copy(p_left,p_top,center_width,center_height);
+	}
+	if (center_height>0)
+		pix_right=p_pixmap.copy(p_left+center_width,p_top,p_right,center_height);
+	
 	pix_bottom_left=p_pixmap.copy(0,p_top+center_height,p_left,p_bottom);
-	pix_bottom=p_pixmap.copy(p_left,p_top+center_height,center_width,p_bottom);
+	if (center_width>0)
+		pix_bottom=p_pixmap.copy(p_left,p_top+center_height,center_width,p_bottom);
 	pix_bottom_right=p_pixmap.copy(p_left+center_width,p_top+center_height,p_right,p_bottom);
 	
 	top=p_top;

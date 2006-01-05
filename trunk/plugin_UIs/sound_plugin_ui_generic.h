@@ -20,6 +20,7 @@ namespace ReShaked {
 	@author Juan Linietsky <reduzio@gmail.com>
 */
 class SoundPluginUI_Generic : public SoundPluginUI {
+	
 public:
 	
 	static SoundPluginUI* create_this(SoundPlugin *p_plugin,QWidget *p_parent);
