@@ -15,9 +15,14 @@
 
 namespace ReShaked {
 
-String Property::get_text_value() {
+String Property::get_postfix() {
 	
-	return get_text_value(get());
+	return "";
+}
+
+String Property::get_text_value(bool p_no_postfix) {
+	
+	return get_text_value(get(),p_no_postfix);
 }
 
 
@@ -75,6 +80,7 @@ void LocalProperty::set(double p_val) {
 	
 	if (val<min || val>max)
 		return;
+
 	if (interval!=0) {
 		p_val-=min;
 		p_val=p_val-fmod(p_val,interval);
@@ -111,7 +117,7 @@ String LocalProperty::get_caption() {
 	return caption;
 }
 
-String LocalProperty::get_text_value(double p_for_value) {
+String LocalProperty::get_text_value(double p_for_value,bool p_no_postfix) {
 	
 	if (min_label!="" && p_for_value==min)
 		return min_label;
@@ -135,11 +141,19 @@ String LocalProperty::get_text_value(double p_for_value) {
 		} while (true);
 	} 
 	
-	return String::num(p_for_value,digits) + postfix;
+	String res=String::num(p_for_value,digits);
+	if (!p_no_postfix)
+		res+=postfix;
+	return res;
 }
 bool LocalProperty::has_text_value() {
 	
 	return true;
+}
+
+String LocalProperty::get_postfix() {
+	
+	return postfix;
 }
 
 LocalProperty::DisplayMode LocalProperty::get_display_mode() {
@@ -162,6 +176,103 @@ LocalProperty::LocalProperty() {
 
 LocalProperty::~LocalProperty() {
 	
+	
+}
+
+
+Property *PropertyEditor::get_property() {
+	
+	return property;
+	
+}
+	
+void PropertyEditor::set(double p_val) {
+
+	ERR_FAIL_COND(property==NULL);
+	property->set(p_val);
+	last_value=property->get();
+	if (group && !group->locked) {
+		
+		group->locked=true;
+		for (int i=0;i<group->other_editors.size();i++) {
+			if (group->other_editors[i]==this)
+				continue;
+			group->other_editors[i]->check_if_changed();
+		}
+		group->locked=false;
+	}
+	
+}
+double PropertyEditor::get() {
+	
+	return property->get();
+}
+	
+void PropertyEditor::check_if_changed() {
+	
+	if (last_value!=property->get()) {
+		last_value=property->get();
+		changed();
+	}
+	
+}
+void PropertyEditor::set_property(Property *p_property) {
+	
+	property=p_property;
+	check_if_changed();
+
+}
+
+void PropertyEditor::add_to_group(PropertyEditor *p_group) {
+	
+	ERR_FAIL_COND(p_group==this);
+	
+	release_group();
+
+	if (p_group->group==NULL) {
+		
+		p_group->group = new Group;
+		p_group->group->other_editors.push_back(p_group);
+		p_group->group->locked=false;
+		
+	}
+	
+	group=p_group->group;
+	group->other_editors.push_back(this);
+}
+
+PropertyEditor::PropertyEditor() {
+	
+	last_value=-1;
+	property=NULL;
+	group=NULL;
+}
+	
+void PropertyEditor::release_group() {
+	
+	if (!group)
+		return;
+		
+	if (group->other_editors.size()<=1) {
+		delete group;
+	} else {
+		
+		
+		for (int i=0;i<group->other_editors.size();i++) {
+			
+			if (group->other_editors[i]==this) {
+				group->other_editors.erase( group->other_editors.begin() +i );
+				break;
+			}
+		} 
+	}	
+	
+	group=NULL;
+}
+	
+PropertyEditor::~PropertyEditor() {
+	
+	release_group();
 	
 }
 

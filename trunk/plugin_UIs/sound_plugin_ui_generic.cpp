@@ -14,11 +14,19 @@
 #include <Qt/qlayout.h>
 #include "ui_blocks/helpers.h"
 #include "ui_blocks/pixmap_label.h"
+#include "ui_blocks/pixmap_slider.h"
+#include "ui_blocks/property_editors.h"
+
 #include "pixmaps/effect_panel_generic_top.xpm"
 #include "pixmaps/effect_panel_generic_left.xpm"
 #include "pixmaps/effect_panel_generic_right.xpm"
 #include "pixmaps/effect_panel_generic_label.xpm"
 #include "pixmaps/effect_panel_generic_value.xpm"
+#include "pixmaps/effect_panel_generic_slider_base.xpm"
+#include "pixmaps/effect_panel_generic_slider_light.xpm"
+#include "pixmaps/effect_panel_generic_slider_grabber.xpm"
+#include "pixmaps/effect_panel_generic_vu_empty.xpm"
+#include "pixmaps/effect_panel_generic_vu_fill.xpm"
 namespace ReShaked {
 
 SoundPluginUI* SoundPluginUI_Generic::create_this(SoundPlugin *p_plugin,QWidget *p_parent) {
@@ -37,16 +45,55 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 	CHBox *hb = new CHBox(this);
 	layout()->addWidget(hb);
 	
-	new PixmapLabel(hb,new QPixmap((const char**)effect_panel_generic_left_xpm), true );
+	PixmapLabel *label_name = new PixmapLabel(hb,QPixmap((const char**)effect_panel_generic_left_xpm));
+	label_name->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	
+	QPixmap value_pixmap((const char**)effect_panel_generic_value_xpm);
+	QPixmap label_pixmap((const char**)effect_panel_generic_label_xpm);
+	PixmapSlider::Skin slider_skin(effect_panel_generic_slider_base_xpm,effect_panel_generic_slider_light_xpm,effect_panel_generic_slider_grabber_xpm);
+	
+	PixmapVU::Skin vu_skin(effect_panel_generic_vu_empty_xpm,effect_panel_generic_vu_fill_xpm);
 	
 	for (int i=0;i<p_plugin->get_port_count();i++) {
 		CVBox *vb_port = new CVBox(hb);
 		
 		CHBox *hb_port = new CHBox(vb_port);
-		PixmapLabel * name = new PixmapLabel(hb_port,new QPixmap((const char**)effect_panel_generic_label_xpm), true );
+		
+		/* LABEL */
+		PixmapLabel * name = new PixmapLabel(hb_port,label_pixmap);
+		
+		name->set_pos(QPoint(3,label_pixmap.height()-8));
+		QFont name_font;
+		name_font.setPixelSize(10);
+		QString name_str=QStrify(p_plugin->get_port(i).get_caption());
+		if (p_plugin->get_port(i).get_postfix()!="") {
+			
+			name_str+=" (" +QStrify(p_plugin->get_port(i).get_postfix()).toLower() +")";
+		}
+		name->set_text( name_str );
+		name->set_angle( -90 );
+		name->set_color(QColor(0,0,22));
 		
 		
-		PixmapLabel * value = new PixmapLabel(vb_port,new QPixmap((const char**)effect_panel_generic_value_xpm), true );
+		/* SLIDER/VU */
+		PropertyEditor *editor;
+		if (p_plugin->get_port_type(i)==SoundPlugin::TYPE_WRITE) {
+			PropertyEditSlider * slider = new PropertyEditSlider(hb_port,slider_skin);
+			slider->set_property(&p_plugin->get_port(i));
+			editor=slider;
+		} else {
+			PropertyEditVU * vu = new PropertyEditVU(hb_port,vu_skin);
+			vu->set_property(&p_plugin->get_port(i));
+			editor=vu;
+		}
+		
+		/* VALUE */
+		PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
+		value->set_property(&p_plugin->get_port(i));
+		value->set_postfix_visible( false );
+		value->set_color(QColor(240,230,255));
+		value->add_to_group(editor); //share group
+		
 		
 		vb_port->layout()->setMargin(0);
 		vb_port->layout()->setSpacing(0);
@@ -55,7 +102,7 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 		
 	}
 	
-	new PixmapLabel(hb,new QPixmap((const char**)effect_panel_generic_right_xpm), true );
+	new PixmapLabel(hb,QPixmap((const char**)effect_panel_generic_right_xpm));
 	
 	
 	layout()->setMargin(0);

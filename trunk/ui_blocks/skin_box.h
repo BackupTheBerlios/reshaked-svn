@@ -33,6 +33,7 @@ class SkinBox {
 	QPixmap pix_bottom;
 	QPixmap pix_bottom_right;
 	
+	int center_w,center_h;
 	int top,left,right,bottom;	
 	bool stretch;
 public:

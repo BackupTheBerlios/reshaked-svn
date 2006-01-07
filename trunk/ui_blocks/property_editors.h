@@ -13,6 +13,9 @@
 #define RESHAKEDPROPERTY_EDITORS_H
 
 #include "ui_blocks/helpers.h"
+#include "ui_blocks/pixmap_label.h"
+#include "ui_blocks/pixmap_slider.h"
+#include "ui_blocks/pixmap_vu.h"
 #include "property.h"
 
 class Knob;
@@ -41,6 +44,48 @@ public:
 	~PropertyEditKnob();
 
 };
+
+class PropertyEditLabel : public PixmapLabel, public PropertyEditor {
+
+	Q_OBJECT
+
+	virtual void changed();
+	bool postfix;
+public:
+	void set_postfix_visible(bool p_visible);
+	PropertyEditLabel(QWidget *p_parent,QPixmap p_bg);
+	~PropertyEditLabel();
+
+};
+
+class PropertyEditSlider : public PixmapSlider, public PropertyEditor {
+
+	Q_OBJECT
+
+	virtual void changed();
+	virtual void value_changed(float p_new_value);
+public:
+
+	PropertyEditSlider(QWidget *p_parent,const Skin& p_skin,Type p_type=TYPE_VERTICAL,int p_margin_beg=5,int p_margin_end=5);
+	~PropertyEditSlider();
+
+};
+
+class PropertyEditVU : public PixmapVU, public PropertyEditor {
+
+Q_OBJECT
+
+	
+	virtual void changed();
+
+public:
+
+	PropertyEditVU(QWidget *p_parent,const Skin& p_skin,Type p_type=TYPE_VERTICAL,int p_margin_beg=5,int p_margin_end=5);
+	~PropertyEditVU();
+
+};
+
+
 
 }
 

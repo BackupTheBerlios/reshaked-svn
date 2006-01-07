@@ -12,6 +12,7 @@
 #include <Qt/qlabel.h>
 #include "ui_blocks/knob.h"
 #include "property_editors.h"
+#include "helpers.h"
 
 namespace ReShaked {
 
@@ -52,6 +53,86 @@ PropertyEditKnob::~PropertyEditKnob() {
 	
 	
 }
+
+
+void PropertyEditLabel::set_postfix_visible(bool p_visible) {
+	
+	postfix=p_visible;
+	changed();
+}
+void PropertyEditLabel::changed() {
+	
+	set_text(QStrify(get_property()->get_text_value(!postfix)));
+	update();
+}
+
+PropertyEditLabel::PropertyEditLabel(QWidget *p_parent,QPixmap p_bg) : PixmapLabel(p_parent,p_bg) {
+	
+	QFont f;
+	f.setBold(true);
+	int font_pix_size=p_bg.height()*2/3;
+	f.setPixelSize(font_pix_size);
+	set_font(f);
+	set_pos(QPoint(p_bg.width()/2,(p_bg.height()-font_pix_size)/2),true);
+	set_color(QColor(255,255,255));
+	postfix=true;
+
+}
+
+PropertyEditLabel::~PropertyEditLabel() {
+	
+	
+}
+
+/*********************/
+
+
+
+void PropertyEditSlider::changed() {
+	
+	
+	set_value( get_property()->get_coeff_value() );
+	update();
+}
+
+void PropertyEditSlider::value_changed(float p_new_value) {
+	
+	set( get_property()->get_value_from_coeff( p_new_value) );
+}
+
+PropertyEditSlider::PropertyEditSlider(QWidget *p_parent,const Skin& p_skin,Type p_type,int p_margin_beg,int p_margin_end) : PixmapSlider(p_parent,p_skin,p_type,p_margin_beg,p_margin_end) {
+	
+		
+	
+}
+		
+PropertyEditSlider::~PropertyEditSlider() {
+	
+	
+	
+}
+
+/***********************************/
+
+
+
+void PropertyEditVU::changed() {
+	
+	update();
+}
+
+PropertyEditVU::PropertyEditVU(QWidget *p_parent,const Skin& p_skin,Type p_type,int p_margin_beg,int p_margin_end) : PixmapVU(p_parent,p_skin,p_type,p_margin_beg,p_margin_end) {
+	
+		
+	
+}
+		
+PropertyEditVU::~PropertyEditVU() {
+	
+	
+	
+}
+
 
 
 

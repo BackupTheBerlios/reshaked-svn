@@ -88,3 +88,4 @@ BUGS:
 if the block is valid too.
 -While connecting cables, am i locking the undo system?
 
+-stereo image.. make an histogram of sounds in l/r ?

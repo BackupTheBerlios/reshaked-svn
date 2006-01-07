@@ -23,7 +23,7 @@ namespace ReShaked {
 class PixmapLabel : public QWidget {
 	
 	SkinBox *skin_box;
-	QPixmap *pixmap;
+	QPixmap pixmap;
 	bool owned;
 	void paintEvent(QPaintEvent *e);
 	QString text;
@@ -31,14 +31,16 @@ class PixmapLabel : public QWidget {
 	QPoint pos;
 	QColor col;
 	int angle;
+	
+	bool centered;
 public:
-	void set_pos(QPoint p_pos);
+	void set_pos(QPoint p_pos,bool p_centered=false);
 	void set_color(QColor p_col);
 	void set_angle(int p_phi);
 	void set_font(const QFont &p_font);
 	void set_text(QString p_text);
 	PixmapLabel(QWidget *p_parent,SkinBox *p_skin_box,bool p_own_it=false);
-	PixmapLabel(QWidget *p_parent,QPixmap *p_pixmap,bool  p_own_it=false);
+	PixmapLabel(QWidget *p_parent,QPixmap p_pixmap);
 
 	~PixmapLabel();
 

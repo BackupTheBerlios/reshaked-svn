@@ -323,7 +323,6 @@ void MainWindow::blocklist_changed_slot() {
 	Track *t=data.song.get_track( data.editor->get_current_track () );
 	if (t==NULL)
 		return;
-	settings_dock->setWindowTitle(QStrify(t->get_name())+ " Properties");
 }
 
 MainWindow::MainWindow() {

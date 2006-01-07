@@ -13,6 +13,9 @@
 #define RESHAKEDPROPERTY_H
 
 #include "typedefs.h"
+#include <vector>
+
+
 namespace ReShaked {
 
 /**
@@ -41,14 +44,15 @@ public:
 	virtual double get_default()=0;
 	virtual String get_name()=0;
 	virtual String get_caption()=0;
+	virtual String get_postfix();
 	
-	virtual String get_text_value(double p_for_value)=0; //useful for precomputnig ranges
+	virtual String get_text_value(double p_for_value,bool p_no_postfix=false)=0; //useful for precomputnig ranges
 	virtual bool has_text_value()=0;
 	
 	virtual DisplayMode get_display_mode()=0;
 	
 	/* helpers */	
-	String get_text_value(); 
+	String get_text_value(bool p_no_postfix=false); 
 	float get_coeff_value(); ///< return value in range 0 .. 1
 	void set_coeff_value(float p_coeff); ///< return value in range 0 .. 1
 	float get_value_from_coeff(float p_coeff);
@@ -91,8 +95,9 @@ public:
 	
 	String get_name();
 	String get_caption();
+	String get_postfix();
 	
-	String get_text_value(double p_for_value);
+	String get_text_value(double p_for_value,bool p_no_postfix=false);
 	bool has_text_value();
 	
 	DisplayMode get_display_mode();
@@ -101,6 +106,44 @@ public:
 	~LocalProperty();
 
 };
+
+
+class PropertyEditor {
+	
+	
+	double last_value;	
+	Property *property;
+protected:	
+	
+	struct Group {
+		
+		bool locked;
+		std::vector<PropertyEditor*> other_editors;	
+	};
+	
+	Group *group;
+	
+	Property *get_property();
+	
+	void set(double p_val);
+	double get();
+	
+	
+	virtual void changed()=0;
+	
+	void release_group();
+public:	
+	
+	void add_to_group(PropertyEditor *p_group);
+	
+	void check_if_changed();
+	void set_property(Property *p_property);
+
+	PropertyEditor();
+	virtual ~PropertyEditor();
+	
+};
+
 
 }
 
