@@ -4,7 +4,7 @@
 
 #include <vector>
 #include "engine/track.h"
-#include "audio_graph.h"
+#include	 "audio_graph.h"
 #include "engine/data_pool.h"
 #include "engine/bar_map.h"
 #include "engine/audio_port_layout.h"
@@ -47,6 +47,7 @@ public:
 	
 	AudioNode *get_input_node();
 	AudioNode *get_output_node();
+	
 	
 	void set_mix_rate(float p_mix_rate);
 	

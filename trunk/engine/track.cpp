@@ -197,7 +197,7 @@ void Track::feed_input(int p_frames) {
 void Track::read_output(int p_frames) {
 	
 	AudioBuffer *output_buff=base_private.output_plug->get_buffer();
-	output_buff->copy_from( base_private.input_proxy.get_input_plug(0)->get_buffer(), p_frames );
+	output_buff->copy_from( base_private.output_proxy.get_input_plug(0)->get_buffer(), p_frames );
 }
 
 void Track::process(int p_frames) {
