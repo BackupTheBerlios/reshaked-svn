@@ -180,6 +180,16 @@ void MainWindow::menu_action_callback(int p_action) {
 			settings_dock->setVisible(get_action(NAVIGATION_CONTROLS_VIEW)->isChecked());
 		} break;
 		*/
+		case CONTROL_PLAY: {
+			
+			data.song.play(0);
+		} break;
+		case CONTROL_STOP: {
+			
+			data.song.stop();
+			
+		} break;
+		
 	}
 }
 
@@ -255,6 +265,14 @@ void MainWindow::add_menus() {
 	navigation_toolbar->addSeparator();
 	get_action(NAVIGATION_EDIT_VIEW)->setCheckable(true);
 	
+	create_action(CONTROL_RW,"Rewind","rewind",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_RW));
+	create_action(CONTROL_PLAY,"Play","play",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_PLAY));
+	create_action(CONTROL_PLAY_LOOP,"Play Loop","play_loop",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_PLAY_LOOP));
+	create_action(CONTROL_PAUSE,"Pause","pause",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_PAUSE));
+	create_action(CONTROL_STOP,"Stop","stop",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_STOP));
+	create_action(CONTROL_FF,"FastForward","fast_forward",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_FF));
+	create_action(CONTROL_RECORD,"Record","record",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_RECORD));
+		
 	/*
 	track->addSeparator();
 	
@@ -325,6 +343,14 @@ void MainWindow::blocklist_changed_slot() {
 		return;
 }
 
+void MainWindow::ui_update_slot() {
+	//printf("update!\n");
+	//if (data.song.get_song_playback().get_status()==SongPlayback::STATUS_PLAY)
+//		printf("play pos at %f\n",(float)data.song.get_song_playback().get_current_tick_from()/(float)TICKS_PER_BEAT);
+	
+	data.property_edit_updater.update_editors();
+}
+
 MainWindow::MainWindow() {
 
 	SoundDriverList::get_singleton()->set_song(&data.song);
@@ -350,16 +376,17 @@ MainWindow::MainWindow() {
 	//settings_dock->setLayout(new QHBoxLayout(settings_dock));
 	//track_settings = new TrackSettings(settings_dock,data.editor);
 	//settings_dock->layout()->addWidget(track_settings);
-	rack = new RackUI(settings_dock,data.editor);
+	rack = new RackUI(settings_dock,data.editor,&data.property_edit_updater);
 	settings_dock->layout()->addWidget(rack);
-	
 	
 	navigation_toolbar = addToolBar("Navigation");
 	//create this one on bottom
 	track_toolbar = addToolBar("Track");
+	
 	removeToolBar(track_toolbar);
 	addToolBar(Qt::BottomToolBarArea,track_toolbar);
 	editing_toolbar = addToolBar("Editing");
+	playback_toolbar=addToolBar("Playback");
 	
 	editing_toolbar->addWidget(new QLabel(" Octave: ",editing_toolbar));
 	octave = new SpinBoxNoFocus(editing_toolbar);
@@ -408,6 +435,9 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(rack_connections_changed()),rack,SLOT(repaint_rack()));
 	QObject::connect(update_notify,SIGNAL(track_names_changed()),rack,SLOT(update_rack_combo_names_slot()));
 		
+	ui_updater = new QTimer(this);
+	QObject::connect(ui_updater,SIGNAL(timeout()),this,SLOT(ui_update_slot()));
+	ui_updater->start(100);
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 	setMinimumSize(750,550); //dont mess with my app!
 }

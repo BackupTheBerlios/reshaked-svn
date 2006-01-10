@@ -23,6 +23,7 @@
 #include <map> // std::map
 #include <Qt/qstackedwidget.h>
 #include <Qt/qdockwidget.h>
+#include <Qt/qtimer.h>
 
 #include "ui_blocks/visual_settings.h"
 #include <Qt/qtoolbar.h>
@@ -68,6 +69,15 @@ class MainWindow : public QMainWindow {
 
 		NAVIGATION_GLOBAL_VIEW,
 		NAVIGATION_EDIT_VIEW,
+			
+		CONTROL_RW,
+		CONTROL_PLAY,
+		CONTROL_PLAY_LOOP,
+		CONTROL_PAUSE,
+		CONTROL_STOP,
+		CONTROL_FF,
+		CONTROL_RECORD,
+			
 		/*		
 		TRACK_SYNTH,
 		TRACK_CONTROLS,
@@ -86,6 +96,7 @@ class MainWindow : public QMainWindow {
 		Keyboard_Input keyboard_codes;
 		Song song;
 		Editor *editor;
+		PropertyEditUpdater property_edit_updater;
 
 	} data;
 
@@ -106,9 +117,11 @@ class MainWindow : public QMainWindow {
 	QToolBar *navigation_toolbar;
 	QToolBar *track_toolbar;
 	QToolBar *editing_toolbar;
+	QToolBar *playback_toolbar;
 	
 	QSpinBox *octave;
 
+	QTimer *ui_updater;
 	
 	VisualSettings visual_settings;
 
@@ -129,6 +142,8 @@ public slots:
 	void octave_changed_external_slot();
 	void blocklist_changed_slot();
 	void track_list_changed_slot();
+	
+	void ui_update_slot();
 public:
 
 	MainWindow();

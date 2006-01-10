@@ -14,6 +14,11 @@
 namespace ReShaked {
 
 
+const EventBuffer *SoundPlugin::get_event_buffer() {
+	
+	return _event_buffer;
+}
+
 String SoundPlugin::get_caption() {
 	
 	return _plugin_info->caption;
@@ -35,7 +40,7 @@ int SoundPlugin::get_channels_created() {
 
 void SoundPlugin::set_event_buffer(const EventBuffer *p_buffer) {
 	
-	
+	_event_buffer=p_buffer;	
 }
 
 /* Internal UI Methods */

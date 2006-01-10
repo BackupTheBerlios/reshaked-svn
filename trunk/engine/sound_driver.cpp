@@ -128,7 +128,7 @@ void SoundDriver::OutputNode::process(int p_frames) {
 
 int SoundDriver::process_graph(int p_frames) {
 	
-	return graph->process(p_frames);
+	return audio_process_base->process(p_frames);
 }
 int SoundDriver::get_input_count() {
 	
@@ -162,6 +162,13 @@ AudioNode *SoundDriver::get_output_node() {
 	
 	return &output_node;
 }
+
+void SoundDriver::set_audio_process_base(AudioProcessBase *p_base) {
+	
+	audio_process_base=p_base;
+	
+}
+
 
 void SoundDriver::set_port_layout(const AudioPortLayout *p_layout) {
 	

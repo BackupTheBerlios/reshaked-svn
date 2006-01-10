@@ -47,7 +47,11 @@ class SoundPlugin : public AudioNode {
 	const SoundPluginInfo *_plugin_info;
 	
 	String get_caption();
+	const EventBuffer *_event_buffer;
+
+protected:	
 	
+	const EventBuffer *get_event_buffer();
 public:
 	enum PortType {
 		TYPE_READ,
@@ -61,7 +65,7 @@ public:
 		
 	
 	/* Methods in case this is a synth */
-	virtual void set_event_buffer(const EventBuffer *p_buffer);
+	void set_event_buffer(const EventBuffer *p_buffer);
 	
 	/* Setting up */
 	virtual void set_mixing_rate(float p_mixing_rate)=0;

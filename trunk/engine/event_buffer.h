@@ -39,14 +39,14 @@ void EventBuffer::push_event(const Event& p_event) {
 	events[size]=p_event; 
 	
 	/* Then update the pointer */
-	if (size<=0 || event_ptrs[size-1]->frame_offset<p_event.frame_offset) {
+	if (size<=0 || event_ptrs[size-1]->frame_offset<=p_event.frame_offset) {
 		/* If the events are added in order, insertion is done at virtually no cost */
 		event_ptrs[size]=&events[size];
 	} else {
 		/* But if not, then the event must be inserted in the proper place */
 		int insert_index=0;
 		/* find the place where it belongs */
-		while (event_ptrs[insert_index]->frame_offset<p_event.frame_offset)
+		while (p_event.frame_offset>=event_ptrs[insert_index]->frame_offset)
 			insert_index++;
 		
 		/* Make space for it (could use memcopy) */

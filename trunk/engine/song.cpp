@@ -35,7 +35,10 @@ GlobalProperties& Song::get_global_properties() {
 	return global_properties;
 }
 
-
+SongPlayback& Song::get_song_playback() {
+	
+	return song_playback;	
+}
 void Song::add_track(Track* p_track,int p_at_pos,std::list<AudioGraph::Connection> *p_node_connections) {
 	
 	if (p_at_pos==-1)
@@ -44,6 +47,7 @@ void Song::add_track(Track* p_track,int p_at_pos,std::list<AudioGraph::Connectio
 	AudioControl::mutex_lock();
 	track_list.insert(track_list.begin()+p_at_pos,p_track);
 	track_graph.add_node( p_track, p_node_connections);
+	p_track->update_plugins_mix_rate();
 	AudioControl::mutex_unlock();
 	
 	
@@ -135,15 +139,56 @@ AudioNode *Song::get_output_node() {
 
 void Song::set_mix_rate(float p_mix_rate) {
 	
+	song_playback.set_mix_rate(p_mix_rate);
+	for (int i=0;i<track_list.size();i++) 
+		track_list[i]->update_plugins_mix_rate();
 	
 }
-Song::Song() : global_track(&global_properties) {
+
+int Song::process(int p_frames) {
+	
+	
+	song_playback.advance(p_frames);
+	global_track.process_automations(true);
+	return track_graph.process( p_frames );
+}
+
+void Song::play(Tick p_from_pos) {
+
+	
+	AudioControl::mutex_lock();
+	song_playback.play(p_from_pos);
+	AudioControl::mutex_unlock();
+}
+void Song::loop(Tick p_begin,Tick p_end) {
+	
+	
+	AudioControl::mutex_lock();
+	song_playback.loop(p_begin,p_end);
+	AudioControl::mutex_unlock();
+}
+void Song::set_pause(bool p_paused) {
+	
+	AudioControl::mutex_lock();
+	song_playback.set_pause(p_paused);
+	AudioControl::mutex_unlock();
+}
+void Song::stop() {
+	
+	AudioControl::mutex_lock();
+	song_playback.stop();
+	AudioControl::mutex_unlock();
+}
+
+
+Song::Song() : song_playback(&global_properties), global_track(&global_properties,&song_playback) {
 	
 	input_node=NULL;
 	output_node=NULL;
 	audio_port_layout.port_out_info.push_back(2);
 	audio_port_layout.port_in_info.push_back(2);
 	marker_list.insert(0,"Markers");
+
 }
 
 Song::~Song() {

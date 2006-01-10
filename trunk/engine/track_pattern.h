@@ -15,6 +15,7 @@
 
 #include "engine/track.h"
 #include "engine/data_pool.h"
+#include "engine/swing_process.h"
 #include <list>
 
 namespace ReShaked {
@@ -30,6 +31,11 @@ class Track_Pattern : public Track {
  	class Pattern;
 	
 public:
+	
+	enum {
+		MAX_COLUMNS=16
+	};
+	
 	struct Note {
 
 		enum {
@@ -143,10 +149,17 @@ private:
 		LocalProperty swing;
 		LocalProperty volume;
 		LocalProperty balance;
+		EventBuffer event_buffer;
 		
+		Note last_note[MAX_COLUMNS];
 	} data;
 	
+	SwingProcess swing_process;
 	
+	void plugin_added_notify(SoundPlugin *p_plugin);	
+	void track_pre_process(int p_frames);
+	
+	void reset_last_notes();
 public:
 
 	Property &swing();
@@ -171,7 +184,7 @@ public:
 	NoteList get_notes_in_range(Tick p_from, Tick p_to);
 	
 	
-	Track_Pattern(int p_channels,GlobalProperties *p_global_props);
+	Track_Pattern(int p_channels,GlobalProperties *p_global_props,SongPlayback *p_song_playback);
 	~Track_Pattern();
 
 };

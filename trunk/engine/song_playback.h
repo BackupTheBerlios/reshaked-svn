@@ -12,6 +12,8 @@
 #ifndef RESHAKEDSONG_PLAYBACK_H
 #define RESHAKEDSONG_PLAYBACK_H
 
+#include "typedefs.h"
+#include "engine/global_properties.h"
 namespace ReShaked {
 
 /**
@@ -26,24 +28,42 @@ public:
 							
 	};
 private:
-	float sampling_rate;
+	float mix_rate;
+	Tick prev_tick;
 	Tick current_tick;
+	
+	GlobalProperties *properties;
 	
 	struct Loop {
 		bool active;
 		int begin,end; //beats
-	} loop;
+	} loopdata;
+	
+	Status status;
 			    
 public:
+
+
 	
-	void set_loop(int p_begin,int p_end);
-	void set_sampling_rate(float p_sampling_rate);
+	/* Control */
+	void play(Tick p_from_pos=0);
+	void loop(Tick p_begin,Tick p_end);
+	void set_pause(bool p_paused);
+	void stop();
 	
-	void set_play_pos(Tick p_tick);
+	/* Info */
 	
-	void set_play_status(Status p_status);
+	Status get_status();
 	
-	SongPlayback();
+	/* Advance, return frames it actually advanced (in case of loop) */
+	int advance(int p_frames);
+	void set_mix_rate(float p_mix_rate);
+	float get_mix_rate();
+	
+	Tick get_current_tick_from();
+	Tick get_current_tick_to();
+	
+	SongPlayback(GlobalProperties *p_properties);
 	~SongPlayback();
 
 };

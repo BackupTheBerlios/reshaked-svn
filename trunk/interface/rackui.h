@@ -65,7 +65,7 @@ public:
 	
 	
 	
-	RackUI(QWidget *p_parent,Editor *p_editor);
+	RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater);
 	~RackUI();
 
 };

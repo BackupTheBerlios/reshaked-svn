@@ -192,6 +192,13 @@ Automation::AutomationBlock::AutomationBlock(AutomationData *p_data) {
 	
 }
 
+void Automation::apply(Tick p_pos) {
+	
+	float val=get_tick_val( p_pos );
+	if (val<0)
+		return;
+	property->set_coeff_value(val); 	
+}
 Automation::AutomationBlock::~AutomationBlock() {
 
 	data->dereference();

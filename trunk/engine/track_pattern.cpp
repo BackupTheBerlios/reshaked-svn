@@ -279,9 +279,98 @@ bool Track_Pattern::shares_block_data(Block *p_block) {
 	
 }
 
+
 bool Track_Pattern::accepts_block(Block *p_block) {
 	
 	return dynamic_cast<PatternBlock*>(p_block)!=NULL;	
+}
+
+void Track_Pattern::plugin_added_notify(SoundPlugin *p_plugin) {
+	
+	if (p_plugin->get_info()->is_synth)
+		p_plugin->set_event_buffer( &data.event_buffer );
+}
+
+void Track_Pattern::track_pre_process(int p_frames) {
+	
+	data.event_buffer.clear(); //first of all, always clear event buffer
+	
+	int block_count=get_block_count();
+	if (block_count==0)
+		return; //nuthin' to do
+	
+	Tick tick_from=get_song_playback()->get_current_tick_from();
+	Tick tick_to=get_song_playback()->get_current_tick_to()-1;
+	
+	int block_idx=get_prev_block_from_idx(tick_from);
+	
+	
+	if (block_idx==-1 || (get_block_pos(block_idx)+get_block(block_idx)->get_length())<tick_from) {
+		block_idx++;
+	}
+	
+	while (block_idx<block_count && (get_block_pos(block_idx)<tick_to) ) {
+		
+		Tick block_pos=get_block_pos(block_idx);
+		Tick tick_from_local=tick_from-block_pos;
+		Tick tick_to_local=tick_to-block_pos;
+		if (tick_from_local<0)
+			tick_from_local=0;
+		if (tick_to_local<0)
+			tick_to_local=0;
+		
+		Pattern *pd=get_block(block_idx)->get_pattern();
+		int from_idx;
+		int to_idx;
+		if (!pd->data.find_values_in_range(tick_from_local,tick_to_local,&from_idx,&to_idx)) {
+		
+			for (int i=from_idx;i<=to_idx;i++) {
+								
+				Tick tick=pd->data.get_index_pos(i).tick;
+				if (tick<tick_from_local)
+					continue;
+				if (tick>tick_to_local)
+					break;
+				int col=pd->data.get_index_pos(i).column;
+				if (col<0 || col>=MAX_COLUMNS)
+					continue; //wont play what is not visible
+				int frame=tick*(tick_to-tick_from)/(Tick)p_frames;
+				
+				Note n = pd->data.get_index_value(i);
+				
+				if (n.is_note()) {
+					
+					if (data.last_note[col].is_note()) {
+						/* if there was a previous note, set noteoff! */						
+						Event e;
+						SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[col].note,0);
+						e.frame_offset=frame; //off te
+						data.event_buffer.push_event(e);
+					}
+					
+					int velocity=(int)n.volume*127/99;
+					Event e;
+					SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_ON,0,n.note,velocity);
+					e.frame_offset=frame;
+					data.event_buffer.push_event(e);
+					data.last_note[col]=n;
+	
+					
+				} else if (n.is_note_off()) {
+					
+					Event e;
+					SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[col].note,0);
+					e.frame_offset=frame; //off te
+					data.event_buffer.push_event(e);
+					data.last_note[col]=n;
+				}
+			}
+		}
+
+		
+		block_idx++;
+	}
+	
 }
 
 Property &Track_Pattern::swing() {
@@ -299,10 +388,19 @@ Property &Track_Pattern::balance() {
 	
 }
 
+void Track_Pattern::reset_last_notes() {
+	
+	for(int i=0;i<MAX_COLUMNS;i++) {
+		
+		data.last_note[i]=Note(Note::NOTE_OFF);
+	}
+}
 
-Track_Pattern::Track_Pattern(int p_channels,GlobalProperties *p_global_props) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT,p_global_props) {
+Track_Pattern::Track_Pattern(int p_channels,GlobalProperties *p_global_props,SongPlayback *p_song_playback) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT,p_global_props,p_song_playback), swing_process(p_song_playback) {
 
 	data.visible_columns=1;
+	reset_last_notes();
+	
 	data.swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "swing","Swing","%","Disabled");
 	data.volume.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "volume","Volume","dB");
 	data.balance.set_all( 0, -1.0, 1.0, 0, 0.01, Property::DISPLAY_KNOB,"balance","Balance","","Left","Right");

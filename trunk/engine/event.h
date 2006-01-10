@@ -148,6 +148,13 @@ struct Event {
 };
 
 
+#define SET_EVENT_MIDI(m_e,m_type,m_chan,m_param_1,m_param_2) {\
+	m_e.type=Event::TYPE_MIDI;			       \
+	m_e.param.midi.midi_type=m_type;		       \
+	m_e.param.midi.channel=m_chan;                         \
+	m_e.param.midi.data.raw.param1=m_param_1;		       \
+	m_e.param.midi.data.raw.param2=m_param_2;		       \
+}
 
 };
 

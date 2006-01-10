@@ -35,7 +35,7 @@ class GlobalTrack : public Track {
 	
 public:
 	
-	GlobalTrack(GlobalProperties *p_global_props);
+	GlobalTrack(GlobalProperties *p_global_props,SongPlayback *p_song_playback);
 	~GlobalTrack();
 
 };

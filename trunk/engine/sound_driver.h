@@ -16,6 +16,7 @@
 #include "engine/audio_node.h"
 #include "engine/audio_port_layout.h"
 #include "engine/audio_graph.h"
+#include "engine/audio_process_base.h"
 #include "property.h"
 #include <vector>
 
@@ -25,7 +26,7 @@ namespace ReShaked {
 	@author Juan Linietsky <reduzio@gmail.com>
 */
 class SoundDriver{
-	
+		
 	class InputNode : public AudioNode {
 	friend class SoundDriver;
 		SoundDriver *driver;
@@ -72,6 +73,7 @@ class SoundDriver{
 	OutputNode output_node;
 	const AudioPortLayout *port_layout;
 	AudioGraph *graph;
+	AudioProcessBase *audio_process_base;
 	
 protected:	
 
@@ -83,7 +85,7 @@ protected:
 	const AudioPortLayout *get_port_layout();
 	
 	/**
-	 * Ask the graph to process a given amount of frames.
+	 * Ask to process a given amount of frames.
 	 * @param p_frames Amount of frames to process
 	 * @return Frames actually processed
 	 */
@@ -124,6 +126,7 @@ public:
 	
 	void set_port_layout(const AudioPortLayout *p_layout);
 	void set_audio_graph(AudioGraph *p_graph);
+	void set_audio_process_base(AudioProcessBase *p_base);
 	
 	AudioNode *get_input_node();
 	AudioNode *get_output_node();

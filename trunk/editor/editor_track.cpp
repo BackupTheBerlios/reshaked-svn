@@ -71,7 +71,7 @@ void Editor::add_track(TrackType p_type,int p_channels,String p_name) {
 		case TRACK_TYPE_PATTERN: {
 			
 			
-			track =  new Track_Pattern(p_channels,&d->song->get_global_properties());
+			track =  new Track_Pattern(p_channels,&d->song->get_global_properties(),&d->song->get_song_playback());
 			track->set_name(p_name);
 
 		} break;

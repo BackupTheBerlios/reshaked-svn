@@ -118,6 +118,9 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.set_key_bind_key_by_name("actions/undo",Qt::CTRL+Qt::Key_Z);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/redo",Qt::SHIFT+Qt::CTRL+Qt::Key_Z);
 
+	data.keyboard_codes.set_key_bind_key_by_name("actions/play",Qt::Key_F5);
+	data.keyboard_codes.set_key_bind_key_by_name("actions/stop",Qt::Key_F8);
+	
 }
 
 

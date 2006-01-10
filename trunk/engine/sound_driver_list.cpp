@@ -44,6 +44,7 @@ bool SoundDriverList::init_driver(int p_index,bool p_internal_init) {
 	current=p_index;
 	
 	driver_list[current]->set_audio_graph(&song->get_track_graph());
+	driver_list[current]->set_audio_process_base(song);
 	driver_list[current]->set_port_layout(&song->get_audio_port_layout());
 	song->set_input_node( driver_list[current]->get_input_node() );
 	song->set_output_node( driver_list[current]->get_output_node() );

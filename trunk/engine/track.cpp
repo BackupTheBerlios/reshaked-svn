@@ -76,7 +76,8 @@ void Track::property_show_automation(int p_idx) {
 	
 	base_private.property_list[ idx ]->automation->visible=true;
 	
-	
+	rebuild_active_automation_cache();
+		
 	AudioControl::mutex_unlock();
 	
 }
@@ -120,6 +121,7 @@ void Track::property_hide_automation(int p_idx) {
 		
 	}
 */
+	rebuild_active_automation_cache();	
 	AudioControl::mutex_unlock();
 	
 }
@@ -200,8 +202,22 @@ void Track::read_output(int p_frames) {
 	output_buff->copy_from( base_private.output_proxy.get_input_plug(0)->get_buffer(), p_frames );
 }
 
+void Track::process_automations(bool p_use_current_tick_to) {
+	
+	if (base_private.song_playback->get_status()==SongPlayback::STATUS_PLAY) {
+		/* update automations */
+		for (int i=0;i<base_private.active_automation_cache.size();i++) {
+			
+			Tick tick = p_use_current_tick_to?base_private.song_playback->get_current_tick_to():base_private.song_playback->get_current_tick_from();
+			base_private.active_automation_cache[i]->apply(tick);
+		}
+		
+	}
+	
+}
 void Track::process(int p_frames) {
 
+	process_automations();	
 	base_private.plugin_graph.process( p_frames );
 }
 
@@ -275,6 +291,7 @@ SoundPlugin *Track::get_plugin(int p_index) {
 	return base_private.sound_plugins[p_index];
 		
 }
+void Track::plugin_added_notify(SoundPlugin *p_plugin) {};
 void Track::add_plugin(PluginInsertData* p_plugin) {
 	
 	AudioControl::mutex_lock();
@@ -319,6 +336,11 @@ void Track::add_plugin(PluginInsertData* p_plugin) {
 	/* Finally, restore connections */
 	
 	base_private.plugin_graph.add_node( p_plugin->plugin, &p_plugin->connections );
+	
+	rebuild_active_automation_cache();
+	plugin_added_notify( p_plugin->plugin );
+	
+	p_plugin->plugin->set_mixing_rate( get_song_playback()->get_mix_rate() );
 	
 	AudioControl::mutex_unlock();
 	
@@ -371,7 +393,21 @@ void Track::remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery) {
 	
 	base_private.sound_plugins.erase( base_private.sound_plugins.begin() + p_pos );
 	
+	rebuild_active_automation_cache();
+		
 	AudioControl::mutex_unlock();
+}
+
+void Track::update_plugins_mix_rate() {
+	
+	AudioControl::mutex_lock();
+		
+	for (int i=0;i<base_private.sound_plugins.size();i++) {
+		
+		base_private.sound_plugins[i]->set_mixing_rate( get_song_playback()->get_mix_rate() );
+	}
+	AudioControl::mutex_unlock();
+	
 }
 
 AudioGraph& Track::get_plugin_graph() {
@@ -384,12 +420,41 @@ int Track::get_channels() {
 	return base_private.channels;
 }
 
-Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props) : BlockList(p_type) {
+void Track::rebuild_active_automation_cache() {
+	
+	AudioControl::mutex_lock();
+	
+	base_private.active_automation_cache.clear();
+	
+	for (int i=0;i<get_property_count();i++) {
+		
+		if (has_property_visible_automation(i) || base_private.property_list[i]->automation->get_block_count() > 0 ) {
+			base_private.active_automation_cache.push_back( base_private.property_list[i]->automation);
+		
+		} 
+		
+	}
+	
+	AudioControl::mutex_unlock();
+	
+}
+
+SongPlayback* Track::get_song_playback() {
+	
+	return base_private.song_playback;	
+}
+
+void Track::track_pre_process(int p_frames) {
+	
+}
+
+Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback) : BlockList(p_type) {
 	
 	base_private.channels=p_channels;
 	base_private.seq_events=NULL;
 	base_private.input_plug=new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	base_private.output_plug=new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
+	base_private.song_playback=p_song_playback;
 	
 	/* input <-> output flipping because we are OUTSIDE the graph */
 	base_private.input_proxy.add_output_plug( p_channels );

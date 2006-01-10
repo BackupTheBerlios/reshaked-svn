@@ -89,6 +89,7 @@ public:
 	
 	Block* create_block(BlockCreationData *p_creation_data=NULL);
 
+	void apply(Tick p_pos);
 	
 	DisplaySize get_display_size();
 

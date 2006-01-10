@@ -41,6 +41,7 @@ void SoundPluginRack::update_rack() {
 		SoundPluginUI *ui = SoundPluginUI_List::get_singleton()->create_UI( track->get_plugin( i ), rack_box );
 		ERR_CONTINUE( ui==NULL );
 		
+		ui->set_property_editor_updater( property_edit_updater );
 		RackElement e;
 		e.plugin_ui=ui;
 		rack_elements.push_back(e);
@@ -55,8 +56,9 @@ void SoundPluginRack::update_rack() {
 	rack_box->show();
 }
 
-SoundPluginRack::SoundPluginRack(QWidget *p_parent) : QScrollArea(p_parent) {
+SoundPluginRack::SoundPluginRack(QWidget *p_parent,PropertyEditUpdater *p_updater) : QScrollArea(p_parent) {
 	
+	property_edit_updater=p_updater;
 	rack_box=NULL;
 	track=NULL;
 	QPalette p=viewport()->palette();

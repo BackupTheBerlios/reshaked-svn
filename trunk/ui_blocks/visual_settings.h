@@ -100,7 +100,14 @@ enum PixmapList {
 	ICON_COLUMN_REMOVE,
 	ICON_ZOOM_SMALL,
 	 
-	
+	ICON_CONTROL_RW,
+	ICON_CONTROL_PLAY,
+	ICON_CONTROL_PLAY_LOOP,
+	ICON_CONTROL_PAUSE,
+	ICON_CONTROL_STOP,
+	ICON_CONTROL_FF,
+	ICON_CONTROL_RECORD,
+		
 };
 
 #define GET_QCOLOR(m_col) VisualSettings::get_singleton()->get_color( m_col )

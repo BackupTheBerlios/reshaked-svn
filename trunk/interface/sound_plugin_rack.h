@@ -34,6 +34,7 @@ class SoundPluginRack : public QScrollArea {
 			
 	};
 	std::vector<RackElement> rack_elements;
+	PropertyEditUpdater *property_edit_updater;
 public slots:
 	
 	void update_rack();
@@ -41,7 +42,7 @@ public slots:
 public:
 	void set_track(Track *p_track);
 	
-	SoundPluginRack(QWidget *p_parent);
+	SoundPluginRack(QWidget *p_parent,PropertyEditUpdater *p_updater);
 	~SoundPluginRack();
 };
 

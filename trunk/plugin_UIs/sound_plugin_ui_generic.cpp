@@ -87,6 +87,8 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 			editor=vu;
 		}
 		
+		set_periodic_updates( editor );
+		
 		/* VALUE */
 		PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
 		value->set_property(&p_plugin->get_port(i));
@@ -94,6 +96,7 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 		value->set_color(QColor(240,230,255));
 		value->add_to_group(editor); //share group
 		
+		set_periodic_updates( value );
 		
 		vb_port->layout()->setMargin(0);
 		vb_port->layout()->setSpacing(0);

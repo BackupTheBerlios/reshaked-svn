@@ -94,7 +94,7 @@ void RackUI::rack_back_selected() {
 	
 }
 
-RackUI::RackUI(QWidget *p_parent,Editor *p_editor) : CVBox(p_parent) {
+RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater) : CVBox(p_parent) {
 	
 	editor=p_editor;
 	
@@ -130,7 +130,7 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor) : CVBox(p_parent) {
 	connections = new ConnectionRack(stack,editor);
 	stack->addWidget(connections);
 	
-	plugins = new SoundPluginRack(stack);
+	plugins = new SoundPluginRack(stack,p_updater);
 	stack->addWidget(plugins);
 	stack->setCurrentWidget(plugins);
 	

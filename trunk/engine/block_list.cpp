@@ -212,7 +212,7 @@ bool BlockList::get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *
 		Tick pos=get_block_pos(from_idx);
 		Tick len=get_block(from_idx)->get_length();
 		bool fits=(pos<=p_to) && ((pos+len)>p_from);
-		//if fits, add to range
+		//if fits, add to 
 		if (fits) {
 			
 			if (first_fit==-1)

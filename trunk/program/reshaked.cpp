@@ -7,6 +7,7 @@
 #include "drivers/sound_driver_jack.h"
 #include "engine/sound_plugin_list.h"
 #include "plugins/amplifier_plugin.h"
+#include "plugins/sine_synth.h"
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 
 #include "interface/sound_plugin_ui_list.h"
@@ -22,6 +23,7 @@ ReShaked::SoundPluginList sound_plugin_list;
 static void init_sound_plugin_list() {
 	
 	sound_plugin_list.add_info( ReShaked::AmplifierPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::SineSynth::create_info() );
 	
 }
 

@@ -20,6 +20,7 @@
 #include "engine/sound_plugin.h"
 #include "engine/audio_graph.h"
 #include "engine/proxy_node.h"
+#include "engine/song_playback.h"
 #include "property.h"
 
 
@@ -70,7 +71,7 @@ private:
 
 		int channels;
 		const EventBuffer * seq_events;
-		//std::vector<TrackAutomation*> automations;
+		std::vector<TrackAutomation*> active_automation_cache;
 		AudioPlug *input_plug;
 		AudioPlug *output_plug;
 
@@ -87,6 +88,7 @@ private:
 		
 		ProxyNode input_proxy;
 		ProxyNode output_proxy;
+		SongPlayback *song_playback;
 		
 	} base_private;
 
@@ -102,17 +104,24 @@ private:
 protected:
 
 	
+	SongPlayback*get_song_playback();
 	const EventBuffer& get_seq_event_buffer();
 	GlobalProperties &get_global_props();
 
 	void add_property(String p_visual_path,Property *p_prop,TrackAutomation *p_automation=NULL,int p_pos=-1);
+	
+	
 
 	String get_caption();
 	
 	virtual bool is_visible();
-	
+	virtual void plugin_added_notify(SoundPlugin *p_plugin);
+	virtual void track_pre_process(int p_frames);
+	void rebuild_active_automation_cache();	
 	
 public:
+	
+	void process_automations(bool p_use_current_tick_to=false);
 
 	/* plugins */
 	
@@ -121,7 +130,7 @@ public:
 	AudioGraph& get_plugin_graph();
 	void add_plugin(PluginInsertData* p_plugin);
 	void remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery);
-	
+	void update_plugins_mix_rate();
 	/* Sequencer Event Handling */
 	void set_sequencer_event_buffer(const EventBuffer *p_seq);
 
@@ -143,7 +152,9 @@ public:
 	String get_name();
 	int get_channels();
 	
-	Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props);
+	
+	
+	Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback);
 	~Track();
 
 };
