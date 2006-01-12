@@ -66,23 +66,23 @@ BIG TODO AFTER 80%: Order doesnt matter anymore?
 		-Presets
 	-Track Duplicate
 -UI:
-	-Play from Cursor / Play Block at Editor
+	*-Play from Cursor / Play Block at Editor
 	*-Edit operations at editor
-	-Select stuff with mouse cursor at editor
+	A?-Select stuff with mouse cursor at editor
 	-Make better art
-	-Automation, Make row selection possible on border of it
+	A-Automation, Make row selection possible on border of it
 	-Rack element move left/right and remove
-	-Display Playback Position
+	*-Display Playback Position
 	*-Better editing of song marks
 	*-Editing of song loop
 	-Track Top for: Mute/Solo and some VU/Pan
 	-Track Top edit track swing/volume, somewhere..
 	-Global Tempo/Swing/Volume somewhere?
-	-Edit automation block LFO stuff.
+	A-Edit automation block LFO stuff.
 	-Settings Dialog
 	-Hints everywhere
 	-Mixer
-	-Fine moving sliders and automations (shift?)
+	A-Fine moving sliders and automations (shift?)
 	
 -Qt Property Editors
 	-Automate/Deautomate from control itself

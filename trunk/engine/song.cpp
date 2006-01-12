@@ -175,7 +175,7 @@ void Song::play(Tick p_from_pos) {
 void Song::loop() {
 	
 	if (loopdata.begin_beat<loopdata.end_beat && loopdata.begin_beat>=0)
-		loop(loopdata.begin_beat, loopdata.end_beat);
+		loop(loopdata.begin_beat*TICKS_PER_BEAT, loopdata.end_beat*TICKS_PER_BEAT);
 }
 
 void Song::loop(Tick p_begin,Tick p_end) {

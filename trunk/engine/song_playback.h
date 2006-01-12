@@ -36,7 +36,7 @@ private:
 	
 	struct Loop {
 		bool active;
-		int begin,end; //beats
+		Tick begin,end; 
 	} loopdata;
 	
 	Status status;

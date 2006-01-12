@@ -19,13 +19,12 @@ void SongPlayback::play(Tick p_from_pos) {
 	
 	status=STATUS_PLAY;
 	loopdata.active=false;
-	current_tick=0;
+	current_tick=p_from_pos;
 	prev_tick=0;
 }
 void SongPlayback::loop(Tick p_begin,Tick p_end) {
 	
 	ERR_FAIL_COND( p_begin>=p_end );
-	
 	status=STATUS_PLAY;
 	loopdata.active=true;
 	loopdata.begin=p_begin;
@@ -74,8 +73,8 @@ int SongPlayback::advance(int p_frames) {
 	if (status!=STATUS_PLAY)
 		return p_frames;
 	
-	if (loopdata.active && current_tick>=(loopdata.end*TICKS_PER_BEAT))
-		current_tick=loopdata.begin*TICKS_PER_BEAT;
+	if (loopdata.active && current_tick>=loopdata.end)
+		current_tick=loopdata.begin;
 	
 	float time=(float)p_frames/mix_rate;
 	float beat_size=60.0/properties->get_tempo().get();

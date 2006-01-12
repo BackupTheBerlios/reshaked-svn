@@ -303,10 +303,24 @@ void BlockListUIList::v_scrollbar_changed(int p_scroll) {
 
 void BlockListUIList::play_cursor_slot() {
 	
-	
+	if (editor->get_blocklist_count()==0)
+		return;
+	editor->get_song()->play( editor->get_cursor().get_tick_pos() );
 }
 void BlockListUIList::play_block_slot() {
 	
+	if (editor->get_blocklist_count()==0)
+		return;
+	
+	BlockList *bl=editor->get_blocklist( editor->get_current_blocklist() );
+	if (bl==NULL)
+		return;
+	int block=bl->get_block_idx_at_pos( editor->get_cursor().get_tick_pos() );
+	if (block<0)
+		return;
+	Tick loop_from=bl->get_block_pos(block);
+	Tick loop_to=loop_from+bl->get_block(block)->get_length();
+	editor->get_song()->loop( loop_from,loop_to);
 	
 	
 }
