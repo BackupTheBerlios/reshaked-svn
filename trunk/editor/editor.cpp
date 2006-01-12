@@ -186,36 +186,12 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		
 		CASE( KEYBIND("editor/selection_begin") ) {
 		
-			if (!d->selection.enabled) {
-				
-				d->selection.begin=get_cursor_selection_pos();
-				d->selection.end=get_cursor_selection_pos();
-				d->selection.enabled=true;
-			} else {
-				
-				d->selection.begin=get_cursor_selection_pos();
-			}
-			
-			fix_selection();			
-			d->ui_update_notify->edit_window_changed();
+			selection_begin();
 			
 		}
 		CASE( KEYBIND("editor/selection_end") ) {
 		
-			if (!d->selection.enabled) {
-				
-				d->selection.begin=get_cursor_selection_pos();
-				d->selection.end=get_cursor_selection_pos();
-				d->selection.enabled=true;
-				
-			} else {
-				
-				d->selection.end=get_cursor_selection_pos();
-			}
-			
-			fix_selection();
-			d->ui_update_notify->edit_window_changed();
-			
+			selection_end();			
 		}
 		CASE( KEYBIND("editor/selection_copy") ) {
 		
@@ -223,26 +199,16 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		}
 		CASE( KEYBIND("editor/selection_paste_insert") ) {
 		
+			selection_paste_insert();
 			printf("can paste: %i\n",selection_can_paste_at( get_cursor_selection_pos() ) );
 		}
 		CASE( KEYBIND("editor/selection_paste_overwrite") ) {
 		
-			if (selection_can_paste_at( get_cursor_selection_pos() )) {
-				
-				d->undo_stream.begin("Paste Overwrite");
-				selection_clear_area( get_cursor_selection_pos(), get_selection_end_from_pos( get_cursor_selection_pos()) );
-				selection_paste_at( get_cursor_selection_pos() );
-				d->undo_stream.end();
-			}
+			selection_paste_overwrite();
 		}
 		CASE( KEYBIND("editor/selection_paste_mix") ) {
 		
-			if (selection_can_paste_at( get_cursor_selection_pos() )) {
-			
-				d->undo_stream.begin("Paste Mix");
-				selection_paste_at( get_cursor_selection_pos() );
-				d->undo_stream.end();
-			}
+			selection_paste_mix();
 		}
 		CASE( KEYBIND("editor/select_column_block_all") ) {
 		
@@ -250,11 +216,7 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		}
 		CASE( KEYBIND("editor/selection_zap") ) {
 		
-			if (d->selection.enabled) {
-				
-				selection_clear_area( d->selection.begin, d->selection.end );
-			}
-			
+			selection_zap();			
 		}
 		CASE( KEYBIND("editor/selection_disable") ) {
 		

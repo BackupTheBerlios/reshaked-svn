@@ -295,6 +295,9 @@ void Track_Pattern::track_pre_process(int p_frames) {
 	
 	data.event_buffer.clear(); //first of all, always clear event buffer
 	
+	if (get_song_playback()->get_status()!=SongPlayback::STATUS_PLAY)
+		return; //nothing much to do
+	
 	int block_count=get_block_count();
 	if (block_count==0)
 		return; //nuthin' to do
@@ -303,7 +306,7 @@ void Track_Pattern::track_pre_process(int p_frames) {
 	Tick tick_to=get_song_playback()->get_current_tick_to()-1;
 	
 	int block_idx=get_prev_block_from_idx(tick_from);
-	
+	//printf("PAT: from %i to %i\n",(int)tick_from,(int)tick_to);
 	
 	if (block_idx==-1 || (get_block_pos(block_idx)+get_block(block_idx)->get_length())<tick_from) {
 		block_idx++;
@@ -323,6 +326,7 @@ void Track_Pattern::track_pre_process(int p_frames) {
 		int from_idx;
 		int to_idx;
 		if (!pd->data.find_values_in_range(tick_from_local,tick_to_local,&from_idx,&to_idx)) {
+			//printf("ticks %i to %i have indexes %i to %i\n",(int)tick_from_local,(int)tick_to_local,from_idx,to_idx);
 		
 			for (int i=from_idx;i<=to_idx;i++) {
 								
@@ -336,10 +340,12 @@ void Track_Pattern::track_pre_process(int p_frames) {
 					continue; //wont play what is not visible
 				int frame=tick*(tick_to-tick_from)/(Tick)p_frames;
 				
+				//printf("something at %i, in index %i (%i to %i) out of %i\n",(int)tick,i,from_idx,to_idx,pd->data.get_stream_size());
 				Note n = pd->data.get_index_value(i);
 				
 				if (n.is_note()) {
 					
+					//printf("AT %i - note %i\n",(int)tick_to,(int)n.note);
 					if (data.last_note[col].is_note()) {
 						/* if there was a previous note, set noteoff! */						
 						Event e;
@@ -357,6 +363,8 @@ void Track_Pattern::track_pre_process(int p_frames) {
 	
 					
 				} else if (n.is_note_off()) {
+					
+					//printf("AT %i - note off\n",(int)tick_to);
 					
 					Event e;
 					SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[col].note,0);

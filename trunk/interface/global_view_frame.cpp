@@ -91,15 +91,24 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	gb_frame->setFrameStyle(Panel+Sunken);
 	gb_frame->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	l->addWidget(gb_frame,1,0,1,2);
+	marker_column = new MarkerColumn(gb_frame,editor);
+	gb_frame->layout()->addWidget(marker_column);	
+	loop_column = new LoopColumn(gb_frame,editor);
+	gb_frame->layout()->addWidget(loop_column);
 	beat_bar_column = new GlobalBeatBarColumn(gb_frame,editor);
 	gb_frame->layout()->addWidget(beat_bar_column);
+	
 	global_view = new GlobalView( gb_frame, p_editor);
 	gb_frame->layout()->addWidget(global_view);
 	gb_frame->layout()->setMargin(0);
 	gb_frame->layout()->setSpacing(0);
 	
 	
+	marker_column->set_global_view( global_view );
+	loop_column->set_global_view( global_view );
 	beat_bar_column->set_global_view( global_view );
+
+
 	v_scroll = new QScrollBar(Qt::Vertical,this);
 	l->addWidget(v_scroll,1,2);
 	

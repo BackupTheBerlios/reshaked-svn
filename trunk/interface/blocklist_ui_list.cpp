@@ -19,6 +19,8 @@
 #include <Qt/qpainter.h>
 #include "interface/blocklist_separator.h"
 #include "ui_blocks/visual_settings.h"
+#include "interface/indexed_action.h"
+#include "editor/keyboard_input.h"
 
 //@TODO SOFT SCROLL when ensuring cursor visible
 namespace ReShaked {
@@ -43,6 +45,7 @@ void BlockListUIList::vscroll_track_list() {
 		block_list_ui_list[i]->update_viewport_pos( editor->get_cursor().get_window_offset() );
 	}
 	row_display->update();
+	play_position->update();
 	v_scroll->setValue( editor->get_cursor().get_window_offset() );
 	
 }
@@ -144,8 +147,9 @@ void BlockListUIList::repaint_track_list() {
 		block_list_ui_list[i]->update();
 	}
 	row_display->update();
+	play_position->update();
 	
-	printf("repainted\n");
+
 
 }
 void BlockListUIList::update_track_list() {
@@ -297,6 +301,103 @@ void BlockListUIList::v_scrollbar_changed(int p_scroll) {
 	scrolling=false;
 }
 
+void BlockListUIList::play_cursor_slot() {
+	
+	
+}
+void BlockListUIList::play_block_slot() {
+	
+	
+	
+}
+
+void BlockListUIList::show_edit_menu() {
+	
+	edit_menu->clear();
+#define ADD_ACTION(m_text,m_index,m_accel,m_can) { QString _txt = m_text; if (m_accel!="") { _txt+=" ( "+(QKeySequence(KEYBIND(m_accel)).operator QString() )+" )"; }; QAction *_a = new IndexedAction(m_index,_txt,edit_menu); _a->setData(m_index); edit_menu->addAction(_a); QObject::connect(_a,SIGNAL(selected_index_signal(int)),this,SLOT(edit_menu_selected_item( int ))); _a->setDisabled(!(m_can)); }
+
+
+	ADD_ACTION("Set Selection Begin",ACTION_SET_SELECTION_BEGIN,"editor/selection_begin",editor->get_blocklist_count()>0);
+	ADD_ACTION("Set Selection End",ACTION_SET_SELECTION_END,"editor/selection_end",editor->get_blocklist_count()>0);
+	ADD_ACTION("Select Column/All",ACTION_SELECT_COLUMN_ALL,"editor/select_column_block_all",editor->get_blocklist_count()>0);
+	ADD_ACTION("Disable Selection",ACTION_CLEAR_SELECTION,"editor/selection_disable",editor->is_selection_active());
+	
+	edit_menu->addSeparator();
+	
+	ADD_ACTION("Copy",ACTION_COPY,"editor/selection_copy",editor->is_selection_active());
+	ADD_ACTION("Cut",ACTION_CUT,"editor/selection_zap",editor->is_selection_active());
+	ADD_ACTION("Paste",ACTION_PASTE,"editor/selection_paste_overwrite",editor->selection_can_paste_at_cursor());
+	ADD_ACTION("Paste Insert",ACTION_PASTE_INSERT,"editor/selection_paste_insert",editor->selection_can_paste_at_cursor());
+	ADD_ACTION("Paste Mix",ACTION_PASTE_MIX,"editor/selection_paste_mix",editor->selection_can_paste_at_cursor());
+#undef ADD_ACTION		
+	
+}
+
+void BlockListUIList::edit_menu_selected_item(int p_item) {
+	
+	
+	printf("MEMEREMEEE!!!\n");
+	switch(p_item) {
+		case ACTION_SET_SELECTION_BEGIN: editor->selection_begin(); break;
+		case ACTION_SET_SELECTION_END: editor->selection_end(); break;
+		case ACTION_SELECT_COLUMN_ALL: editor->selection_column_all(); break;
+		case ACTION_CLEAR_SELECTION: editor->disable_selection(); break;
+	/***/
+		case ACTION_COPY: editor->selection_copy(); break;
+		case ACTION_CUT: editor->selection_zap(); break;
+		case ACTION_PASTE: editor->selection_paste_overwrite(); break;
+		case ACTION_PASTE_INSERT: editor->selection_paste_insert(); break;
+		case ACTION_PASTE_MIX: editor->selection_paste_mix(); break;
+	}
+}
+
+
+void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
+	
+	/* Play buttons */
+	
+	play_cursor = new QPushButton(GET_QPIXMAP(ICON_CONTROL_PLAY_CURSOR),"",p_hb_top);
+	play_cursor->setIconSize(GET_QPIXMAP(ICON_CONTROL_PLAY_CURSOR).size());
+	QObject::connect(play_cursor,SIGNAL(clicked()),this,SLOT(play_cursor_slot()));
+	play_cursor->setFlat(true);
+	play_cursor->setFocusPolicy(Qt::NoFocus);
+	
+	play_block = new QPushButton(GET_QPIXMAP(ICON_CONTROL_PLAY_BLOCK),"",p_hb_top);
+	play_block->setIconSize(GET_QPIXMAP(ICON_CONTROL_PLAY_BLOCK).size());
+	QObject::connect(play_block,SIGNAL(clicked()),this,SLOT(play_block_slot()));
+	play_block->setFlat(true);
+	play_block->setFocusPolicy(Qt::NoFocus);
+	
+	edit_menubar = new QMenuBar(p_hb_top);
+	edit_menubar->setFocusPolicy(Qt::NoFocus);
+	edit_menu = edit_menubar->addMenu("Edit");
+	
+	QObject::connect(edit_menu,SIGNAL(aboutToShow()),this,SLOT(show_edit_menu()));
+	
+	
+	(new QFrame(p_hb_top))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	new QLabel(" Snap: ",p_hb_top);
+	
+
+	snap = new QComboBox(p_hb_top);
+	for (int i=0;i<MAX_DIVISORS;i++) {
+
+		snap->addItem("1/"+QString::number(divisors[i]));
+	}
+	snap->setFocusPolicy(Qt::NoFocus);
+	snap->setCurrentIndex(3);
+	
+	
+		
+	QObject::connect(snap,SIGNAL(activated(int)),this,SLOT(snap_changed_slot( int )));
+
+	
+}
+void BlockListUIList::update_play_position() {
+	
+	play_position->check_pos_changed();
+}
+
 BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p_parent)
 {
 
@@ -308,20 +409,7 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	CHBox *hb_top= new CHBox(this);
 	vl->addWidget(hb_top);
 	
-	(new QFrame(hb_top))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-	new QLabel(" Snap: ",hb_top);
-	
-
-	snap = new QComboBox(hb_top);
-	for (int i=0;i<MAX_DIVISORS;i++) {
-
-		snap->addItem("1/"+QString::number(divisors[i]));
-	}
-	snap->setFocusPolicy(Qt::NoFocus);
-	snap->setCurrentIndex(3);
-	
-	QObject::connect(snap,SIGNAL(activated(int)),this,SLOT(snap_changed_slot( int )));
-	
+	fill_hb_top( hb_top );	
 	
 	CHBox *hb= new CHBox(this);
 	vl->addWidget(hb);
@@ -331,9 +419,14 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	
 	CVBox *cvb = new CVBox(hb);
 	new TrackTop(cvb,&editor->get_song()->get_global_track(),editor,TrackTop::TYPE_GLOBAL); // Global Track
-	row_display = new RowListDisplay(cvb ,editor);
+	CHBox *chb = new CHBox(cvb);
+	
+	row_display = new RowListDisplay(chb ,editor);
+	play_position = new EditorPlayPosition(chb,editor);
 	cvb->layout()->setMargin(0);
 	cvb->layout()->setSpacing(0);
+	chb->layout()->setMargin(0);
+	chb->layout()->setSpacing(0);
 	l->addWidget(cvb);
 
 	scrollarea = new QScrollArea(hb);

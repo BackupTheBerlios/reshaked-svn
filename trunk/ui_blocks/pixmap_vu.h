@@ -50,7 +50,7 @@ private:
 	Type type;
 public:	
 		
-	
+	void set_value(float p_value);	
 	
 	PixmapVU(QWidget *p_parent,const Skin& p_skin,Type p_type=TYPE_VERTICAL,int p_margin_beg=5,int p_margin_end=5);
 	~PixmapVU();

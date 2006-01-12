@@ -94,6 +94,8 @@ void AmplifierPlugin::process(int p_frames) {
 	
 	float gain_linear=powf(10.0,gain.get()/20.0); //convert db -> linear
 	
+	float max=0;; //cheap way of computing energy, will fix later, this is for test!
+	
 	for (int i=0;i<input_plug->get_channels();i++) {
 		
 		float *src=input_plug->get_buffer()->get_buffer(i);
@@ -102,9 +104,15 @@ void AmplifierPlugin::process(int p_frames) {
 		
 		for (int j=0;j<p_frames;j++) {
 			
+			if (fabsf(src[j])>max)
+				max=fabsf(src[j]);
 			dst[j]=src[j]*gain_linear;
 		}
 	}
+	if (max<=0.0)
+		max=0.0000001;
+	
+	signal_energy.set(20*logf(max));
 }
 
 
@@ -117,7 +125,7 @@ AmplifierPlugin::AmplifierPlugin(const SoundPluginInfo *p_info,int p_channels) :
 	output_plug = new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
 	
 	gain.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "gain","Gain","dB");
-	signal_energy.set_all( 0, 0, 1.0, 0, 0.01, Property::DISPLAY_VU, "energy","Energy","dB");
+	signal_energy.set_all( 0, -60, 24, 0, 0.01, Property::DISPLAY_VU, "energy","Energy","dB");
 }
 
 

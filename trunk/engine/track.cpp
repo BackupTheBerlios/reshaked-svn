@@ -217,7 +217,8 @@ void Track::process_automations(bool p_use_current_tick_to) {
 }
 void Track::process(int p_frames) {
 
-	process_automations();	
+	process_automations();
+	track_pre_process(p_frames);
 	base_private.plugin_graph.process( p_frames );
 }
 

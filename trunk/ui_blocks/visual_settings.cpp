@@ -60,11 +60,16 @@
 #include "pixmaps/control_ff.xpm"
 #include "pixmaps/control_play.xpm"
 #include "pixmaps/control_play_loop.xpm"
+#include "pixmaps/control_play_cursor.xpm"
+#include "pixmaps/control_play_block.xpm"
 #include "pixmaps/control_rw.xpm"
 #include "pixmaps/control_pause.xpm"
 #include "pixmaps/control_record.xpm"
 #include "pixmaps/control_stop.xpm"
 
+#include "pixmaps/row_icon_loop_begin.xpm"
+#include "pixmaps/row_icon_loop_end.xpm"
+#include "pixmaps/row_icon_play.xpm"
 
 
 #include <iostream>
@@ -228,11 +233,18 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_CONTROL_RW]=QPixmap((const char**)control_rw_xpm);
 	pixmap_map[ICON_CONTROL_PLAY]=QPixmap((const char**)control_play_xpm);
 	pixmap_map[ICON_CONTROL_PLAY_LOOP]=QPixmap((const char**)control_play_loop_xpm);
+	pixmap_map[ICON_CONTROL_PLAY_BLOCK]=QPixmap((const char**)control_play_xpm);
+	pixmap_map[ICON_CONTROL_PLAY_CURSOR]=QPixmap((const char**)control_play_cursor_xpm);
+	pixmap_map[ICON_CONTROL_PLAY_BLOCK]=QPixmap((const char**)control_play_block_xpm);
 	pixmap_map[ICON_CONTROL_PAUSE]=QPixmap((const char**)control_pause_xpm);
 	pixmap_map[ICON_CONTROL_STOP]=QPixmap((const char**)control_stop_xpm);
 	pixmap_map[ICON_CONTROL_FF]=QPixmap((const char**)control_ff_xpm);
 	pixmap_map[ICON_CONTROL_RECORD]=QPixmap((const char**)control_record_xpm);
 		
+	pixmap_map[ICON_EDIT_VIEW_ROW_PLAYED]=QPixmap((const char**)row_icon_play_xpm);
+	pixmap_map[ICON_EDIT_VIEW_ROW_LOOP_BEGIN]=QPixmap((const char**)row_icon_loop_begin_xpm);
+	pixmap_map[ICON_EDIT_VIEW_ROW_LOOP_END]=QPixmap((const char**)row_icon_loop_end_xpm);
+	
 	
 	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#0123456789-*");
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#0123456789-*"); 

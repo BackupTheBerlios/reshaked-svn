@@ -180,6 +180,33 @@ void Song::stop() {
 	AudioControl::mutex_unlock();
 }
 
+void Song::set_loop_begin(int p_beat) {
+	
+	loopdata.begin_beat=p_beat;
+	if (loopdata.begin_beat>loopdata.end_beat) {
+		
+		SWAP(loopdata.begin_beat,loopdata.end_beat);
+	}
+}
+int Song::get_loop_begin() {
+	
+	
+	return loopdata.begin_beat;
+}
+void Song::set_loop_end(int p_beat) {
+	
+	loopdata.end_beat=p_beat;
+	if (loopdata.begin_beat>loopdata.end_beat) {
+		
+		SWAP(loopdata.begin_beat,loopdata.end_beat);
+	}
+	
+}
+int Song::get_loop_end() {
+	
+	return loopdata.end_beat;
+	
+}
 
 Song::Song() : song_playback(&global_properties), global_track(&global_properties,&song_playback) {
 	
@@ -188,6 +215,8 @@ Song::Song() : song_playback(&global_properties), global_track(&global_propertie
 	audio_port_layout.port_out_info.push_back(2);
 	audio_port_layout.port_in_info.push_back(2);
 	marker_list.insert(0,"Markers");
+	loopdata.begin_beat=0;
+	loopdata.end_beat=0;
 
 }
 

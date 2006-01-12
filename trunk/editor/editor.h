@@ -133,10 +133,21 @@ public:
 	int get_selection_end_row();
 	int get_selection_end_blocklist();
 	
+	bool selection_can_paste_at_cursor();
 	bool is_selection_active();
 	void disable_selection();
 	
+	void selection_begin();
+	void selection_end();
+	void selection_column_all();
 	void selection_copy();
+	void selection_zap();
+	void selection_paste();
+	void selection_paste_insert();
+	void selection_paste_overwrite();
+	void selection_paste_mix();
+	
+
 	
 	/** CURSOR EDITING (editor.cpp) */	
 	

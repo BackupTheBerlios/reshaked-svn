@@ -173,7 +173,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 		
 		}
 	
-		CASE( KEYBIND("insert") ) {
+		CASE( KEYBIND("editor/insert") ) {
 	
 		
 			Tick cursor_pos=d->cursor.get_tick_pos();
@@ -211,7 +211,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			d->undo_stream.end();
 		
 		}
-		CASE( KEYBIND("delete") ) {
+		CASE( KEYBIND("editor/delete") ) {
 	
 			Tick cursor_pos=d->cursor.get_tick_pos();
 	

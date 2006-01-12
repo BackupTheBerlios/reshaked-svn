@@ -18,9 +18,12 @@
 #include <Qt/qlayout.h>
 #include <Qt/qframe.h>
 #include <Qt/qcombobox.h>
+#include <Qt/qpushbutton.h>
+#include <Qt/qmenubar.h>
 #include "editor/editor.h"
 #include "interface/rowlist_display.h"
 #include "interface/track_top.h"
+#include "interface/editor_play_position.h"
 
 namespace ReShaked {
 
@@ -42,8 +45,39 @@ class BlockListUIList : public QFrame {
 	RowListDisplay *row_display;
 	Editor *editor;
 	QComboBox *snap;
+	
+	QPushButton *play_cursor;
+	QPushButton *play_block;
+	QMenuBar *edit_menubar;
+	QMenu *edit_menu;
+	
+	EditorPlayPosition *play_position;
+	
 	bool scrolling;
+	
+	void fill_hb_top(QWidget* p_hb_top);
+	
+	enum EditMenuAction {
+		ACTION_SET_SELECTION_BEGIN,
+		ACTION_SET_SELECTION_END,
+		ACTION_SELECT_COLUMN_ALL,
+		ACTION_CLEAR_SELECTION,
+		/***/
+		ACTION_COPY,
+		ACTION_CUT,
+		ACTION_PASTE,
+		ACTION_PASTE_INSERT,
+		ACTION_PASTE_MIX,
+		/***/
+		ACTION_RAISE_SEMITONE,
+		ACTION_LOWER_SEMITONE,
+		ACTION_RAISE_OCTAVE,
+		ACTION_LOWER_OCTAVE,
+		/**/
+	
+	};
 
+	
 public slots:
 
 
@@ -57,6 +91,14 @@ public slots:
 	void snap_changed_slot(int p_to_idx);
 	void v_scrollbar_changed(int p_scroll);
 	void update_blocklist_list(const std::list<int>& p_list);
+	
+	void play_cursor_slot();
+	void play_block_slot();
+	
+	void show_edit_menu();
+	void edit_menu_selected_item(int p_item);
+	
+	void update_play_position();
 	
 public:
 

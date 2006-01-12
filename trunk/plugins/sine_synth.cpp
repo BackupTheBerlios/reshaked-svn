@@ -83,16 +83,20 @@ void SineSynth::set_mixing_rate(float p_mixing_rate) { //sort of useless
 void SineSynth::process(int p_frames) {
 	
 	const EventBuffer *ebuff=get_event_buffer();
+	
 	for (int i=0;i<ebuff->get_event_count();i++) {
 		
 		const Event *e=ebuff->get_event(i);
 				
 		if (e->type==Event::TYPE_MIDI) {
 			
+			
 			const EventMidi &em=e->param.midi;
 			switch (em.midi_type) {
 				
 				case EventMidi::MIDI_NOTE_ON: {
+					
+					printf("NOTE ON %i,%i\n",em.data.note.note,em.data.note.velocity);
 					ofs=0;
 					freq=440.0*powf(2.0,((float)em.data.note.note-69.0)/12.0);
 					amp=DEFAULT_AMP*(float)em.data.note.velocity/127.0;
@@ -104,6 +108,7 @@ void SineSynth::process(int p_frames) {
 						
 				} break;
 				case EventMidi::MIDI_NOTE_OFF: {
+					printf("NOTE OFF %i\n",em.data.note.note);
 					
 					sust=false;
 				} break;
@@ -123,7 +128,7 @@ void SineSynth::process(int p_frames) {
 			continue;
 		}
 		
-		float val=sinf(((double)ofs*freq*M_PI*2.0)/mixing_rate);
+		float val=sinf(((double)ofs*freq/mixing_rate)*M_PI*2.0);
 		val*=amp;
 		if (!sust) {
 			amp-=amp_decr;
@@ -131,6 +136,7 @@ void SineSynth::process(int p_frames) {
 				amp=0;
 		}
 				
+		buff[i]=val;
 		ofs++;
 	}
 	

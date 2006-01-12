@@ -79,6 +79,8 @@ bool Editor::selection_can_paste_at(EditorData::Selection::Pos p_pos) {
 	int column=p_pos.column;
 	int blocklist=p_pos.blocklist;
 	
+	if (blocklist<0)
+		return false;
 	if (blocklist>=get_blocklist_count())
 		return false;
 	
@@ -535,7 +537,89 @@ EditorData::Selection::Pos Editor::get_cursor_selection_pos() {
 
 
 
+void Editor::selection_begin() {
+	
+	
+	if (!d->selection.enabled) {
+				
+		d->selection.begin=get_cursor_selection_pos();
+		d->selection.end=get_cursor_selection_pos();
+		d->selection.enabled=true;
+	} else {
+				
+		d->selection.begin=get_cursor_selection_pos();
+	}
+			
+	fix_selection();			
+	d->ui_update_notify->edit_window_changed();
+	
+}
+void Editor::selection_end() {
+	
+	
+	if (!d->selection.enabled) {
+				
+		d->selection.begin=get_cursor_selection_pos();
+		d->selection.end=get_cursor_selection_pos();
+		d->selection.enabled=true;
+				
+	} else {
+				
+		d->selection.end=get_cursor_selection_pos();
+	}
+			
+	fix_selection();
+	d->ui_update_notify->edit_window_changed();
 
+}
+void Editor::selection_column_all() {
+	
+	
+}
+void Editor::selection_zap() {
+	
+	if (get_blocklist_count()==0)
+		return;
+	if (d->selection.enabled) {
+				
+		selection_clear_area( d->selection.begin, d->selection.end );
+	}
+	
+}
+void Editor::selection_paste() {
+	
+	
+}
+void Editor::selection_paste_insert() {
+	
+	
+}
+void Editor::selection_paste_overwrite() {
+	
+	if (selection_can_paste_at( get_cursor_selection_pos() )) {
+				
+		d->undo_stream.begin("Paste Overwrite");
+		selection_clear_area( get_cursor_selection_pos(), get_selection_end_from_pos( get_cursor_selection_pos()) );
+		selection_paste_at( get_cursor_selection_pos() );
+		d->undo_stream.end();
+	}
+	
+}
+void Editor::selection_paste_mix() {
+	
+			
+	if (selection_can_paste_at( get_cursor_selection_pos() )) {
+			
+		d->undo_stream.begin("Paste Mix");
+		selection_paste_at( get_cursor_selection_pos() );
+		d->undo_stream.end();
+	}
+	
+}
 
+bool Editor::selection_can_paste_at_cursor() {
+	
+	return selection_can_paste_at( get_cursor_selection_pos() );
+}
 
 } //end of namespace

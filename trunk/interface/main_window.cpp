@@ -349,6 +349,7 @@ void MainWindow::ui_update_slot() {
 //		printf("play pos at %f\n",(float)data.song.get_song_playback().get_current_tick_from()/(float)TICKS_PER_BEAT);
 	
 	data.property_edit_updater.update_editors();
+	blui_list->update_play_position();
 }
 
 MainWindow::MainWindow() {
@@ -437,7 +438,7 @@ MainWindow::MainWindow() {
 		
 	ui_updater = new QTimer(this);
 	QObject::connect(ui_updater,SIGNAL(timeout()),this,SLOT(ui_update_slot()));
-	ui_updater->start(100);
+	ui_updater->start(50);
 	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
 	setMinimumSize(750,550); //dont mess with my app!
 }

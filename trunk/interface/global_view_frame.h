@@ -38,6 +38,8 @@ class GlobalViewFrame : public QFrame {
 	GlobalViewCursor *cursor_op;
 	
 	GlobalBeatBarColumn *beat_bar_column;
+	MarkerColumn *marker_column;
+	LoopColumn *loop_column;
 	
 public slots:
 	void update();

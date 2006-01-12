@@ -118,6 +118,7 @@ PropertyEditSlider::~PropertyEditSlider() {
 
 void PropertyEditVU::changed() {
 	
+	set_value( get_property()->get_coeff_value() );
 	update();
 }
 

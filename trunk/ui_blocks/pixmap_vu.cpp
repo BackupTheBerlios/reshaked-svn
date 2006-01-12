@@ -39,8 +39,6 @@ void PixmapVU::paintEvent(QPaintEvent *pe) {
 	
 	int fill_size=value_ofs+margin_beg;
 	
-	
-	
 	if (type==TYPE_VERTICAL) {
 		
 		p.drawPixmap(0,height()-fill_size, skin.bottom_full , 0, height()-fill_size, width(), fill_size);
@@ -53,6 +51,17 @@ void PixmapVU::paintEvent(QPaintEvent *pe) {
 	}
 			
 
+}
+
+void PixmapVU::set_value(float p_value) {
+	
+	if (p_value<0)
+		p_value=0;
+	if (p_value>1)
+		p_value=1;
+	
+	value=p_value;
+	update();
 }
 
 PixmapVU::PixmapVU(QWidget *p_parent,const Skin& p_skin,Type p_type,int p_margin_beg,int p_margin_end) :QWidget(p_parent) {

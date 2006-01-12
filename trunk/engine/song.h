@@ -25,6 +25,11 @@ private:
 	SongPlayback song_playback;
 	GlobalTrack global_track;
 	
+	struct Loop {
+		int begin_beat;
+		int end_beat;	
+	} loopdata;
+	
 	AudioNode *input_node; ///< Global Input Node
 	AudioNode *output_node; ///< Global Output Node
 
@@ -56,6 +61,11 @@ public:
 	void loop(Tick p_begin,Tick p_end);
 	void set_pause(bool p_paused);
 	void stop();
+	
+	void set_loop_begin(int p_beat);
+	int get_loop_begin();
+	void set_loop_end(int p_beat);
+	int get_loop_end();
 	
 	int process(int p_frames);
 	void set_mix_rate(float p_mix_rate);

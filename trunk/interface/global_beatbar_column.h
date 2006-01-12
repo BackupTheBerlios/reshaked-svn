@@ -18,19 +18,69 @@
 
 namespace ReShaked {
 
-/**
-	@author Juan Linietsky <reduzio@gmail.com>
-*/
+
+
+
+class LoopColumn : public QWidget {
+
+
+	GlobalView *global_view;
+	Editor *editor;
+	
+	bool inside;
+	int inside_beat;
+
+
+	void paintEvent(QPaintEvent *p);
+	void mousePressEvent(QMouseEvent *e);
+	
+	void mouseMoveEvent(QMouseEvent *e);
+	void enterEvent(QEvent *ee);
+	void leaveEvent(QEvent *ee);
+				       
+public:
+	
+	void set_global_view(GlobalView *p_global_view);
+	LoopColumn(QWidget *p_parent,Editor *p_editor);
+	
+};
+
+
+class MarkerColumn : public QWidget {
+
+
+	GlobalView *global_view;
+	BarMap *bar_map;
+	Editor *editor;
+	ValueStream<int,String> *marker_list;	
+	
+	bool inside;
+	int inside_beat;
+
+	
+	void paint_marker(QPainter& p, int p_marker_idx);
+	void paintEvent(QPaintEvent *p);
+	void mousePressEvent(QMouseEvent *e);
+	
+	void mouseMoveEvent(QMouseEvent *e);
+	void enterEvent(QEvent *ee);
+	void leaveEvent(QEvent *ee);
+				       
+public:
+	
+	void set_global_view(GlobalView *p_global_view);
+	MarkerColumn(QWidget *p_parent,Editor *p_editor);
+	
+};
+					       
 class GlobalBeatBarColumn : public QWidget {
 				       
 	GlobalView *global_view;
 	BarMap *bar_map;
 	Editor *editor;
-	ValueStream<int,String> *marker_list;
-	
-	void paint_marker(QPainter& p, int p_marker_idx);
+
 	void paintEvent(QPaintEvent *p);
-	void mousePressEvent(QMouseEvent *e);
+
 public:
 	
 	void set_global_view(GlobalView *p_global_view);
