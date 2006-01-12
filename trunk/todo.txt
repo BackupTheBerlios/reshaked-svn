@@ -55,7 +55,7 @@ Goals for 80%
 
 BIG TODO AFTER 80%: Order doesnt matter anymore?
 
--Song Loop
+*-Song Loop
 -Sounds when editing
 -Virtual pianito
 -proper reset on stop and other things
@@ -63,17 +63,18 @@ BIG TODO AFTER 80%: Order doesnt matter anymore?
 	-MIDI Input
 -DDS improvement
 	-SAVE/LOAD
+		-Presets
 	-Track Duplicate
 -UI:
 	-Play from Cursor / Play Block at Editor
-	-Edit operations at editor
+	*-Edit operations at editor
 	-Select stuff with mouse cursor at editor
 	-Make better art
 	-Automation, Make row selection possible on border of it
 	-Rack element move left/right and remove
 	-Display Playback Position
-	-Better editing of song marks
-	-Editing of song loop
+	*-Better editing of song marks
+	*-Editing of song loop
 	-Track Top for: Mute/Solo and some VU/Pan
 	-Track Top edit track swing/volume, somewhere..
 	-Global Tempo/Swing/Volume somewhere?
