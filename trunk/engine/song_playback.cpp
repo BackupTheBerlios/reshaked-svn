@@ -74,6 +74,9 @@ int SongPlayback::advance(int p_frames) {
 	if (status!=STATUS_PLAY)
 		return p_frames;
 	
+	if (loopdata.active && current_tick>=(loopdata.end*TICKS_PER_BEAT))
+		current_tick=loopdata.begin*TICKS_PER_BEAT;
+	
 	float time=(float)p_frames/mix_rate;
 	float beat_size=60.0/properties->get_tempo().get();
 	float beat_frac=time/beat_size;

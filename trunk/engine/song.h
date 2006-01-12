@@ -30,6 +30,12 @@ private:
 		int end_beat;	
 	} loopdata;
 	
+	struct ProcessData {
+		
+		int buffer_exp;
+	
+	} process_data;
+	
 	AudioNode *input_node; ///< Global Input Node
 	AudioNode *output_node; ///< Global Output Node
 
@@ -59,6 +65,7 @@ public:
 	
 	void play(Tick p_from_pos=0);
 	void loop(Tick p_begin,Tick p_end);
+	void loop();
 	void set_pause(bool p_paused);
 	void stop();
 	

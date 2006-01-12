@@ -183,7 +183,7 @@ void AudioGraphProcess::configure_connections() {
 int AudioGraphProcess::process(int p_frames) {
 	 
 	if (unconfigured)
-		return 0;
+		return p_frames; // nothing processed
 	
 	if (p_frames>BUFFER_SIZE)
 		p_frames=BUFFER_SIZE;

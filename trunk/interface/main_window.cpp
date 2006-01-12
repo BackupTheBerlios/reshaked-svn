@@ -184,6 +184,11 @@ void MainWindow::menu_action_callback(int p_action) {
 			
 			data.song.play(0);
 		} break;
+		case CONTROL_PLAY_LOOP: {
+		
+			data.song.loop();
+			
+		} break;
 		case CONTROL_STOP: {
 			
 			data.song.stop();

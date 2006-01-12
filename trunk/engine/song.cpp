@@ -147,10 +147,21 @@ void Song::set_mix_rate(float p_mix_rate) {
 
 int Song::process(int p_frames) {
 	
-	
-	song_playback.advance(p_frames);
-	global_track.process_automations(true);
-	return track_graph.process( p_frames );
+	int todo=p_frames;
+	int process_size=(1<<process_data.buffer_exp);
+	while (todo) {
+		
+		int to_write=(todo<process_size)?todo:process_size;
+		
+		to_write=song_playback.advance(to_write);
+		global_track.process_automations(true);
+		
+		int to_process=to_write;
+		while (to_process) {
+			to_process-=track_graph.process( to_process );
+		}
+		todo-=to_write;
+	}
 }
 
 void Song::play(Tick p_from_pos) {
@@ -160,8 +171,16 @@ void Song::play(Tick p_from_pos) {
 	song_playback.play(p_from_pos);
 	AudioControl::mutex_unlock();
 }
+
+void Song::loop() {
+	
+	if (loopdata.begin_beat<loopdata.end_beat && loopdata.begin_beat>=0)
+		loop(loopdata.begin_beat, loopdata.end_beat);
+}
+
 void Song::loop(Tick p_begin,Tick p_end) {
 	
+	ERR_FAIL_COND( !(p_begin>=0 && p_end>p_begin));
 	
 	AudioControl::mutex_lock();
 	song_playback.loop(p_begin,p_end);
@@ -217,6 +236,7 @@ Song::Song() : song_playback(&global_properties), global_track(&global_propertie
 	marker_list.insert(0,"Markers");
 	loopdata.begin_beat=0;
 	loopdata.end_beat=0;
+	process_data.buffer_exp = 7;
 
 }
 
