@@ -14,7 +14,15 @@
 namespace ReShaked {
 
 
-void SoundPluginUI::set_periodic_updates(PropertyEditor* p_editor) {
+
+void SoundPluginUI::property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,float p_old_val) {
+	
+	SoundPluginUI *instance=(SoundPluginUI*)_this;
+	instance->property_edited_signal(p_editor->get_property(), p_old_val); 
+	
+}
+
+void SoundPluginUI::register_property_editor(PropertyEditor* p_editor) {
 	
 	for (int i=0;i<property_editors.size();i++) {
 		
@@ -25,9 +33,10 @@ void SoundPluginUI::set_periodic_updates(PropertyEditor* p_editor) {
 	if (editor_updater)
 		editor_updater->add_editor( p_editor );
 	
+	p_editor->set_changed_by_editor_callback(this,&SoundPluginUI::property_editor_property_edited_callback); 
 }
 
-void SoundPluginUI::remove_periodic_updates(PropertyEditor* p_editor) {
+void SoundPluginUI::unregister_property_editor(PropertyEditor* p_editor) {
 	
 	
 	
@@ -42,6 +51,8 @@ void SoundPluginUI::remove_periodic_updates(PropertyEditor* p_editor) {
 	
 	if (editor_updater)
 		editor_updater->remove_editor( p_editor );
+	
+	p_editor->set_changed_by_editor_callback(NULL,NULL);
 }
 
 void SoundPluginUI::set_property_editor_updater(PropertyEditUpdater *p_property_edit_updater) {

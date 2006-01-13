@@ -15,6 +15,12 @@
 namespace ReShaked {
 
 
+void SoundPluginRack::property_edited_slot(Property *p_prop,float p_old_val) {
+	
+	editor->property_changed( p_prop,p_old_val );
+	
+}
+
 void SoundPluginRack::set_track(Track *p_track) {
 	
 	if (track==p_track)
@@ -45,6 +51,7 @@ void SoundPluginRack::update_rack() {
 		RackElement e;
 		e.plugin_ui=ui;
 		rack_elements.push_back(e);
+		QObject::connect(ui,SIGNAL(property_edited_signal( Property*, float )),this,SLOT(property_edited_slot( Property*, float )));
 		
 	}	
 	
@@ -56,8 +63,9 @@ void SoundPluginRack::update_rack() {
 	rack_box->show();
 }
 
-SoundPluginRack::SoundPluginRack(QWidget *p_parent,PropertyEditUpdater *p_updater) : QScrollArea(p_parent) {
+SoundPluginRack::SoundPluginRack(QWidget *p_parent,PropertyEditUpdater *p_updater,Editor *p_editor) : QScrollArea(p_parent) {
 	
+	editor=p_editor;
 	property_edit_updater=p_updater;
 	rack_box=NULL;
 	track=NULL;

@@ -21,6 +21,8 @@ namespace ReShaked {
 /**
 	@author red <red@killy>
 */
+				    
+    
 class Property {
 			    
 public:
@@ -123,21 +125,27 @@ protected:
 	
 	Group *group;
 	
-	Property *get_property();
 	
 	void set(double p_val);
 	double get();
 	
 	
 	virtual void changed()=0;
-	
+	virtual void config();	
 	void release_group();
+	
+	void (*changed_by_editor)(void*,PropertyEditor*,float);
+	void* changed_by_editor_userdata;
 public:	
 	
+	Property *get_property();
+		
 	void add_to_group(PropertyEditor *p_group);
 	
 	void check_if_changed();
 	void set_property(Property *p_property);
+	
+	void set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,PropertyEditor*,float));
 
 	PropertyEditor();
 	virtual ~PropertyEditor();

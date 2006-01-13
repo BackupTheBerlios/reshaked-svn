@@ -15,6 +15,8 @@
 
 namespace ReShaked {
 
+
+
 String Property::get_postfix() {
 	
 	return "";
@@ -189,6 +191,7 @@ Property *PropertyEditor::get_property() {
 void PropertyEditor::set(double p_val) {
 
 	ERR_FAIL_COND(property==NULL);
+	float old_val=property->get();
 	property->set(p_val);
 	last_value=property->get();
 	if (group && !group->locked) {
@@ -200,7 +203,11 @@ void PropertyEditor::set(double p_val) {
 			group->other_editors[i]->check_if_changed();
 		}
 		group->locked=false;
+		
+		if (changed_by_editor)
+			changed_by_editor(changed_by_editor_userdata,this,old_val);
 	}
+	
 	
 }
 double PropertyEditor::get() {
@@ -219,10 +226,16 @@ void PropertyEditor::check_if_changed() {
 void PropertyEditor::set_property(Property *p_property) {
 	
 	property=p_property;
+	config();
 	check_if_changed();
 
 }
 
+void PropertyEditor::set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,PropertyEditor*,float)) {
+	
+	changed_by_editor_userdata=p_userdata;
+	changed_by_editor=p_callback;
+}
 void PropertyEditor::add_to_group(PropertyEditor *p_group) {
 	
 	ERR_FAIL_COND(p_group==this);
@@ -246,8 +259,13 @@ PropertyEditor::PropertyEditor() {
 	last_value=-1;
 	property=NULL;
 	group=NULL;
+	changed_by_editor=NULL;
 }
 	
+void PropertyEditor::config() {
+	
+	
+}
 void PropertyEditor::release_group() {
 	
 	if (!group)
@@ -266,6 +284,7 @@ void PropertyEditor::release_group() {
 			}
 		} 
 	}	
+	
 	
 	group=NULL;
 }

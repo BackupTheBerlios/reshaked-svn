@@ -122,6 +122,8 @@ public:
 	void add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin);
 	void remove_plugin_from_track(Track *p_track,int p_which);
 	
+	void property_changed(Property * p_property,float p_old_value,Track *p_hint_track=NULL);
+	
 	
 	/** SELECTION EDITING */
 	

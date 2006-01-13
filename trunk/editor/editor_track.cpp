@@ -160,6 +160,10 @@ void Editor::connection_erase(AudioGraph *p_graph, int p_node_from,int p_plug_fr
 	
 }
 
-
+void Editor::property_changed(Property * p_property,float p_old_value,Track *p_hint_track) {
+	
+	printf("%lls changed from %g to %g\n",p_property->get_caption().c_str(),p_old_value,p_property->get());
+	
+}
 
 } //end of namespace

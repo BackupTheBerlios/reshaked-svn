@@ -17,6 +17,8 @@
 #include "ui_blocks/pixmap_slider.h"
 #include "ui_blocks/pixmap_vu.h"
 #include "property.h"
+#include <Qt/qspinbox.h>
+
 
 class Knob;
 class QLabel;
@@ -84,6 +86,19 @@ public:
 	~PropertyEditVU();
 
 };
+
+class PropertyEditSpinBox : public QDoubleSpinBox, public PropertyEditor {
+	
+	
+	virtual void config();
+	virtual void changed();
+	
+public:	
+	
+	PropertyEditSpinBox(QWidget *p_widget);
+	
+};
+
 
 
 }

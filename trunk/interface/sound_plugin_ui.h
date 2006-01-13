@@ -22,13 +22,21 @@ namespace ReShaked {
 	@author red <red@killy>
 */
 class SoundPluginUI : public QWidget {
-			    
+Q_OBJECT
+					    
 	PropertyEditUpdater * editor_updater;
 	std::vector<PropertyEditor*> property_editors;
+	
+	static void property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,float p_old_val);
 protected:			    
 			    
-	void set_periodic_updates(PropertyEditor* p_property_editor);
-	void remove_periodic_updates(PropertyEditor* p_property_editor);
+	void register_property_editor(PropertyEditor* p_property_editor);
+	void unregister_property_editor(PropertyEditor* p_property_editor);
+	
+signals:	
+	
+	void property_edited_signal(Property *p_property,float p_old_value);
+	
 public:
 	void set_property_editor_updater(PropertyEditUpdater *p_property_edit_updater);
 	SoundPluginUI(QWidget *p_parent,SoundPlugin *p_plugin);

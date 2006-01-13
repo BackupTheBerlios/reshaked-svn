@@ -130,7 +130,7 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	connections = new ConnectionRack(stack,editor);
 	stack->addWidget(connections);
 	
-	plugins = new SoundPluginRack(stack,p_updater);
+	plugins = new SoundPluginRack(stack,p_updater,editor);
 	stack->addWidget(plugins);
 	stack->setCurrentWidget(plugins);
 	

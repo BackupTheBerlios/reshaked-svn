@@ -13,6 +13,7 @@ namespace ReShaked {
 
 
 
+
 class Automation : public BlockList {
 public:
 
@@ -66,6 +67,7 @@ public:
 		~AutomationBlock();
 	};
 
+	
 private:
 	
 	String get_type_name();
@@ -78,6 +80,8 @@ private:
 	
 	DisplaySize display_size;
 
+
+	
 public:
 	
 	bool shares_block_data(Block *p_block);
