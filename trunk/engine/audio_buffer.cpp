@@ -1,9 +1,27 @@
 
 
 #include "audio_buffer.h"
-
+#include <math.h>
 namespace ReShaked {
 
+float AudioBuffer::get_highest_energy(int p_frames) {
+	
+	if (p_frames<0 || p_frames>size)
+		p_frames=size;
+	
+	float max=0;
+	for (int i=0;i<(int)data.size();i++) {
+		float *ptr=&data[i][0];
+		for (int j=0;j<p_frames;j++) {
+			
+			float nrg=fabsf(ptr[j]);
+			if (nrg>max)
+				max=nrg;
+		}
+	}
+		
+	return max;
+}
 
 float *AudioBuffer::get_buffer(int p_channel) {
 
@@ -19,6 +37,8 @@ int AudioBuffer::get_size() {
 }
 int AudioBuffer::get_channels() {
 
+
+			
 	return data.size();
 }
 

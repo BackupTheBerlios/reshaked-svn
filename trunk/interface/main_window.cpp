@@ -363,6 +363,8 @@ void MainWindow::ui_update_slot() {
 	
 	data.property_edit_updater.update_editors();
 	blui_list->update_play_position();
+	blui_list->update_vus();
+	
 }
 
 MainWindow::MainWindow() {
@@ -376,7 +378,7 @@ MainWindow::MainWindow() {
 	main_stack = new QStackedWidget(this);
 	global_view_frame = new GlobalViewFrame(main_stack,data.editor);
 	main_stack->addWidget(global_view_frame);
-	blui_list = new BlockListUIList(main_stack,data.editor);
+	blui_list = new BlockListUIList(main_stack,data.editor,&data.property_edit_updater);
 	main_stack->addWidget(blui_list);
 	main_stack->setCurrentWidget(blui_list);
 

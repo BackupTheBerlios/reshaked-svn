@@ -67,10 +67,10 @@ BIG TODO AFTER 80%: Order doesnt matter anymore?
 	-Track Duplicate
 -UI:
 	*-Play from Cursor / Play Block at Editor
-	*-Edit operations at editor
+	*-Edit operations popup at editor
 	A?-Select stuff with mouse cursor at editor
 	-Make better art
-	A-Automation, Make row selection possible on border of it
+	*-Automation, Make row selection possible on border of it
 	-Rack element move left/right and remove
 	*-Display Playback Position
 	*-Better editing of song marks
@@ -116,5 +116,7 @@ BUGS:
 -Move_COPYing blocks in global view can overlap two blocks, check for overlaps when seeing
 if the block is valid too.
 -While connecting cables, am i locking the undo system?
+-it is possible to click on a wrong colum in pattern editor
+-move undostream locking to a safer place in automation stuff
 
 -stereo image.. make an histogram of sounds in l/r ?

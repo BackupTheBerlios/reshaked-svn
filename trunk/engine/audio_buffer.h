@@ -19,6 +19,11 @@ public:
 	void add_from(AudioBuffer *p_src,int p_frames);
 	void copy_from(AudioBuffer *p_src,int p_frames);
 	AudioBuffer(int p_channels,int p_size);
+	
+	/* helpers */
+	
+	float get_highest_energy(int p_frames=-1);
+	
 };
 
 

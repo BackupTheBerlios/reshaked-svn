@@ -57,8 +57,6 @@ void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 		delete_redo_history();
 	
 	/* Shall we create a new group, or use the previous one? */
-	if (!undo_stream.empty())
-		printf("can collapse to previous: %i, empty %i, name %i, diff %i<%i\n",(int)p_can_collapse_to_previous,(int)!undo_stream.empty(),(int)(undo_stream.back().name==p_name),(GetTime::get_time_msec()-undo_stream.back().timestamp),collapse_max_time_window);
 	if (p_can_collapse_to_previous && !undo_stream.empty() && undo_stream.back().name==p_name && (GetTime::get_time_msec()-undo_stream.back().timestamp)<collapse_max_time_window) {
 		/* can collapse it to previous one! */
 		

@@ -90,6 +90,11 @@ private:
 		ProxyNode output_proxy;
 		SongPlayback *song_playback;
 		
+		struct Audio {
+			float highest_energy;
+			float volume_ratio;
+		} audio;
+		
 	} base_private;
 
 	int get_input_plug_count();
@@ -153,6 +158,7 @@ public:
 	int get_channels();
 	
 	void reset_automations();
+	float read_highest_energy();
 	
 	
 	Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback);

@@ -15,6 +15,7 @@
 #include "ui_blocks/helpers.h"
 #include "ui_blocks/pixmap_label.h"
 #include "ui_blocks/pixmap_slider.h"
+#include "ui_blocks/pixmap_slider_vu.h"
 #include "ui_blocks/pixmap_vu.h"
 #include "property.h"
 #include <Qt/qspinbox.h>
@@ -72,6 +73,20 @@ public:
 	~PropertyEditSlider();
 
 };
+
+class PropertyEditSliderVU : public PixmapSliderVU, public PropertyEditor {
+
+	Q_OBJECT
+
+	virtual void changed();
+	virtual void value_changed(float p_new_value);
+public:
+
+	PropertyEditSliderVU(QWidget *p_parent,const Skin& p_skin,Type p_type=TYPE_VERTICAL,int p_margin_beg=5,int p_margin_end=5);
+	~PropertyEditSliderVU();
+
+};
+
 
 class PropertyEditVU : public PixmapVU, public PropertyEditor {
 

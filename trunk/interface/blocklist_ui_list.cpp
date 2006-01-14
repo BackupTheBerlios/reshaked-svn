@@ -93,6 +93,16 @@ static int get_pos_in_some_parent(QWidget *p_someparent, QWidget *p_widget) {
 	}	
 }
 
+void BlockListUIList::update_vus() {
+	
+	for (int i=0;i<editor->get_song()->get_track_count();i++) {
+		
+		float vu_val=editor->get_song()->get_track(i)->read_highest_energy();
+		if (i>=slider_vus.size())
+			break;
+		slider_vus[i]->update_vu(vu_val);
+	}
+}
 
 void BlockListUIList::ensure_cursor_visible() {
 
@@ -154,13 +164,20 @@ void BlockListUIList::repaint_track_list() {
 }
 void BlockListUIList::update_track_list() {
 
-	setUpdatesEnabled(false);
+	//setUpdatesEnabled(false);
+	
+	for (int i=0;i<property_editors.size();i++) {
+		property_ui_updater->remove_editor(property_editors[i]);
+	}
+	property_editors.clear();
+	slider_vus.clear();
 	
 	if (hbox) {
 		hbox->hide();
 		delete hbox; //all widgets die!
 	}
 
+	
 	hbox = new QWidget(this);
 	
 	//hbox->hide();
@@ -177,45 +194,21 @@ void BlockListUIList::update_track_list() {
 	
 	for (int i=0;i<editor->get_song()->get_global_track().get_visible_automation_count();i++) {
 		
-		CVBox *vb = new CVBox(hbox);
-		hbox_layout->addWidget(vb);
-		
-		(new BlackWidget(vb))->setFixedHeight(VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS ).height());
-		
-		CHBox *hb = new CHBox(vb);
 		
 		Automation *a=editor->get_song()->get_global_track().get_visible_automation(i);
-		block_list_ui_list.push_back( new BlockListUI_Automation(hb,editor,a) );
+		BlockListUI_Automation *au_wg=new BlockListUI_Automation(hbox,editor,a);
+		block_list_ui_list.push_back( au_wg );
+		hbox_layout->addWidget( au_wg );
 			
-		BlockList_Separator *s = new BlockList_Separator(hb,QStrify(a->get_property()->get_caption()));
-				
-		hb->layout()->setSpacing(0);
-		hb->layout()->setMargin(0);
-		vb->layout()->setSpacing(0);
-		vb->layout()->setMargin(0);
-		vb->show();		
-		printf("CACAS\n");
+		BlockList_Separator *s = new BlockList_Separator(hbox,QStrify(a->get_property()->get_caption()));
+		hbox_layout->addWidget(s);
 		
 	}
 	
-	VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS ).height();
-
+	PixmapSlider::Skin amp_slider_vu_skin(GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_BG),GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_FG),GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_GRABBER));
+	
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
 
-		QWidget *vb= new QWidget(hbox);
-		hbox_layout->addWidget(vb);	
-		
-		QVBoxLayout *vl=new QVBoxLayout(vb);
-		vb->setLayout(vl);
-		
-		TrackTop *top = new TrackTop(vb,editor->get_song()->get_track(i),editor,TrackTop::TYPE_PATTERN);
-		track_tops.push_back(top);
-		vl->addWidget(top);
-		
-		QWidget *hb = new QWidget(vb);
-		QHBoxLayout *hl = new QHBoxLayout(hb);
-		hb->setLayout(hl);
-		vl->addWidget(hb);
 		
 		//hb->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
 		
@@ -224,31 +217,39 @@ void BlockListUIList::update_track_list() {
 
 			CASE("pattern") {
 
-				block_list_ui_list.push_back( new BlockListUI_Pattern(hb,editor,i) );
-				hl->addWidget(block_list_ui_list [block_list_ui_list.size() -1] );
+				block_list_ui_list.push_back( new BlockListUI_Pattern(hbox,editor,i) );
+				hbox_layout->addWidget(block_list_ui_list [block_list_ui_list.size() -1] );
 				
-			
-		//	hl->addWidget(new QPushButton("heh",hb ));
-				//hbox_layout->addWidget( block_list_ui_list [block_list_ui_list.size() -1] );
+				CVBox *cvb = new CVBox(hbox);
+				hbox_layout->addWidget(cvb);
+				TrackTop *top = new TrackTop(cvb,editor->get_song()->get_track(i),editor,TrackTop::TYPE_PATTERN);
+				track_tops.push_back(top);
+				
+				Track_Pattern *pattern=dynamic_cast<Track_Pattern *>(editor->get_song()->get_track(i));
+				ERR_CONTINUE(pattern==NULL);
+				new PixmapLabel(cvb,GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_ICON));
+				PropertyEditSliderVU *slider_vu = new PropertyEditSliderVU(cvb,amp_slider_vu_skin);
+				slider_vu->set_property( &pattern->volume() );
+				slider_vus.push_back(slider_vu);
+				property_ui_updater->add_editor(slider_vu);
+				property_editors.push_back(slider_vu);
+				
 			}
 		END_SWITCH
 
+		
+				
 		for (int j=0;j<editor->get_song()->get_track(i)->get_visible_automation_count();j++) {
 
 			Automation *a=editor->get_song()->get_track(i)->get_visible_automation(j);
-			block_list_ui_list.push_back( new BlockListUI_Automation(hb,editor,a) );
-			hl->addWidget(block_list_ui_list [block_list_ui_list.size() -1] );
+			BlockListUI_Automation *au_wg= new BlockListUI_Automation(hbox,editor,a);
+			block_list_ui_list.push_back( au_wg );
+			hbox_layout->addWidget( au_wg );
 			
-			BlockList_Separator *s = new BlockList_Separator(hb,QStrify(a->get_property()->get_caption()));
-			hl->addWidget(s);
+			BlockList_Separator *s = new BlockList_Separator(hbox,QStrify(a->get_property()->get_caption()));
+			hbox_layout->addWidget(s);
 
 		}
-		
-		vl->setMargin(0);
-		vl->setSpacing(0);
-		hl->setMargin(0);
-		hl->setSpacing(0);
-		vb->show();
 	}
 
 	BlackWidget *spacer = new BlackWidget(hbox);
@@ -258,11 +259,11 @@ void BlockListUIList::update_track_list() {
 	hbox_layout->setSpacing(0);
 	hbox_layout->setMargin(0);
 
-	hbox->adjustSize();
 
 	update_h_scroll();
+	//setUpdatesEnabled(true);
 	hbox->show();
-	setUpdatesEnabled(true);
+	hbox->adjustSize();
 	
 	
 }
@@ -412,9 +413,10 @@ void BlockListUIList::update_play_position() {
 	play_position->check_pos_changed();
 }
 
-BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p_parent)
+BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_property_ui_updater) : QFrame (p_parent)
 {
 
+	property_ui_updater=p_property_ui_updater;
 	editor=p_editor;
 	
 	QVBoxLayout *vl = new QVBoxLayout(this);
@@ -428,23 +430,17 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	CHBox *hb= new CHBox(this);
 	vl->addWidget(hb);
 	
-	QBoxLayout *l = hb->layout();
+
 	
 	
-	CVBox *cvb = new CVBox(hb);
-	new TrackTop(cvb,&editor->get_song()->get_global_track(),editor,TrackTop::TYPE_GLOBAL); // Global Track
-	CHBox *chb = new CHBox(cvb);
+	row_display = new RowListDisplay(hb ,editor);
+	play_position = new EditorPlayPosition(hb,editor);
+	new TrackTop(hb,&editor->get_song()->get_global_track(),editor,TrackTop::TYPE_GLOBAL); // Global Track
 	
-	row_display = new RowListDisplay(chb ,editor);
-	play_position = new EditorPlayPosition(chb,editor);
-	cvb->layout()->setMargin(0);
-	cvb->layout()->setSpacing(0);
-	chb->layout()->setMargin(0);
-	chb->layout()->setSpacing(0);
-	l->addWidget(cvb);
+
 
 	scrollarea = new QScrollArea(hb);
-	l->addWidget(scrollarea);;
+
 	scrollarea->setFrameStyle(QFrame::NoFrame);
 	scrollarea->viewport()->setContentsMargins(0,0,0,0);
 	scrollarea->setContentsMargins(0,0,0,0);
@@ -473,8 +469,6 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	p.setColor(QPalette::Background,QColor(0,0,0));
 	scrollarea->viewport()->setPalette(p);
 	
-	l->setSpacing(0);
-	l->setMargin(0);
 	vl->setSpacing(0);
 	vl->setMargin(0);
 	hb_top->layout()->setMargin(3);

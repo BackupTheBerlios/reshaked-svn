@@ -597,7 +597,35 @@ void BlockListUI_Automation::cancel_motion() {
 void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 	
 	if (e->button()==Qt::LeftButton)
-		   editor->lock_undo_stream();
+		editor->lock_undo_stream();
+	
+	/* check if we are selecting the row */
+	
+	if (e->button()==Qt::LeftButton) {
+		
+		int font_width=	VisualSettings::get_singleton()->get_pattern_font()->get_width();
+		int row=e->y()/VisualSettings::get_singleton()->get_editing_row_height();
+		Tick click_tick=editor->get_cursor().get_snapped_window_tick_pos(row);
+		bool get_focus=false;
+		
+		if (automation->get_block_idx_at_pos(click_tick)<0) { 		
+			get_focus=true;
+		} else if (e->x()<font_width || (width()-e->x())<font_width) {
+			get_focus=true;
+		}
+		if (get_focus) {
+			
+			
+			editor->get_cursor().set_pos( editor->get_cursor().get_window_offset() + row );			
+			editor->set_current_blocklist( editor->find_blocklist(automation) );
+			
+			setFocus();
+			update();
+			return;
+		}
+	}
+	
+	
 	if (e->button()==Qt::RightButton && moving_point.moving ) {
 	
 		/* Cancel motion */

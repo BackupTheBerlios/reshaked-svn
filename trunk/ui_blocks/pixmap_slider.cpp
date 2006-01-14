@@ -25,33 +25,53 @@ PixmapSlider::Skin::Skin(QPixmap p_bottom, QPixmap p_bottom_full, QPixmap p_grab
 
 /***********/
 
-void PixmapSlider::paintEvent(QPaintEvent *pe) {
 
-	
-	QPainter p(this);
+int PixmapSlider::get_grabber_offset() {
 	
 	int area=(type==TYPE_VERTICAL)?height():width();
 	int grabber=(type==TYPE_VERTICAL)?skin.grabber.height():skin.grabber.width();
 	
 	area-=margin_beg+margin_end+grabber;
+	
+	return (int)(value*area);
+}
 
+void PixmapSlider::paint_grabber(QPainter&p) {
 	
-	int slider_ofs=(int)(value*area);
-	
-	int fill_size=slider_ofs+margin_beg+grabber/2;
-	
-	
-	
+	int grabber=(type==TYPE_VERTICAL)?skin.grabber.height():skin.grabber.width();
+	int fill_size=get_grabber_offset()+margin_beg+grabber/2;
 	if (type==TYPE_VERTICAL) {
 		
-		p.drawPixmap(0,height()-fill_size, skin.bottom_full , 0, height()-fill_size, width(), fill_size);
-		p.drawPixmap(0,0, skin.bottom , 0, 0, width(), height()-fill_size);
 		p.drawPixmap((width()-skin.grabber.width())/2,(height()-fill_size-grabber/2),skin.grabber);
 		
 	} else {
 		
 		
 	}
+	
+}
+
+void PixmapSlider::paintEvent(QPaintEvent *pe) {
+
+	
+	QPainter p(this);
+	
+	int grabber=(type==TYPE_VERTICAL)?skin.grabber.height():skin.grabber.width();	
+	int slider_ofs=get_grabber_offset();
+	int fill_size=slider_ofs+margin_beg+grabber/2;
+	
+	
+	if (type==TYPE_VERTICAL) {
+		
+		p.drawPixmap(0,height()-fill_size, skin.bottom_full , 0, height()-fill_size, width(), fill_size);
+		p.drawPixmap(0,0, skin.bottom , 0, 0, width(), height()-fill_size);
+		
+	} else {
+		
+		
+	}
+	
+	paint_grabber( p);
 			
 
 }

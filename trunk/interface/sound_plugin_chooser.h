@@ -35,6 +35,7 @@ class SoundPluginChooser : public QDialog {
 	int selected_idx;
 		
 	virtual void accept();
+	void focusOutEvent(QFocusEvent*e);
 public:
 	int get_selected_plugin_idx();
 	

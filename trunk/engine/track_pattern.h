@@ -171,7 +171,7 @@ public:
 	bool shares_block_data(Block *p_block);
 	bool accepts_block(Block *p_block);
 	
-	
+ 	
 	void set_note(const Position& p_pos,const Note& p_note);
 	Note get_note(const Position& p_pos);
 	

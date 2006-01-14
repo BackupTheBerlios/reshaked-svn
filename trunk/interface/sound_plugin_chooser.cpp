@@ -19,6 +19,10 @@
 
 namespace ReShaked {
 
+void SoundPluginChooser::focusOutEvent(QFocusEvent*e) {
+	
+	reject();
+}
 void SoundPluginChooser::accept() {
 	
 	QTreeWidgetItem *twi=tree->currentItem();

@@ -43,8 +43,7 @@ public:
 		Skin(QPixmap p_bottom, QPixmap p_bottom_full, QPixmap p_grabber);
 	};
 	
-private:
-			
+protected:			
 	int margin_beg;
 	int margin_end;
 	float value;
@@ -58,7 +57,6 @@ private:
 		float value_at_click;
 	} drag;
 	
-	
 	float get_click_pos(QPoint p_mouse_pos);
 	void paintEvent(QPaintEvent *pe);
 	void mousePressEvent(QMouseEvent *e);
@@ -66,6 +64,9 @@ private:
 	void mouseReleaseEvent(QMouseEvent *e);
 	
 	virtual void value_changed(float p_new_val);
+
+	int get_grabber_offset();
+	void paint_grabber(QPainter&p);
 signals:	
 	
 	void value_changed_signal(float p_new_val);

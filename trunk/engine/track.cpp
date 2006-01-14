@@ -11,6 +11,7 @@
 //
 #include "track.h"
 #include "engine/audio_control.h"
+#include <math.h>
 
 namespace ReShaked {
 
@@ -199,9 +200,33 @@ void Track::feed_input(int p_frames) {
 void Track::read_output(int p_frames) {
 	
 	AudioBuffer *output_buff=base_private.output_plug->get_buffer();
-	output_buff->copy_from( base_private.output_proxy.get_input_plug(0)->get_buffer(), p_frames );
+	AudioBuffer *track_output_buff=base_private.output_proxy.get_input_plug(0)->get_buffer();
+	
+	float max_nrg=0;
+	
+	for (int i=0;i<output_buff->get_channels();i++) {
+		
+		float *src=output_buff->get_buffer(i);
+		float *dst=track_output_buff->get_buffer(i);
+		for (int j=0;j<p_frames;j++) {
+			
+			dst[j]=src[j]*base_private.audio.volume_ratio;
+			float abs_dst=fabsf(dst[j]);
+			if (abs_dst>max_nrg)
+				base_private.audio.highest_energy=max_nrg;
+		}
+	}
+
+	if (max_nrg>base_private.audio.highest_energy)
+		base_private.audio.highest_energy=max_nrg;
 }
 
+float Track::read_highest_energy() {
+	
+	float highest_nrg=base_private.audio.highest_energy;
+	base_private.audio.highest_energy=0;
+	return highest_nrg;
+}
 void Track::process_automations(bool p_use_current_tick_to) {
 	
 	if (base_private.song_playback->get_status()==SongPlayback::STATUS_PLAY) {
@@ -475,6 +500,8 @@ Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,So
 	base_private.output_proxy.set_process_method( this, (void (ProxyNodeBase::*)(int)) &Track::read_output );
 	
 	
+	base_private.audio.highest_energy=0;
+	base_private.audio.volume_ratio=1;
 	
 }
 

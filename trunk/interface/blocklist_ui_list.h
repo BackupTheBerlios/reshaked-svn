@@ -24,6 +24,8 @@
 #include "interface/rowlist_display.h"
 #include "interface/track_top.h"
 #include "interface/editor_play_position.h"
+#include "ui_blocks/property_editors.h"
+#include "engine/property_edit_updater.h"
 
 namespace ReShaked {
 
@@ -36,6 +38,8 @@ class BlockListUIList : public QFrame {
 
 	std::vector<BlockListUI_Base*> block_list_ui_list;
 	std::vector<TrackTop*> track_tops;
+	std::vector<PropertyEditor*> property_editors;
+	std::vector<PropertyEditSliderVU*> slider_vus;
 	
 	QWidget *hbox;
 	QHBoxLayout *hbox_layout;
@@ -45,6 +49,7 @@ class BlockListUIList : public QFrame {
 	RowListDisplay *row_display;
 	Editor *editor;
 	QComboBox *snap;
+	PropertyEditUpdater *property_ui_updater;
 	
 	QPushButton *play_cursor;
 	QPushButton *play_block;
@@ -78,6 +83,7 @@ class BlockListUIList : public QFrame {
 	};
 
 	
+	
 public slots:
 
 
@@ -99,10 +105,11 @@ public slots:
 	void edit_menu_selected_item(int p_item);
 	
 	void update_play_position();
+	void update_vus();
 	
 public:
 
-	BlockListUIList(QWidget *p_parent,Editor *p_editor);
+	BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_property_ui_updater);
 	~BlockListUIList();
 
 };

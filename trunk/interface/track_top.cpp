@@ -28,29 +28,32 @@ namespace ReShaked {
 void TrackTop::paintEvent(QPaintEvent *e) {
 	
 	QPainter p(this);
-	p.fillRect(0,0,width(),height(),QColor(0,0,0));
+
+	GET_SKIN(SKINBOX_TRACK_TOP_BG)->paint_into(p,0,0,width(),height());
 	QPixmap px = VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS );
 	p.drawPixmap(0,0,px);
 	
 	if (!track)
 		return;
+	
 	QFont f;
-	f.setPixelSize(height()-4);
+	f.setPixelSize(width()-4);
 	f.setBold(true);
 	p.setFont(f);
 	QFontMetrics m(p.font());
 
-	int ofs=px.width()+2;
+	int ofs=px.height()+4;
+	
 	QString name=QStrify(track->get_name());
 	
-	if ( (ofs+m.boundingRect(name).width())>width()) { //doesnt fit!
+	if ( (ofs+m.boundingRect(name).width())>height()) { //doesnt fit!
 		
 		int eat=1;
 		do {
 			
 			QString str=name.left( name.length() - eat )+"..";
 			
-			if ( (ofs+m.boundingRect(str).width()) < width() ) {
+			if ( (ofs+m.boundingRect(str).width()) < height() ) {
 				
 				name=str;
 				break;
@@ -62,8 +65,14 @@ void TrackTop::paintEvent(QPaintEvent *e) {
 		} while (eat<name.length());
 	}
 		
+	p.rotate(90);
+	p.setPen(QColor(200,255,200));	
+	p.drawText(px.height()+4,-(width()-m.ascent()),name);
+
+	
+	/*
 	p.setPen(QColor(200,255,200));
-	p.drawText(px.width()+2,m.ascent(),name);
+	p.drawText(px.width()+2,m.ascent(),name);*/
 	
 	
 }
@@ -71,10 +80,10 @@ void TrackTop::paintEvent(QPaintEvent *e) {
 void TrackTop::mousePressEvent(QMouseEvent *e) {
 	
 	QPixmap px = VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS );
-	if (e->x()<px.width()) {
+	if (e->y()<px.height()) {
 		
 		automation_menu->rebuild();
-		menu->popup(mapToGlobal( QPoint(0,height()) ) );
+		menu->popup(mapToGlobal( QPoint(0,px.height()) ) );
 	} else
 		rename();
 }
@@ -191,8 +200,8 @@ void TrackTop::automation_remove_slot(int p_prop_idx) {
 TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p_type) :QWidget(p_parent) {
 	track=p_track;
 	editor=p_editor;
-	int wheight=VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS ).height();
-	setFixedHeight(wheight);
+	int wwidth=VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS ).width();
+	setFixedWidth(wwidth);
 	setBackgroundRole(QPalette::NoRole);
 	
 	menu =new QMenu("Track Options",this);

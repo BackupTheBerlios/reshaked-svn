@@ -72,6 +72,12 @@
 #include "pixmaps/row_icon_loop_end.xpm"
 #include "pixmaps/row_icon_play.xpm"
 
+#include "pixmaps/track_variables_volume_vu_empty.xpm"
+#include "pixmaps/track_variables_volume_vu_full.xpm"
+#include "pixmaps/track_variables_volume_vu_grabber.xpm"
+#include "pixmaps/track_variables_volume.xpm"
+
+#include "pixmaps/track_top_bg.xpm"
 
 #include <iostream>
 
@@ -186,6 +192,8 @@ VisualSettings::VisualSettings() {
 	skin_box_map[SKINBOX_RACK_NORMAL]=new SkinBox((const char**)connection_panel_bg_xpm,26,31,20,33,true);
 	skin_box_map[SKINBOX_RACK_SYSTEM]=new SkinBox((const char**)connection_panel_system_xpm,26,31,20,33,true);
 	
+	skin_box_map[SKINBOX_TRACK_TOP_BG]=new SkinBox((const char**)track_top_bg_xpm,6,6,6,6,true);
+	
 	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0,33,0);
 	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(255,190,170);
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
@@ -211,6 +219,10 @@ VisualSettings::VisualSettings() {
 	pixmap_map[PIXMAP_TRACK_SETTINGS_CONNECTIONS]=QPixmap((const char**)track_settings_connections_xpm);
 	pixmap_map[PIXMAP_ENVELOPE_POINT]=QPixmap((const char**)envelope_point_xpm);
 	pixmap_map[PIXMAP_RACK_JACK_HOLE]=QPixmap((const char**)jack_hole_xpm);
+	pixmap_map[PIXMAP_TRACK_SLIDER_VU_BG]=QPixmap((const char**)track_variables_volume_vu_empty_xpm);
+	pixmap_map[PIXMAP_TRACK_SLIDER_VU_FG]=QPixmap((const char**)track_variables_volume_vu_full_xpm);
+	pixmap_map[PIXMAP_TRACK_SLIDER_VU_GRABBER]=QPixmap((const char**)track_variables_volume_vu_grabber_xpm);
+	pixmap_map[PIXMAP_TRACK_SLIDER_VU_ICON]=QPixmap((const char**)track_variables_volume_xpm);
 
 
 	pixmap_map[ICON_TRACK_MOVE_LEFT]=QPixmap((const char**)track_move_left_xpm);
