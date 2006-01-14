@@ -199,14 +199,26 @@ void Automation::apply(Tick p_pos) {
 		return;
 	property->set_coeff_value(val); 	
 }
+
 Automation::AutomationBlock::~AutomationBlock() {
 
 	data->dereference();
 }
+
+void Automation::set_initial_value(double p_value) {
+	
+	initial_value=p_value;
+}
+double Automation::get_initial_value() {
+	
+	return initial_value;
+}
+
 Automation::Automation(Property *p_property) : BlockList(BLOCK_TYPE_FIXED_TO_BEAT) {
 
 	property=p_property;
 	display_size=DISPLAY_SIZE_SMALL;
+	initial_value=p_property->get();
 }
 
 

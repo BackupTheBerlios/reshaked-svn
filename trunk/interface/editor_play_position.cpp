@@ -22,7 +22,7 @@ int EditorPlayPosition::get_playback_snap_pos() {
 		return -1;
 	}
 	
-	return editor->get_cursor().ticks_to_snap( editor->get_song()->get_song_playback().get_current_tick_from() );	
+	return editor->get_cursor().ticks_to_snap( editor->get_song()->get_song_playback().get_playback_pos_tick() );	
 }
 bool EditorPlayPosition::is_playback_visible() {
 	

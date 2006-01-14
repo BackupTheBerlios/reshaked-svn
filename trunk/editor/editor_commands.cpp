@@ -475,5 +475,38 @@ CommandFunc* EditorCommands::track_plugin_remove(bool p_no_undo,Track *p_track,i
 	return ret;
 }
 
+CommandFunc* EditorCommands::automation_initial_value_changed(bool p_no_undo,Automation *p_auto,double p_to_val) {
+	
+	double old_val=p_auto->get_initial_value();
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+	
+		ret=Command2(this,&EditorCommands::automation_initial_value_changed,p_auto,old_val);
+	}
+	
+	if (d->song->get_song_playback().get_status()==SongPlayback::STATUS_STOP) {
+		/* if the song is stopped, the property can be updated, otherwise, the property may be
+		automated */
+		p_auto->get_property()->set( p_to_val );
+	}
+	p_auto->set_initial_value( p_to_val );
+	
+	return ret;
+}
+CommandFunc* EditorCommands::property_value_changed(bool p_no_undo,Property *p_property,double p_old_val,double p_to_val) {
+	
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+	
+		ret=Command3(this,&EditorCommands::property_value_changed,p_property,p_to_val,p_old_val);
+	}
+	p_property->set( p_to_val ); //may be redundant, but it's needed
+	
+	return ret;
+}
 
 }

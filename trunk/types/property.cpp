@@ -28,17 +28,17 @@ String Property::get_text_value(bool p_no_postfix) {
 }
 
 
-float Property::get_coeff_value() {
+double Property::get_coeff_value() {
 	
 	return (get()-get_min())/(get_max()-get_min());
 }
 
-void Property::set_coeff_value(float p_coeff) {
+void Property::set_coeff_value(double p_coeff) {
 	
 	set(get_value_from_coeff(p_coeff));
 }
 
-float Property::get_value_from_coeff(float p_coeff) {
+double Property::get_value_from_coeff(double p_coeff) {
 	
 	if (p_coeff==1)
 		return get_max(); //avoid precision issues
@@ -191,7 +191,7 @@ Property *PropertyEditor::get_property() {
 void PropertyEditor::set(double p_val) {
 
 	ERR_FAIL_COND(property==NULL);
-	float old_val=property->get();
+	double old_val=property->get();
 	property->set(p_val);
 	last_value=property->get();
 	if (group && !group->locked) {
@@ -231,7 +231,7 @@ void PropertyEditor::set_property(Property *p_property) {
 
 }
 
-void PropertyEditor::set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,PropertyEditor*,float)) {
+void PropertyEditor::set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,PropertyEditor*,double)) {
 	
 	changed_by_editor_userdata=p_userdata;
 	changed_by_editor=p_callback;

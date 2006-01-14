@@ -77,6 +77,7 @@ public:
 	void finish();
 	String get_error();
 
+	int get_output_latency();	
 	
 	Status get_status();
 	

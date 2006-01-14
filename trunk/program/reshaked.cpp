@@ -9,6 +9,7 @@
 #include "plugins/amplifier_plugin.h"
 #include "plugins/sine_synth.h"
 #include "plugin_UIs/sound_plugin_ui_generic.h"
+#include "drivers/get_time_posix.h"
 
 #include "interface/sound_plugin_ui_list.h"
 #ifdef POSIX_ENABLED
@@ -38,13 +39,16 @@ static void init_sound_plugin_UI_list() {
 
 int main(int argc, char *argv[]) {
 
-	init_sound_plugin_list();
-	init_sound_plugin_UI_list();
-	
 #ifdef POSIX_ENABLED
 	
 	MutexLock::create_mutex=MutexLock_Pthreads::create_mutex_pthreads;
+	ReShaked::GetTime_Posix get_time_posix;
 #endif
+	
+	
+	init_sound_plugin_list();
+	init_sound_plugin_UI_list();
+	
 	
 	
 	ReShaked::AudioControl::init();

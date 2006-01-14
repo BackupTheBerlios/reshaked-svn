@@ -449,6 +449,15 @@ void Track::track_pre_process(int p_frames) {
 	
 }
 
+void Track::reset_automations() {
+	
+	for (int i=0;i<get_property_count();i++) {
+		
+		Automation *a=get_property_automation(i);
+		a->get_property()->set( a->get_initial_value() );
+	}
+}
+
 Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback) : BlockList(p_type) {
 	
 	base_private.channels=p_channels;

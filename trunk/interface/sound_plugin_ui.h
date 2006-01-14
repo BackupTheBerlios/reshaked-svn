@@ -27,7 +27,7 @@ Q_OBJECT
 	PropertyEditUpdater * editor_updater;
 	std::vector<PropertyEditor*> property_editors;
 	
-	static void property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,float p_old_val);
+	static void property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val);
 protected:			    
 			    
 	void register_property_editor(PropertyEditor* p_property_editor);
@@ -35,7 +35,7 @@ protected:
 	
 signals:	
 	
-	void property_edited_signal(Property *p_property,float p_old_value);
+	void property_edited_signal(Property *p_property,double p_old_value);
 	
 public:
 	void set_property_editor_updater(PropertyEditUpdater *p_property_edit_updater);

@@ -58,6 +58,14 @@ void SoundDriver_JACK::process(int p_frames) {
 	AudioControl::mutex_unlock();
 }
 
+int SoundDriver_JACK::get_output_latency() {
+	
+	if (output_port_list.size()==0)
+		return 0;
+	if (output_port_list[0].ports.size()==0)
+		return 0;
+	return jack_port_get_total_latency(client,output_port_list[0].ports[0]);
+}
 void SoundDriver_JACK::write_to_inputs(int p_frames) {
 	
 	ERR_FAIL_COND( get_input_count()!=input_port_list.size() );

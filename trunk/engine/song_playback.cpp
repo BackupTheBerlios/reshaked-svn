@@ -10,7 +10,7 @@
 //
 //
 #include "song_playback.h"
-
+#include "engine/audio_control.h"
 namespace ReShaked {
 
 
@@ -21,6 +21,7 @@ void SongPlayback::play(Tick p_from_pos) {
 	loopdata.active=false;
 	current_tick=p_from_pos;
 	prev_tick=0;
+	latency_buffer.clear();
 }
 void SongPlayback::loop(Tick p_begin,Tick p_end) {
 	
@@ -31,6 +32,7 @@ void SongPlayback::loop(Tick p_begin,Tick p_end) {
 	loopdata.end=p_end;
 	current_tick=p_begin;
 	prev_tick=p_begin;
+	latency_buffer.clear();
 	
 }
 void SongPlayback::set_pause(bool p_paused) {
@@ -83,10 +85,32 @@ int SongPlayback::advance(int p_frames) {
 	
 	prev_tick=current_tick;
 	current_tick+=tick_adv;
+	latency_buffer.add( prev_tick,tick_adv,time*1000.0);
 	
 	return p_frames;
 }
 
+Tick SongPlayback::get_playback_pos_tick() {
+	
+	if (status!=STATUS_PLAY)
+		return 0;
+	
+	int latency_msecs=int(((float)AudioControl::get_output_latency()/(float)mix_rate)*1000.0);
+	
+	Tick pos=latency_buffer.get_tick_at_latency(latency_msecs);
+	if (pos==-1)
+		return prev_tick;
+	return pos;
+}
+
+void SongPlayback::set_recording_automations(bool p_recording) {
+	
+	record_automation=p_recording;
+}
+bool SongPlayback::is_recording_automations() {
+	
+	return record_automation;
+}
 
 SongPlayback::SongPlayback(GlobalProperties *p_properties) {
 	
@@ -95,6 +119,8 @@ SongPlayback::SongPlayback(GlobalProperties *p_properties) {
 	mix_rate=1;
 	current_tick=0;
 	prev_tick=0;
+	latency_buffer.clear();
+	record_automation=true;
 }
 
 

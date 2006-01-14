@@ -80,9 +80,11 @@ private:
 	
 	DisplaySize display_size;
 
-
+	double initial_value;
 	
 public:
+	void set_initial_value(double p_value);
+	double get_initial_value();
 	
 	bool shares_block_data(Block *p_block);
 	Property *get_property();

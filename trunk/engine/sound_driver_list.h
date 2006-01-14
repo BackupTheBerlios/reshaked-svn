@@ -39,6 +39,9 @@ public:
 	int get_current_driver();
 	bool is_current_driver_active();
 	
+	float get_mix_rate();	
+	int get_output_latency();
+	
 	void set_song(Song *p_song);
 
     	SoundDriverList();

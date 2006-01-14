@@ -1,5 +1,6 @@
 #include "undo_stream.h"
 #include "typedefs.h"
+#include "get_time.h"
 
 namespace ReShaked {
 
@@ -46,31 +47,44 @@ void UndoStream::delete_redo_history() {
 	
 }
 
-void UndoStream::begin(String p_name) {
+void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 
 	inside_count++;
 	if (inside_count>1) //already into group, merge
 		return;
 	
-	UndoGroup undo_group;
-	undo_group.name=p_name;
-	
 	if (current_index<(int)(undo_stream.size()-1))  // we have been undoing, so delete redo history
 		delete_redo_history();
-	undo_stream.push_back( undo_group );
-	current_index++;
+	
+	/* Shall we create a new group, or use the previous one? */
+	if (!undo_stream.empty())
+		printf("can collapse to previous: %i, empty %i, name %i, diff %i<%i\n",(int)p_can_collapse_to_previous,(int)!undo_stream.empty(),(int)(undo_stream.back().name==p_name),(GetTime::get_time_msec()-undo_stream.back().timestamp),collapse_max_time_window);
+	if (p_can_collapse_to_previous && !undo_stream.empty() && undo_stream.back().name==p_name && (GetTime::get_time_msec()-undo_stream.back().timestamp)<collapse_max_time_window) {
+		/* can collapse it to previous one! */
+		
+	} else {
+	
+		UndoGroup undo_group;
+		undo_group.name=p_name;
+		undo_group.timestamp=GetTime::get_time_msec();
+		printf("adding at time %i\n",undo_group.timestamp);
+		
+		undo_stream.push_back( undo_group );
+		current_index++;
+	}
 	
 	
 }
+
 void UndoStream::add_command( CommandFunc *p_command ) {
 
 	ERR_FAIL_COND(inside_count==0);
 	ERR_FAIL_COND(undo_stream.empty());
 	
-	
 	UndoElement e;
 	e.redo=p_command;
 	e.undo=p_command->exec();
+
 	if (e.undo==NULL) { //the command failed, abort. Commands shouldnt fail, but I just do it for app safety
 		delete p_command;
 		return;
@@ -93,6 +107,7 @@ void UndoStream::end() {
 	//i could put something here someday..
 
 }
+
 std::list<UndoStream::UndoGroup>::iterator UndoStream::get_block_iterator(int p_index) {
 
 	int undo_stream_size=(int)undo_stream.size();
@@ -176,6 +191,7 @@ UndoStream::UndoStream() {
 	lock_count=0;
 	current_index=-1;
 	inside_count=0;
+	collapse_max_time_window=2000; //2 seconds
 }
 
 } //end of namespace

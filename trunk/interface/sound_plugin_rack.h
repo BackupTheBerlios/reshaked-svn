@@ -42,7 +42,7 @@ Q_OBJECT
 	
 public slots:
 	
-	void property_edited_slot(Property *p_prop,float p_old_val);
+	void property_edited_slot(Property *p_prop,double p_old_val);
 	void update_rack();
 	
 public:

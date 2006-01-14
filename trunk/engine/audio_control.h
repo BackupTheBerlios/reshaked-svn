@@ -15,12 +15,14 @@ public:
 
 	
 	/* Sampling Rate */
-	static float get_sample_rate();
+	static float get_mix_rate();
 	
 	/* Audio Mutex */
 	static void mutex_lock();
 	static bool mutex_try_lock();
 	static void mutex_unlock();
+		
+	static int get_output_latency();
 	
 	static void init();
 

@@ -72,7 +72,7 @@ public:
 	void show_automation(int p_property,Track *p_track=NULL);
 	void hide_automation(int p_property,Track *p_track=NULL);
 	
-	void add_automation_point(Automation *p_automation,Tick p_tick, float p_val,float p_lfo_depth=0);
+	void add_automation_point(Automation *p_automation,Tick p_tick, float p_val,float p_lfo_depth=0,bool p_collapsable=false);
 	void move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val);
 	void remove_automation_point(Automation *p_automation,int p_block,int p_point);
 	
@@ -122,7 +122,7 @@ public:
 	void add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin);
 	void remove_plugin_from_track(Track *p_track,int p_which);
 	
-	void property_changed(Property * p_property,float p_old_value,Track *p_hint_track=NULL);
+	void property_changed(Property * p_property,double p_old_value,Track *p_hint_track=NULL);
 	
 	
 	/** SELECTION EDITING */

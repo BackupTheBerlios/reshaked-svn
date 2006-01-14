@@ -20,8 +20,7 @@ PixmapSlider::Skin::Skin(QPixmap p_bottom, QPixmap p_bottom_full, QPixmap p_grab
 	bottom=p_bottom;
 	bottom_full=p_bottom_full;
 	grabber=p_grabber;
-	
-	
+
 }
 
 /***********/
@@ -98,6 +97,8 @@ void PixmapSlider::mouseMoveEvent(QMouseEvent *e) {
 		value_ofs=0;
 	if (value_ofs>1)
 		value_ofs=1;
+	if (value==value_ofs)
+		return; //dont bother if the value is the same
 	value=value_ofs;
 	value_changed(value_ofs);
 	value_changed_signal(value_ofs);

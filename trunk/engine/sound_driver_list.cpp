@@ -59,6 +59,27 @@ bool SoundDriverList::init_driver(int p_index,bool p_internal_init) {
 	return (p_internal_init && driver_list[current]->get_status()==SoundDriver::STATUS_DISABLED);
 	
 }
+
+float SoundDriverList::get_mix_rate() {
+	
+	ERR_FAIL_INDEX_V(current,driver_list.size(),1);
+	if (driver_list[current]->get_status()==SoundDriver::STATUS_DISABLED)
+		return 1;
+	return driver_list[current]->get_mix_rate();
+	
+}
+
+int SoundDriverList::get_output_latency() {
+	
+	ERR_FAIL_INDEX_V(current,driver_list.size(),1);
+	if (driver_list[current]->get_status()==SoundDriver::STATUS_DISABLED)
+		return 0;
+	
+	return driver_list[current]->get_output_latency();
+	
+}
+
+
 void SoundDriverList::finish_driver() {
 	ERR_FAIL_COND(song==NULL);
 	ERR_FAIL_COND(is_current_driver_active());

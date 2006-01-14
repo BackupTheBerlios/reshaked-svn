@@ -65,6 +65,7 @@
 #include "pixmaps/control_rw.xpm"
 #include "pixmaps/control_pause.xpm"
 #include "pixmaps/control_record.xpm"
+#include "pixmaps/control_record_automations.xpm"
 #include "pixmaps/control_stop.xpm"
 
 #include "pixmaps/row_icon_loop_begin.xpm"
@@ -240,6 +241,7 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_CONTROL_STOP]=QPixmap((const char**)control_stop_xpm);
 	pixmap_map[ICON_CONTROL_FF]=QPixmap((const char**)control_ff_xpm);
 	pixmap_map[ICON_CONTROL_RECORD]=QPixmap((const char**)control_record_xpm);
+	pixmap_map[ICON_CONTROL_RECORD_AUTOMATIONS]=QPixmap((const char**)control_record_automations_xpm);
 		
 	pixmap_map[ICON_EDIT_VIEW_ROW_PLAYED]=QPixmap((const char**)row_icon_play_xpm);
 	pixmap_map[ICON_EDIT_VIEW_ROW_LOOP_BEGIN]=QPixmap((const char**)row_icon_loop_begin_xpm);

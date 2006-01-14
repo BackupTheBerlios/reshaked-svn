@@ -77,6 +77,7 @@ class MainWindow : public QMainWindow {
 		CONTROL_STOP,
 		CONTROL_FF,
 		CONTROL_RECORD,
+		CONTROL_RECORD_AUTOMATIONS,
 			
 		/*		
 		TRACK_SYNTH,

@@ -55,9 +55,9 @@ public:
 	
 	/* helpers */	
 	String get_text_value(bool p_no_postfix=false); 
-	float get_coeff_value(); ///< return value in range 0 .. 1
-	void set_coeff_value(float p_coeff); ///< return value in range 0 .. 1
-	float get_value_from_coeff(float p_coeff);
+	double get_coeff_value(); ///< return value in range 0 .. 1
+	void set_coeff_value(double p_coeff); ///< return value in range 0 .. 1
+	double get_value_from_coeff(double p_coeff);
 	 
 	
 	virtual ~Property(){};
@@ -134,7 +134,7 @@ protected:
 	virtual void config();	
 	void release_group();
 	
-	void (*changed_by_editor)(void*,PropertyEditor*,float);
+	void (*changed_by_editor)(void*,PropertyEditor*,double);
 	void* changed_by_editor_userdata;
 public:	
 	
@@ -145,7 +145,7 @@ public:
 	void check_if_changed();
 	void set_property(Property *p_property);
 	
-	void set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,PropertyEditor*,float));
+	void set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,PropertyEditor*,double));
 
 	PropertyEditor();
 	virtual ~PropertyEditor();

@@ -123,6 +123,7 @@ public:
 	
 	virtual float get_mix_rate()=0;	
 	
+	virtual int get_output_latency()=0; //get output latency in frames
 	
 	void set_port_layout(const AudioPortLayout *p_layout);
 	void set_audio_graph(AudioGraph *p_graph);

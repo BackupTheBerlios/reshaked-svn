@@ -63,6 +63,9 @@ friend class Editor;
 	CommandFunc* track_plugin_add(bool p_no_undo,Track *p_track,Track::PluginInsertData p_data);
 	CommandFunc* track_plugin_remove(bool p_no_undo,Track *p_track,int p_which);
 	
+	CommandFunc* automation_initial_value_changed(bool p_no_undo,Automation *p_auto,double p_to_val);
+	CommandFunc* property_value_changed(bool p_no_undo,Property *p_property,double p_old_val,double p_to_val);
+
 	
 };
 

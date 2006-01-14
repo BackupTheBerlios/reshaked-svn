@@ -152,6 +152,7 @@ public:
 	String get_name();
 	int get_channels();
 	
+	void reset_automations();
 	
 	
 	Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback);

@@ -50,21 +50,22 @@ void Editor::hide_automation(int p_property,Track *p_track) {
 	
 }
 
-void Editor::add_automation_point(Automation *p_automation,Tick p_tick, float p_val,float p_lfo_depth) {
+void Editor::add_automation_point(Automation *p_automation,Tick p_tick, float p_val,float p_lfo_depth,bool p_collapsable) {
 	
-	d->undo_stream.begin("Add Point");
+	int block_idx=p_automation->get_block_idx_at_pos( p_tick );
+	if (block_idx<0)
+		return;
+	
+	d->undo_stream.begin("Add Point",p_collapsable);
 	
 	/* CHECK That we are not overwriting a previous point, if we are, save it! */
-	int block_idx=p_automation->get_block_idx_at_pos( p_tick );
-	if (block_idx>=0) {
 		
 		
-		Automation::AutomationData *d=p_automation->get_block( block_idx )->get_data();
-		int point=d->get_exact_index( p_tick-p_automation->get_block_pos(block_idx) );
-		if ( point!=INVALID_STREAM_INDEX) {
-			/* POINT WILL BE OVERWRITTEN! SAVE IT! */
-			remove_automation_point( p_automation, block_idx, point ); 
-		}
+	Automation::AutomationData *ad=p_automation->get_block( block_idx )->get_data();
+	int point=ad->get_exact_index( p_tick-p_automation->get_block_pos(block_idx) );
+	if ( point!=INVALID_STREAM_INDEX) {
+		/* POINT WILL BE OVERWRITTEN! SAVE IT! */
+		remove_automation_point( p_automation, block_idx, point ); 
 	}
 			
 	d->undo_stream.add_command( Command4(&commands,&EditorCommands::add_automation_point,p_automation,p_tick,p_val,p_lfo_depth) );

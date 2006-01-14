@@ -15,7 +15,7 @@ namespace ReShaked {
 
 
 
-void SoundPluginUI::property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,float p_old_val) {
+void SoundPluginUI::property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val) {
 	
 	SoundPluginUI *instance=(SoundPluginUI*)_this;
 	instance->property_edited_signal(p_editor->get_property(), p_old_val); 

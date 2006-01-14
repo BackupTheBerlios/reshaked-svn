@@ -195,6 +195,11 @@ void MainWindow::menu_action_callback(int p_action) {
 			
 		} break;
 		
+		case CONTROL_RECORD_AUTOMATIONS: {
+		
+			data.song.get_song_playback().set_recording_automations( get_action(CONTROL_RECORD_AUTOMATIONS)->isChecked() );
+		} break;
+		
 	}
 }
 
@@ -277,6 +282,9 @@ void MainWindow::add_menus() {
 	create_action(CONTROL_STOP,"Stop","stop",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_STOP));
 	create_action(CONTROL_FF,"FastForward","fast_forward",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_FF));
 	create_action(CONTROL_RECORD,"Record","record",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_RECORD));
+	create_action(CONTROL_RECORD_AUTOMATIONS,"Record Automations","record_automations",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_RECORD_AUTOMATIONS));
+	get_action(CONTROL_RECORD_AUTOMATIONS)->setCheckable(true);
+	
 		
 	/*
 	track->addSeparator();

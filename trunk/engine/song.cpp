@@ -196,6 +196,8 @@ void Song::stop() {
 	
 	AudioControl::mutex_lock();
 	song_playback.stop();
+	for (int i=0;i<track_list.size();i++)
+		track_list[i]->reset_automations();
 	AudioControl::mutex_unlock();
 }
 

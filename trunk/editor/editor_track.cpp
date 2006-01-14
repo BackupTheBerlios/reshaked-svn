@@ -124,7 +124,7 @@ void Editor::move_track_left(int p_which) {
 	if (p_which==0)
 		return;
 	
-	d->undo_stream.begin("Track Move Left");
+	d->undo_stream.begin("Track Move Left",true);
 	d->undo_stream.add_command(Command1(&commands,&EditorCommands::track_move_left,p_which));
 	d->undo_stream.end();
 	
@@ -135,7 +135,7 @@ void Editor::move_track_right(int p_which) {
 	if (p_which==(d->song->get_track_count()-1))
 		return;
 	
-	d->undo_stream.begin("Track Move Right");
+	d->undo_stream.begin("Track Move Right",true);
 	d->undo_stream.add_command(Command1(&commands,&EditorCommands::track_move_right,p_which));
 	d->undo_stream.end();
 	
@@ -160,10 +160,51 @@ void Editor::connection_erase(AudioGraph *p_graph, int p_node_from,int p_plug_fr
 	
 }
 
-void Editor::property_changed(Property * p_property,float p_old_value,Track *p_hint_track) {
+void Editor::property_changed(Property * p_property,double p_old_value,Track *p_hint_track) {
 	
 	printf("%lls changed from %g to %g\n",p_property->get_caption().c_str(),p_old_value,p_property->get());
 	
+	Automation *a=NULL;
+	if (p_hint_track) {
+		
+		for (int i=0;i<p_hint_track->get_property_count();i++) {
+			
+			if (p_hint_track->get_property(i)==p_property) {
+				
+				a=p_hint_track->get_property_automation(i);
+				break;
+			}
+		}
+	}
+	
+	static Property *last_property=NULL;
+	bool can_collapse=last_property==p_property;
+	last_property=p_property;
+	
+	if (a) { //property belongs to an automation, so set initial value or record it
+		
+		if (d->song->get_song_playback().is_recording_automations() && d->song->get_song_playback().get_status()==SongPlayback::STATUS_PLAY) {
+			/* Record automation */
+		
+			Tick tick=d->song->get_song_playback().get_playback_pos_tick();
+			add_automation_point( a, tick, p_property->get_coeff_value(), 0, can_collapse );
+			
+		} else {
+			if (p_property->get()==a->get_initial_value())
+				return; //no point
+			d->undo_stream.begin("Automation Initial Changed",can_collapse);
+			d->undo_stream.add_command(Command2(&commands,&EditorCommands::automation_initial_value_changed ,a,p_property->get()));
+			d->undo_stream.end();
+		}		
+	} else {
+		
+		if (p_property->get()==p_old_value)
+			return; //no point
+		d->undo_stream.begin("Property Changed",can_collapse);
+		d->undo_stream.add_command(Command3(&commands,&EditorCommands::property_value_changed,p_property,p_old_value,p_property->get()));
+		d->undo_stream.end();
+		
+	}
 }
 
 } //end of namespace

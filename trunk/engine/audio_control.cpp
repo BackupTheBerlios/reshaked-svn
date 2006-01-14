@@ -1,7 +1,7 @@
 
 #include "audio_control.h"
 #include "error_macros.h"
-
+#include "sound_driver_list.h"
 
 void value_stream_global_lock() {
 	
@@ -20,9 +20,14 @@ MutexLock *AudioControl::audio_mutex=0;
 
 
 
-float AudioControl::get_sample_rate() {
+int AudioControl::get_output_latency() {
 	
-	return 0;	
+	return SoundDriverList::get_singleton()->get_output_latency();
+}
+float AudioControl::get_mix_rate() {
+	
+	
+	return SoundDriverList::get_singleton()->get_mix_rate();	
 	
 }
 

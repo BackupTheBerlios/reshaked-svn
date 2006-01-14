@@ -14,6 +14,8 @@
 
 #include "typedefs.h"
 #include "engine/global_properties.h"
+#include "engine/latency_buffer.h"
+
 namespace ReShaked {
 
 /**
@@ -27,6 +29,7 @@ public:
 		STATUS_STOP,
 							
 	};
+	
 private:
 	float mix_rate;
 	Tick prev_tick;
@@ -40,7 +43,9 @@ private:
 	} loopdata;
 	
 	Status status;
+	bool record_automation;
 			    
+	LatencyBuffer latency_buffer;
 public:
 
 
@@ -50,6 +55,9 @@ public:
 	void loop(Tick p_begin,Tick p_end);
 	void set_pause(bool p_paused);
 	void stop();
+	
+	void set_recording_automations(bool p_recording);
+	bool is_recording_automations();
 	
 	/* Info */
 	
@@ -62,6 +70,8 @@ public:
 	
 	Tick get_current_tick_from();
 	Tick get_current_tick_to();
+	
+	Tick get_playback_pos_tick();
 	
 	SongPlayback(GlobalProperties *p_properties);
 	~SongPlayback();
