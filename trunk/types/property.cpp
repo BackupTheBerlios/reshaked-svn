@@ -204,6 +204,8 @@ void PropertyEditor::set(double p_val) {
 		}
 		group->locked=false;
 		
+	} else if (!group) {
+		
 		if (changed_by_editor)
 			changed_by_editor(changed_by_editor_userdata,this,old_val);
 	}

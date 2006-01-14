@@ -77,6 +77,11 @@
 #include "pixmaps/track_variables_volume_vu_grabber.xpm"
 #include "pixmaps/track_variables_volume.xpm"
 
+#include "pixmaps/track_variables_swing_empty.xpm"
+#include "pixmaps/track_variables_swing_full.xpm"
+#include "pixmaps/track_variables_swing_grabber.xpm"
+#include "pixmaps/track_variables_swing.xpm"
+
 #include "pixmaps/track_top_bg.xpm"
 
 #include <iostream>
@@ -223,6 +228,10 @@ VisualSettings::VisualSettings() {
 	pixmap_map[PIXMAP_TRACK_SLIDER_VU_FG]=QPixmap((const char**)track_variables_volume_vu_full_xpm);
 	pixmap_map[PIXMAP_TRACK_SLIDER_VU_GRABBER]=QPixmap((const char**)track_variables_volume_vu_grabber_xpm);
 	pixmap_map[PIXMAP_TRACK_SLIDER_VU_ICON]=QPixmap((const char**)track_variables_volume_xpm);
+	pixmap_map[PIXMAP_TRACK_SLIDER_SWING_BG]=QPixmap((const char**)track_variables_swing_empty_xpm);
+	pixmap_map[PIXMAP_TRACK_SLIDER_SWING_FG]=QPixmap((const char**)track_variables_swing_full_xpm);
+	pixmap_map[PIXMAP_TRACK_SLIDER_SWING_GRABBER]=QPixmap((const char**)track_variables_swing_grabber_xpm);
+	pixmap_map[PIXMAP_TRACK_SLIDER_SWING_ICON]=QPixmap((const char**)track_variables_swing_xpm);
 
 
 	pixmap_map[ICON_TRACK_MOVE_LEFT]=QPixmap((const char**)track_move_left_xpm);

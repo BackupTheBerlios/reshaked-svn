@@ -50,6 +50,34 @@ void BlockListUIList::vscroll_track_list() {
 	
 }
 
+void BlockListUIList::property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val) {
+	printf("callbackGRH!\n");
+	BlockListUIList *instance=(BlockListUIList*)_this;
+	instance->property_editor_property_edited( p_editor,p_old_val );
+}
+
+void BlockListUIList::property_editor_property_edited(PropertyEditor* p_editor,double p_old_val) {
+	
+	Track *t=NULL; // see if we can hint the track
+	for (int i=0;i<slider_vus.size();i++) { //a vu?
+		
+		if (slider_vus[i]==p_editor) {
+			t=editor->get_song()->get_track(i);
+			break;
+		}
+	}
+	
+	for (int i=0;i<slider_swings.size();i++) { //a swing?
+		
+		if (slider_swings[i]==p_editor) {
+			t=editor->get_song()->get_track(i);
+			break;
+		}
+	}
+	printf("fucking callback!\n");
+	editor->property_changed( p_editor->get_property(), p_old_val, t );
+}
+
 void BlockListUIList::update_blocklist_list(const std::list<int>& p_list) {
 	
 	std::list<int>::const_iterator I=p_list.begin();
@@ -171,6 +199,7 @@ void BlockListUIList::update_track_list() {
 	}
 	property_editors.clear();
 	slider_vus.clear();
+	slider_swings.clear();
 	
 	if (hbox) {
 		hbox->hide();
@@ -207,6 +236,8 @@ void BlockListUIList::update_track_list() {
 	
 	PixmapSlider::Skin amp_slider_vu_skin(GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_BG),GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_FG),GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_GRABBER));
 	
+	PixmapSlider::Skin swing_skin(GET_QPIXMAP(PIXMAP_TRACK_SLIDER_SWING_BG),GET_QPIXMAP(PIXMAP_TRACK_SLIDER_SWING_FG),GET_QPIXMAP(PIXMAP_TRACK_SLIDER_SWING_GRABBER));
+		
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
 
 		
@@ -227,12 +258,24 @@ void BlockListUIList::update_track_list() {
 				
 				Track_Pattern *pattern=dynamic_cast<Track_Pattern *>(editor->get_song()->get_track(i));
 				ERR_CONTINUE(pattern==NULL);
+				
+				
+				new PixmapLabel(cvb,GET_QPIXMAP(PIXMAP_TRACK_SLIDER_SWING_ICON));
+				PropertyEditSlider *swing = new PropertyEditSlider(cvb,swing_skin);
+				swing->set_property( &pattern->swing() );
+				property_ui_updater->add_editor(swing);
+				property_editors.push_back(swing);
+				slider_swings.push_back(swing);
+				swing->set_changed_by_editor_callback(this,&BlockListUIList::property_editor_property_edited_callback);
+				
 				new PixmapLabel(cvb,GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_ICON));
 				PropertyEditSliderVU *slider_vu = new PropertyEditSliderVU(cvb,amp_slider_vu_skin);
 				slider_vu->set_property( &pattern->volume() );
 				slider_vus.push_back(slider_vu);
 				property_ui_updater->add_editor(slider_vu);
 				property_editors.push_back(slider_vu);
+				slider_vu->set_changed_by_editor_callback(this,&BlockListUIList::property_editor_property_edited_callback);
+				
 				
 			}
 		END_SWITCH

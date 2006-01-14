@@ -40,6 +40,7 @@ class BlockListUIList : public QFrame {
 	std::vector<TrackTop*> track_tops;
 	std::vector<PropertyEditor*> property_editors;
 	std::vector<PropertyEditSliderVU*> slider_vus;
+	std::vector<PropertyEditSlider*> slider_swings;
 	
 	QWidget *hbox;
 	QHBoxLayout *hbox_layout;
@@ -82,7 +83,9 @@ class BlockListUIList : public QFrame {
 	
 	};
 
+	static void property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val);
 	
+	void property_editor_property_edited(PropertyEditor* p_editor,double p_old_val);
 	
 public slots:
 
