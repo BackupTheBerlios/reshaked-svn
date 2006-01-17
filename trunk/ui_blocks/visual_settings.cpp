@@ -84,6 +84,90 @@
 
 #include "pixmaps/track_top_bg.xpm"
 
+#include "pixmaps/default_skin/top__bpm_bottom.xpm"
+#include "pixmaps/default_skin/top__bpm_display.xpm"
+#include "pixmaps/default_skin/top__bpm_octave_separator.xpm"
+#include "pixmaps/default_skin/top__bpm_top.xpm"
+#include "pixmaps/default_skin/top__bpm_updown.xpm"
+#include "pixmaps/default_skin/top__button_fastforward_active.xpm"
+#include "pixmaps/default_skin/top__button_fastforward.xpm"
+#include "pixmaps/default_skin/top__button_pause_active.xpm"
+#include "pixmaps/default_skin/top__button_pause.xpm"
+#include "pixmaps/default_skin/top__button_play_active.xpm"
+#include "pixmaps/default_skin/top__button_play.xpm"
+#include "pixmaps/default_skin/top__button_loop_active.xpm"
+#include "pixmaps/default_skin/top__button_loop.xpm"
+#include "pixmaps/default_skin/top__button_record_active.xpm"
+#include "pixmaps/default_skin/top__button_record_automations_active.xpm"
+#include "pixmaps/default_skin/top__button_record_automations.xpm"
+#include "pixmaps/default_skin/top__button_record.xpm"
+#include "pixmaps/default_skin/top__button_rewind_active.xpm"
+#include "pixmaps/default_skin/top__button_rewind.xpm"
+#include "pixmaps/default_skin/top__buttons_bottom.xpm"
+#include "pixmaps/default_skin/top__buttons_bpm_separator.xpm"
+#include "pixmaps/default_skin/top__button_stop_active.xpm"
+#include "pixmaps/default_skin/top__button_stop.xpm"
+#include "pixmaps/default_skin/top__buttons_top.xpm"
+#include "pixmaps/default_skin/top__margin_bottom.xpm"
+#include "pixmaps/default_skin/top__margin_left.xpm"
+#include "pixmaps/default_skin/top__margin_right.xpm"
+#include "pixmaps/default_skin/top__octave_bottom.xpm"
+#include "pixmaps/default_skin/top__octave_display.xpm"
+#include "pixmaps/default_skin/top__octave_end.xpm"
+#include "pixmaps/default_skin/top__octave_top.xpm"
+#include "pixmaps/default_skin/top__octave_updown.xpm"
+#include "pixmaps/default_skin/top__tab_edit_active.xpm"
+#include "pixmaps/default_skin/top__tab_edit.xpm"
+#include "pixmaps/default_skin/top__tab_mix_active.xpm"
+#include "pixmaps/default_skin/top__tab_mix.xpm"
+#include "pixmaps/default_skin/top__tabs_buttons_separator.xpm"
+#include "pixmaps/default_skin/top__tab_song_active.xpm"
+#include "pixmaps/default_skin/top__tab_song.xpm"
+#include "pixmaps/default_skin/top__controls_end.xpm"
+
+#include "pixmaps/default_skin/top__icon_file_activated.xpm"
+#include "pixmaps/default_skin/top__icon_file.xpm"
+#include "pixmaps/default_skin/top__icon_add_activated.xpm"
+#include "pixmaps/default_skin/top__icon_add.xpm"
+#include "pixmaps/default_skin/top__icon_help_activated.xpm"
+#include "pixmaps/default_skin/top__icon_help.xpm"
+#include "pixmaps/default_skin/top__icon_redo_activated.xpm"
+#include "pixmaps/default_skin/top__icon_redo_disabled.xpm"
+#include "pixmaps/default_skin/top__icon_redo.xpm"
+#include "pixmaps/default_skin/top__icon_settings_activated.xpm"
+#include "pixmaps/default_skin/top__icon_settings.xpm"
+#include "pixmaps/default_skin/top__icon_undo_activated.xpm"
+#include "pixmaps/default_skin/top__icon_undo_disabled.xpm"
+#include "pixmaps/default_skin/top__icon_undo.xpm"
+
+#include "pixmaps/default_skin/left__margin.xpm"
+#include "pixmaps/default_skin/right__margin.xpm"
+#include "pixmaps/default_skin/bottom__margin.xpm"
+#include "pixmaps/default_skin/bottom_left__corner.xpm"
+#include "pixmaps/default_skin/bottom_right__corner.xpm"
+
+#include "pixmaps/default_skin/global_toolbar__add_active.xpm"
+#include "pixmaps/default_skin/global_toolbar__add.xpm"
+#include "pixmaps/default_skin/global_toolbar__copy_active.xpm"
+#include "pixmaps/default_skin/global_toolbar__copy_link_active.xpm"
+#include "pixmaps/default_skin/global_toolbar__copy_link.xpm"
+#include "pixmaps/default_skin/global_toolbar__copy.xpm"
+#include "pixmaps/default_skin/global_toolbar__eraser_pushed.xpm"
+#include "pixmaps/default_skin/global_toolbar__eraser.xpm"
+#include "pixmaps/default_skin/global_toolbar__hspacer.xpm"
+#include "pixmaps/default_skin/global_toolbar__left.xpm"
+#include "pixmaps/default_skin/global_toolbar__right.xpm"
+#include "pixmaps/default_skin/global_toolbar__select_active.xpm"
+#include "pixmaps/default_skin/global_toolbar__select_linked_pushed.xpm"
+#include "pixmaps/default_skin/global_toolbar__select_linked.xpm"
+#include "pixmaps/default_skin/global_toolbar__select.xpm"
+#include "pixmaps/default_skin/global_toolbar__unlink_selected_pushed.xpm"
+#include "pixmaps/default_skin/global_toolbar__unlink_selected.xpm"
+#include "pixmaps/default_skin/global_toolbar__zoom_bg.xpm"
+#include "pixmaps/default_skin/global_toolbar__zoom_fg.xpm"
+#include "pixmaps/default_skin/global_toolbar__zoom_grabber.xpm"
+#include "pixmaps/default_skin/global_toolbar__zoom_icon.xpm"
+
 #include <iostream>
 
 #include "error_macros.h"
@@ -264,6 +348,90 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_CONTROL_RECORD]=QPixmap((const char**)control_record_xpm);
 	pixmap_map[ICON_CONTROL_RECORD_AUTOMATIONS]=QPixmap((const char**)control_record_automations_xpm);
 		
+	pixmap_map[THEME_TOP__BPM_BOTTOM]=QPixmap((const char**)top__bpm_bottom_xpm);
+	pixmap_map[THEME_TOP__BPM_DISPLAY]=QPixmap((const char**)top__bpm_display_xpm);
+	pixmap_map[THEME_TOP__BPM_OCTAVE_SEPARATOR]=QPixmap((const char**)top__bpm_octave_separator_xpm);
+	pixmap_map[THEME_TOP__BPM_TOP]=QPixmap((const char**)top__bpm_top_xpm);
+	pixmap_map[THEME_TOP__BPM_UPDOWN]=QPixmap((const char**)top__bpm_updown_xpm);
+	pixmap_map[THEME_TOP__BUTTON_FASTFORWARD_ACTIVE]=QPixmap((const char**)top__button_fastforward_active_xpm);
+	pixmap_map[THEME_TOP__BUTTON_FASTFORWARD]=QPixmap((const char**)top__button_fastforward_xpm);
+	pixmap_map[THEME_TOP__BUTTON_PAUSE_ACTIVE]=QPixmap((const char**)top__button_pause_active_xpm);
+	pixmap_map[THEME_TOP__BUTTON_PAUSE]=QPixmap((const char**)top__button_pause_xpm);
+	pixmap_map[THEME_TOP__BUTTON_PLAY_ACTIVE]=QPixmap((const char**)top__button_play_active_xpm);
+	pixmap_map[THEME_TOP__BUTTON_PLAY]=QPixmap((const char**)top__button_play_xpm);
+	pixmap_map[THEME_TOP__BUTTON_LOOP_ACTIVE]=QPixmap((const char**)top__button_loop_active_xpm);
+	pixmap_map[THEME_TOP__BUTTON_LOOP]=QPixmap((const char**)top__button_loop_xpm);
+	pixmap_map[THEME_TOP__BUTTON_RECORD_ACTIVE]=QPixmap((const char**)top__button_record_active_xpm);
+	pixmap_map[THEME_TOP__BUTTON_RECORD_AUTOMATIONS_ACTIVE]=QPixmap((const char**)top__button_record_automations_active_xpm);
+	pixmap_map[THEME_TOP__BUTTON_RECORD_AUTOMATIONS]=QPixmap((const char**)top__button_record_automations_xpm);
+	pixmap_map[THEME_TOP__BUTTON_RECORD]=QPixmap((const char**)top__button_record_xpm);
+	pixmap_map[THEME_TOP__BUTTON_REWIND_ACTIVE]=QPixmap((const char**)top__button_rewind_active_xpm);
+	pixmap_map[THEME_TOP__BUTTON_REWIND]=QPixmap((const char**)top__button_rewind_xpm);
+	pixmap_map[THEME_TOP__BUTTONS_BOTTOM]=QPixmap((const char**)top__buttons_bottom_xpm);
+	pixmap_map[THEME_TOP__BUTTONS_BPM_SEPARATOR]=QPixmap((const char**)top__buttons_bpm_separator_xpm);
+	pixmap_map[THEME_TOP__BUTTON_STOP_ACTIVE]=QPixmap((const char**)top__button_stop_active_xpm);
+	pixmap_map[THEME_TOP__BUTTON_STOP]=QPixmap((const char**)top__button_stop_xpm);
+	pixmap_map[THEME_TOP__BUTTONS_TOP]=QPixmap((const char**)top__buttons_top_xpm);
+	pixmap_map[THEME_TOP__MARGIN_BOTTOM]=QPixmap((const char**)top__margin_bottom_xpm);
+	pixmap_map[THEME_TOP__MARGIN_LEFT]=QPixmap((const char**)top__margin_left_xpm);
+	pixmap_map[THEME_TOP__MARGIN_RIGHT]=QPixmap((const char**)top__margin_right_xpm);
+	pixmap_map[THEME_TOP__OCTAVE_BOTTOM]=QPixmap((const char**)top__octave_bottom_xpm);
+	pixmap_map[THEME_TOP__OCTAVE_DISPLAY]=QPixmap((const char**)top__octave_display_xpm);
+	pixmap_map[THEME_TOP__OCTAVE_END]=QPixmap((const char**)top__octave_end_xpm);
+	pixmap_map[THEME_TOP__OCTAVE_TOP]=QPixmap((const char**)top__octave_top_xpm);
+	pixmap_map[THEME_TOP__OCTAVE_UPDOWN]=QPixmap((const char**)top__octave_updown_xpm);
+	pixmap_map[THEME_TOP__TAB_EDIT_ACTIVE]=QPixmap((const char**)top__tab_edit_active_xpm);
+	pixmap_map[THEME_TOP__TAB_EDIT]=QPixmap((const char**)top__tab_edit_xpm);
+	pixmap_map[THEME_TOP__TAB_MIX_ACTIVE]=QPixmap((const char**)top__tab_mix_active_xpm);
+	pixmap_map[THEME_TOP__TAB_MIX]=QPixmap((const char**)top__tab_mix_xpm);
+	pixmap_map[THEME_TOP__TABS_BUTTONS_SEPARATOR]=QPixmap((const char**)top__tabs_buttons_separator_xpm);
+	pixmap_map[THEME_TOP__TAB_SONG_ACTIVE]=QPixmap((const char**)top__tab_song_active_xpm);
+	pixmap_map[THEME_TOP__TAB_SONG]=QPixmap((const char**)top__tab_song_xpm);
+	pixmap_map[THEME_TOP__CONTROLS_END]=QPixmap((const char**)top__controls_end_xpm);
+
+	pixmap_map[THEME_TOP__ICON_FILE_ACTIVATED]=QPixmap((const char**)top__icon_file_activated_xpm);
+	pixmap_map[THEME_TOP__ICON_FILE]=QPixmap((const char**)top__icon_file_xpm);
+	pixmap_map[THEME_TOP__ICON_ADD_ACTIVATED]=QPixmap((const char**)top__icon_add_activated_xpm);
+	pixmap_map[THEME_TOP__ICON_ADD]=QPixmap((const char**)top__icon_add_xpm);
+	pixmap_map[THEME_TOP__ICON_HELP_ACTIVATED]=QPixmap((const char**)top__icon_help_activated_xpm);
+	pixmap_map[THEME_TOP__ICON_HELP]=QPixmap((const char**)top__icon_help_xpm);
+	pixmap_map[THEME_TOP__ICON_REDO_ACTIVATED]=QPixmap((const char**)top__icon_redo_activated_xpm);
+	pixmap_map[THEME_TOP__ICON_REDO_DISABLED]=QPixmap((const char**)top__icon_redo_disabled_xpm);
+	pixmap_map[THEME_TOP__ICON_REDO]=QPixmap((const char**)top__icon_redo_xpm);
+	pixmap_map[THEME_TOP__ICON_SETTINGS_ACTIVATED]=QPixmap((const char**)top__icon_settings_activated_xpm);
+	pixmap_map[THEME_TOP__ICON_SETTINGS]=QPixmap((const char**)top__icon_settings_xpm);
+	pixmap_map[THEME_TOP__ICON_UNDO_ACTIVATED]=QPixmap((const char**)top__icon_undo_activated_xpm);
+	pixmap_map[THEME_TOP__ICON_UNDO_DISABLED]=QPixmap((const char**)top__icon_undo_disabled_xpm);
+	pixmap_map[THEME_TOP__ICON_UNDO]=QPixmap((const char**)top__icon_undo_xpm);
+	
+	pixmap_map[THEME_LEFT__MARGIN]=QPixmap((const char**)left__margin_xpm);
+	pixmap_map[THEME_RIGHT__MARGIN]=QPixmap((const char**)right__margin_xpm);
+	pixmap_map[THEME_BOTTOM__MARGIN]=QPixmap((const char**)bottom__margin_xpm);
+	pixmap_map[THEME_BOTTOM_LEFT__CORNER]=QPixmap((const char**)bottom_left__corner_xpm);
+	pixmap_map[THEME_BOTTOM_RIGHT__CORNER]=QPixmap((const char**)bottom_right__corner_xpm);
+	
+	pixmap_map[THEME_GLOBAL_TOOLBAR__ADD_ACTIVE]=QPixmap((const char**)global_toolbar__add_active_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__ADD]=QPixmap((const char**)global_toolbar__add_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__COPY_ACTIVE]=QPixmap((const char**)global_toolbar__copy_active_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__COPY_LINK_ACTIVE]=QPixmap((const char**)global_toolbar__copy_link_active_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__COPY_LINK]=QPixmap((const char**)global_toolbar__copy_link_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__COPY]=QPixmap((const char**)global_toolbar__copy_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__ERASER_PUSHED]=QPixmap((const char**)global_toolbar__eraser_pushed_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__ERASER]=QPixmap((const char**)global_toolbar__eraser_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__HSPACER]=QPixmap((const char**)global_toolbar__hspacer_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__LEFT]=QPixmap((const char**)global_toolbar__left_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__RIGHT]=QPixmap((const char**)global_toolbar__right_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__SELECT_ACTIVE]=QPixmap((const char**)global_toolbar__select_active_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__SELECT_LINKED_PUSHED]=QPixmap((const char**)global_toolbar__select_linked_pushed_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__SELECT_LINKED]=QPixmap((const char**)global_toolbar__select_linked_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__SELECT]=QPixmap((const char**)global_toolbar__select_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__UNLINK_SELECTED_PUSHED]=QPixmap((const char**)global_toolbar__unlink_selected_pushed_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__UNLINK_SELECTED]=QPixmap((const char**)global_toolbar__unlink_selected_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__ZOOM_BG]=QPixmap((const char**)global_toolbar__zoom_bg_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__ZOOM_FG]=QPixmap((const char**)global_toolbar__zoom_fg_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__ZOOM_GRABBER]=QPixmap((const char**)global_toolbar__zoom_grabber_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__ZOOM_ICON]=QPixmap((const char**)global_toolbar__zoom_icon_xpm);
+	
 	pixmap_map[ICON_EDIT_VIEW_ROW_PLAYED]=QPixmap((const char**)row_icon_play_xpm);
 	pixmap_map[ICON_EDIT_VIEW_ROW_LOOP_BEGIN]=QPixmap((const char**)row_icon_loop_begin_xpm);
 	pixmap_map[ICON_EDIT_VIEW_ROW_LOOP_END]=QPixmap((const char**)row_icon_loop_end_xpm);

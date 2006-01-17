@@ -10,10 +10,13 @@
 //
 //
 #include <Qt/qlabel.h>
+#include <Qt/qinputdialog.h>
+#include <Qt/qevent.h>
 #include "ui_blocks/knob.h"
 #include "property_editors.h"
 #include "helpers.h"
 #include <math.h>
+
 namespace ReShaked {
 
 
@@ -62,19 +65,27 @@ void PropertyEditLabel::set_postfix_visible(bool p_visible) {
 }
 void PropertyEditLabel::changed() {
 	
+	
 	set_text(QStrify(get_property()->get_text_value(!postfix)));
 	update();
 }
 
+void PropertyEditLabel::click_override() {
+	
+	bool ok;
+	
+	double val=QInputDialog::getDouble ( this, QStrify( get_property()->get_caption()), "Enter Value", get(), get_property()->get_min(), get_property()->get_max(), 4, &ok);
+	if (ok)
+		set(val);
+	
+	changed();
+	
+}
+
 PropertyEditLabel::PropertyEditLabel(QWidget *p_parent,QPixmap p_bg) : PixmapLabel(p_parent,p_bg) {
 	
-	QFont f;
-	f.setBold(true);
-	int font_pix_size=p_bg.height()*2/3;
-	f.setPixelSize(font_pix_size);
-	set_font(f);
-	set_pos(QPoint(p_bg.width()/2,(p_bg.height()-font_pix_size)/2),true);
-	set_color(QColor(255,255,255));
+
+	get_font().setBold(true);
 	postfix=true;
 
 }
@@ -161,6 +172,62 @@ PropertyEditVU::~PropertyEditVU() {
 
 /*******************/
 
+void PropertyEditUpDown::changed() {
+	
+	/* updowns have no fear */
+}
+
+void PropertyEditUpDown::max_pressed_slot() {
+	if (!get_property())
+		return;
+	
+	set( get_property()->get_max() );
+}
+void PropertyEditUpDown::min_pressed_slot() {
+	if (!get_property())
+		return;
+	
+	set( get_property()->get_min() );
+}
+void PropertyEditUpDown::up_pressed_slot() {
+	if (!get_property())
+		return;
+	
+	set( get() + step );
+}
+void PropertyEditUpDown::down_pressed_slot() {
+	if (!get_property())
+		return;
+	
+	set( get() - step );
+}
+
+void PropertyEditUpDown::set_step(double p_step) {
+	
+	step=p_step;
+}
+
+void PropertyEditUpDown::config() {
+
+	step=get_property()->get_stepping();
+}
+PropertyEditUpDown::PropertyEditUpDown(QWidget *p_parent,const Skin& p_skin) : PixmapUpDown(p_parent,p_skin) {
+	
+	QObject::connect(this,SIGNAL(down_pressed_signal()),this,SLOT(down_pressed_slot()));
+	QObject::connect(this,SIGNAL(up_pressed_signal()),this,SLOT(up_pressed_slot()));
+	QObject::connect(this,SIGNAL(min_pressed_signal()),this,SLOT(min_pressed_slot()));
+	QObject::connect(this,SIGNAL(max_pressed_signal()),this,SLOT(max_pressed_slot()));
+	step=0;
+	
+}
+		
+PropertyEditUpDown::~PropertyEditUpDown() {
+	
+	
+	
+}
+
+/*******************/
 
 void PropertyEditSpinBox::config() {
 	
@@ -194,6 +261,13 @@ void PropertyEditSpinBox::config() {
 
 }
 
+
+void PropertyEditSpinBox::value_changed_slot(double p_val) {
+	
+//	set( p_val );
+
+}
+
 void PropertyEditSpinBox::changed() {
 	
 	
@@ -202,7 +276,7 @@ void PropertyEditSpinBox::changed() {
 
 PropertyEditSpinBox::PropertyEditSpinBox(QWidget *p_widget) : QDoubleSpinBox(p_widget) {
 
-	
+	QObject::connect(this,SIGNAL(valueChanged(double)),this,SLOT(value_changed_slot( double )));
 
 }
 

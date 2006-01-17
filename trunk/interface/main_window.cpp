@@ -29,70 +29,6 @@
 
 namespace ReShaked {
 
-class SpinBoxNoFocus : public QSpinBox {
-	
-public:	
-	SpinBoxNoFocus(QWidget *p_parent) : QSpinBox(p_parent) {
-		setFocusPolicy(Qt::NoFocus);
-		lineEdit()->setFocusPolicy(Qt::NoFocus);
-	}
-};
-
-void MainWindow::octave_changed_slot(int p_to_idx) {
-	
-	updating_octave=true;
-	data.editor->set_editing_octave(p_to_idx);
-	updating_octave=false;
-}
-void MainWindow::octave_changed_external_slot() {
-	if (updating_octave)
-		return;
-	octave->setValue(data.editor->get_editing_octave());
-}
-
-void MainWindow::set_top_screen(TopScreenList p_list) {
-
-	switch (p_list) {
-
-		case TOP_SCREEN_GLOBAL_VIEW: {
-
-			get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
-			get_action(NAVIGATION_EDIT_VIEW)->setChecked(false);
-			main_stack->setCurrentWidget(global_view_frame);
-
-		} break;
-		case TOP_SCREEN_EDIT_VIEW: {
-
-			get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(false);
-			get_action(NAVIGATION_EDIT_VIEW)->setChecked(true);
-			main_stack->setCurrentWidget(blui_list);
-			blui_list->repaint_track_list();
-
-		} break;
-	}
-
-}
-/*
-void MainWindow::set_track_settings_page(TrackSettings::TrackSettingsPage p_page) {
-	
-	track_settings->set_page( p_page );
-	
-	if (p_page!=TrackSettings::TRACK_SETTINGS_PATTERN)
-		get_action(TRACK_SYNTH)->setChecked(false);
-	if (p_page!=TrackSettings::TRACK_SETTINGS_CONTROLS)
-		get_action(TRACK_CONTROLS)->setChecked(false);
-	if (p_page!=TrackSettings::TRACK_SETTINGS_AUTOMATION)
-		get_action(TRACK_AUTOMATIONS)->setChecked(false);
-	if (p_page!=TrackSettings::TRACK_SETTINGS_EFFECTS)
-		get_action(TRACK_EFFECTS)->setChecked(false);
-	if (p_page!=TrackSettings::TRACK_SETTINGS_CONNECTIONS)
-		get_action(TRACK_CONNECTIONS)->setChecked(false);
-	if (p_page!=TrackSettings::TRACK_SETTINGS_TRACKLIST_CONNECTIONS)
-		get_action(TRACK_LIST_CONNECTIONS)->setChecked(false);
-	
-	
-}
-*/
 void MainWindow::menu_action_callback(int p_action) {
 
 	if (p_action<0 || p_action>=MAX_ITEMS)
@@ -137,11 +73,11 @@ void MainWindow::menu_action_callback(int p_action) {
 
 		case NAVIGATION_GLOBAL_VIEW: {
 
-			set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
+			top_bar->set_screen( TopBarControls::SCREEN_SONG );
 		} break;
 		case NAVIGATION_EDIT_VIEW: {
 
-			set_top_screen(TOP_SCREEN_EDIT_VIEW);
+			top_bar->set_screen( TopBarControls::SCREEN_EDIT );
 
 		} break;
 		/*		
@@ -203,7 +139,7 @@ void MainWindow::menu_action_callback(int p_action) {
 	}
 }
 
-void MainWindow::create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,QToolBar *p_toolbar,const QPixmap &p_pixmap) {
+void MainWindow::create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,const QPixmap &p_pixmap) {
 
 	ERR_FAIL_COND( action_map.find(p_item)!=action_map.end() );
 
@@ -221,15 +157,6 @@ void MainWindow::create_action(MenuItems p_item,QString p_text,String p_kb_path,
 	action_map[p_item]=q;
 	if (p_menu)
 		p_menu->addAction(q);
-	if (p_toolbar) {
-		
-		QToolButton *tb = new QToolButton(this);
-		tb->setDefaultAction(q);
-		if (!p_pixmap.isNull())
-			tb->setIconSize(p_pixmap.size());
-		p_toolbar->addWidget(tb);
-		
-	}
 	
 	data.keyboard_codes.add_key_bind("actions/"+p_kb_path,DeQStrify(p_text),Keyboard_Input::NO_KEY,false,new QAction_Keybind(q));
 }
@@ -248,112 +175,48 @@ void MainWindow::add_menus() {
 
 
 
+	create_action(ITEM_SONG_NEW,"New Song","new",top_bar->get_file_menu());
+	create_action(ITEM_SONG_OPEN,"Open Song","open",top_bar->get_file_menu());
+	create_action(ITEM_SONG_SAVE,"Save Song","save",top_bar->get_file_menu());
+	create_action(ITEM_SONG_SAVE_AS,"Save song As..","save_as",top_bar->get_file_menu());
+	top_bar->get_file_menu()->addSeparator();
+	create_action(ITEM_SONG_EXIT,"Quit!","quit",top_bar->get_file_menu());
 
-	QMenu * file = menuBar()->addMenu("File");
-	QMenu * edit = menuBar()->addMenu("Edit");
-	QMenu * track = menuBar()->addMenu("Track");
+	create_action(ITEM_EDIT_UNDO,"Undo","undo",NULL);
+	create_action(ITEM_EDIT_REDO,"Redo","redo",NULL);
 
-	create_action(ITEM_SONG_NEW,"New","new",file,NULL);
-	create_action(ITEM_SONG_OPEN,"Open","open",file,NULL);
-	create_action(ITEM_SONG_SAVE,"Save","save",file,NULL);
-	create_action(ITEM_SONG_SAVE_AS,"Save As..","save_as",file,NULL);
-	file->addSeparator();
-	create_action(ITEM_SONG_EXIT,"Quit","quit",file,NULL);
-
-	create_action(ITEM_EDIT_UNDO,"Undo","undo",edit,NULL);
-	create_action(ITEM_EDIT_REDO,"Redo","redo",edit,NULL);
-
-	create_action(ITEM_TRACK_ADD_PATTERN,"Add Pattern Track","add_pattern",track,NULL);
+	create_action(ITEM_TRACK_ADD_PATTERN,"Add Pattern Track","add_pattern",top_bar->get_add_menu());
 	//create_action(ITEM_TRACK_ADD_AUDIO,"Add Audio Track",track,NULL);
-	create_action(ITEM_TRACK_REMOVE,"Remove Current Track","remove_current_track",track,NULL);
-	track->addSeparator();
 
-	create_action(NAVIGATION_GLOBAL_VIEW,"Global View","switch_to_global_view",NULL,navigation_toolbar,QPixmap((const char**)view_global_xpm));
-	get_action(NAVIGATION_GLOBAL_VIEW)->setCheckable(true);
-	get_action(NAVIGATION_GLOBAL_VIEW)->setChecked(true);
-	create_action(NAVIGATION_EDIT_VIEW,"Edit View","switch_to_edit_view",NULL,navigation_toolbar,QPixmap((const char**)view_edit_xpm));
-	navigation_toolbar->addSeparator();
-	get_action(NAVIGATION_EDIT_VIEW)->setCheckable(true);
+	create_action(NAVIGATION_GLOBAL_VIEW,"Global View","switch_to_global_view",NULL);
+	create_action(NAVIGATION_EDIT_VIEW,"Edit View","switch_to_edit_view",NULL);
 	
-	create_action(CONTROL_RW,"Rewind","rewind",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_RW));
-	create_action(CONTROL_PLAY,"Play","play",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_PLAY));
-	create_action(CONTROL_PLAY_LOOP,"Play Loop","play_loop",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_PLAY_LOOP));
-	create_action(CONTROL_PAUSE,"Pause","pause",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_PAUSE));
-	create_action(CONTROL_STOP,"Stop","stop",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_STOP));
-	create_action(CONTROL_FF,"FastForward","fast_forward",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_FF));
-	create_action(CONTROL_RECORD,"Record","record",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_RECORD));
-	create_action(CONTROL_RECORD_AUTOMATIONS,"Record Automations","record_automations",NULL,playback_toolbar,GET_QPIXMAP(ICON_CONTROL_RECORD_AUTOMATIONS));
-	get_action(CONTROL_RECORD_AUTOMATIONS)->setCheckable(true);
-	
-		
-	/*
-	track->addSeparator();
-	
-	create_action(TRACK_SYNTH,"Edit Synth Tab","edit_synth_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_PATTERN));
-	create_action(TRACK_CONTROLS,"Edit Controls","edit_ctrls_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONTROLS));
-	create_action(TRACK_AUTOMATIONS,"Edit Automations","edit_automations_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS));
-	create_action(TRACK_EFFECTS,"Edit Effects","edit_effects_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS));
-	create_action(TRACK_CONNECTIONS,"Edit Connections","edit_connections_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONNECTIONS));
+	create_action(CONTROL_RW,"Rewind","rewind",NULL);
+	create_action(CONTROL_PLAY,"Play","play",NULL);
+	create_action(CONTROL_PLAY_LOOP,"Play Loop","play_loop",NULL);
+	create_action(CONTROL_PAUSE,"Pause","pause",NULL);
+	create_action(CONTROL_STOP,"Stop","stop",NULL);
+	create_action(CONTROL_FF,"FastForward","fast_forward",NULL);
+	create_action(CONTROL_RECORD,"Record","record",NULL);
+	create_action(CONTROL_RECORD_AUTOMATIONS,"Record Automations","record_automations",NULL);
 
-	track_toolbar->addSeparator();
+	create_action(SETTINGS_CONFIG,"Settings","settings",top_bar->get_settings_menu());
+	create_action(HELP_HELP,"Help","help",top_bar->get_help_menu());
+	create_action(HELP_ABOUT,"About","about",top_bar->get_help_menu());
 	
-	create_action(TRACK_LIST_CONNECTIONS,"Track List Connections","edit_track_list_connections_tab",track,track_toolbar,GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_CONNECTIONS));
-	
-	get_action(TRACK_SYNTH)->setCheckable(true);
-	get_action(TRACK_CONTROLS)->setCheckable(true);
-	get_action(TRACK_AUTOMATIONS)->setCheckable(true);
-	get_action(TRACK_EFFECTS)->setCheckable(true);
-	get_action(TRACK_CONNECTIONS)->setCheckable(true);
-	get_action(TRACK_LIST_CONNECTIONS)->setCheckable(true);
-	get_action(TRACK_SYNTH)->setEnabled(false);
-	get_action(TRACK_CONTROLS)->setEnabled(false);
-	get_action(TRACK_AUTOMATIONS)->setEnabled(false);
-	get_action(TRACK_EFFECTS)->setEnabled(false);
-	get_action(TRACK_CONNECTIONS)->setEnabled(false);
-	get_action(TRACK_LIST_CONNECTIONS)->setEnabled(false);
-	*/
 
 }
 
-void MainWindow::track_list_changed_slot() {
-	/*
-	if ( data.editor->get_current_track ()<0 || data.editor->get_current_track ()>=data.song.get_track_count() ) {
+void MainWindow::screen_changed_slot(TopBarControls::ScreenList p_screen) {
+	
+	switch(p_screen) {
+		
+		case TopBarControls::SCREEN_SONG: main_stack->setCurrentWidget(global_view_frame); break;
+		case TopBarControls::SCREEN_EDIT: main_stack->setCurrentWidget(blui_list); break;
+		case TopBarControls::SCREEN_MIX:  break;
+				
 
-		
-		get_action(TRACK_SYNTH)->setEnabled(false);
-		get_action(TRACK_CONTROLS)->setEnabled(false);
-		get_action(TRACK_AUTOMATIONS)->setEnabled(false);
-		get_action(TRACK_EFFECTS)->setEnabled(false);
-		get_action(TRACK_CONNECTIONS)->setEnabled(false);
-		get_action(TRACK_LIST_CONNECTIONS)->setEnabled(false);
-		get_action(TRACK_SYNTH)->setChecked(false);
-		get_action(TRACK_CONTROLS)->setChecked(false);
-		get_action(TRACK_AUTOMATIONS)->setChecked(false);
-		get_action(TRACK_EFFECTS)->setChecked(false);
-		get_action(TRACK_CONNECTIONS)->setChecked(false);
-		get_action(TRACK_LIST_CONNECTIONS)->setChecked(false);
-		
-		settings_dock->hide();
-	} else {
-		blocklist_changed_slot();
-		get_action(TRACK_CONTROLS)->setEnabled(true);
-		get_action(TRACK_AUTOMATIONS)->setEnabled(true);
-		get_action(TRACK_EFFECTS)->setEnabled(false);
-		get_action(TRACK_CONNECTIONS)->setEnabled(true);
-		get_action(TRACK_LIST_CONNECTIONS)->setEnabled(true);
-	}
-		
-	*/
-	
-}
-void MainWindow::blocklist_changed_slot() {
-	
-	
-	if (data.editor->get_current_track()<0)
-		return;
-	Track *t=data.song.get_track( data.editor->get_current_track () );
-	if (t==NULL)
-		return;
+	} 
 }
 
 void MainWindow::ui_update_slot() {
@@ -364,8 +227,10 @@ void MainWindow::ui_update_slot() {
 	data.property_edit_updater.update_editors();
 	blui_list->update_play_position();
 	blui_list->update_vus();
+	top_bar->update_playback_indicator();
 	
 }
+
 
 MainWindow::MainWindow() {
 
@@ -375,14 +240,31 @@ MainWindow::MainWindow() {
 	data.editor = new Editor( &data.song, update_notify );
 
 
-	main_stack = new QStackedWidget(this);
+	CVBox *main_vbox = new CVBox(this);
+	setCentralWidget(main_vbox);
+	top_bar = new TopBarControls(main_vbox,data.editor,&data.property_edit_updater);
+	
+	CHBox *stack_hbox = new CHBox(main_vbox);
+			
+	new PixmapLabel(stack_hbox,GET_QPIXMAP(THEME_LEFT__MARGIN),PixmapLabel::EXPAND_TILE_V);
+	main_stack = new QStackedWidget(stack_hbox);
+	new PixmapLabel(stack_hbox,GET_QPIXMAP(THEME_RIGHT__MARGIN),PixmapLabel::EXPAND_TILE_V);
+	
 	global_view_frame = new GlobalViewFrame(main_stack,data.editor);
 	main_stack->addWidget(global_view_frame);
+	
 	blui_list = new BlockListUIList(main_stack,data.editor,&data.property_edit_updater);
+			
 	main_stack->addWidget(blui_list);
-	main_stack->setCurrentWidget(blui_list);
+	main_stack->setCurrentWidget(global_view_frame);
 
-	setCentralWidget(main_stack);
+	CHBox *middle_hbox = new CHBox(main_vbox);
+	
+	new PixmapLabel(middle_hbox,GET_QPIXMAP(THEME_BOTTOM_LEFT__CORNER));
+	new PixmapLabel(middle_hbox,GET_QPIXMAP(THEME_BOTTOM__MARGIN),PixmapLabel::EXPAND_TILE_H);
+	new PixmapLabel(middle_hbox,GET_QPIXMAP(THEME_BOTTOM_RIGHT__CORNER));
+
+	
 	settings_dock = new QDockWidget("Virtual Rack",this);
 	settings_dock->setAllowedAreas(Qt::TopDockWidgetArea|Qt::BottomDockWidgetArea);
 	settings_dock->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable);
@@ -395,23 +277,6 @@ MainWindow::MainWindow() {
 	rack = new RackUI(settings_dock,data.editor,&data.property_edit_updater);
 	settings_dock->layout()->addWidget(rack);
 	
-	navigation_toolbar = addToolBar("Navigation");
-	//create this one on bottom
-	track_toolbar = addToolBar("Track");
-	
-	removeToolBar(track_toolbar);
-	addToolBar(Qt::BottomToolBarArea,track_toolbar);
-	editing_toolbar = addToolBar("Editing");
-	playback_toolbar=addToolBar("Playback");
-	
-	editing_toolbar->addWidget(new QLabel(" Octave: ",editing_toolbar));
-	octave = new SpinBoxNoFocus(editing_toolbar);
-	octave->setRange(0,8);
-	octave->setValue(4);
-	octave->setFocusPolicy(Qt::NoFocus);
-	QObject::connect(octave,SIGNAL(valueChanged(int)),this,SLOT(octave_changed_slot( int )));
-	updating_octave=false;;	
-	editing_toolbar->addWidget(octave);
 	
 	
 	add_menus();
@@ -434,7 +299,7 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),blui_list,SLOT(update_track_list()));
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),global_view_frame,SLOT(update()));
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),rack,SLOT(update_rack()));
-	QObject::connect(update_notify,SIGNAL(editing_octave_changed()),this,SLOT(octave_changed_external_slot()));
+	QObject::connect(update_notify,SIGNAL(editing_octave_changed()),top_bar,SLOT(octave_changed_slot()));
 	
 	//QObject::connect(track_settings,SIGNAL(update_track_names_signal()),global_view_frame,SLOT(update()));
 	//QObject::connect(track_settings,SIGNAL(update_track_names_signal()),blui_list,SLOT(repaint_names()));
@@ -442,8 +307,7 @@ MainWindow::MainWindow() {
 	QObject::connect(global_view_frame,SIGNAL(global_view_changed_blocks_signal()),blui_list,SLOT(update_h_scroll()));
 	QObject::connect(update_notify,SIGNAL(update_blocklist_list( const std::list< int >& )),blui_list,SLOT(update_blocklist_list(const std::list<int>&)));
 	
-	QObject::connect(update_notify,SIGNAL(track_list_changed()),this,SLOT(track_list_changed_slot()));
-	
+
 	QObject::connect(update_notify,SIGNAL(block_layout_changed()),global_view_frame->get_global_view(),SLOT(block_layout_changed_slot()));
 	
 	QObject::connect(update_notify,SIGNAL(block_layout_changed()),blui_list,SLOT(repaint_track_list()));
@@ -451,10 +315,12 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(rack_connections_changed()),rack,SLOT(repaint_rack()));
 	QObject::connect(update_notify,SIGNAL(track_names_changed()),rack,SLOT(update_rack_combo_names_slot()));
 		
+	QObject::connect(top_bar,SIGNAL(screen_changed_signal( ScreenList )),this,SLOT(screen_changed_slot( TopBarControls::ScreenList )));
+	
 	ui_updater = new QTimer(this);
 	QObject::connect(ui_updater,SIGNAL(timeout()),this,SLOT(ui_update_slot()));
 	ui_updater->start(50);
-	set_top_screen(TOP_SCREEN_GLOBAL_VIEW);
+
 	setMinimumSize(750,550); //dont mess with my app!
 }
 

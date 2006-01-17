@@ -56,10 +56,9 @@ void GlobalViewFrame::block_list_changed_slot() {
 	
 }
 
-void GlobalViewFrame::zoom_changed_slot(int p_to_val) {
+void GlobalViewFrame::zoom_changed_slot(float  p_to_val) {
 	
-	float zoom_val=(float)p_to_val/100.0;
-	global_view->set_zoom( zoom_val );
+	global_view->set_zoom( p_to_val );
 	
 }
 
@@ -87,7 +86,7 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	
 	QFrame *gb_frame = new QFrame( this );
 	gb_frame->setLayout(new QHBoxLayout(gb_frame));
-	gb_frame->setLineWidth(2);
+	gb_frame->setLineWidth(0);
 	gb_frame->setFrameStyle(Panel+Sunken);
 	gb_frame->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	l->addWidget(gb_frame,1,0,1,2);
@@ -120,26 +119,26 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	h_scroll = new QScrollBar(Qt::Horizontal,hw);
 	h_scroll->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
 	h->addWidget(h_scroll);
-	zoom = new QSlider(Qt::Horizontal,hw);
-	zoom->setRange(0,100);
-	zoom->setValue(0);
+//	zoom = new QSlider(Qt::Horizontal,hw);
+//	zoom->setRange(0,100);
+//	zoom->setValue(0);
 	
-	h->addWidget(zoom);
-	h->setStretchFactor(h_scroll,4);
-	h->setStretchFactor(zoom,1);
-	QLabel *z=new QLabel(this);
-	z->setPixmap(GET_QPIXMAP(ICON_ZOOM_SMALL));
-	l->addWidget(z,2,2);
+//	h->addWidget(zoom);
+//	h->setStretchFactor(h_scroll,4);
+//	h->setStretchFactor(zoom,1);
+//	QLabel *z=new QLabel(this);
+//	z->setPixmap(GET_QPIXMAP(ICON_ZOOM_SMALL));
+//	l->addWidget(z,2,2);
 	
 	//some default
-	zoom_changed_slot( 35 );
-	zoom->setValue(35); 
+//	zoom_changed_slot( 35 );
+//	zoom->setValue(35); 
 	
 	QObject::connect(global_view,SIGNAL(resized_signal()),this,SLOT(block_list_changed_slot()));
 	QObject::connect(global_view,SIGNAL(resized_signal()),this,SIGNAL(global_view_changed_blocks_signal()));
 	QObject::connect(h_scroll,SIGNAL(valueChanged(int)),this,SLOT(h_scollbar_changed_slot( int )));
 	QObject::connect(v_scroll,SIGNAL(valueChanged(int)),this,SLOT(v_scollbar_changed_slot( int )));
-	QObject::connect(zoom,SIGNAL(valueChanged(int)),this,SLOT(zoom_changed_slot( int )));
+	QObject::connect(cursor_op,SIGNAL(zoom_changed( float )),this,SLOT(zoom_changed_slot(float)));
 	QObject::connect(cursor_op,SIGNAL(edit_mode_changed_signal( GlobalView::EditMode )),global_view,SLOT(set_edit_mode( EditMode )));
 	QObject::connect(cursor_op,SIGNAL(delete_clicked_signal()),global_view,SLOT(delete_selected_blocks()));
 	
@@ -147,8 +146,8 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	l->setSpacing(0);
 	h->setMargin(0);
 	
-	setFrameStyle(Panel+Sunken);
-	setLineWidth(1);
+	//setFrameStyle(Panel+Sunken);
+	setLineWidth(0);
 	
 }
 

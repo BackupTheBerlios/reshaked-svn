@@ -14,8 +14,11 @@
 
 
 #include <Qt/qpushbutton.h>
-#include <ui_blocks/helpers.h>
+#include "ui_blocks/helpers.h"
 #include <interface/global_view.h>
+#include "ui_blocks/pixmap_button.h"
+#include "ui_blocks/pixmap_label.h"
+#include "ui_blocks/pixmap_slider.h"
 
 namespace ReShaked {
 
@@ -33,16 +36,24 @@ public:
 	
 	GlobalView::EditMode mode;
 	
-	QPushButton *mode_button[MAX_MODES];
-	QPushButton *delete_selected;
-	void add_button(GlobalView::EditMode p_mode, PixmapList p_pixmap );
+	PixmapButton *mode_button[MAX_MODES];
+	PixmapButton *delete_selected;
+	PixmapButton *select_linked;
+	PixmapButton *unlink_selected;
+	PixmapSlider *zoom;
+	void add_button(GlobalView::EditMode p_mode, PixmapList p_pixmap_fg, PixmapList p_pixmap_bg);
+	
 	
 signals:	
 	
 	void edit_mode_changed_signal(GlobalView::EditMode p_mode);
 	void delete_clicked_signal();
+	void select_linked_signal();
+	void unlink_selected_signal();
+	void zoom_changed(float p_to_val);	
 public slots:	
 	void mode_selected(int p_mode);
+
 	
 public:
 	

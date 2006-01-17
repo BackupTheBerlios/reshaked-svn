@@ -83,9 +83,10 @@ class BlockListUIList : public QFrame {
 	
 	};
 
-	static void property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val);
 	
 	void property_editor_property_edited(PropertyEditor* p_editor,double p_old_val);
+public:	
+	static void property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val);
 	
 public slots:
 

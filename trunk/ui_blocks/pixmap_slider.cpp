@@ -46,6 +46,7 @@ void PixmapSlider::paint_grabber(QPainter&p) {
 		
 	} else {
 		
+		p.drawPixmap((fill_size-grabber/2),(height()-skin.grabber.height())/2,skin.grabber);
 		
 	}
 	
@@ -68,7 +69,8 @@ void PixmapSlider::paintEvent(QPaintEvent *pe) {
 		
 	} else {
 		
-		
+		p.drawPixmap(0,0, skin.bottom_full , 0, 0, fill_size, height());
+		p.drawPixmap(fill_size,0, skin.bottom , fill_size, 0,  width()-fill_size,height());
 	}
 	
 	paint_grabber( p);

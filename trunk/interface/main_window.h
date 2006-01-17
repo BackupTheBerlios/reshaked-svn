@@ -33,6 +33,8 @@
 #include "interface/qt_updatenotify.h"
 #include "interface/rackui.h"
 #include "ui_blocks/qaction_keybind.h"
+#include "interface/top_bar_controls.h"
+
 
 namespace ReShaked {
 
@@ -63,10 +65,6 @@ class MainWindow : public QMainWindow {
 		ITEM_TRACK_ADD_PATTERN,
 		ITEM_TRACK_ADD_AUDIO,
 
-		ITEM_TRACK_REMOVE,
-		ITEM_TRACK_MOVE_LEFT,
-		ITEM_TRACK_MOVE_RIGHT,
-
 		NAVIGATION_GLOBAL_VIEW,
 		NAVIGATION_EDIT_VIEW,
 			
@@ -78,15 +76,12 @@ class MainWindow : public QMainWindow {
 		CONTROL_FF,
 		CONTROL_RECORD,
 		CONTROL_RECORD_AUTOMATIONS,
+		
+		SETTINGS_CONFIG,
+		HELP_HELP,
+		HELP_ABOUT,
+				
 			
-		/*		
-		TRACK_SYNTH,
-		TRACK_CONTROLS,
-		TRACK_AUTOMATIONS,
-		TRACK_EFFECTS,
-		TRACK_CONNECTIONS,
-		TRACK_LIST_CONNECTIONS,
-		*/
 		MAX_ITEMS
 	};
 
@@ -104,7 +99,7 @@ class MainWindow : public QMainWindow {
 	std::map<int,QAction*> action_map;
 
 	void create_keybindings();
-	void create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,QToolBar *p_toolbar,const QPixmap &p_pixmap = QPixmap());
+	void create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,const QPixmap &p_pixmap = QPixmap());
 	
 	QAction *get_action(MenuItems p_item);
 	void add_menus();
@@ -115,12 +110,6 @@ class MainWindow : public QMainWindow {
 	QStackedWidget *main_stack;
 	BlockListUIList *blui_list;
 
-	QToolBar *navigation_toolbar;
-	QToolBar *track_toolbar;
-	QToolBar *editing_toolbar;
-	QToolBar *playback_toolbar;
-	
-	QSpinBox *octave;
 
 	QTimer *ui_updater;
 	
@@ -128,21 +117,20 @@ class MainWindow : public QMainWindow {
 
 	Qt_UpdateNotify *update_notify;
 	
+	TopBarControls *top_bar;
 	//TrackSettings *track_settings;
 	RackUI *rack;
 
+	
 	void set_top_screen(TopScreenList p_list);
 	//void set_track_settings_page(TrackSettings::TrackSettingsPage p_page);
 
-	bool updating_octave;
+
 	
 public slots:
+	
+	void screen_changed_slot(TopBarControls::ScreenList p_screen);
 	void menu_action_callback(int p_action);
-
-	void octave_changed_slot(int p_to_idx);
-	void octave_changed_external_slot();
-	void blocklist_changed_slot();
-	void track_list_changed_slot();
 	
 	void ui_update_slot();
 public:

@@ -59,22 +59,33 @@ void BlockListUIList::property_editor_property_edited_callback(void *_this,Prope
 void BlockListUIList::property_editor_property_edited(PropertyEditor* p_editor,double p_old_val) {
 	
 	Track *t=NULL; // see if we can hint the track
-	for (int i=0;i<slider_vus.size();i++) { //a vu?
+	
+	if (p_editor->get_property()==&editor->get_song()->get_global_properties().get_tempo()) {
+		printf("is tempo!\n");
+		t=&editor->get_song()->get_global_track();
 		
-		if (slider_vus[i]==p_editor) {
-			t=editor->get_song()->get_track(i);
-			break;
+	}
+	if (!t) {
+	
+		for (int i=0;i<slider_vus.size();i++) { //a vu?
+			
+			if (slider_vus[i]==p_editor) {
+				t=editor->get_song()->get_track(i);
+				break;
+			}
 		}
 	}
 	
-	for (int i=0;i<slider_swings.size();i++) { //a swing?
-		
-		if (slider_swings[i]==p_editor) {
-			t=editor->get_song()->get_track(i);
-			break;
+	if (!t) {
+		for (int i=0;i<slider_swings.size();i++) { //a swing?
+			
+			if (slider_swings[i]==p_editor) {
+				t=editor->get_song()->get_track(i);
+				break;
+			}
 		}
 	}
-	printf("fucking callback!\n");
+
 	editor->property_changed( p_editor->get_property(), p_old_val, t );
 }
 

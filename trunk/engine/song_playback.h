@@ -62,6 +62,7 @@ public:
 	/* Info */
 	
 	Status get_status();
+	bool is_loop_active();
 	
 	/* Advance, return frames it actually advanced (in case of loop) */
 	int advance(int p_frames);

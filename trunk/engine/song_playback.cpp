@@ -70,6 +70,10 @@ Tick SongPlayback::get_current_tick_from() {
 	return prev_tick;
 }
 
+bool SongPlayback::is_loop_active() {
+	
+	return loopdata.active;
+}
 
 int SongPlayback::advance(int p_frames) {
 	if (status!=STATUS_PLAY)
@@ -120,7 +124,7 @@ SongPlayback::SongPlayback(GlobalProperties *p_properties) {
 	current_tick=0;
 	prev_tick=0;
 	latency_buffer.clear();
-	record_automation=true;
+	record_automation=false;
 }
 
 

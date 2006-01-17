@@ -34,7 +34,6 @@ class GlobalViewFrame : public QFrame {
 	GlobalView *global_view;
 	QScrollBar *h_scroll;
 	QScrollBar *v_scroll;
-	QSlider *zoom;
 	GlobalViewCursor *cursor_op;
 	
 	GlobalBeatBarColumn *beat_bar_column;
@@ -46,7 +45,7 @@ public slots:
 	void block_list_changed_slot();
 	void h_scollbar_changed_slot(int p_new_idx);
 	void v_scollbar_changed_slot(int p_new_idx);
-	void zoom_changed_slot(int p_to_val);
+	void zoom_changed_slot(float p_to_val);
 signals:
 	void global_view_changed_blocks_signal();		
 public:

@@ -11,16 +11,37 @@
 //
 #include "pixmap_label.h"
 #include <Qt/qpainter.h>
+#include <Qt/qevent.h>
 namespace ReShaked {
 
+
+void PixmapLabel::click_override() {
+	
+	
+}
+
+void PixmapLabel::mousePressEvent(QMouseEvent *e) {
+	
+	if (e->button()!=Qt::LeftButton)
+		return;
+	
+	click_override();
+	clicked_signal();
+}
 
 void PixmapLabel::paintEvent(QPaintEvent *e) {
 	
 	QPainter p(this);
 	if (skin_box)
 		skin_box->paint_into(p,0,0,width(),height());
-	else
-		p.drawPixmap(0,0,pixmap);
+	else {
+		
+		switch (expand_type) {
+			case EXPAND_NONE: p.drawPixmap(0,0,pixmap); break;
+			case EXPAND_TILE_V:
+			case EXPAND_TILE_H: p.drawTiledPixmap(0,0,width(),height(),pixmap); break;
+		};
+	}
 	
 	QFontMetrics m(font);
 	p.setFont(font);
@@ -83,18 +104,34 @@ PixmapLabel::PixmapLabel(QWidget *p_parent,SkinBox *p_skin_box,bool p_own_it) :Q
 	col=QColor(255,255,255);
 	angle=0;
 	
+	expand_type=EXPAND_NONE;
 }
 
-PixmapLabel::PixmapLabel(QWidget *p_parent,QPixmap p_pixmap) :QWidget(p_parent) {
+QFont& PixmapLabel::get_font() {
+	return font;	
+}
+PixmapLabel::PixmapLabel(QWidget *p_parent,QPixmap p_pixmap,PixmapExpandType p_type) :QWidget(p_parent) {
 	
+	expand_type=p_type;
 	skin_box=NULL;
 	pixmap=p_pixmap;
 	owned=false;
+	if (p_type==EXPAND_NONE)
+		setFixedSize(pixmap.size()); 
+	else if (p_type==EXPAND_TILE_H)
+		setFixedHeight(pixmap.height()); 
+	else if (p_type==EXPAND_TILE_V)
+		setFixedWidth(pixmap.width()); 
 	
-	setFixedSize(pixmap.size()); 
-	pos=QPoint(0,0);
-	col=QColor(255,255,255);
+	
+	
+	font.setBold(true);
+	int font_pix_size=p_pixmap.height()*3/5;
+	font.setPixelSize(font_pix_size);
+	set_pos(QPoint(p_pixmap.width()/2,(p_pixmap.height()-font_pix_size)/2),true);
+	set_color(QColor(255,255,255));
 	angle=0;
+
 }
 
 PixmapLabel::~PixmapLabel()

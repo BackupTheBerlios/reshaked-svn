@@ -44,6 +44,7 @@ public:
 	CVBox(QWidget *p_parent);	
 };
 
+
 QString QStrify(const String& p_str);
 String DeQStrify(const QString& p_str);
 

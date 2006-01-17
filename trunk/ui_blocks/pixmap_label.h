@@ -21,7 +21,17 @@ namespace ReShaked {
 	@author red <red@killy>
 */
 class PixmapLabel : public QWidget {
-	
+	Q_OBJECT	
+public:	
+	enum PixmapExpandType {
+		EXPAND_NONE,
+		EXPAND_TILE_H,
+		EXPAND_TILE_V
+		
+	};
+private:
+
+	PixmapExpandType expand_type;
 	SkinBox *skin_box;
 	QPixmap pixmap;
 	bool owned;
@@ -33,14 +43,20 @@ class PixmapLabel : public QWidget {
 	int angle;
 	
 	bool centered;
+	virtual void click_override();
+	void mousePressEvent(QMouseEvent *e);
+signals:
+			
+	void clicked_signal();
 public:
 	void set_pos(QPoint p_pos,bool p_centered=false);
 	void set_color(QColor p_col);
 	void set_angle(int p_phi);
 	void set_font(const QFont &p_font);
 	void set_text(QString p_text);
+	QFont& get_font();
 	PixmapLabel(QWidget *p_parent,SkinBox *p_skin_box,bool p_own_it=false);
-	PixmapLabel(QWidget *p_parent,QPixmap p_pixmap);
+	PixmapLabel(QWidget *p_parent,QPixmap p_pixmap,PixmapExpandType p_type=EXPAND_NONE);
 
 	~PixmapLabel();
 

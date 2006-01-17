@@ -65,6 +65,7 @@ protected slots:
 	void automation_add_slot(int p_prop_idx);
 	void automation_remove_slot(int p_prop_idx);
 	
+	
 public:
 	enum TrackType {
 		TYPE_PATTERN,

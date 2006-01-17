@@ -17,6 +17,7 @@
 #include "ui_blocks/pixmap_slider.h"
 #include "ui_blocks/pixmap_slider_vu.h"
 #include "ui_blocks/pixmap_vu.h"
+#include "ui_blocks/pixmap_updown.h"
 #include "property.h"
 #include <Qt/qspinbox.h>
 
@@ -54,6 +55,7 @@ class PropertyEditLabel : public PixmapLabel, public PropertyEditor {
 
 	virtual void changed();
 	bool postfix;
+	void click_override();
 public:
 	void set_postfix_visible(bool p_visible);
 	PropertyEditLabel(QWidget *p_parent,QPixmap p_bg);
@@ -102,12 +104,35 @@ public:
 
 };
 
+class PropertyEditUpDown : public PixmapUpDown, public PropertyEditor {
+
+Q_OBJECT
+
+	double step;
+	virtual void changed();
+	virtual void config();
+	
+public slots:
+	
+	void max_pressed_slot();
+	void min_pressed_slot();
+	void up_pressed_slot();
+	void down_pressed_slot();	
+public:
+	void set_step(double p_step);
+	PropertyEditUpDown(QWidget *p_parent,const Skin& p_skin);
+	~PropertyEditUpDown();
+
+};
+
 class PropertyEditSpinBox : public QDoubleSpinBox, public PropertyEditor {
 	
-	
+Q_OBJECT	
 	virtual void config();
 	virtual void changed();
-	
+private slots:
+			
+	void value_changed_slot(double p_val);
 public:	
 	
 	PropertyEditSpinBox(QWidget *p_widget);

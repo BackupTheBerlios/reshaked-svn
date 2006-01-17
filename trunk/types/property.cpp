@@ -128,7 +128,7 @@ String LocalProperty::get_text_value(double p_for_value,bool p_no_postfix) {
 	
 	int digits=-1;
 	
-	if (interval!=0 || interval!=floorf(interval)) {
+	if (interval!=0 && interval!=floorf(interval)) {
 		
 		digits=0;
 		double step_aux=interval;
@@ -142,7 +142,6 @@ String LocalProperty::get_text_value(double p_for_value,bool p_no_postfix) {
 		
 		} while (true);
 	} 
-	
 	String res=String::num(p_for_value,digits);
 	if (!p_no_postfix)
 		res+=postfix;
