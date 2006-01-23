@@ -46,7 +46,7 @@ void BlockListUIList::vscroll_track_list() {
 	}
 	row_display->update();
 	play_position->update();
-	v_scroll->setValue( editor->get_cursor().get_window_offset() );
+	v_scroll->set_value( editor->get_cursor().get_window_offset() );
 	
 }
 
@@ -76,15 +76,6 @@ void BlockListUIList::property_editor_property_edited(PropertyEditor* p_editor,d
 		}
 	}
 	
-	if (!t) {
-		for (int i=0;i<slider_swings.size();i++) { //a swing?
-			
-			if (slider_swings[i]==p_editor) {
-				t=editor->get_song()->get_track(i);
-				break;
-			}
-		}
-	}
 
 	editor->property_changed( p_editor->get_property(), p_old_val, t );
 }
@@ -210,7 +201,7 @@ void BlockListUIList::update_track_list() {
 	}
 	property_editors.clear();
 	slider_vus.clear();
-	slider_swings.clear();
+	
 	
 	if (hbox) {
 		hbox->hide();
@@ -254,31 +245,26 @@ void BlockListUIList::update_track_list() {
 		
 		//hb->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
 		
+		CVBox *track_vb = new CVBox(hbox);
+		hbox_layout->addWidget( track_vb );
+
+		TrackTop *top = new TrackTop(track_vb,editor->get_song()->get_track(i),editor,TrackTop::TYPE_PATTERN);
+		track_tops.push_back(top);
+				
+		CHBox *track_hb = new CHBox(track_vb);
 
 		SWITCH( editor->get_song()->get_track(i)->get_type_name() )
 
 			CASE("pattern") {
 
-				block_list_ui_list.push_back( new BlockListUI_Pattern(hbox,editor,i) );
-				hbox_layout->addWidget(block_list_ui_list [block_list_ui_list.size() -1] );
 				
-				CVBox *cvb = new CVBox(hbox);
-				hbox_layout->addWidget(cvb);
-				TrackTop *top = new TrackTop(cvb,editor->get_song()->get_track(i),editor,TrackTop::TYPE_PATTERN);
-				track_tops.push_back(top);
+				block_list_ui_list.push_back( new BlockListUI_Pattern(track_hb,editor,i) );
 				
 				Track_Pattern *pattern=dynamic_cast<Track_Pattern *>(editor->get_song()->get_track(i));
 				ERR_CONTINUE(pattern==NULL);
 				
-				
-				new PixmapLabel(cvb,GET_QPIXMAP(PIXMAP_TRACK_SLIDER_SWING_ICON));
-				PropertyEditSlider *swing = new PropertyEditSlider(cvb,swing_skin);
-				swing->set_property( &pattern->swing() );
-				property_ui_updater->add_editor(swing);
-				property_editors.push_back(swing);
-				slider_swings.push_back(swing);
-				swing->set_changed_by_editor_callback(this,&BlockListUIList::property_editor_property_edited_callback);
-				
+		
+				/*
 				new PixmapLabel(cvb,GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_ICON));
 				PropertyEditSliderVU *slider_vu = new PropertyEditSliderVU(cvb,amp_slider_vu_skin);
 				slider_vu->set_property( &pattern->volume() );
@@ -286,7 +272,7 @@ void BlockListUIList::update_track_list() {
 				property_ui_updater->add_editor(slider_vu);
 				property_editors.push_back(slider_vu);
 				slider_vu->set_changed_by_editor_callback(this,&BlockListUIList::property_editor_property_edited_callback);
-				
+				*/
 				
 			}
 		END_SWITCH
@@ -296,13 +282,10 @@ void BlockListUIList::update_track_list() {
 		for (int j=0;j<editor->get_song()->get_track(i)->get_visible_automation_count();j++) {
 
 			Automation *a=editor->get_song()->get_track(i)->get_visible_automation(j);
-			BlockListUI_Automation *au_wg= new BlockListUI_Automation(hbox,editor,a);
+			BlockListUI_Automation *au_wg= new BlockListUI_Automation(track_hb,editor,a);
 			block_list_ui_list.push_back( au_wg );
-			hbox_layout->addWidget( au_wg );
 			
-			BlockList_Separator *s = new BlockList_Separator(hbox,QStrify(a->get_property()->get_caption()));
-			hbox_layout->addWidget(s);
-
+			BlockList_Separator *s = new BlockList_Separator(track_hb,QStrify(a->get_property()->get_caption()));
 		}
 	}
 
@@ -337,8 +320,8 @@ void BlockListUIList::update_h_scroll() {
 	int max_len=editor->get_cursor().ticks_to_snap( editor->get_song_max_len() );
 	max_len-=editor->get_cursor().get_window_size();
 	printf("max len is %i\n",max_len);
-	v_scroll->setRange(0,max_len);
-	v_scroll->setPageStep(editor->get_cursor().get_window_size());
+	v_scroll->set_max(max_len);
+	v_scroll->set_pagesize(editor->get_cursor().get_window_size());
 }
 
 void BlockListUIList::v_scrollbar_changed(int p_scroll) {
@@ -399,6 +382,8 @@ void BlockListUIList::show_edit_menu() {
 	ADD_ACTION("Paste Insert",ACTION_PASTE_INSERT,"editor/selection_paste_insert",editor->selection_can_paste_at_cursor());
 	ADD_ACTION("Paste Mix",ACTION_PASTE_MIX,"editor/selection_paste_mix",editor->selection_can_paste_at_cursor());
 #undef ADD_ACTION		
+
+	edit_menu->popup(edit_button->mapToGlobal(QPoint(0,edit_button->height())));
 	
 }
 
@@ -425,43 +410,96 @@ void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 	
 	/* Play buttons */
 	
-	play_cursor = new QPushButton(GET_QPIXMAP(ICON_CONTROL_PLAY_CURSOR),"",p_hb_top);
-	play_cursor->setIconSize(GET_QPIXMAP(ICON_CONTROL_PLAY_CURSOR).size());
-	QObject::connect(play_cursor,SIGNAL(clicked()),this,SLOT(play_cursor_slot()));
-	play_cursor->setFlat(true);
-	play_cursor->setFocusPolicy(Qt::NoFocus);
+	//PixmapButton *play_cursor;
+	//PixmapButton *play_block;
 	
-	play_block = new QPushButton(GET_QPIXMAP(ICON_CONTROL_PLAY_BLOCK),"",p_hb_top);
-	play_block->setIconSize(GET_QPIXMAP(ICON_CONTROL_PLAY_BLOCK).size());
-	QObject::connect(play_block,SIGNAL(clicked()),this,SLOT(play_block_slot()));
-	play_block->setFlat(true);
-	play_block->setFocusPolicy(Qt::NoFocus);
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__BEGIN));
 	
-	edit_menubar = new QMenuBar(p_hb_top);
-	edit_menubar->setFocusPolicy(Qt::NoFocus);
-	edit_menu = edit_menubar->addMenu("Edit");
+	play_cursor = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__PLAY_FROM_CURSOR),GET_QPIXMAP(THEME_EDIT_TOOLBAR__PLAY_FROM_CURSOR_PUSHED)));
+	QObject::connect(play_cursor,SIGNAL(mouse_pressed_signal()),this,SLOT(play_cursor_slot()));
 	
-	QObject::connect(edit_menu,SIGNAL(aboutToShow()),this,SLOT(show_edit_menu()));
+	play_block = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__PLAY_CURRENT_BLOCK),GET_QPIXMAP(THEME_EDIT_TOOLBAR__PLAY_CURRENT_BLOCK_PUSHED)));
+	QObject::connect(play_block,SIGNAL(mouse_pressed_signal()),this,SLOT(play_block_slot()));
 	
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
 	
-	(new QFrame(p_hb_top))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-	new QLabel(" Snap: ",p_hb_top);
-	
+	CVBox *edit_vb = new CVBox(p_hb_top);
+	edit_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
-	snap = new QComboBox(p_hb_top);
+	new PixmapLabel(edit_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__EDIT_MENU_TOP));
+	edit_button = new PixmapLabel(edit_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__EDIT_MENU));
+	edit_button->get_font().setPixelSize(GET_CONSTANT(CONSTANT_EDIT_TOOLBAR_FONT_HEIGHT));
+	new PixmapLabel(edit_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__EDIT_MENU_BOTTOM));
+	edit_button->set_text("Edit");
+	QObject::connect(edit_button,SIGNAL(clicked_signal()),this,SLOT(show_edit_menu()));
+	edit_menu = new QMenu(this);
+	
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
+	
+	automation_envelope = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE),GET_QPIXMAP(THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE_ACTIVE)),PixmapButton::TYPE_TOGGLE);
+	automation_stream = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__AUTOMATION_MODE_STREAM),GET_QPIXMAP(THEME_EDIT_TOOLBAR__AUTOMATION_MODE_STREAM_ACTIVE)),PixmapButton::TYPE_TOGGLE);
+	
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
+	
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__CURSOR_STEPPING_ICON));
+	
+	CVBox *cursor_stepping_vb = new CVBox(p_hb_top);
+	cursor_stepping_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	new PixmapLabel(cursor_stepping_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN_TOP));
+	cursor_stepping = new PixmapCombo(cursor_stepping_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN));
+	cursor_stepping->get_font().setPixelSize(GET_CONSTANT(CONSTANT_EDIT_TOOLBAR_FONT_HEIGHT));
+	for (int i=0;i<=16;i++) {
+		cursor_stepping->add_item( QString::number(i) );
+	}
+	new PixmapLabel(cursor_stepping_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN_BOTTOM));
+		
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
+	
+	midi_in_config = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG),GET_QPIXMAP(THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG_PUSHED)));
+	
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SPACER),PixmapLabel::EXPAND_TILE_H);
+	
+	CVBox *snap_vb = new CVBox(p_hb_top);
+	snap_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	new PixmapLabel(snap_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SNAP_DROPDOWN_TOP));
+	snap_config = new PixmapCombo(snap_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SNAP_DROPDOWN));
+	snap_config->get_font().setPixelSize(GET_CONSTANT(CONSTANT_EDIT_TOOLBAR_FONT_HEIGHT));
+	
+	new PixmapLabel(snap_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SNAP_DROPDOWN_BOTTOM));
+
+	
 	for (int i=0;i<MAX_DIVISORS;i++) {
 
-		snap->addItem("1/"+QString::number(divisors[i]));
+		snap_config->add_item("1/"+QString::number(divisors[i])+" of Beat");
 	}
-	snap->setFocusPolicy(Qt::NoFocus);
-	snap->setCurrentIndex(3);
-	
-	
+	snap_config->select_item(3);
 		
-	QObject::connect(snap,SIGNAL(activated(int)),this,SLOT(snap_changed_slot( int )));
+	QObject::connect(snap_config,SIGNAL(item_selected( int )),this,SLOT(snap_changed_slot( int )));
 
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__END));
 	
 }
+
+void BlockListUIList::h_qscrollbar_range_changed(int p_min,int p_max) {
+	
+	//printf("range_changed %i - %i\n",p_min,p_max);
+	h_scroll->set_max( p_max-p_min );
+	//printf("vpw %i, hbw %i\n",scrollarea->viewport()->width(),hbox->width());
+	if (hbox && hbox->width())
+		h_scroll->set_pagesize( scrollarea->viewport()->width()*p_max/hbox->width() );
+	if (p_max==0)
+		h_scroll->hide();
+	else
+		h_scroll->show();
+}
+void BlockListUIList::h_qscrollbar_changed(int p_val) {
+	
+	//printf("val_changed %i\n",p_val);
+	h_scroll->set_value( p_val );
+}	
+	
+
+
 void BlockListUIList::update_play_position() {
 	
 	play_position->check_pos_changed();
@@ -485,22 +523,30 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEdit
 	vl->addWidget(hb);
 	
 
-	
-	
-	row_display = new RowListDisplay(hb ,editor);
-	play_position = new EditorPlayPosition(hb,editor);
-	new TrackTop(hb,&editor->get_song()->get_global_track(),editor,TrackTop::TYPE_GLOBAL); // Global Track
+	CVBox *track_top_vb = new CVBox(hb);
+	new TrackTop(track_top_vb,&editor->get_song()->get_global_track(),editor,TrackTop::TYPE_GLOBAL); // Global Track	
+	CHBox *track_top_hb = new CHBox(track_top_vb);
+	row_display = new RowListDisplay(track_top_hb ,editor);
+	play_position = new EditorPlayPosition(track_top_hb,editor);
 	
 
-
-	scrollarea = new QScrollArea(hb);
+	CVBox *scrollarea_vb = new CVBox(hb);
+	scrollarea = new QScrollArea(scrollarea_vb);
 
 	scrollarea->setFrameStyle(QFrame::NoFrame);
 	scrollarea->viewport()->setContentsMargins(0,0,0,0);
 	scrollarea->setContentsMargins(0,0,0,0);
-
-	v_scroll=new QScrollBar(Qt::Vertical,hb);
-	QObject::connect(v_scroll,SIGNAL(valueChanged(int)),this,SLOT(v_scrollbar_changed(int)));
+	scrollarea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	QObject::connect(scrollarea->horizontalScrollBar(),SIGNAL(valueChanged( int )),this,SLOT(h_qscrollbar_changed( int )));
+	QObject::connect(scrollarea->horizontalScrollBar(),SIGNAL(rangeChanged( int,int )),this,SLOT(h_qscrollbar_range_changed( int,int )));
+	
+	v_scroll=new PixmapScrollBar(hb,PixmapScrollBar::Skin(GET_SKIN(SKINBOX_THEME_SCROLLBAR_V_BG),GET_SKIN(SKINBOX_THEME_SCROLLBAR_GRABBER)),PixmapScrollBar::TYPE_VERTICAL);
+	QObject::connect(v_scroll,SIGNAL(value_changed_signal( int )),this,SLOT(v_scrollbar_changed(int)));
+	
+	
+	h_scroll = new PixmapScrollBar(scrollarea_vb,PixmapScrollBar::Skin(GET_SKIN(SKINBOX_THEME_SCROLLBAR_H_BG),GET_SKIN(SKINBOX_THEME_SCROLLBAR_GRABBER)),PixmapScrollBar::TYPE_HORIZONTAL);
+	
+	QObject::connect(h_scroll,SIGNAL(value_changed_signal( int )),scrollarea->horizontalScrollBar(),SLOT(setValue(int)));
 	
 	//scrollarea->setFrameRect(QRect(0, 0, 0, 0 ));
 
@@ -525,9 +571,10 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEdit
 	
 	vl->setSpacing(0);
 	vl->setMargin(0);
-	hb_top->layout()->setMargin(3);
-	setFrameStyle(Panel+Sunken);
-	setLineWidth(1);
+	hb_top->layout()->setMargin(0);
+	hb_top->layout()->setSpacing(0);
+	
+	setLineWidth(0);
 	scrolling=false;
 	
 }

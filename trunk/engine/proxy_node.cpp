@@ -19,6 +19,18 @@ ProxyNodeBase::~ProxyNodeBase() {
 	
 }
 
+bool ProxyNode::is_system() {
+	
+	return system;
+}
+void ProxyNode::set_system(bool p_system) {
+	
+	system=p_system;
+}
+void ProxyNode::set_caption(String p_caption) {
+	
+	caption=p_caption;
+}
 
 AudioPlug *ProxyNode::get_input_plug(int p_index) {
 	
@@ -71,6 +83,7 @@ ProxyNode::ProxyNode() {
 	
 	process_instance=NULL;
 	caption="Proxy";
+	system=false;
 }
 
 

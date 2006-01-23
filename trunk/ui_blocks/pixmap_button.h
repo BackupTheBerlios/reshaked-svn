@@ -59,6 +59,9 @@ private:
 	void enterEvent ( QEvent * event );
 	void leaveEvent ( QEvent * event );
 	
+	
+	void emit_qactions();
+	
 protected:
 			
 	virtual void mouse_press_event_override();

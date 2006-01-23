@@ -42,8 +42,6 @@ class TrackTop : public QWidget {
 		ACTION_RENAME,
 		ACTION_DUPLICATE,
 			
-		ACTION_EFFECTS,
-			
 		ACTION_DELETE,
 	};
 			    

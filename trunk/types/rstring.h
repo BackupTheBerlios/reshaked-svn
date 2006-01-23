@@ -110,6 +110,7 @@ public:
 	
 	static String num(double p_num,int p_digits=-1);
 	
+	String left(int p_chars);
 	/**
 	 * The constructors must not depend on other overloads
 	 */

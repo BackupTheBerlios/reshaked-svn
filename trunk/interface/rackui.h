@@ -20,6 +20,9 @@
 #include <Qt/qpushbutton.h>
 #include <Qt/qcombobox.h>
 #include <Qt/qstackedwidget.h>
+#include "ui_blocks/pixmap_combo.h"
+#include "ui_blocks/pixmap_button.h"
+
 
 namespace ReShaked {
 
@@ -32,13 +35,14 @@ class RackUI : public CVBox {
 			    
 			
 	Editor *editor;
-	QComboBox *rack_choose;
-	QPushButton *rack_front;
-	QPushButton *rack_back;
+	PixmapButton *add_plugin;
+	PixmapCombo *rack_choose;
+	PixmapButton *rack_front;
+	PixmapButton *rack_back;
 	
-	QLineEdit *rack_name;
-	QPushButton *rack_load;
-	QPushButton *rack_save;
+	PixmapLabel *rack_label;
+	PixmapButton *rack_file;
+
 	
 	
 	int selected_rack;
@@ -61,6 +65,8 @@ public slots:
 	
 	void update_rack();
 	void repaint_rack();
+	
+	void add_plugin_slot();
 public:
 	
 	

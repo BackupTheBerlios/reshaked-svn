@@ -146,7 +146,8 @@ void BlockListUI_Automation::paint_frames(QPainter& p,int p_from_row,int p_to_ro
 	p_to_row++; //always add one just in case
 	
 	
-	SkinBox *sb=VisualSettings::get_singleton()->get_skin_box( hasFocus() ? SKINBOX_EDITING_AUTOMATION_SELECTED : SKINBOX_EDITING_AUTOMATION );
+	SkinBox *sb=VisualSettings::get_singleton()->get_skin_box( SKINBOX_EDITING_AUTOMATION );
+	SkinBox *sb_shared=VisualSettings::get_singleton()->get_skin_box(  SKINBOX_EDITING_AUTOMATION_SHARED );
 	
 	int block_from,block_to;
 	if (automation->get_blocks_in_rage( editor->get_cursor().get_snapped_window_tick_pos( p_from_row ), editor->get_cursor().get_snapped_window_tick_pos( p_to_row +1 ), &block_from, &block_to ))
@@ -166,15 +167,14 @@ void BlockListUI_Automation::paint_frames(QPainter& p,int p_from_row,int p_to_ro
 		
 		int from_y=block_from_row*get_row_size();
 		int height_y=(block_to_row-block_from_row)*get_row_size();
-		sb->paint_into( p, 0,from_y, width(), height_y );
-		
+		if (i>=0 && automation->get_block( i )->is_shared() ) 
+			sb_shared->paint_into( p, 0,from_y, width(), height_y );
+		else
+			sb->paint_into( p, 0,from_y, width(), height_y );
+	
+	
 	}
 	
-	if(hasFocus()) {
-
-		p.setPen( VisualSettings::get_singleton()->get_color( COLORLIST_PATTERN_EDIT_FOCUS_RECT ) );
-		p.drawRect(0,0,width()-1,height()-1);
-	}
 }
 
 void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_to_row) {

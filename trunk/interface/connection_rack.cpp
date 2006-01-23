@@ -78,9 +78,9 @@ SkinBox *ConnectionRack::skin(bool p_system) {
 	return VisualSettings::get_singleton()->get_skin_box( p_system?SKINBOX_RACK_SYSTEM:SKINBOX_RACK_NORMAL );
 }
 
-QPixmap ConnectionRack::jack_hole() {
+QPixmap ConnectionRack::jack_hole(AudioPlug::Type p_type) {
 	
-	return GET_QPIXMAP(PIXMAP_RACK_JACK_HOLE);
+	return (p_type==AudioPlug::TYPE_INPUT)?GET_QPIXMAP(THEME_RACK_PANEL__JACK_IN):GET_QPIXMAP(THEME_RACK_PANEL__JACK_OUT);
 }
 
 QSize ConnectionRack::get_plug_size() {
@@ -261,7 +261,7 @@ void ConnectionRack::paint_cable(QPainter &p,int p_src_x,int p_src_y,int p_dst_x
 
 
 
-void ConnectionRack::paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,QString p_name) {
+void ConnectionRack::paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,QString p_name, AudioPlug::Type p_type) {
 	
 	QFont f;
 	f.setBold(true);
@@ -269,7 +269,10 @@ void ConnectionRack::paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,Q
 	p.setFont(f);
 	p.setPen(QColor(255,255,255,120));
 	
-	p.drawPixmap(p_x,p_y+jack_hole().height(),jack_hole());
+	if (connecting.enabled && p_type==connecting.from.type)
+		p.drawPixmap(p_x,p_y+jack_hole().height(),GET_QPIXMAP(THEME_RACK_PANEL__JACK_FORBIDDEN));
+	else
+		p.drawPixmap(p_x,p_y+jack_hole().height(),jack_hole(p_type));
 	p.drawText(p_x,p_y,jack_hole().width()*2,jack_hole().height(),Qt::AlignHCenter,p_name);
 	
 	f.setPixelSize(13);
@@ -285,7 +288,7 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 	f.setBold(true);
 	p.setFont(f);
 	f.setPixelSize(skin()->get_top()/2);
-	p.setPen(QColor(255,255,255,120));
+	p.setPen(QColor(255,255,255,220));
 	int node_width=get_node_width(p_node);
 	
 	int font_margin=VisualSettings::get_singleton()->get_rack_panel_h_margin();
@@ -317,7 +320,7 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 			}
 		}
 		
-		paint_jack(p,p_offset,y_offset,p_node->get_input_plug( i),QStrify(p_node->get_input_plug_caption( i)));
+		paint_jack(p,p_offset,y_offset,p_node->get_input_plug( i),QStrify(p_node->get_input_plug_caption( i)),AudioPlug::TYPE_INPUT);
 	}
 	
 	if (p_node->get_input_plug_count()) {
@@ -337,7 +340,7 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 			}
 		}
 		
-		paint_jack(p,p_offset,y_offset,p_node->get_output_plug( i),QStrify(p_node->get_output_plug_caption( i)) );
+		paint_jack(p,p_offset,y_offset,p_node->get_output_plug( i),QStrify(p_node->get_output_plug_caption( i)),AudioPlug::TYPE_OUTPUT );
 	}
 	
 }
@@ -590,14 +593,17 @@ ConnectionRack::ConnectionRack(QWidget *p_parent,Editor *p_editor) : QWidget(p_p
 	setMouseTracking(true);
 	
 	connecting.enabled=false;
+	
 	offset=0;
+	
+	setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 	
 }
 
 AudioNode *ConnectionRack::get_node_at_pos(int p_node) {
 	
 	
-	return graph->get_node( p_node );
+	return graph->get_node_at_visual_pos(p_node);
 }
 
 ConnectionRack::~ConnectionRack() {

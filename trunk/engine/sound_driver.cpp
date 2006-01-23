@@ -63,7 +63,7 @@ String SoundDriver::InputNode::get_output_plug_caption(int p_which) {
 
 String SoundDriver::InputNode::get_caption() {
 	
-	return "Input";
+	return "Rec";
 }
 
 void SoundDriver::InputNode::process(int p_frames) {
@@ -115,7 +115,7 @@ String SoundDriver::OutputNode::get_input_plug_caption(int p_which) {
 
 String SoundDriver::OutputNode::get_caption() {
 	
-	return "Output";
+	return "Play";
 }
 
 void SoundDriver::OutputNode::process(int p_frames) {

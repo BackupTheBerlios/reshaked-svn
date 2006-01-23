@@ -61,11 +61,21 @@ public:
 		virtual ~External() {}
 	};	
 	
+	class ExternalDescription {
+		public:
+					
+			virtual void set_description(String p_descr){}
+			virtual void set_bind(int p_key) {};
+		
+		virtual ~ExternalDescription() {}
+	};	
+	
 	static Keyboard_Input *singleton_instance;
 
 	struct Bind {
 
 		External *external;
+		ExternalDescription *external_description;
 		bool readonly;
 		String category;
 		String name;
@@ -84,7 +94,7 @@ public:
 
 	static Keyboard_Input* get_singleton_instance();
 
-	void add_key_bind(String p_name,String p_caption_name,int p_key=NO_KEY,bool p_readonly=false,External *p_external=NULL);
+	void add_key_bind(String p_name,String p_caption_name,int p_key=NO_KEY,bool p_readonly=false,External *p_external=NULL,ExternalDescription *p_external_descr=NULL);
 
 
 	int get_key_bind_count();

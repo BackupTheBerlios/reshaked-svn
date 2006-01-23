@@ -37,7 +37,7 @@ signals:
 	void block_layout_changed();
 	void rack_changed();
 	void track_names_changed();
-	void rack_connections_changed();	
+	void rack_repaint();
 public:
 	
 	

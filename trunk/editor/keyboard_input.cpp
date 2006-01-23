@@ -33,7 +33,7 @@ namespace ReShaked {
 
 Keyboard_Input *Keyboard_Input::singleton_instance=NULL;
 
-void Keyboard_Input::add_key_bind(String p_name,String p_caption_name,int p_key,bool p_readonly,External *p_external) {
+void Keyboard_Input::add_key_bind(String p_name,String p_caption_name,int p_key,bool p_readonly,External *p_external,ExternalDescription *p_external_descr) {
 
 	Bind key_bind;
 
@@ -42,6 +42,16 @@ void Keyboard_Input::add_key_bind(String p_name,String p_caption_name,int p_key,
 	key_bind.key=p_key;
 	key_bind.readonly=p_readonly;
 	key_bind.external=p_external;
+	key_bind.external_description=p_external_descr;
+	if (p_external) {
+		p_external->set_bind( p_key );
+	}
+	if (p_external_descr) {
+		
+		p_external_descr->set_bind( p_key );
+		p_external_descr->set_description( p_caption_name );
+		
+	}
 	bind_list.push_back(key_bind);
 }
 
@@ -67,6 +77,9 @@ void Keyboard_Input::set_key_bind_key(int p_idx,int p_key) {
 	bind_list[p_idx].key=p_key;
 	if (bind_list[p_idx].external)
 		bind_list[p_idx].external->set_bind(p_key);
+
+	if (bind_list[p_idx].external_description) 
+		bind_list[p_idx].external_description->set_bind(p_key);
 
 }
 
@@ -177,9 +190,12 @@ Keyboard_Input::Keyboard_Input() {
 Keyboard_Input::~Keyboard_Input() {
 	
 	/* delete externals */
-	for (int i=0;i<bind_list.size();i++) 
+	for (int i=0;i<bind_list.size();i++) {
 		if (bind_list[i].external)
 			delete bind_list[i].external;
+		if (bind_list[i].external_description)
+			delete bind_list[i].external_description;
+	}
 }
 
 

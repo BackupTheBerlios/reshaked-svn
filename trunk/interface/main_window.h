@@ -71,6 +71,8 @@ class MainWindow : public QMainWindow {
 		CONTROL_RW,
 		CONTROL_PLAY,
 		CONTROL_PLAY_LOOP,
+		CONTROL_PLAY_FROM_CURSOR,
+		CONTROL_PLAY_BLOCK,
 		CONTROL_PAUSE,
 		CONTROL_STOP,
 		CONTROL_FF,
@@ -99,13 +101,12 @@ class MainWindow : public QMainWindow {
 	std::map<int,QAction*> action_map;
 
 	void create_keybindings();
-	void create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,const QPixmap &p_pixmap = QPixmap());
+	void create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,QWidget *p_widget=NULL,const QPixmap &p_pixmap = QPixmap());
 	
 	QAction *get_action(MenuItems p_item);
 	void add_menus();
 
 	GlobalViewFrame *global_view_frame;
-	QDockWidget *settings_dock;
 
 	QStackedWidget *main_stack;
 	BlockListUIList *blui_list;

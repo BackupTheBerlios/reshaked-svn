@@ -14,6 +14,12 @@
 namespace ReShaked {
 
 
+bool GlobalTrack::can_use_synths() {
+	
+	
+	return false;
+}
+
 BlockList::Block *GlobalTrack::create_duplicate_block(Block *p_block) {
 	
 	return NULL;

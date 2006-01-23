@@ -37,6 +37,8 @@ const SoundPluginInfo *AmplifierPlugin::create_info() {
 	
 	return &info;
 }
+
+
 int AmplifierPlugin::get_input_plug_count() {
 	
 	return 1;

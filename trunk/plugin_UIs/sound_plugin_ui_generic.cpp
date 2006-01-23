@@ -17,6 +17,8 @@
 #include "ui_blocks/pixmap_slider.h"
 #include "ui_blocks/property_editors.h"
 
+#include "pixmaps/effect_panel_generic_top_left.xpm"
+#include "pixmaps/effect_panel_generic_top_right.xpm"
 #include "pixmaps/effect_panel_generic_top.xpm"
 #include "pixmaps/effect_panel_generic_left.xpm"
 #include "pixmaps/effect_panel_generic_right.xpm"
@@ -27,6 +29,10 @@
 #include "pixmaps/effect_panel_generic_slider_grabber.xpm"
 #include "pixmaps/effect_panel_generic_vu_empty.xpm"
 #include "pixmaps/effect_panel_generic_vu_fill.xpm"
+#include "pixmaps/effect_panel_generic_bottom_left.xpm"
+#include "pixmaps/effect_panel_generic_bottom_right.xpm"
+#include "pixmaps/effect_panel_generic_bottom.xpm"
+
 namespace ReShaked {
 
 SoundPluginUI* SoundPluginUI_Generic::create_this(SoundPlugin *p_plugin,QWidget *p_parent) {
@@ -38,8 +44,14 @@ SoundPluginUI* SoundPluginUI_Generic::create_this(SoundPlugin *p_plugin,QWidget 
 SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_parent,p_plugin) {
 	
 	setLayout(new QVBoxLayout(this));
-	PixmapLabel *title = new PixmapLabel(this,new SkinBox((const char**)effect_panel_generic_top_xpm,15,40,15,40), true);
-	layout()->addWidget(title);
+	CHBox *hb_top = new CHBox(this);
+	layout()->addWidget(hb_top);
+	new PixmapLabel(hb_top,QPixmap((const char**)effect_panel_generic_top_left_xpm));
+	PixmapLabel *title = new PixmapLabel(hb_top,QPixmap((const char**)effect_panel_generic_top_xpm) ,PixmapLabel::EXPAND_TILE_H);
+	title->set_text( QStrify(p_plugin->get_caption())) ;
+	title->setToolTip( QStrify(p_plugin->get_caption())) ;
+	new PixmapLabel(hb_top,QPixmap((const char**)effect_panel_generic_top_right_xpm));
+	
 	
 	
 	CHBox *hb = new CHBox(this);
@@ -62,9 +74,8 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 		/* LABEL */
 		PixmapLabel * name = new PixmapLabel(hb_port,label_pixmap);
 		
-		name->set_pos(QPoint(3,label_pixmap.height()-8));
-		QFont name_font;
-		name_font.setPixelSize(10);
+		name->set_pos(QPoint(6,label_pixmap.height()-8));
+		name->get_font().setPixelSize(10);
 		QString name_str=QStrify(p_plugin->get_port(i).get_caption());
 		if (p_plugin->get_port(i).get_postfix()!="") {
 			
@@ -93,7 +104,7 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 		PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
 		value->set_property(&p_plugin->get_port(i));
 		value->set_postfix_visible( false );
-		value->set_color(QColor(240,230,255));
+		value->set_color(QColor(240,240,255));
 		value->add_to_group(editor); //share group
 		
 		register_property_editor( value );
@@ -106,6 +117,12 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 	}
 	
 	new PixmapLabel(hb,QPixmap((const char**)effect_panel_generic_right_xpm));
+	
+	CHBox *hb_bottom = new CHBox(this);
+	layout()->addWidget(hb_bottom);
+	new PixmapLabel(hb_bottom,QPixmap((const char**)effect_panel_generic_bottom_left_xpm));
+	new PixmapLabel(hb_bottom,QPixmap((const char**)effect_panel_generic_bottom_xpm),PixmapLabel::EXPAND_TILE_H);
+	new PixmapLabel(hb_bottom,QPixmap((const char**)effect_panel_generic_bottom_right_xpm));
 	
 	
 	layout()->setMargin(0);

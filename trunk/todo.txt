@@ -69,7 +69,7 @@ BIG TODO AFTER 80%: Order doesnt matter anymore?
 	*-Play from Cursor / Play Block at Editor
 	*-Edit operations popup at editor
 	A?-Select stuff with mouse cursor at editor
-	-Make better art
+	*-Make better art
 	*-Automation, Make row selection possible on border of it
 	-Rack element move left/right and remove
 	*-Display Playback Position
@@ -83,6 +83,12 @@ BIG TODO AFTER 80%: Order doesnt matter anymore?
 	-Hints everywhere
 	-Mixer
 	A-Fine moving sliders and automations (shift?)
+	-Show linked blocks property
+	-Select linked blocks, unlink selected blocks
+	-Change beats/bar
+	-Make a menubutton thing?
+	-display shortcuts on buttons
+
 	
 -Qt Property Editors
 	-Automate/Deautomate from control itself
@@ -118,5 +124,8 @@ if the block is valid too.
 -While connecting cables, am i locking the undo system?
 -it is possible to click on a wrong colum in pattern editor
 -move undostream locking to a safer place in automation stuff
-
+-if shared block is the only one (after deleting) it is still reported
+as shared because of the one at the undo buffer!
 -stereo image.. make an histogram of sounds in l/r ?
+-erase empty undo groups when finished
+-REWRITE THE DAMN GLOBAL VIEW!!

@@ -44,6 +44,14 @@ void LoopColumn::mousePressEvent(QMouseEvent *e) {
 	QAction *op_2 = new QAction(GET_QPIXMAP(ICON_EDIT_VIEW_ROW_LOOP_END),"Set Loop End",this);
 	op_2->setData("end");
 	ac_list.push_back(op_2);
+	QAction *op_3 = new QAction("Change Bar Length",this);
+	op_3->setData("beatsbar");
+	ac_list.push_back(op_3);
+	
+	QAction *op_4 = new QAction("Remove Bar Length",this);
+	op_4->setData("beatsbar_remove");
+	if (editor->get_song()->get_bar_map().get_bar_idx_at_beat(beat)>=0 && beat>0)
+		ac_list.push_back(op_4);
 	
 	QAction *res = QMenu::exec(ac_list,mapToGlobal(e->pos()));
 	
@@ -55,10 +63,27 @@ void LoopColumn::mousePressEvent(QMouseEvent *e) {
 		} else if (res->data().toString()=="end") {
 			editor->get_song()->set_loop_end( beat );
 	
+		} else if (res->data().toString()=="beatsbar") { 
+			
+			bool ok;
+			int current=editor->get_song()->get_bar_map().get_bar_idx( editor->get_song()->get_bar_map().get_bar_idx_from_beat( beat ) );
+			int bbar=QInputDialog::getInteger ( this, "Change Bar Length", "Set Bar Length: (beats)", current,2,16,1,&ok);
+			
+			if (ok) {
+				
+				editor->bar_length_set( beat,bbar);
+				
+			}
+			
+		} else if (res->data().toString()=="beatsbar_remove") { 
+			
+			editor->bar_length_remove( beat);
+			
 		}
 	}
 	delete op_1;
 	delete op_2;
+	delete op_3;
 	
 }
 
@@ -86,6 +111,17 @@ void LoopColumn::paintEvent(QPaintEvent *pe) {
 		p.setPen(QColor(20,180,100));
 		int h=global_view->get_beat_pixel( inside_beat );
 		p.drawLine(0,h,width(),h);
+	}
+	
+	for (int i=0;i<editor->get_song()->get_bar_map().get_bar_idx_count();i++) {
+		
+		int beat=editor->get_song()->get_bar_map().get_bar_idx_pos(i);
+		if (beat<beat_from || beat>beat_to)
+			continue;
+		p.setPen(QColor(180,120,100));
+		int h=global_view->get_beat_pixel( beat );
+		p.drawLine(0,h,width(),h);
+		
 	}
 	
 	
@@ -118,7 +154,7 @@ LoopColumn::LoopColumn(QWidget *p_parent,Editor *p_editor) : QWidget(p_parent) {
 	setFixedWidth(GET_QPIXMAP(ICON_EDIT_VIEW_ROW_PLAYED).width());
 	setBackgroundRole(QPalette::NoRole);
 	setMouseTracking(true);
-	setToolTip("Loop");
+	setToolTip("Loop, Bar Length");
 	//setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
 
 }

@@ -36,8 +36,11 @@ class ProxyNode : public AudioNode {
 	ProxyNodeBase * process_instance;
 	void (ProxyNodeBase::*process_method)(int);
 	
+	bool system;
 	String caption;
 	String get_caption();
+	bool is_system();	
+
 public:
 	/* virtual */
 	AudioPlug *get_input_plug(int p_index);
@@ -53,6 +56,8 @@ public:
 	
 	void process(int p_frames);
 	
+	void set_system(bool p_system);
+	void set_caption(String p_caption);
 	
 	
 	ProxyNode();

@@ -36,6 +36,7 @@ class SkinBox {
 	int center_w,center_h;
 	int top,left,right,bottom;	
 	bool stretch;
+	bool no_center;
 public:
 	
 	int get_top();
@@ -49,6 +50,7 @@ public:
 	void load_from_xpm(const char** p_xpm,int p_top, int p_left, int p_bottom, int p_right,bool p_stretchable=false);
 	void load_from_pixmap(const QPixmap& p_pixmap,int p_top, int p_left, int p_bottom, int p_right,bool p_stretchable=false);
 	
+	void set_no_center_hint(bool p_no_center);
 	SkinBox(const char ** p_xpm,int p_top, int p_left, int p_bottom, int p_right,bool p_stretchable=false);
 	SkinBox();
 	~SkinBox();

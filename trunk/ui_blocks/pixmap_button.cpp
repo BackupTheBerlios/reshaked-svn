@@ -14,7 +14,7 @@
 #include <Qt/qpainter.h>
 #include <Qt/qevent.h>
 #include "typedefs.h"
-
+#include <Qt/qaction.h>
 namespace ReShaked {
 
 
@@ -57,6 +57,19 @@ void PixmapButton::mousePressEvent(QMouseEvent *e) {
 	update();
 	
 }
+
+
+void PixmapButton::emit_qactions() {
+
+	
+	QList<QAction*> action_list=actions();
+	foreach(I,action_list) {
+		
+		
+		(*I)->trigger();
+	}
+}
+		
 void PixmapButton::mouseReleaseEvent(QMouseEvent *e) {
 	if (e->button()!=Qt::LeftButton)
 		return;
@@ -71,13 +84,17 @@ void PixmapButton::mouseReleaseEvent(QMouseEvent *e) {
 			
 			mouse_press_event_override();
 			mouse_pressed_signal();
+			emit_qactions();
 		} else if (type==TYPE_TOGGLE) {
 			
 			status.pressed=!status.pressed;
 			mouse_pressed_signal();
 			mouse_toggled_signal(status.pressed);
+			if (status.pressed)
+				emit_qactions();
 			
 		}
+		
 		
 	}
 	

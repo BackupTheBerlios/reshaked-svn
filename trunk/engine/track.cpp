@@ -24,20 +24,9 @@ void Track::add_property(String p_visual_path,Property *p_prop,TrackAutomation *
 		p_visual_path="/"+p_visual_path;
 	
 	if (p_visual_path[p_visual_path.length()-1]!='/')
-		p_visual_path+="/";
-	p_visual_path+=p_prop->get_name();
+		p_visual_path=p_visual_path+"/";
 	
-	for (int i=0;i<base_private.property_list.size();i++) {
-			
-		if (p_prop==base_private.property_list[i]->property) {
-			
-			ERR_PRINT( "p_prop==base_private.property_list[i]->property" );
-			AudioControl::mutex_unlock();
-			return;
-			//@TODO rename to p_visual_path+(num)
-		}
-		
-	}
+	p_visual_path+=p_prop->get_caption();
 	
 	PropertyRef * p = new PropertyRef;
 	p->visual_path=p_visual_path;
@@ -55,6 +44,8 @@ void Track::add_property(String p_visual_path,Property *p_prop,TrackAutomation *
 	
 	AudioControl::mutex_unlock();	
 }
+
+
 
 void Track::set_sequencer_event_buffer(const EventBuffer *p_seq) {
 	
@@ -318,21 +309,77 @@ SoundPlugin *Track::get_plugin(int p_index) {
 		
 }
 void Track::plugin_added_notify(SoundPlugin *p_plugin) {};
+
+void Track::move_plugin_left(int p_index) {
+	
+	ERR_FAIL_INDEX(p_index,base_private.sound_plugins.size());
+	ERR_FAIL_COND(p_index==0);
+
+	SWAP(base_private.sound_plugins[p_index-1],base_private.sound_plugins[p_index]);
+}
+void Track::move_plugin_right(int p_index) {
+	
+	ERR_FAIL_INDEX(p_index,(base_private.sound_plugins.size()-1));
+	SWAP(base_private.sound_plugins[p_index+1],base_private.sound_plugins[p_index]);
+	
+}
+
+
+void Track::validate_plugin_duplicate(SoundPlugin *p_plugin) {
+	
+	bool exists=false;
+	for (int i=0;i<get_plugin_count();i++) {
+			
+		if (get_plugin(i)->get_info()->unique_ID==p_plugin->get_info()->unique_ID && get_plugin(i)->get_duplicate()==p_plugin->get_duplicate()) {
+			exists=true;
+			break;
+		}
+		
+	}
+	
+	if (!exists)
+		return;
+	
+	int free_duplicate=-1;
+	
+	while(true) {
+		
+		free_duplicate++;
+		bool found_duplicate=false;
+		for (int i=0;i<get_plugin_count();i++) {
+			if (get_plugin(i)->get_info()->unique_ID==p_plugin->get_info()->unique_ID && get_plugin(i)->get_duplicate()==free_duplicate) 
+				found_duplicate=true;
+		}
+
+		if (found_duplicate)
+			continue;
+		
+		break;
+	}
+	
+	p_plugin->set_duplicate( free_duplicate );
+}
+
 void Track::add_plugin(PluginInsertData* p_plugin) {
 	
 	AudioControl::mutex_lock();
 	
+	/* valudate plugin duplicate (before insert) */
+	
+	validate_plugin_duplicate(p_plugin->plugin);		
+	
 	/* insert */
-	if (p_plugin->pos==-1) {
+	if (p_plugin->pos==-1 || p_plugin->pos==base_private.sound_plugins.size()) {
 		base_private.sound_plugins.push_back(p_plugin->plugin);
 	} else {
 		base_private.sound_plugins.insert( base_private.sound_plugins.begin()+p_plugin->pos,p_plugin->plugin );
 	}
+			
 	
 	/* determine path */
 	String path=p_plugin->plugin->get_info()->is_synth?"Synths/":"Effects/";
 	
-	String desired_name=p_plugin->plugin->get_info()->caption;
+	String desired_name=p_plugin->plugin->get_caption();
 	
 	
 	path+=desired_name+"/";
@@ -483,6 +530,22 @@ void Track::reset_automations() {
 	}
 }
 
+AudioNode *Track::get_node_at_visual_pos(int p_pos) {
+	if (p_pos<0)
+		return NULL;
+	if (p_pos==0)
+		return &base_private.input_proxy;	
+	else 
+		p_pos--;
+	if (p_pos<base_private.sound_plugins.size())
+		return base_private.sound_plugins[p_pos];
+	
+	if (p_pos==base_private.sound_plugins.size())
+		return &base_private.output_proxy;
+	
+	return NULL;
+	
+}
 Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback) : BlockList(p_type) {
 	
 	base_private.channels=p_channels;
@@ -498,10 +561,17 @@ Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,So
 	base_private.plugin_graph.add_node( &base_private.output_proxy );
 	base_private.input_proxy.set_process_method( this, (void (ProxyNodeBase::*)(int))&Track::feed_input );
 	base_private.output_proxy.set_process_method( this, (void (ProxyNodeBase::*)(int)) &Track::read_output );
+	base_private.output_proxy.set_system(true);
+	base_private.input_proxy.set_system(true);
+	base_private.output_proxy.set_caption("Play");
+	base_private.input_proxy.set_caption("Rec");
+	
 	
 	
 	base_private.audio.highest_energy=0;
 	base_private.audio.volume_ratio=1;
+	
+	base_private.plugin_graph.set_visual_node_order( this );
 	
 }
 

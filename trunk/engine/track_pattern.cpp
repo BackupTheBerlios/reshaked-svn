@@ -160,6 +160,15 @@ bool Track_Pattern::PatternBlock::get_notes_in_local_range(Tick p_from, Tick p_t
 	return pattern->data.find_values_in_range(p_from,p_to,p_note_from,p_note_to);
 }
 
+bool Track_Pattern::PatternBlock::shared_with(Block *p_block) {
+	
+	PatternBlock *pb = dynamic_cast<PatternBlock*>(p_block);
+	if (!pb)
+		return false;
+	return pb->pattern==pattern;
+}
+
+
 int Track_Pattern::PatternBlock::get_note_count() {
 	
 	return pattern->data.get_stream_size();
@@ -184,11 +193,13 @@ Track_Pattern::PatternBlock::PatternBlock(Pattern* p) {
 	pattern = p;
 	p->reference();
 
+
 }
 
 Track_Pattern::PatternBlock::~PatternBlock() {
 	
 	pattern->dereference();
+
 	
 }
 Track_Pattern::PatternBlock* Track_Pattern::get_block(int p_index) {
@@ -402,6 +413,12 @@ void Track_Pattern::reset_last_notes() {
 		
 		data.last_note[i]=Note(Note::NOTE_OFF);
 	}
+}
+
+bool Track_Pattern::can_use_synths() {
+	
+	
+	true;
 }
 
 Track_Pattern::Track_Pattern(int p_channels,GlobalProperties *p_global_props,SongPlayback *p_song_playback) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT,p_global_props,p_song_playback), swing_process(p_song_playback) {

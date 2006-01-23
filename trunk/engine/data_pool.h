@@ -23,14 +23,19 @@ namespace ReShaked {
 class SharedData {
 	
 	int refcount;
+	int claimcount;
 	
 public:	
 	
 	void reference();
 	void dereference();
 	
+	void claim();
+	void unclaim();
+	
 	void reset_refcount();
 	int get_refcount();
+	int get_claimcount();
 	
 	SharedData();
 	virtual ~SharedData();

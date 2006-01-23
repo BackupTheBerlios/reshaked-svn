@@ -11,10 +11,18 @@
  * but powerful in the sense that it does what it should.
  */
 
+
 namespace ReShaked {
 
 class AudioGraph {
 public:
+	
+	class VisualNodeOrder {
+	public:		
+		virtual AudioNode *get_node_at_visual_pos(int p_pos)=0;
+		virtual ~VisualNodeOrder() {}
+	};
+	
 	struct Connection {
 	
 		int node_from;
@@ -40,7 +48,14 @@ private:
 	void recompute_graph();
 	AudioGraphProcess graph_process;
 	ConnectError last_error;
+	
+	VisualNodeOrder * visual_node_order;
+
 public:
+	
+	void set_visual_node_order(VisualNodeOrder * p_visual_node_order);
+	AudioNode *get_node_at_visual_pos(int p_pos);
+
 	
 	int get_ordered_node(int p_index);
 	int get_node_count();

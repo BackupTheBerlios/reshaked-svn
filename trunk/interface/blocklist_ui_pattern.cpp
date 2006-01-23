@@ -327,11 +327,15 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 	int begin_pos=-1;
 	int old_block_idx=-1;
 	int visible_rows=editor->get_cursor().get_window_size();
-	SkinBox *sb=VisualSettings::get_singleton()->get_skin_box( hasFocus() ? SKINBOX_EDITING_PATTERN_SELECTED : SKINBOX_EDITING_PATTERN );
-
+	SkinBox *sb=VisualSettings::get_singleton()->get_skin_box(  SKINBOX_EDITING_PATTERN );
+	SkinBox *sb_shared=VisualSettings::get_singleton()->get_skin_box(  SKINBOX_EDITING_PATTERN_SHARED );
+	int last_block_idx=-1;
 	for (int i=0;i<(visible_rows+3);i++) {
 		Tick tick=editor->get_cursor().get_snapped_window_tick_pos(i);
 		int block_idx=track->get_block_idx_at_pos(tick);
+		if (block_idx!=last_block_idx && block_idx!=-1)
+			last_block_idx=block_idx;
+			
 
 		bool begin=(block_idx!=-1 && track->get_block_pos(block_idx)==tick);
 
@@ -344,6 +348,7 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 			old_block_idx=block_idx;
 
 		bool end=((old_block_idx!=block_idx || i==(visible_rows+2)) && old_block_idx!=-1);
+		
 		old_block_idx=block_idx;
 
 		if (end) {
@@ -352,7 +357,11 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 			int begin_h=begin_pos*row_size;
 			int len_h=(i-begin_pos)*row_size;
 
-			sb->paint_into( p, 0,begin_h, width(), len_h );
+			if (last_block_idx!=-1 && track->get_block(last_block_idx)->is_shared())
+
+				sb_shared->paint_into( p, 0,begin_h, width(), len_h );
+			else
+				sb->paint_into( p, 0,begin_h, width(), len_h );
 
 		}
 
@@ -361,12 +370,7 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 
 	}
 
-	if(hasFocus()) {
-
-		p.setPen( VisualSettings::get_singleton()->get_color( COLORLIST_PATTERN_EDIT_FOCUS_RECT ) );
-		p.drawRect(0,0,width()-1,height()-1);
-	}
-
+	
 }
 
 void BlockListUI_Pattern::paint_row_lines(QPainter &p) {

@@ -360,6 +360,31 @@ UI_UpdateNotify *Editor::get_ui_update_notify() {
 }
 
 
+void Editor::bar_length_set(int p_at_beat,int p_len) {
+	
+	if (p_len<2 || p_len>16)
+		return; //no go!
+	
+	d->undo_stream.begin("Insert Bar Length");
+	
+	if (d->song->get_bar_map().get_bar_idx_at_beat( p_at_beat )>=0) 
+		bar_length_remove( p_at_beat );
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::bar_length_add,p_at_beat,p_len));
+	
+	d->undo_stream.end();
+	
+}
+void Editor::bar_length_remove(int p_at_beat) {
+	
+	d->undo_stream.begin("Remove Bar Length");
+	
+	d->undo_stream.add_command(Command1(&commands,&EditorCommands::bar_length_remove,p_at_beat));
+	
+	d->undo_stream.end();
+	
+}
+
+
 Editor::Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify) {
 	
 	d = new EditorData(p_song,p_ui_update_notify);

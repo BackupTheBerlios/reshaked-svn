@@ -23,6 +23,7 @@ class SoundPluginUI_Generic : public SoundPluginUI {
 	
 public:
 	
+	
 	static SoundPluginUI* create_this(SoundPlugin *p_plugin,QWidget *p_parent);
 	
 	SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_plugin);

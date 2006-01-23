@@ -18,6 +18,7 @@
 #include "interface/global_beatbar_column.h"
 #include "interface/global_view_cursor.h"
 #include <Qt/qframe.h>
+#include "ui_blocks/pixmap_scrollbar.h"
 
 
 namespace ReShaked {
@@ -32,8 +33,8 @@ class GlobalViewFrame : public QFrame {
 			
 	Editor *editor;
 	GlobalView *global_view;
-	QScrollBar *h_scroll;
-	QScrollBar *v_scroll;
+	PixmapScrollBar *h_scroll;
+	PixmapScrollBar *v_scroll;
 	GlobalViewCursor *cursor_op;
 	
 	GlobalBeatBarColumn *beat_bar_column;

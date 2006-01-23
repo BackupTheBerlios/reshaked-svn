@@ -103,6 +103,11 @@ void MainWindow::create_keybindings() {
 
 	data.keyboard_codes.add_key_bind("editor/previous_pattern","Prev Pattern",Qt::Key_Minus);
 
+	data.keyboard_codes.add_key_bind("editor/automation_mode_stream","Stream Automation Edit",Qt::CTRL+Qt::Key_T,false,NULL,new QWidget_KeybindDescription(blui_list->automation_stream));
+	data.keyboard_codes.add_key_bind("editor/automation_mode_envelope","Envelope Automation Edit",Qt::CTRL+Qt::Key_E,false,NULL,new QWidget_KeybindDescription(blui_list->automation_envelope));
+	data.keyboard_codes.add_key_bind("editor/midi_input_assign","Midi Input Assign",Qt::CTRL+Qt::Key_M,false,NULL,new QWidget_KeybindDescription(blui_list->midi_in_config));
+	data.keyboard_codes.add_key_bind("editor/quantize","Quantize",Qt::ALT+Qt::Key_T);
+	
 
 	data.keyboard_codes.add_key_bind("global/raise_octave","Raise Octave",Qt::Key_Asterisk);
 
@@ -120,6 +125,15 @@ void MainWindow::create_keybindings() {
 
 	data.keyboard_codes.set_key_bind_key_by_name("actions/play",Qt::Key_F5);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/stop",Qt::Key_F8);
+	
+	data.keyboard_codes.set_key_bind_key_by_name("actions/pause",Qt::SHIFT+Qt::Key_F8);
+	data.keyboard_codes.set_key_bind_key_by_name("actions/play_loop",Qt::SHIFT+Qt::Key_F5);
+	
+	data.keyboard_codes.set_key_bind_key_by_name("actions/record",Qt::SHIFT+Qt::Key_F6);
+	data.keyboard_codes.set_key_bind_key_by_name("actions/record_automations",Qt::SHIFT+Qt::Key_F7);
+	
+	data.keyboard_codes.set_key_bind_key_by_name("actions/play_block",Qt::Key_F6);
+	data.keyboard_codes.set_key_bind_key_by_name("actions/play_from_cursor",Qt::Key_F7);
 	
 }
 

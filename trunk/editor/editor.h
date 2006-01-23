@@ -122,8 +122,11 @@ public:
 	void add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin);
 	void remove_plugin_from_track(Track *p_track,int p_which);
 	
+	void set_plugin_skips_processing(SoundPlugin *p_plugin, bool p_skips);
 	void property_changed(Property * p_property,double p_old_value,Track *p_hint_track=NULL);
 	
+	void track_move_plugin_left(Track *p_track,int p_plugin);
+	void track_move_plugin_right(Track *p_track,int p_plugin);
 	
 	/** SELECTION EDITING */
 	
@@ -163,6 +166,8 @@ public:
 	void marker_set(int p_beat,String p_text);
 	void marker_remove(int p_beat);
 	
+	void bar_length_set(int p_at_beat,int p_len);
+	void bar_length_remove(int p_at_beat);
 	
 	/** UNDO SYSTEM (edit.cpp) */
 	

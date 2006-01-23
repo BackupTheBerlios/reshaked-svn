@@ -33,6 +33,7 @@ class GlobalTrack : public Track {
 	bool can_resize_from_begining();
 	void process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int p_frames);	
 	
+	bool can_use_synths();
 public:
 	
 	GlobalTrack(GlobalProperties *p_global_props,SongPlayback *p_song_playback);

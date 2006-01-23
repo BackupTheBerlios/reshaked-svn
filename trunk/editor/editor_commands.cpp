@@ -396,7 +396,7 @@ CommandFunc* EditorCommands::connection_create(bool p_no_undo,AudioGraph *p_grap
 	}
 	
 	
-	d->ui_update_notify->rack_connections_changed();
+	d->ui_update_notify->rack_repaint();
 	return ret;
 	
 	
@@ -412,15 +412,36 @@ CommandFunc* EditorCommands::connection_erase(bool p_no_undo,AudioGraph *p_graph
 		ret=Command5(this,&EditorCommands::connection_create, p_graph, p_node_from, p_plug_from, p_node_to, p_plug_to);
 	}
 	
-	d->ui_update_notify->rack_connections_changed();
+	d->ui_update_notify->rack_repaint();
 	return ret;
 	
 	
 }
 
+CommandFunc* EditorCommands::plugin_set_skip(bool p_no_undo,SoundPlugin *p_plugin,bool p_skip) {
+	
+	
+	CommandFunc *ret=NULL;
+		
+	if (!p_no_undo) {
+		
+
+		ret=Command2(this,&EditorCommands::plugin_set_skip,p_plugin,p_plugin->skips_processing());
+		
+	}
+	
+	p_plugin->set_skip_processing(p_skip);
+	d->ui_update_notify->rack_repaint();
+	
+	return ret;
+	
+}
+
+
 CommandFunc* EditorCommands::track_plugin_add(bool p_no_undo,Track *p_track,Track::PluginInsertData p_data) {
 	
-	ERR_FAIL_COND_V(p_data.pos < -1 || p_data.pos >= p_track->get_plugin_count(), NULL );
+	
+	ERR_FAIL_COND_V(p_data.pos < -1 || p_data.pos > p_track->get_plugin_count(), NULL );
 	
 	CommandFunc *ret=NULL;
 	
@@ -507,6 +528,86 @@ CommandFunc* EditorCommands::property_value_changed(bool p_no_undo,Property *p_p
 	p_property->set( p_to_val ); //may be redundant, but it's needed
 	
 	return ret;
+}
+
+CommandFunc* EditorCommands::track_plugin_move_left(bool p_no_undo,Track *p_track,int p_which) {
+	
+	if (p_which==0)
+		return NULL;
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+	
+		ret=Command2(this,&EditorCommands::track_plugin_move_right , p_track,p_which-1);
+	}
+	
+	p_track->move_plugin_left( p_which );
+	d->ui_update_notify->rack_changed();
+	
+	return ret;
+	
+}
+CommandFunc* EditorCommands::track_plugin_move_right(bool p_no_undo,Track *p_track,int p_which) {
+	
+	if ((p_which+1)>=p_track->get_plugin_count())
+		return NULL;
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+	
+		ret=Command2(this,&EditorCommands::track_plugin_move_left , p_track,p_which+1);
+	}
+	
+	p_track->move_plugin_right( p_which );
+	d->ui_update_notify->rack_changed();
+	
+	return ret;
+	
+	
+}
+
+CommandFunc* EditorCommands::bar_length_add(bool p_no_undo,int p_at_beat,int p_len) {
+	
+//	ERR_FAIL_COND_V(d->song->get_bar_map().get_bar_idx_at_beat(p_at_beat)>=0,NULL);
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+	
+		ret=Command1(this,&EditorCommands::bar_length_remove, p_at_beat);
+	}
+	
+	d->song->get_bar_map().insert_bar_len_at_beat( p_at_beat, p_len );
+	
+	d->ui_update_notify->block_layout_changed();
+	
+	return ret;
+	
+	
+}
+CommandFunc* EditorCommands::bar_length_remove(bool p_no_undo,int p_at_beat) {
+	
+	int bar_idx=d->song->get_bar_map().get_bar_idx_at_beat(p_at_beat);
+	ERR_FAIL_COND_V(bar_idx<0,NULL);
+	
+	CommandFunc *ret=NULL;
+	
+	
+	if (!p_no_undo) {
+	
+		int current_len=d->song->get_bar_map().get_bar_idx( bar_idx );
+		ret=Command2(this,&EditorCommands::bar_length_add, p_at_beat,current_len);
+	}
+	
+	d->song->get_bar_map().remove_bar_len( bar_idx );
+	
+	d->ui_update_notify->block_layout_changed();
+	
+	return ret;
+	
+	
 }
 
 }

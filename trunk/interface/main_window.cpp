@@ -116,12 +116,35 @@ void MainWindow::menu_action_callback(int p_action) {
 			settings_dock->setVisible(get_action(NAVIGATION_CONTROLS_VIEW)->isChecked());
 		} break;
 		*/
+		
+		case CONTROL_PLAY_FROM_CURSOR: {
+			
+			if (data.editor->get_blocklist_count())
+				data.song.play(data.editor->get_cursor().get_tick_pos());
+			
+		} break;
+		case CONTROL_PLAY_BLOCK: {
+			
+			if (data.editor->get_blocklist_count()==0)
+				break;
+			BlockList *bl=data.editor->get_blocklist( data.editor->get_current_blocklist());
+			
+			if (bl==NULL)
+				break;
+			int block_idx= bl->get_block_idx_at_pos(data.editor->get_cursor().get_tick_pos());
+			if (block_idx<0)
+				break;
+			
+			data.song.loop( bl->get_block_pos( block_idx ), bl->get_block_pos( block_idx )+bl->get_block( block_idx )->get_length());
+		} break;
+		
 		case CONTROL_PLAY: {
 			
 			data.song.play(0);
 		} break;
 		case CONTROL_PLAY_LOOP: {
 		
+			printf("loopy?\n");
 			data.song.loop();
 			
 		} break;
@@ -139,7 +162,7 @@ void MainWindow::menu_action_callback(int p_action) {
 	}
 }
 
-void MainWindow::create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,const QPixmap &p_pixmap) {
+void MainWindow::create_action(MenuItems p_item,QString p_text,String p_kb_path,QMenu *p_menu,QWidget *p_widget,const QPixmap &p_pixmap) {
 
 	ERR_FAIL_COND( action_map.find(p_item)!=action_map.end() );
 
@@ -157,8 +180,22 @@ void MainWindow::create_action(MenuItems p_item,QString p_text,String p_kb_path,
 	action_map[p_item]=q;
 	if (p_menu)
 		p_menu->addAction(q);
+	else 
+		addAction(q);
 	
-	data.keyboard_codes.add_key_bind("actions/"+p_kb_path,DeQStrify(p_text),Keyboard_Input::NO_KEY,false,new QAction_Keybind(q));
+	
+	if (p_widget) {
+		p_widget->addAction(q);
+		printf("action at %p\n",q);
+		
+	}
+
+		
+	QWidget_KeybindDescription *widget_desc=NULL;
+	if (p_widget)
+		widget_desc=new QWidget_KeybindDescription(p_widget);
+	data.keyboard_codes.add_key_bind("actions/"+p_kb_path,DeQStrify(p_text),Keyboard_Input::NO_KEY,false,new QAction_Keybind(q),widget_desc);
+	
 }
 
 QAction *MainWindow::get_action(MenuItems p_item) {
@@ -182,8 +219,8 @@ void MainWindow::add_menus() {
 	top_bar->get_file_menu()->addSeparator();
 	create_action(ITEM_SONG_EXIT,"Quit!","quit",top_bar->get_file_menu());
 
-	create_action(ITEM_EDIT_UNDO,"Undo","undo",NULL);
-	create_action(ITEM_EDIT_REDO,"Redo","redo",NULL);
+	create_action(ITEM_EDIT_UNDO,"Undo","undo",NULL,top_bar->icon_undo);
+	create_action(ITEM_EDIT_REDO,"Redo","redo",NULL,top_bar->icon_redo);
 
 	create_action(ITEM_TRACK_ADD_PATTERN,"Add Pattern Track","add_pattern",top_bar->get_add_menu());
 	//create_action(ITEM_TRACK_ADD_AUDIO,"Add Audio Track",track,NULL);
@@ -191,18 +228,21 @@ void MainWindow::add_menus() {
 	create_action(NAVIGATION_GLOBAL_VIEW,"Global View","switch_to_global_view",NULL);
 	create_action(NAVIGATION_EDIT_VIEW,"Edit View","switch_to_edit_view",NULL);
 	
-	create_action(CONTROL_RW,"Rewind","rewind",NULL);
-	create_action(CONTROL_PLAY,"Play","play",NULL);
-	create_action(CONTROL_PLAY_LOOP,"Play Loop","play_loop",NULL);
-	create_action(CONTROL_PAUSE,"Pause","pause",NULL);
-	create_action(CONTROL_STOP,"Stop","stop",NULL);
-	create_action(CONTROL_FF,"FastForward","fast_forward",NULL);
-	create_action(CONTROL_RECORD,"Record","record",NULL);
-	create_action(CONTROL_RECORD_AUTOMATIONS,"Record Automations","record_automations",NULL);
+	create_action(CONTROL_RW,"Rewind","rewind",NULL,top_bar->control_button_rw);
+	create_action(CONTROL_PLAY,"Play","play",NULL,top_bar->control_button_play);
+	create_action(CONTROL_PLAY_LOOP,"Play Loop","play_loop",NULL,top_bar->control_button_loop);
+	create_action(CONTROL_PAUSE,"Pause","pause",NULL,top_bar->control_button_pause);
+	create_action(CONTROL_STOP,"Stop","stop",NULL,top_bar->control_button_stop);
+	create_action(CONTROL_FF,"FastForward","fast_forward",NULL,top_bar->control_button_ff);
+	create_action(CONTROL_RECORD,"Record","record",NULL,top_bar->control_button_record);
+	create_action(CONTROL_RECORD_AUTOMATIONS,"Record Automations","record_automations",NULL,top_bar->control_button_record_auto);
+	create_action(CONTROL_PLAY_BLOCK,"Play Block","play_block",NULL,blui_list->play_block);
+	create_action(CONTROL_PLAY_FROM_CURSOR,"Play From Cursor","play_from_cursor",NULL,blui_list->play_cursor);
 
 	create_action(SETTINGS_CONFIG,"Settings","settings",top_bar->get_settings_menu());
 	create_action(HELP_HELP,"Help","help",top_bar->get_help_menu());
 	create_action(HELP_ABOUT,"About","about",top_bar->get_help_menu());
+	
 	
 
 }
@@ -265,18 +305,31 @@ MainWindow::MainWindow() {
 	new PixmapLabel(middle_hbox,GET_QPIXMAP(THEME_BOTTOM_RIGHT__CORNER));
 
 	
-	settings_dock = new QDockWidget("Virtual Rack",this);
-	settings_dock->setAllowedAreas(Qt::TopDockWidgetArea|Qt::BottomDockWidgetArea);
-	settings_dock->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable);
-	addDockWidget(Qt::BottomDockWidgetArea,settings_dock);
 
 	
 	//settings_dock->setLayout(new QHBoxLayout(settings_dock));
 	//track_settings = new TrackSettings(settings_dock,data.editor);
 	//settings_dock->layout()->addWidget(track_settings);
-	rack = new RackUI(settings_dock,data.editor,&data.property_edit_updater);
-	settings_dock->layout()->addWidget(rack);
+	CVBox *rack_vbox = new CVBox(main_vbox);
 	
+	CHBox *rack_top_hbox = new CHBox(rack_vbox);
+	
+	new PixmapLabel(rack_top_hbox,GET_QPIXMAP(THEME_MIDDLE__SEPARATOR_BEGIN));
+	new PixmapLabel(rack_top_hbox,GET_QPIXMAP(THEME_MIDDLE__SEPARATOR_CENTER),PixmapLabel::EXPAND_TILE_H);
+	new PixmapLabel(rack_top_hbox,GET_QPIXMAP(THEME_MIDDLE__SEPARATOR_END));
+	
+	CHBox *rack_middle_hbox = new CHBox(rack_vbox);
+	new PixmapLabel(rack_middle_hbox,GET_QPIXMAP(THEME_LEFT__MARGIN),PixmapLabel::EXPAND_TILE_V);
+	
+	rack = new RackUI(rack_middle_hbox,data.editor,&data.property_edit_updater);
+	rack->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	new PixmapLabel(rack_middle_hbox,GET_QPIXMAP(THEME_RIGHT__MARGIN),PixmapLabel::EXPAND_TILE_V);
+	
+	CHBox *rack_bottom_hbox = new CHBox(rack_vbox);
+	
+	new PixmapLabel(rack_bottom_hbox,GET_QPIXMAP(THEME_BOTTOM_LEFT__CORNER));
+	new PixmapLabel(rack_bottom_hbox,GET_QPIXMAP(THEME_BOTTOM__MARGIN),PixmapLabel::EXPAND_TILE_H);
+	new PixmapLabel(rack_bottom_hbox,GET_QPIXMAP(THEME_BOTTOM_RIGHT__CORNER));
 	
 	
 	add_menus();
@@ -312,7 +365,7 @@ MainWindow::MainWindow() {
 	
 	QObject::connect(update_notify,SIGNAL(block_layout_changed()),blui_list,SLOT(repaint_track_list()));
 	QObject::connect(update_notify,SIGNAL(rack_changed()),rack,SLOT(update_rack()));
-	QObject::connect(update_notify,SIGNAL(rack_connections_changed()),rack,SLOT(repaint_rack()));
+	QObject::connect(update_notify,SIGNAL(rack_repaint()),rack,SLOT(repaint_rack()));
 	QObject::connect(update_notify,SIGNAL(track_names_changed()),rack,SLOT(update_rack_combo_names_slot()));
 		
 	QObject::connect(top_bar,SIGNAL(screen_changed_signal( ScreenList )),this,SLOT(screen_changed_slot( TopBarControls::ScreenList )));

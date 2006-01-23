@@ -973,11 +973,11 @@ void GlobalView::paint_name(QPainter&p, int p_blocklist,int p_ofs) {
 	QFontMetrics m(p.font());
 	
 	p.rotate(90);
-	p.setPen(QColor(0,0,0,200));
-	p.drawText(6,-(p_ofs+m.descent()+1),name);
-	if (p_blocklist==editor->get_current_blocklist())
-		p.setPen(QColor(255,222,222,200));
-	else
+	//p.setPen(QColor(0,0,0,200)); //shadow sucked?
+	//p.drawText(6,-(p_ofs+m.descent()+1),name);
+	//if (p_blocklist==editor->get_current_blocklist()) //current bl sucked?
+//		p.setPen(QColor(255,222,222,200));
+//	else
 		p.setPen(QColor(255,255,255,200));
 	p.drawText(5,-(p_ofs+m.descent()),name);
 	p.restore();
@@ -1072,7 +1072,7 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 		float block_width=get_block_list_width(blocklist);
 		float f_width=block_width*display.zoom_width;
 
-		p.setPen(QColor(255,255,255));
+		p.setPen(QColor(111,111,111));
 		p.drawLine(f_from_x+f_width,0,f_from_x+f_width,height());
 		for (int j=0;j<blocklist->get_block_count();j++) {
 
@@ -1086,12 +1086,6 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 			paint_block(p,(int)f_from_x,(int)f_from_y,i,j,false);
 		}
 
-		if (editor->get_current_track()==editor->get_blocklist_track( i) ) {
-			/* selected, display it */
-			
-			p.setPen(QColor(255,0,0));
-			p.drawRect((int)f_from_x,0,(int)f_width,height());
-		}
 		
 		paint_name(p,i,(int)f_from_x);
 		ofs+=f_width;
@@ -1221,6 +1215,69 @@ void GlobalView::block_layout_changed_slot() {
 	update();
 	resize_check_consistency();
 }
+
+void GlobalView::select_linked_slot() {
+	
+	if (selection.size()!=1)
+		return;
+	
+	int list=*selection.begin()%MAX_LISTS;
+	int block=*selection.begin()/MAX_LISTS;
+	
+	ERR_FAIL_INDEX(list,get_block_list_count());
+	ERR_FAIL_INDEX(block,get_block_list(list)->get_block_count());
+	BlockList::Block *sb=get_block_list(list)->get_block(block);
+	
+	for (int i=0;i<get_block_list_count();i++) {
+		
+		BlockList *bl=get_block_list(i);
+		for (int j=0;j<bl->get_block_count();j++) {
+			
+			BlockList::Block *b=bl->get_block(j);
+			if (sb!=b && sb->shared_with(b)) {
+				 
+				add_block_to_selection( i,j );
+			}
+			
+		}
+		
+	}
+	
+	update();
+}
+void GlobalView::unlink_selected_slot() {
+	
+	update();
+	
+	editor->begin_meta_undo_block("Unlink blocks");
+	std::set<int> selection_copy=selection;
+	
+	foreach(I,selection_copy) {
+		int list=*I%MAX_LISTS;
+		int block=*I/MAX_LISTS;
+		
+		BlockList *bl=get_block_list(list);
+		if (!bl)
+			continue;
+		
+		BlockList::Block *sb=bl->get_block(block);
+		if (!sb)
+			continue;
+		if (!sb->is_shared())
+			continue;
+		
+		BlockList::Block *db=bl->create_duplicate_block( sb );
+		Tick pos = bl->get_block_pos(block);
+		editor->blocklist_remove_block( bl, block );
+		editor->blocklist_insert_block( bl, db, pos );
+	
+	}
+	
+	selection=selection_copy;
+	editor->end_meta_undo_block();
+	
+}
+
 
 GlobalView::GlobalView(QWidget *p_widget,Editor *p_editor) : QWidget(p_widget)
 {

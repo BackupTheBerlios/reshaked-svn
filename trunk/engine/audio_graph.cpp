@@ -6,6 +6,18 @@
 namespace ReShaked {
 
 
+void AudioGraph::set_visual_node_order(VisualNodeOrder * p_visual_node_order) {
+	
+	visual_node_order=p_visual_node_order;
+}
+AudioNode *AudioGraph::get_node_at_visual_pos(int p_pos) {
+	
+	if (visual_node_order)
+		return visual_node_order->get_node_at_visual_pos( p_pos );
+	else 
+		return get_node( p_pos );
+	
+}
 
 bool AudioGraph::recompute_process_order() {
 
@@ -331,5 +343,6 @@ int AudioGraph::process(int p_frames) {
 AudioGraph::AudioGraph() {
 	
 	last_error=CONNECT_OK;
+	visual_node_order=NULL;
 }
 };

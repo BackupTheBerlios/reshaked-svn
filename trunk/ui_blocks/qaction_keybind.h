@@ -30,6 +30,23 @@ public:
 
 };
 
+
+class QWidget_KeybindDescription : public Keyboard_Input::ExternalDescription {
+			    
+	QWidget *widget;
+	String text;
+	int key;
+	void update_tooltip();
+public:
+	void set_description(String p_descr);
+	void set_bind(int p_key);
+	QWidget_KeybindDescription(QWidget *p_widget);
+
+	~QWidget_KeybindDescription();
+
+};
+
+
 }
 
 #endif

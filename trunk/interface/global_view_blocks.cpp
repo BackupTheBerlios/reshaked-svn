@@ -27,6 +27,10 @@ struct NoteTmp {
 
 void GlobalViewBlocks::paint_block_contents(QPainter &p, int p_x,int p_y,int p_w, int p_h, BlockList::Block *p_block,bool p_selected,int p_clip_to_len) {
 	
+	
+	if (p_block && p_block->is_shared())
+		GET_SKIN(SKINBOX_LINKED_BLOCK)->paint_into(p,p_x,p_y,p_w,p_h);
+	
 	if (dynamic_cast<Automation::AutomationBlock*>(p_block)) {
 		
 		Automation::AutomationBlock *b=dynamic_cast<Automation::AutomationBlock*>(p_block);
@@ -150,7 +154,7 @@ void GlobalViewBlocks::paint_block_contents(QPainter &p, int p_x,int p_y,int p_w
 		for (int i=0;i<note_list.size();i++) {
 			
 			float note_xv=(float)(note_list[i].note-min_note)/(float)(max_note-min_note);
-			int note_x=p_x+(int)(4.0+note_xv*(p_w-8.0));
+			int note_x=p_x+(int)(note_xv*(float)(p_w/2))+p_w/4;
 			int pos=note_list[i].pos*p_h/(b->get_length());
 			int len=note_list[i].len*p_h/(b->get_length());
 			

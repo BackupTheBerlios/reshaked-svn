@@ -175,6 +175,9 @@ public slots:
 	void set_edit_mode(EditMode p_edit_mode);
 	void block_layout_changed_slot();
 	void delete_selected_blocks();
+	
+	void select_linked_slot();
+	void unlink_selected_slot();
 public:
 	
 	int get_total_pixel_width();

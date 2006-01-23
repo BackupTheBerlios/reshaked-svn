@@ -25,6 +25,9 @@ namespace ReShaked {
 	@author Juan Linietsky <reduzio@gmail.com>
 */
 
+					       
+
+					       
 class ConnectionRack : public QWidget {
 
 				       
@@ -59,7 +62,7 @@ class ConnectionRack : public QWidget {
 	
 	int offset;
 	SkinBox *skin(bool p_system=false);
-	QPixmap jack_hole();
+	QPixmap jack_hole(AudioPlug::Type p_type=AudioPlug::TYPE_INPUT);
 	int get_plugs_for_height();
 	QSize get_plug_size();
 	
@@ -69,7 +72,7 @@ class ConnectionRack : public QWidget {
 	
 	void paint_cable(QPainter &p,int p_src_x,int p_src_y,int p_dst_x,int p_dst_y);
 	
-	void paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,QString p_name);
+	void paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,QString p_name, AudioPlug::Type p_type=AudioPlug::TYPE_INPUT);
 	void paint_node(QPainter&p,int p_offset,AudioNode *p_node);
 	void paintEvent(QPaintEvent *pe);
 	

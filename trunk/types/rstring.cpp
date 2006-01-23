@@ -483,4 +483,25 @@ String operator+(String::CharType p_chr, const String& p_str) {
 }
 
 
+String String::left(int p_chars) {
+	
+	if (p_chars<=0)
+		return *this;
+	
+	String new_str;
+	
+	int new_str_chars=length()-p_chars;
+	if (new_str_chars<=0)
+		return new_str;
+	
+	for (int i=0;i<new_str_chars;i++)
+		new_str+=(*this)[i];
+	
+	return new_str;
+}
+
+
+
+
+
 }

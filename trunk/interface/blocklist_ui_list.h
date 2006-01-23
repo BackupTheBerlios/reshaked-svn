@@ -26,6 +26,10 @@
 #include "interface/editor_play_position.h"
 #include "ui_blocks/property_editors.h"
 #include "engine/property_edit_updater.h"
+#include "ui_blocks/pixmap_button.h"
+#include "ui_blocks/pixmap_label.h"
+#include "ui_blocks/pixmap_combo.h"
+#include "ui_blocks/pixmap_scrollbar.h"
 
 namespace ReShaked {
 
@@ -36,25 +40,32 @@ class BlockListUIList : public QFrame {
 
 	Q_OBJECT
 
+friend class MainWindow;			
 	std::vector<BlockListUI_Base*> block_list_ui_list;
 	std::vector<TrackTop*> track_tops;
 	std::vector<PropertyEditor*> property_editors;
 	std::vector<PropertyEditSliderVU*> slider_vus;
-	std::vector<PropertyEditSlider*> slider_swings;
 	
 	QWidget *hbox;
 	QHBoxLayout *hbox_layout;
 	QScrollArea *scrollarea;
-	QScrollBar *v_scroll;
+	PixmapScrollBar *v_scroll;
+	PixmapScrollBar *h_scroll;
 
 	RowListDisplay *row_display;
 	Editor *editor;
 	QComboBox *snap;
 	PropertyEditUpdater *property_ui_updater;
 	
-	QPushButton *play_cursor;
-	QPushButton *play_block;
-	QMenuBar *edit_menubar;
+	PixmapButton *play_cursor;
+	PixmapButton *play_block;
+	PixmapLabel *edit_button;
+	PixmapButton *automation_envelope;
+	PixmapButton *automation_stream;
+	PixmapCombo *cursor_stepping;
+	PixmapButton *midi_in_config;;
+	PixmapCombo *snap_config;
+
 	QMenu *edit_menu;
 	
 	EditorPlayPosition *play_position;
@@ -110,6 +121,9 @@ public slots:
 	
 	void update_play_position();
 	void update_vus();
+	
+	void h_qscrollbar_range_changed(int p_min,int p_max);
+	void h_qscrollbar_changed(int p_val);
 	
 public:
 

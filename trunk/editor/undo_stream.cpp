@@ -59,6 +59,7 @@ void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 	/* Shall we create a new group, or use the previous one? */
 	if (p_can_collapse_to_previous && !undo_stream.empty() && undo_stream.back().name==p_name && (GetTime::get_time_msec()-undo_stream.back().timestamp)<collapse_max_time_window) {
 		/* can collapse it to previous one! */
+		printf("collapsing %lls\n",p_name.c_str());
 		
 	} else {
 	

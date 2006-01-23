@@ -20,9 +20,12 @@
 #include "pixmaps/rowcount_font_subbeat.xpm"
 #include "pixmaps/pattern_bg.xpm"
 #include "pixmaps/automation_bg.xpm"
+#include "pixmaps/pattern_bg_shared.xpm"
+#include "pixmaps/automation_bg_shared.xpm"
 #include "pixmaps/automation_bg_sel.xpm"
 #include "pixmaps/pattern_bg_sel.xpm"
 #include "pixmaps/pattern_cursor.xpm"
+#include "pixmaps/automation_cursor.xpm"
 #include "pixmaps/track_options.xpm"
 #include "pixmaps/knob_base.xpm"
 #include "pixmaps/knob_handle.xpm"
@@ -83,6 +86,8 @@
 #include "pixmaps/track_variables_swing.xpm"
 
 #include "pixmaps/track_top_bg.xpm"
+
+#include "pixmaps/linked_block.xpm"
 
 #include "pixmaps/default_skin/top__bpm_bottom.xpm"
 #include "pixmaps/default_skin/top__bpm_display.xpm"
@@ -167,10 +172,94 @@
 #include "pixmaps/default_skin/global_toolbar__zoom_fg.xpm"
 #include "pixmaps/default_skin/global_toolbar__zoom_grabber.xpm"
 #include "pixmaps/default_skin/global_toolbar__zoom_icon.xpm"
+#include "pixmaps/default_skin/global_toolbar__bottom_right_pixmap.xpm"
+#include "pixmaps/default_skin/edit_toolbar__automation_mode_envelope_active.xpm"
+#include "pixmaps/default_skin/edit_toolbar__automation_mode_envelope.xpm"
+#include "pixmaps/default_skin/edit_toolbar__automation_mode_stream_active.xpm"
+#include "pixmaps/default_skin/edit_toolbar__automation_mode_stream.xpm"
+#include "pixmaps/default_skin/edit_toolbar__begin.xpm"
+#include "pixmaps/default_skin/edit_toolbar__cursor_follows_playback_pushed.xpm"
+#include "pixmaps/default_skin/edit_toolbar__cursor_follows_playback.xpm"
+#include "pixmaps/default_skin/edit_toolbar__cursor_stepping_dropdown.xpm"
+#include "pixmaps/default_skin/edit_toolbar__cursor_stepping_dropdown_top.xpm"
+#include "pixmaps/default_skin/edit_toolbar__cursor_stepping_dropdown_bottom.xpm"
+#include "pixmaps/default_skin/edit_toolbar__cursor_stepping_icon.xpm"
+#include "pixmaps/default_skin/edit_toolbar__edit_menu.xpm"
+#include "pixmaps/default_skin/edit_toolbar__edit_menu_top.xpm"
+#include "pixmaps/default_skin/edit_toolbar__edit_menu_bottom.xpm"
+#include "pixmaps/default_skin/edit_toolbar__end.xpm"
+#include "pixmaps/default_skin/edit_toolbar__midi_in_config_pushed.xpm"
+#include "pixmaps/default_skin/edit_toolbar__midi_in_config.xpm"
+#include "pixmaps/default_skin/edit_toolbar__play_current_block_pushed.xpm"
+#include "pixmaps/default_skin/edit_toolbar__play_current_block.xpm"
+#include "pixmaps/default_skin/edit_toolbar__play_from_cursor_pushed.xpm"
+#include "pixmaps/default_skin/edit_toolbar__play_from_cursor.xpm"
+#include "pixmaps/default_skin/edit_toolbar__snap_dropdown.xpm"
+#include "pixmaps/default_skin/edit_toolbar__snap_dropdown_top.xpm"
+#include "pixmaps/default_skin/edit_toolbar__snap_dropdown_bottom.xpm"
+#include "pixmaps/default_skin/edit_toolbar__spacer.xpm"
+#include "pixmaps/default_skin/edit_toolbar__separator.xpm"
+#include "pixmaps/default_skin/scrollbar_arrow_down_pushed.xpm"
+#include "pixmaps/default_skin/scrollbar_arrow_down.xpm"
+#include "pixmaps/default_skin/scrollbar_arrow_left_pushed.xpm"
+#include "pixmaps/default_skin/scrollbar_arrow_left.xpm"
+#include "pixmaps/default_skin/scrollbar_arrow_right_pushed.xpm"
+#include "pixmaps/default_skin/scrollbar_arrow_right.xpm"
+#include "pixmaps/default_skin/scrollbar_arrow_up_pushed.xpm"
+#include "pixmaps/default_skin/scrollbar_arrow_up.xpm"
+#include "pixmaps/default_skin/scrollbar_grabber.xpm"
+#include "pixmaps/default_skin/scrollbar_h_bg.xpm"
+#include "pixmaps/default_skin/scrollbar_v_bg.xpm"
+
+#include "pixmaps/default_skin/middle__separator_begin.xpm"
+#include "pixmaps/default_skin/middle__separator_center.xpm"
+#include "pixmaps/default_skin/middle__separator_end.xpm"
+
+
+#include "pixmaps/default_skin/rack_plugin_top__begin.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__end.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__info_pushed.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__info.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__move_left_pushed.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__move_left.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__move_right_pushed.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__move_right.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__preset_name.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__preset_pushed.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__preset.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__remove_pushed.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__remove.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__separator.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__skip_active.xpm"
+#include "pixmaps/default_skin/rack_plugin_top__skip.xpm"
+
+#include "pixmaps/default_skin/rack_toolbar__add_plugin_pushed.xpm"
+#include "pixmaps/default_skin/rack_toolbar__add_plugin.xpm"
+#include "pixmaps/default_skin/rack_toolbar__begin.xpm"
+#include "pixmaps/default_skin/rack_toolbar__end.xpm"
+#include "pixmaps/default_skin/rack_toolbar__preset_file_pushed.xpm"
+#include "pixmaps/default_skin/rack_toolbar__preset_file.xpm"
+#include "pixmaps/default_skin/rack_toolbar__preset_icon.xpm"
+#include "pixmaps/default_skin/rack_toolbar__preset_label_bottom.xpm"
+#include "pixmaps/default_skin/rack_toolbar__preset_label_top.xpm"
+#include "pixmaps/default_skin/rack_toolbar__preset_label.xpm"
+#include "pixmaps/default_skin/rack_toolbar__separator.xpm"
+#include "pixmaps/default_skin/rack_toolbar__show_back_active.xpm"
+#include "pixmaps/default_skin/rack_toolbar__show_back.xpm"
+#include "pixmaps/default_skin/rack_toolbar__show_front_active.xpm"
+#include "pixmaps/default_skin/rack_toolbar__show_front.xpm"
+#include "pixmaps/default_skin/rack_toolbar__spacer.xpm"
+#include "pixmaps/default_skin/rack_toolbar__track_dropdown_bottom.xpm"
+#include "pixmaps/default_skin/rack_toolbar__track_dropdown_top.xpm"
+#include "pixmaps/default_skin/rack_toolbar__track_dropdown.xpm"
+#include "pixmaps/default_skin/rack_panel__jack_in.xpm"
+#include "pixmaps/default_skin/rack_panel__jack_out.xpm"
+#include "pixmaps/default_skin/rack_panel__jack_forbidden.xpm"
 
 #include <iostream>
 
 #include "error_macros.h"
+
 namespace ReShaked {
 
 VisualSettings * VisualSettings::singleton=NULL;
@@ -255,6 +344,17 @@ QPixmap VisualSettings::get_pixmap(PixmapList p_pixmap) {
 	
 }
 
+int VisualSettings::get_constant(ConstantList p_constant) {
+	
+	ConstantMap::iterator I=constant_map.find(p_constant);
+
+	ERR_FAIL_COND_V( I==constant_map.end() ,-1 );
+
+	return I->second;
+	
+	
+}
+
 QPixmap VisualSettings::get_pattern_cursor_pixmap() {
 
 	return pattern_cursor;
@@ -269,34 +369,46 @@ VisualSettings::VisualSettings() {
 
 	singleton=this;    
 
-	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN]=new SkinBox((const char**)pattern_glob_bg_xpm,6,6,6,6,true);
-	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION]=new SkinBox((const char**)automation_glob_bg_xpm,6,6,6,6,true);
-	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]=new SkinBox((const char**)pattern_glob_bg_sel_xpm,6,6,6,6,true);
-	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_glob_bg_sel_xpm,6,6,6,6,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN]=new SkinBox((const char**)pattern_glob_bg_xpm,7,7,7,7,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION]=new SkinBox((const char**)automation_glob_bg_xpm,7,7,7,7,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]=new SkinBox((const char**)pattern_glob_bg_sel_xpm,7,7,7,7,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_glob_bg_sel_xpm,7,7,7,7,true);
 	skin_box_map[SKINBOX_EDITING_PATTERN]=new SkinBox((const char**)pattern_bg_xpm,8,8,8,8);
-	skin_box_map[SKINBOX_EDITING_PATTERN_SELECTED]=new SkinBox((const char**)pattern_bg_sel_xpm,4,4,4,4);
-	skin_box_map[SKINBOX_EDITING_AUTOMATION]=new SkinBox((const char**)automation_bg_xpm,4,4,4,4);
-	skin_box_map[SKINBOX_EDITING_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_bg_sel_xpm,4,4,4,4);
-	skin_box_map[SKINBOX_EDITING_RESIZABLE_CURSOR]=new SkinBox((const char**)pattern_cursor_xpm,3,3,3,3,true); 
+	skin_box_map[SKINBOX_EDITING_PATTERN_SELECTED]=new SkinBox((const char**)pattern_bg_sel_xpm,8,8,8,8);
+	skin_box_map[SKINBOX_EDITING_AUTOMATION]=new SkinBox((const char**)automation_bg_xpm,8,8,8,8);
+	
+	skin_box_map[SKINBOX_EDITING_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_bg_sel_xpm,8,8,8,8);
+	skin_box_map[SKINBOX_EDITING_PATTERN_SHARED]=new SkinBox((const char**)pattern_bg_shared_xpm,8,8,8,8);
+	skin_box_map[SKINBOX_EDITING_AUTOMATION_SHARED]=new SkinBox((const char**)automation_bg_shared_xpm,8,8,8,8);
+	
+	skin_box_map[SKINBOX_EDITING_RESIZABLE_CURSOR]=new SkinBox((const char**)automation_cursor_xpm,5,5,5,5,true); 
 	skin_box_map[SKINBOX_RACK_NORMAL]=new SkinBox((const char**)connection_panel_bg_xpm,26,31,20,33,true);
 	skin_box_map[SKINBOX_RACK_SYSTEM]=new SkinBox((const char**)connection_panel_system_xpm,26,31,20,33,true);
 	
 	skin_box_map[SKINBOX_TRACK_TOP_BG]=new SkinBox((const char**)track_top_bg_xpm,6,6,6,6,true);
 	
+	skin_box_map[SKINBOX_THEME_SCROLLBAR_GRABBER]=new SkinBox((const char**)scrollbar_grabber_xpm,4,4,4,4,true);
+	skin_box_map[SKINBOX_THEME_SCROLLBAR_H_BG]=new SkinBox((const char**)scrollbar_h_bg_xpm,6,6,6,6,true);
+	skin_box_map[SKINBOX_THEME_SCROLLBAR_V_BG]=new SkinBox((const char**)scrollbar_v_bg_xpm,6,6,6,6,true);
+	
+	skin_box_map[SKINBOX_LINKED_BLOCK]=new SkinBox((const char**)linked_block_xpm,1,7,1,7);
+	skin_box_map[SKINBOX_LINKED_BLOCK]->set_no_center_hint(true);
+	
+	
 	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0,33,0);
 	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(255,190,170);
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
-	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,255,200,128);
-	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(150,200,150,64);
+	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,233,255,128);
+	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(150,170,200,64);
 	color_map[COLORLIST_AUTOMATION_ENVELOPE]=QColor(255,255,200,200);
-	color_map[COLORLIST_GLOBAL_VIEW_BAR_LINE]=QColor(150,200,150);
-	color_map[COLORLIST_GLOBAL_VIEW_BEAT_LINE]=QColor(50,80,60);
-	color_map[COLORLIST_PATTERN_EDIT_BAR]=QColor(222,255,242,40);
+	color_map[COLORLIST_GLOBAL_VIEW_BAR_LINE]=QColor(80,120,140);
+	color_map[COLORLIST_GLOBAL_VIEW_BEAT_LINE]=QColor(50,60,80);
+	color_map[COLORLIST_PATTERN_EDIT_BAR]=QColor(222,242,255,40);
 	color_map[COLORLIST_EDITOR_SELECTION_AUTOMATION]=QColor(0x75,0x7f,0x09);
-	color_map[COLORLIST_EDITOR_SELECTION_PATTERN]=QColor(0x28,0x7c,0x46);
+	color_map[COLORLIST_EDITOR_SELECTION_PATTERN]=QColor(0x28,0x56,0x7c);
 	color_map[COLORLIST_RACK_CABLE]=QColor(0x97,0xd5,0x2b);
 	color_map[COLORLIST_RACK_CABLE_DARK]=QColor(0x2b,0x8f,0x1a);
-
+	color_map[COLORLIST_TRACK_TITLE]=QColor(200,233,255);
 	
 	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);
 	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);
@@ -431,11 +543,102 @@ VisualSettings::VisualSettings() {
 	pixmap_map[THEME_GLOBAL_TOOLBAR__ZOOM_FG]=QPixmap((const char**)global_toolbar__zoom_fg_xpm);
 	pixmap_map[THEME_GLOBAL_TOOLBAR__ZOOM_GRABBER]=QPixmap((const char**)global_toolbar__zoom_grabber_xpm);
 	pixmap_map[THEME_GLOBAL_TOOLBAR__ZOOM_ICON]=QPixmap((const char**)global_toolbar__zoom_icon_xpm);
+	pixmap_map[THEME_GLOBAL_TOOLBAR__BOTTOM_RIGHT_PIXMAP]=QPixmap((const char**)global_toolbar__bottom_right_pixmap_xpm);
+	
+	pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE_ACTIVE]=QPixmap((const char**)edit_toolbar__automation_mode_envelope_active_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE]=QPixmap((const char**)edit_toolbar__automation_mode_envelope_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_STREAM_ACTIVE]=QPixmap((const char**)edit_toolbar__automation_mode_stream_active_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_STREAM]=QPixmap((const char**)edit_toolbar__automation_mode_stream_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__BEGIN]=QPixmap((const char**)edit_toolbar__begin_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__CURSOR_FOLLOWS_PLAYBACK_PUSHED]=QPixmap((const char**)edit_toolbar__cursor_follows_playback_pushed_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__CURSOR_FOLLOWS_PLAYBACK]=QPixmap((const char**)edit_toolbar__cursor_follows_playback_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN]=QPixmap((const char**)edit_toolbar__cursor_stepping_dropdown_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN_TOP]=QPixmap((const char**)edit_toolbar__cursor_stepping_dropdown_top_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN_BOTTOM]=QPixmap((const char**)edit_toolbar__cursor_stepping_dropdown_bottom_xpm);	
+	pixmap_map[THEME_EDIT_TOOLBAR__CURSOR_STEPPING_ICON]=QPixmap((const char**)edit_toolbar__cursor_stepping_icon_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__EDIT_MENU]=QPixmap((const char**)edit_toolbar__edit_menu_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__EDIT_MENU_TOP]=QPixmap((const char**)edit_toolbar__edit_menu_top_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__EDIT_MENU_BOTTOM]=QPixmap((const char**)edit_toolbar__edit_menu_bottom_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__END]=QPixmap((const char**)edit_toolbar__end_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG_PUSHED]=QPixmap((const char**)edit_toolbar__midi_in_config_pushed_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG]=QPixmap((const char**)edit_toolbar__midi_in_config_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__PLAY_CURRENT_BLOCK_PUSHED]=QPixmap((const char**)edit_toolbar__play_current_block_pushed_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__PLAY_CURRENT_BLOCK]=QPixmap((const char**)edit_toolbar__play_current_block_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__PLAY_FROM_CURSOR_PUSHED]=QPixmap((const char**)edit_toolbar__play_from_cursor_pushed_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__PLAY_FROM_CURSOR]=QPixmap((const char**)edit_toolbar__play_from_cursor_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__SNAP_DROPDOWN]=QPixmap((const char**)edit_toolbar__snap_dropdown_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__SNAP_DROPDOWN_TOP]=QPixmap((const char**)edit_toolbar__snap_dropdown_top_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__SNAP_DROPDOWN_BOTTOM]=QPixmap((const char**)edit_toolbar__snap_dropdown_bottom_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__SPACER]=QPixmap((const char**)edit_toolbar__spacer_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__SEPARATOR]=QPixmap((const char**)edit_toolbar__separator_xpm);
+	
+	pixmap_map[THEME_MIDDLE__SEPARATOR_BEGIN]=QPixmap((const char**)middle__separator_begin_xpm);
+	pixmap_map[THEME_MIDDLE__SEPARATOR_CENTER]=QPixmap((const char**)middle__separator_center_xpm);
+	pixmap_map[THEME_MIDDLE__SEPARATOR_END]=QPixmap((const char**)middle__separator_end_xpm);
+	
+	
+	pixmap_map[THEME_RACK_TOOLBAR__ADD_PLUGIN_PUSHED]=QPixmap((const char**)rack_toolbar__add_plugin_pushed_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__ADD_PLUGIN]=QPixmap((const char**)rack_toolbar__add_plugin_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__BEGIN]=QPixmap((const char**)rack_toolbar__begin_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__END]=QPixmap((const char**)rack_toolbar__end_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__PRESET_FILE_PUSHED]=QPixmap((const char**)rack_toolbar__preset_file_pushed_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__PRESET_FILE]=QPixmap((const char**)rack_toolbar__preset_file_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__PRESET_ICON]=QPixmap((const char**)rack_toolbar__preset_icon_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__PRESET_LABEL_BOTTOM]=QPixmap((const char**)rack_toolbar__preset_label_bottom_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__PRESET_LABEL_TOP]=QPixmap((const char**)rack_toolbar__preset_label_top_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__PRESET_LABEL]=QPixmap((const char**)rack_toolbar__preset_label_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__SEPARATOR]=QPixmap((const char**)rack_toolbar__separator_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__SHOW_BACK_ACTIVE]=QPixmap((const char**)rack_toolbar__show_back_active_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__SHOW_BACK]=QPixmap((const char**)rack_toolbar__show_back_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__SHOW_FRONT_ACTIVE]=QPixmap((const char**)rack_toolbar__show_front_active_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__SHOW_FRONT]=QPixmap((const char**)rack_toolbar__show_front_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__SPACER]=QPixmap((const char**)rack_toolbar__spacer_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__TRACK_DROPDOWN_BOTTOM]=QPixmap((const char**)rack_toolbar__track_dropdown_bottom_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__TRACK_DROPDOWN_TOP]=QPixmap((const char**)rack_toolbar__track_dropdown_top_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__TRACK_DROPDOWN]=QPixmap((const char**)rack_toolbar__track_dropdown_xpm);
+	
+	pixmap_map[THEME_RACK_PANEL__JACK_IN]=QPixmap((const char**)rack_panel__jack_in_xpm);
+	pixmap_map[THEME_RACK_PANEL__JACK_OUT]=QPixmap((const char**)rack_panel__jack_out_xpm);
+	pixmap_map[THEME_RACK_PANEL__JACK_FORBIDDEN]=QPixmap((const char**)rack_panel__jack_forbidden_xpm);
+
+	
+	pixmap_map[THEME_RACK_PLUGIN_TOP__BEGIN]=QPixmap((const char**)rack_plugin_top__begin_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__END]=QPixmap((const char**)rack_plugin_top__end_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__INFO_PUSHED]=QPixmap((const char**)rack_plugin_top__info_pushed_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__INFO]=QPixmap((const char**)rack_plugin_top__info_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__MOVE_LEFT_PUSHED]=QPixmap((const char**)rack_plugin_top__move_left_pushed_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__MOVE_LEFT]=QPixmap((const char**)rack_plugin_top__move_left_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__MOVE_RIGHT_PUSHED]=QPixmap((const char**)rack_plugin_top__move_right_pushed_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__MOVE_RIGHT]=QPixmap((const char**)rack_plugin_top__move_right_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__PRESET_NAME]=QPixmap((const char**)rack_plugin_top__preset_name_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__PRESET_PUSHED]=QPixmap((const char**)rack_plugin_top__preset_pushed_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__PRESET]=QPixmap((const char**)rack_plugin_top__preset_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__REMOVE_PUSHED]=QPixmap((const char**)rack_plugin_top__remove_pushed_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__REMOVE]=QPixmap((const char**)rack_plugin_top__remove_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__SEPARATOR]=QPixmap((const char**)rack_plugin_top__separator_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__SKIP_ACTIVE]=QPixmap((const char**)rack_plugin_top__skip_active_xpm);
+	pixmap_map[THEME_RACK_PLUGIN_TOP__SKIP]=QPixmap((const char**)rack_plugin_top__skip_xpm);
+	
+	
+	pixmap_map[THEME_SCROLLBAR_ARROW_DOWN_PUSHED]=QPixmap((const char**)scrollbar_arrow_down_pushed_xpm);
+	pixmap_map[THEME_SCROLLBAR_ARROW_DOWN]=QPixmap((const char**)scrollbar_arrow_down_xpm);
+	pixmap_map[THEME_SCROLLBAR_ARROW_LEFT_PUSHED]=QPixmap((const char**)scrollbar_arrow_left_pushed_xpm);
+	pixmap_map[THEME_SCROLLBAR_ARROW_LEFT]=QPixmap((const char**)scrollbar_arrow_left_xpm);
+	pixmap_map[THEME_SCROLLBAR_ARROW_RIGHT_PUSHED]=QPixmap((const char**)scrollbar_arrow_right_pushed_xpm);
+	pixmap_map[THEME_SCROLLBAR_ARROW_RIGHT]=QPixmap((const char**)scrollbar_arrow_right_xpm);
+	pixmap_map[THEME_SCROLLBAR_ARROW_UP_PUSHED]=QPixmap((const char**)scrollbar_arrow_up_pushed_xpm);
+	pixmap_map[THEME_SCROLLBAR_ARROW_UP]=QPixmap((const char**)scrollbar_arrow_up_xpm);
+	
+	
+	
 	
 	pixmap_map[ICON_EDIT_VIEW_ROW_PLAYED]=QPixmap((const char**)row_icon_play_xpm);
 	pixmap_map[ICON_EDIT_VIEW_ROW_LOOP_BEGIN]=QPixmap((const char**)row_icon_loop_begin_xpm);
 	pixmap_map[ICON_EDIT_VIEW_ROW_LOOP_END]=QPixmap((const char**)row_icon_loop_end_xpm);
 	
+	
+	constant_map[CONSTANT_EDIT_TOOLBAR_FONT_HEIGHT]=10;
+	constant_map[CONSTANT_RACK_MINIMUM_HEIGHT]=176;
 	
 	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#0123456789-*");
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#0123456789-*"); 

@@ -26,6 +26,7 @@ class SoundPlugin; /* for creation func */
 
 struct SoundPluginInfo {
 
+	
 	String caption; ///< Caption of the Plugin
 	String description; ///< Short description of the plugin
 	String long_description; ///< Long description of the plugin
@@ -45,8 +46,9 @@ class SoundPlugin : public AudioNode {
 	
 	int _channels_created;
 	const SoundPluginInfo *_plugin_info;
-	
-	String get_caption();
+	bool _skip_processing;
+	int _duplicate;
+
 	const EventBuffer *_event_buffer;
 
 protected:	
@@ -70,12 +72,20 @@ public:
 	/* Setting up */
 	virtual void set_mixing_rate(float p_mixing_rate)=0;
 	
+	/* tell it to skip processing */
+	void set_skip_processing(bool p_skip);
+	bool skips_processing();
+	
+	
 	/* Internal UI Methods, only for plugins with internal UI */
 	virtual void show_internal_UI();
 	virtual void hide_internal_UI();
 	
 	/* Golobal Info */	
 	const SoundPluginInfo* get_info();
+	String get_caption();	
+	int get_duplicate();
+	void set_duplicate(int p_duplicate);
 	int get_channels_created();
 	
 	/**

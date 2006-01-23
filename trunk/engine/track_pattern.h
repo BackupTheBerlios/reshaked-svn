@@ -106,6 +106,9 @@ public:
 		
 	public:
 		
+		bool shared_with(Block *p_block);
+		bool copy_shared();
+		
 		bool get_notes_in_local_range(Tick p_from, Tick p_to, int *p_note_from,int *p_note_to);
 		
 		int get_note_count();
@@ -160,6 +163,7 @@ private:
 	void track_pre_process(int p_frames);
 	
 	void reset_last_notes();
+	bool can_use_synths();
 public:
 
 	Property &swing();

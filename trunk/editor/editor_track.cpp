@@ -15,6 +15,28 @@
 
 namespace ReShaked {
 
+
+void Editor::track_move_plugin_left(Track *p_track,int p_plugin) {
+	
+	if (p_plugin==0)
+		return;
+	d->undo_stream.begin("Move Plugin Left",true);
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_move_left,p_track,p_plugin));
+	d->undo_stream.end();
+	
+}
+void Editor::track_move_plugin_right(Track *p_track,int p_plugin) {
+	
+	if ((p_plugin+1)>=p_track->get_plugin_count())
+		return;
+	d->undo_stream.begin("Move Plugin Right",true);
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_move_right,p_track,p_plugin));
+	d->undo_stream.end();
+	
+	
+}
+
+
 void Editor::add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin) {
 	
 	
@@ -205,6 +227,15 @@ void Editor::property_changed(Property * p_property,double p_old_value,Track *p_
 		d->undo_stream.end();
 		
 	}
+}
+
+void Editor::set_plugin_skips_processing(SoundPlugin *p_plugin, bool p_skips) {
+	
+	d->undo_stream.begin(p_skips?(p_plugin->get_info()->caption+" Skips Processing"):(p_plugin->get_info()->caption+" Resumes Processing"));
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::plugin_set_skip,p_plugin,p_skips));
+	d->undo_stream.end();
+	
+	
 }
 
 } //end of namespace

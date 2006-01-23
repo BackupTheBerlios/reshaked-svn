@@ -192,6 +192,15 @@ Automation::AutomationBlock::AutomationBlock(AutomationData *p_data) {
 	
 }
 
+bool Automation::AutomationBlock::shared_with(Block *p_block) {
+	
+	AutomationBlock *ab = dynamic_cast<AutomationBlock*>(p_block);
+	if (!ab)
+		return false;
+	return ab->data==data;
+}
+
+
 void Automation::apply(Tick p_pos) {
 	
 	float val=get_tick_val( p_pos );

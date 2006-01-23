@@ -63,8 +63,16 @@ friend class Editor;
 	CommandFunc* track_plugin_add(bool p_no_undo,Track *p_track,Track::PluginInsertData p_data);
 	CommandFunc* track_plugin_remove(bool p_no_undo,Track *p_track,int p_which);
 	
+	CommandFunc* track_plugin_move_left(bool p_no_undo,Track *p_track,int p_which);
+	CommandFunc* track_plugin_move_right(bool p_no_undo,Track *p_track,int p_which);
+	
+	CommandFunc* plugin_set_skip(bool p_no_undo,SoundPlugin *p_plugin,bool p_skip);
+	
 	CommandFunc* automation_initial_value_changed(bool p_no_undo,Automation *p_auto,double p_to_val);
 	CommandFunc* property_value_changed(bool p_no_undo,Property *p_property,double p_old_val,double p_to_val);
+
+	CommandFunc* bar_length_add(bool p_no_undo,int p_at_beat,int p_len);
+	CommandFunc* bar_length_remove(bool p_no_undo,int p_at_beat);
 
 	
 };

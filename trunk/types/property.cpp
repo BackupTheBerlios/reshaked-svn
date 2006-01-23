@@ -193,24 +193,24 @@ void PropertyEditor::set(double p_val) {
 	double old_val=property->get();
 	property->set(p_val);
 	last_value=property->get();
-	if (group && !group->locked) {
-		
-		group->locked=true;
-		for (int i=0;i<group->other_editors.size();i++) {
-			if (group->other_editors[i]==this)
-				continue;
-			group->other_editors[i]->check_if_changed();
-		}
-		group->locked=false;
-		
-	} else if (!group) {
-		
-		if (changed_by_editor)
-			changed_by_editor(changed_by_editor_userdata,this,old_val);
+	
+	if (group && group->locked)
+		return;
+	
+	
+	group->locked=true;
+	for (int i=0;i<group->other_editors.size();i++) {
+		if (group->other_editors[i]==this)
+			continue;
+		group->other_editors[i]->check_if_changed();
 	}
+	group->locked=false;
 	
-	
+	if (changed_by_editor)
+		changed_by_editor(changed_by_editor_userdata,this,old_val);
+		
 }
+
 double PropertyEditor::get() {
 	
 	return property->get();

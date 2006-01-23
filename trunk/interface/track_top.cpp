@@ -19,7 +19,6 @@
 #include <Qt/qinputdialog.h>
 #include "ui_blocks/helpers.h"
 #include "interface/indexed_action.h"
-#include "interface/sound_plugin_chooser.h"
 
 #include "engine/sound_plugin_list.h"
 
@@ -37,23 +36,23 @@ void TrackTop::paintEvent(QPaintEvent *e) {
 		return;
 	
 	QFont f;
-	f.setPixelSize(width()-4);
+	f.setPixelSize(height()*2/3);
 	f.setBold(true);
 	p.setFont(f);
 	QFontMetrics m(p.font());
 
-	int ofs=px.height()+4;
+	int ofs=px.width()+2;
 	
 	QString name=QStrify(track->get_name());
 	
-	if ( (ofs+m.boundingRect(name).width())>height()) { //doesnt fit!
+	if ( (ofs+m.boundingRect(name).width())>width()) { //doesnt fit!
 		
 		int eat=1;
 		do {
 			
 			QString str=name.left( name.length() - eat )+"..";
 			
-			if ( (ofs+m.boundingRect(str).width()) < height() ) {
+			if ( (ofs+m.boundingRect(str).width()) < width() ) {
 				
 				name=str;
 				break;
@@ -65,14 +64,9 @@ void TrackTop::paintEvent(QPaintEvent *e) {
 		} while (eat<name.length());
 	}
 		
-	p.rotate(90);
-	p.setPen(QColor(200,255,200));	
-	p.drawText(px.height()+4,-(width()-m.ascent()),name);
-
 	
-	/*
-	p.setPen(QColor(200,255,200));
-	p.drawText(px.width()+2,m.ascent(),name);*/
+	p.setPen(GET_QCOLOR(COLORLIST_TRACK_TITLE));
+	p.drawText(px.width()+2,height()-m.descent(),name);
 	
 	
 }
@@ -80,10 +74,10 @@ void TrackTop::paintEvent(QPaintEvent *e) {
 void TrackTop::mousePressEvent(QMouseEvent *e) {
 	
 	QPixmap px = VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS );
-	if (e->y()<px.height()) {
+	if (e->x()<px.width()) {
 		
 		automation_menu->rebuild();
-		menu->popup(mapToGlobal( QPoint(0,px.height()) ) );
+		menu->popup(mapToGlobal( QPoint(0,height()) ) );
 	} else
 		rename();
 }
@@ -137,31 +131,6 @@ void TrackTop::action_slot(QAction *p_action) {
 			
 		} break;
 		
-		case ACTION_EFFECTS: {
-		
-			SoundPluginChooser *plugin_chooser = new SoundPluginChooser(this,can_synths);
-			plugin_chooser->exec();
-			int plugin_idx=plugin_chooser->get_selected_plugin_idx();
-			delete plugin_chooser;
-			if (plugin_chooser->get_selected_plugin_idx()<0)
-				break; //nothing selected
-			int custom_channels=-1;
-			if (SoundPluginList::get_singleton()->get_plugin_info(plugin_idx)->can_custom_channels) {
-				int default_channels=track->get_channels();
-
-				bool ok;
-				int channels=QInputDialog::getInteger ( this, "Channels Instanced", "Channels to Instance?", default_channels, 1, 8, 1, &ok);
-				if (!ok)
-					break;
-				
-				custom_channels=channels;
-				
-			}
-			     
-			SoundPlugin *plugin = SoundPluginList::get_singleton()->instance_plugin(plugin_idx,custom_channels);
-			editor->add_plugin_to_track(track,plugin);
-					
-		} break;
 			
 		case ACTION_RENAME: {
 			
@@ -200,8 +169,8 @@ void TrackTop::automation_remove_slot(int p_prop_idx) {
 TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p_type) :QWidget(p_parent) {
 	track=p_track;
 	editor=p_editor;
-	int wwidth=VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS ).width();
-	setFixedWidth(wwidth);
+	int fheight=VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS ).height();
+	setFixedHeight(fheight);
 	setBackgroundRole(QPalette::NoRole);
 	
 	menu =new QMenu("Track Options",this);
@@ -218,8 +187,6 @@ TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p
 	amenu->setIcon(GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS));
 	
 	if (p_type!=TYPE_GLOBAL) {
-		menu->addAction(new IndexedAction(ACTION_EFFECTS,"Add Effect/Synth",GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_EFFECTS),this));
-	
 	
 	
 		menu->addSeparator();

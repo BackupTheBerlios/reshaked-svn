@@ -30,7 +30,7 @@ namespace ReShaked {
 @author Juan Linietsky
 */
 
-class Track : public AudioNode , public BlockList, public ProxyNodeBase {
+class Track : public AudioNode , public BlockList, public ProxyNodeBase, public AudioGraph::VisualNodeOrder {
 public:
 
 	class TrackAutomation : public Automation {
@@ -106,6 +106,7 @@ private:
 	void feed_input(int p_frames);
 	void read_output(int p_frames);
 	
+	void validate_plugin_duplicate(SoundPlugin *p_plugin);
 protected:
 
 	
@@ -122,7 +123,9 @@ protected:
 	virtual bool is_visible();
 	virtual void plugin_added_notify(SoundPlugin *p_plugin);
 	virtual void track_pre_process(int p_frames);
+	
 	void rebuild_active_automation_cache();	
+	AudioNode *get_node_at_visual_pos(int p_pos);	
 	
 public:
 	
@@ -136,6 +139,8 @@ public:
 	void add_plugin(PluginInsertData* p_plugin);
 	void remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery);
 	void update_plugins_mix_rate();
+	void move_plugin_left(int p_index);
+	void move_plugin_right(int p_index);
 	/* Sequencer Event Handling */
 	void set_sequencer_event_buffer(const EventBuffer *p_seq);
 
@@ -160,6 +165,7 @@ public:
 	void reset_automations();
 	float read_highest_energy();
 	
+	virtual bool can_use_synths()=0;
 	
 	Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback);
 	~Track();

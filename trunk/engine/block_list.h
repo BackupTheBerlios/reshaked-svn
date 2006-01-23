@@ -30,10 +30,13 @@ public:
 	class Block {
 
 		public:
+			
+		virtual bool shared_with(Block *p_block)=0;
 
 		virtual Tick get_length()=0;
 		virtual void set_length(Tick p_length)=0;
 		virtual bool is_shared()=0;
+	
 		virtual ~Block() {}
 	};
 

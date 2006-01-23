@@ -37,6 +37,9 @@ public:
 	};
 		
 private:		
+	
+	Editor *editor;
+friend class MainWindow;	
 	PixmapButton *song_view;
 	PixmapButton *edit_view;
 	PixmapButton *mix_view;
@@ -64,8 +67,6 @@ private:
 	
 	PixmapButton *icon_menu_settings;
 	PixmapButton *icon_menu_help;
-	
-	Editor *editor;
 	
 	QMenu * file_menu;
 	QMenu * add_menu;
