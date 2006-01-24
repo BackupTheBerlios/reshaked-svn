@@ -13,6 +13,8 @@
 #include "interface/sound_plugin_ui_list.h"
 #include "ui_blocks/visual_settings.h"
 #include <Qt/qmessagebox.h>
+#include <Qt/qmenu.h>
+#include <Qt/qcursor.h>
 
 namespace ReShaked {
 
@@ -139,6 +141,45 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 }
 
 
+void SoundPluginRack::property_options_requested(Property *p_property) {
+	
+	if (!track)
+		return;
+	
+	int prop_idx=-1;
+	for (int i=0;i<track->get_property_count();i++) {
+		
+		if (track->get_property(i)==p_property) {
+			
+			prop_idx=i;
+			break;
+		}
+	}
+	
+	if (prop_idx==-1)
+		return;
+	
+	bool is_automated=track->has_property_visible_automation(prop_idx);
+	
+	QList<QAction*> ac_list;
+	QAction *op_auto = new QAction(GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS),is_automated?"Hide Automation":"Show Automation",this);
+	ac_list.push_back(op_auto);
+	QAction *res = QMenu::exec(ac_list,QCursor::pos());
+	
+	if (res==op_auto) {
+		
+		if (is_automated)
+			editor->hide_automation( prop_idx, track );
+		else
+			editor->show_automation( prop_idx, track );
+	}
+	
+	foreach(I,ac_list) {
+		delete *I;
+	}
+	
+}
+
 void SoundPluginRack::property_edited_slot(Property *p_prop,double p_old_val) {
 	
 	editor->property_changed( p_prop,p_old_val,track );
@@ -198,6 +239,7 @@ void SoundPluginRack::update_rack() {
 		rack_elements.push_back(e);
 		QObject::connect(ui,SIGNAL(property_edited_signal( Property*, double )),this,SLOT(property_edited_slot( Property*, double )));
 		QObject::connect(e.top,SIGNAL(action_signal( int,int )),this,SLOT(plugin_action_signal( int,int )),Qt::QueuedConnection);
+		QObject::connect(ui,SIGNAL(property_options_requested( Property* )),this,SLOT(property_options_requested( Property* )));
 		
 		
 		

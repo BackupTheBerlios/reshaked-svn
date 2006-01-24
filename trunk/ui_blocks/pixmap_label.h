@@ -44,6 +44,7 @@ private:
 	
 	bool centered;
 	virtual void click_override();
+protected:	
 	void mousePressEvent(QMouseEvent *e);
 signals:
 			

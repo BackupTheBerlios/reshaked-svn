@@ -152,6 +152,8 @@ public:
 	void selection_paste_overwrite();
 	void selection_paste_mix();
 	
+	void selection_mouse_drag_begin(int p_blocklist,int p_column,int p_row);
+	void selection_mouse_drag_end(int p_blocklist,int p_column,int p_row);
 
 	
 	/** CURSOR EDITING (editor.cpp) */	

@@ -104,6 +104,8 @@ Q_OBJECT
 	
 public slots:
 	
+	void property_options_requested(Property *p_property);
+	
 	void plugin_action_signal(int,int);
 
 	void rack_height_chanegd_slot(int p_to_height);

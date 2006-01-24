@@ -70,6 +70,14 @@ void PropertyEditLabel::changed() {
 	update();
 }
 
+void PropertyEditLabel::mousePressEvent(QMouseEvent *e) {
+	
+	if (e->button()==Qt::RightButton)
+		external_edit_signal( get_property() );
+	else	
+		PixmapLabel::mousePressEvent(e);
+}
+
 void PropertyEditLabel::click_override() {
 	
 	bool ok;
@@ -109,6 +117,14 @@ void PropertyEditSlider::changed() {
 void PropertyEditSlider::value_changed(float p_new_value) {
 	
 	set( get_property()->get_value_from_coeff( p_new_value) );
+}
+
+void PropertyEditSlider::mousePressEvent(QMouseEvent *e) {
+	
+	if (e->button()==Qt::RightButton)
+		external_edit_signal( get_property() );
+	else	
+		PixmapSlider::mousePressEvent(e);
 }
 
 PropertyEditSlider::PropertyEditSlider(QWidget *p_parent,const Skin& p_skin,Type p_type,int p_margin_beg,int p_margin_end) : PixmapSlider(p_parent,p_skin,p_type,p_margin_beg,p_margin_end) {

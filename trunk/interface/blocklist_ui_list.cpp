@@ -123,6 +123,21 @@ static int get_pos_in_some_parent(QWidget *p_someparent, QWidget *p_widget) {
 	}	
 }
 
+void BlockListUIList::blocklist_ui_under_cursor_request_signal(BlockListUI_Base*p_ui) {
+	
+	for (int i=0;i<block_list_ui_list.size();i++) {
+		
+		QRect global_rect(block_list_ui_list[i]->mapToGlobal(QPoint(0,0)),block_list_ui_list[i]->size());
+		if (!global_rect.contains( QCursor::pos() ))
+			continue;
+		
+		QPoint contained=QCursor::pos()-global_rect.topLeft();
+		p_ui->set_blocklist_ui_under_cursor( block_list_ui_list[i], contained );
+		
+	}
+	
+}
+
 void BlockListUIList::update_vus() {
 	
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
@@ -252,13 +267,13 @@ void BlockListUIList::update_track_list() {
 		track_tops.push_back(top);
 				
 		CHBox *track_hb = new CHBox(track_vb);
-
+		BlockListUI_Base *bui;
 		SWITCH( editor->get_song()->get_track(i)->get_type_name() )
 
 			CASE("pattern") {
 
-				
-				block_list_ui_list.push_back( new BlockListUI_Pattern(track_hb,editor,i) );
+				bui=new BlockListUI_Pattern(track_hb,editor,i);
+				block_list_ui_list.push_back( bui );
 				
 				Track_Pattern *pattern=dynamic_cast<Track_Pattern *>(editor->get_song()->get_track(i));
 				ERR_CONTINUE(pattern==NULL);
@@ -277,6 +292,7 @@ void BlockListUIList::update_track_list() {
 			}
 		END_SWITCH
 
+		QObject::connect( bui, SIGNAL(blocklist_ui_under_cursor_request_signal( BlockListUI_Base* )), this, SLOT(blocklist_ui_under_cursor_request_signal( BlockListUI_Base* ) ));
 		
 				
 		for (int j=0;j<editor->get_song()->get_track(i)->get_visible_automation_count();j++) {

@@ -89,6 +89,8 @@ class BlockListUI_Automation : public BlockListUI_Base {
 	int get_row_size();
 	
 	bool event( QEvent * ev );
+	void get_pos_at_pointer(QPoint p_pointer, int *p_blocklist,int *p_column, int *p_row);
+	
 public:
 	BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, Automation *p_automation);
 	~BlockListUI_Automation();

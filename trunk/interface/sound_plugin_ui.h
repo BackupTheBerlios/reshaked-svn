@@ -36,6 +36,7 @@ protected:
 signals:	
 	
 	void property_edited_signal(Property *p_property,double p_old_value);
+	void property_options_requested(Property *p_property);
 	
 public:
 	void set_property_editor_updater(PropertyEditUpdater *p_property_edit_updater);

@@ -74,6 +74,8 @@ friend class EditorCommands;
 			
 			bool operator==(const Pos& p_pos) { return (blocklist==p_pos.blocklist && column==p_pos.column && tick==p_pos.tick); }
 			bool operator!=(const Pos& p_pos) { return (!(*this==p_pos)); }
+			
+			Pos(int p_blocklist=0,int p_column=0, Tick p_tick=0) { blocklist=p_blocklist; column=p_column; tick=p_tick; }
 		} begin,end;
 		bool enabled;
 
@@ -90,6 +92,9 @@ friend class EditorCommands;
 		bool shift_selecting;
 		ShiftSelectingChanging shift_selecton_change_tick;
 		ShiftSelectingChanging shift_selecton_change_blocklist_column;
+		
+		Pos mouse_drag_begin;
+		Pos mouse_drag_end;
 		
 		SelectionData data;
 		

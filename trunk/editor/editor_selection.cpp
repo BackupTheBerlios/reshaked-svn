@@ -20,6 +20,28 @@ static Track_Pattern::Note _fix_macro(const Track_Pattern::Note &p_note) { retur
 #define SET_NOTE(m_pos,m_note) d->undo_stream.add_command( Command3(&commands,&EditorCommands::set_note,pattern_track,m_pos,_fix_macro(m_note)) )
 
 
+void Editor::selection_mouse_drag_begin(int p_blocklist,int p_column,int p_row) {
+	
+	Tick tick=get_cursor().snap_to_ticks( p_row );
+	d->selection.mouse_drag_begin=EditorData::Selection::Pos(p_blocklist, p_column, tick );
+	d->selection.mouse_drag_end=d->selection.mouse_drag_begin;
+
+	
+}
+void Editor::selection_mouse_drag_end(int p_blocklist,int p_column,int p_row) {
+	
+	Tick tick=get_cursor().snap_to_ticks( p_row );
+	d->selection.mouse_drag_end=EditorData::Selection::Pos(p_blocklist, p_column, tick );
+	
+	d->selection.begin=d->selection.mouse_drag_begin;
+	d->selection.end=d->selection.mouse_drag_end;
+	d->selection.enabled=true;
+	
+	fix_selection();	
+
+}
+
+
 EditorData::Selection::Pos Editor::get_selection_end_from_pos(EditorData::Selection::Pos p_pos) {
 	
 	EditorData::Selection::Pos end_pos=p_pos;

@@ -594,6 +594,14 @@ void BlockListUI_Automation::cancel_motion() {
 	update();
 	
 }
+
+void BlockListUI_Automation::get_pos_at_pointer(QPoint p_pointer, int *p_blocklist,int *p_column, int *p_row) {
+	
+	*p_row=p_pointer.y()/VisualSettings::get_singleton()->get_editing_row_height();
+	*p_blocklist=editor->find_blocklist( automation );
+	*p_column=0;
+}
+
 void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 	
 	if (e->button()==Qt::LeftButton)
@@ -770,7 +778,7 @@ bool BlockListUI_Automation::event( QEvent * ev ) {
 	
 }
 
-BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, Automation *p_automation) : BlockListUI_Base(p_parent) {
+BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, Automation *p_automation) : BlockListUI_Base(p_parent,p_editor) {
 	
 	editor = p_editor;
 	automation=p_automation;

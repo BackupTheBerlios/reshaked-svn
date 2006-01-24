@@ -25,11 +25,16 @@
 class Knob;
 class QLabel;
 
+
 namespace ReShaked {
 
 /**
 	@author red <red@killy>
 */
+				    
+				    
+
+				    
 class PropertyEditKnob : public CVBox {
 
 	Q_OBJECT
@@ -56,6 +61,11 @@ class PropertyEditLabel : public PixmapLabel, public PropertyEditor {
 	virtual void changed();
 	bool postfix;
 	void click_override();
+	void mousePressEvent(QMouseEvent *e);		
+signals:	
+
+	void external_edit_signal(Property *p_property);
+	
 public:
 	void set_postfix_visible(bool p_visible);
 	PropertyEditLabel(QWidget *p_parent,QPixmap p_bg);
@@ -69,6 +79,12 @@ class PropertyEditSlider : public PixmapSlider, public PropertyEditor {
 
 	virtual void changed();
 	virtual void value_changed(float p_new_value);
+	
+	void mousePressEvent(QMouseEvent *e);
+signals:	
+
+	void external_edit_signal(Property *p_property);
+	
 public:
 
 	PropertyEditSlider(QWidget *p_parent,const Skin& p_skin,Type p_type=TYPE_VERTICAL,int p_margin_beg=5,int p_margin_end=5);
@@ -96,7 +112,6 @@ Q_OBJECT
 
 	
 	virtual void changed();
-
 public:
 
 	PropertyEditVU(QWidget *p_parent,const Skin& p_skin,Type p_type=TYPE_VERTICAL,int p_margin_beg=5,int p_margin_end=5);
@@ -118,6 +133,7 @@ public slots:
 	void min_pressed_slot();
 	void up_pressed_slot();
 	void down_pressed_slot();	
+	
 public:
 	void set_step(double p_step);
 	PropertyEditUpDown(QWidget *p_parent,const Skin& p_skin);
@@ -130,6 +146,8 @@ class PropertyEditSpinBox : public QDoubleSpinBox, public PropertyEditor {
 Q_OBJECT	
 	virtual void config();
 	virtual void changed();
+	
+	
 private slots:
 			
 	void value_changed_slot(double p_val);

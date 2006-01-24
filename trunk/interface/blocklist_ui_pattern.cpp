@@ -470,6 +470,42 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 
 }
 
+void BlockListUI_Pattern::get_row_column_and_field(QPoint p_pos,int *p_row,int *p_column,int *p_field) {
+	
+	PixmapFont * font=VisualSettings::get_singleton()->get_pattern_font();
+
+	int rowsize=VisualSettings::get_singleton()->get_editing_row_height();
+	int columnwidth=font->get_width()*4;
+
+	int click_x=p_pos.x();
+	if (editor->get_pattern_note_edit_mode()==EditorData::MODE_NOTE)
+		click_x+=font->get_width()/2; //makes clicking easier
+	click_x-=font->get_width();
+	if (click_x<0)
+		click_x=0;
+
+	*p_row=p_pos.y()/VisualSettings::get_singleton()->get_editing_row_height();
+	*p_column= click_x / columnwidth;
+	int col_x=click_x % columnwidth;
+	*p_field=col_x*2/columnwidth;
+	
+	if (*p_column>=track->get_visible_columns()) {
+		
+		*p_column=track->get_visible_columns()-1;
+		*p_field=1;
+	}
+	
+}
+
+void BlockListUI_Pattern::get_pos_at_pointer(QPoint p_pointer, int *p_blocklist,int *p_column, int *p_row) {
+	
+	
+	int field;
+	get_row_column_and_field( p_pointer, p_row, p_column, &field );
+	*p_blocklist=editor->find_blocklist( track );
+	
+}
+
 void BlockListUI_Pattern::focusInEvent ( QFocusEvent * event ) {
 
 	
@@ -480,27 +516,29 @@ void BlockListUI_Pattern::focusInEvent ( QFocusEvent * event ) {
 
 void BlockListUI_Pattern::mousePressEvent ( QMouseEvent * e ) {
 
-	PixmapFont * font=VisualSettings::get_singleton()->get_pattern_font();
+	int row;
+	int column;
+	int field;
+	
+	get_row_column_and_field(e->pos(),&row,&column,&field);
 
-	int rowsize=VisualSettings::get_singleton()->get_editing_row_height();
-	int columnwidth=font->get_width()*4;
-
-	int click_x=e->x();
-	if (editor->get_pattern_note_edit_mode()==EditorData::MODE_NOTE)
-		click_x+=font->get_width()/2; //makes clicking easier
-	click_x-=font->get_width();
-	if (click_x<0)
-		click_x=0;
-
-	int row=e->y()/VisualSettings::get_singleton()->get_editing_row_height();
-	int column= click_x / columnwidth;
-	int col_x=click_x % columnwidth;
-	int field=col_x*2/columnwidth;
 	editor->set_pattern_edit_field( field );
 	editor->set_pattern_edit_column( column );
 	editor->get_cursor().set_pos( editor->get_cursor().get_window_offset() + row );
 	update();
+	
+	mouse_selection_begin( e->pos() );
 
+}
+
+void BlockListUI_Pattern::mouseMoveEvent ( QMouseEvent * e ) {
+	
+	mouse_selection_update_check();
+}
+void BlockListUI_Pattern::mouseReleaseEvent ( QMouseEvent * e ) {
+	
+	mouse_selection_end();
+	
 }
 
 bool BlockListUI_Pattern::event ( QEvent * ev )  {
@@ -531,7 +569,7 @@ bool BlockListUI_Pattern::event ( QEvent * ev )  {
 	
 	return QWidget::event(ev);
 }
-BlockListUI_Pattern::BlockListUI_Pattern(QWidget *p_parent,Editor *p_editor, int p_track) : BlockListUI_Base(p_parent) {
+BlockListUI_Pattern::BlockListUI_Pattern(QWidget *p_parent,Editor *p_editor, int p_track) : BlockListUI_Base(p_parent,p_editor) {
 
 
 
@@ -549,7 +587,8 @@ BlockListUI_Pattern::BlockListUI_Pattern(QWidget *p_parent,Editor *p_editor, int
 	int min_chars_width=2+3*columns+( (columns>1)?(columns-1):0 );
 	setFixedWidth( min_chars_width*fontwidth );
 	setFocusPolicy(Qt::ClickFocus);
-
+	setMouseTracking(true);
+	
 
 }
 

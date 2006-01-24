@@ -35,6 +35,14 @@ void SoundPluginUI::register_property_editor(PropertyEditor* p_editor) {
 		editor_updater->add_editor( p_editor );
 	
 	p_editor->set_changed_by_editor_callback(this,&SoundPluginUI::property_editor_property_edited_callback); 
+	
+	QWidget *w = dynamic_cast<QWidget*>(p_editor);
+	
+	if (w) {
+		
+		QObject::connect(w,SIGNAL(external_edit_signal(Property *)),this,SIGNAL(property_options_requested( Property* )));
+	}
+	
 }
 
 void SoundPluginUI::unregister_property_editor(PropertyEditor* p_editor) {

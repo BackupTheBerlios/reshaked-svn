@@ -125,6 +125,7 @@ public slots:
 	void h_qscrollbar_range_changed(int p_min,int p_max);
 	void h_qscrollbar_changed(int p_val);
 	
+	void blocklist_ui_under_cursor_request_signal(BlockListUI_Base*p_ui);	
 public:
 
 	BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_property_ui_updater);
