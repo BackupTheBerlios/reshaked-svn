@@ -80,8 +80,10 @@ double LocalProperty::get() {
 }
 void LocalProperty::set(double p_val) {
 	
-	if (val<min || val>max)
-		return;
+	if (p_val<min)
+		p_val=min;
+	if (p_val>max)
+		p_val=max;
 
 	if (interval!=0) {
 		p_val-=min;

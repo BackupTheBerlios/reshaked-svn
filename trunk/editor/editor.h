@@ -119,7 +119,7 @@ public:
 	AudioGraph::ConnectError connection_create(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
 	void connection_erase(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to);
 	
-	void add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin);
+	void add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin,bool p_append_to_end=true);
 	void remove_plugin_from_track(Track *p_track,int p_which);
 	
 	void set_plugin_skips_processing(SoundPlugin *p_plugin, bool p_skips);

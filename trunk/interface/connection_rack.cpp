@@ -55,7 +55,7 @@ bool ConnectionRack::get_plug_data_at_pos(int p_x,int p_y,PlugData* p_data) {
 			QPoint p = get_output_plug_pos( i, j);
 			
 			int sqr_distance=POW2(p_x-p.x())+POW2(p_y-p.y());
-			//printf("Compare output %i,%i against %i,%i - %i<%i\n",p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
+			printf("Compare output %i,%i against %i,%i - %i<%i\n",p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
 			if (sqr_distance>jack_sqr_len)
 				continue;
 			

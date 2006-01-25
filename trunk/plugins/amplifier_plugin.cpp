@@ -11,7 +11,7 @@
 //
 #include "amplifier_plugin.h"
 #include <math.h>
-
+#include "pixmaps/effect_amplifier.xpm"
 namespace ReShaked {
 
 static SoundPlugin* create_amplifier(const SoundPluginInfo *p_info,int p_channels) {
@@ -32,7 +32,7 @@ const SoundPluginInfo *AmplifierPlugin::create_info() {
 	info.can_custom_channels=true;
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;
+	info.xpm_preview=(const char**)effect_amplifier_xpm;
 	info.creation_func=&create_amplifier;
 	
 	return &info;
@@ -106,15 +106,16 @@ void AmplifierPlugin::process(int p_frames) {
 		
 		for (int j=0;j<p_frames;j++) {
 			
-			if (fabsf(src[j])>max)
-				max=fabsf(src[j]);
-			dst[j]=src[j]*gain_linear;
+			float v=src[j]*gain_linear;
+			if (fabsf(v)>max)
+				max=fabsf(v);
+			dst[j]=v;
 		}
 	}
 	if (max<=0.0)
 		max=0.0000001;
 	
-	signal_energy.set(20*logf(max));
+	signal_energy.set(20*(logf(max)/logf(10.0)));
 }
 
 

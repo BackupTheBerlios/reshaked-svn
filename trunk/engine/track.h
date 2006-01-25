@@ -133,6 +133,8 @@ public:
 
 	/* plugins */
 	
+	AudioNode *get_record_node();
+	AudioNode *get_playback_node();
 	int get_plugin_count();
 	SoundPlugin *get_plugin(int p_index);
 	AudioGraph& get_plugin_graph();
@@ -164,6 +166,8 @@ public:
 	
 	void reset_automations();
 	float read_highest_energy();
+	
+	void reset_plugins();
 	
 	virtual bool can_use_synths()=0;
 	

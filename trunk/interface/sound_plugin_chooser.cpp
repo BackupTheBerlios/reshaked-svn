@@ -17,21 +17,105 @@
 #include "ui_blocks/helpers.h"
 #include "pixmaps/note.xpm"
 
+#include <Qt/qpainter.h>
+#include <Qt/qfontmetrics.h>
+#include <Qt/qevent.h>
+#include "ui_blocks/visual_settings.h"
+#include "ui_blocks/helpers.h"
+
+
 namespace ReShaked {
 
-void SoundPluginChooser::focusOutEvent(QFocusEvent*e) {
+
+
+void SoundPluginChooserItem::paintEvent(QPaintEvent *e) {
 	
-	reject();
+	int px_w=px.isNull()?48:px.width();
+	
+	int margin=GET_CONSTANT(CONSTANT_PLUGIN_CHOOSER_ITEM_MARGIN);
+	
+	QPainter p(this);
+	
+	
+	if (selected) 
+		p.fillRect(0,0,width(),height(),QColor(200,200,220));
+	else		
+		p.fillRect(0,0,width(),height(),QColor(255,255,255));
+		
+	
+	if (!px.isNull()) {
+		
+		p.drawPixmap(margin,margin,px);
+	}
+	
+	int text_ofs=margin*2+px_w;
+	
+	int title_h=height()*65/100;
+	int desc_h=height()*35/100;
+	
+	QFont ft;
+	
+	ft.setPixelSize(title_h/2);
+	ft.setBold(true);
+	QFontMetrics fm(ft);
+	p.setFont(ft);
+	p.drawText(text_ofs,title_h/2+fm.ascent(),title);
+	
+	QFont fd;
+	
+	fd.setPixelSize(desc_h*2/3);
+	QFontMetrics fmd(fd);
+	
+	p.setFont(fd);
+	p.drawText(text_ofs,title_h+(desc_h-fmd.height())/2+fmd.ascent(),description);
+	
+	p.setPen(QColor(150,150,150));
+	p.drawLine(0,height()-1,width(),height()-1);
+	
 }
-void SoundPluginChooser::accept() {
+
+
+void SoundPluginChooserItem::mousePressEvent(QMouseEvent *e) {
 	
-	QTreeWidgetItem *twi=tree->currentItem();
-	if (twi==NULL)
+	if (e->button()!=Qt::LeftButton)
 		return;
-	selected_idx=twi->data(2,ROLE_ID).toInt();
-	printf("selected_idx is %i\n",selected_idx);
-	QDialog::accept();
+		
+	selected_signal(this);
+	
 }
+
+
+void SoundPluginChooserItem::set_selected(bool p_selected) {
+	
+	
+	selected=p_selected;
+	update();
+}
+
+int SoundPluginChooserItem::get_index() {
+	
+	return index;
+	
+}
+
+SoundPluginChooserItem::SoundPluginChooserItem(QWidget *p_parent,QPixmap p_icon, QString p_title, QString p_description,QString p_text,int p_index) : QWidget(p_parent) {
+	
+	px=p_icon;
+	title=p_title;
+	description=p_description;
+	index=p_index;
+	
+	if (!p_icon.isNull()) 
+		setFixedHeight(p_icon.height()+GET_CONSTANT(CONSTANT_PLUGIN_CHOOSER_ITEM_MARGIN)*2);
+	else	
+		setFixedHeight(48+GET_CONSTANT(CONSTANT_PLUGIN_CHOOSER_ITEM_MARGIN)*2);
+	
+	setToolTip(p_text);
+	selected=false;
+}
+
+
+
 
 int SoundPluginChooser::get_selected_plugin_idx() {
 	
@@ -39,19 +123,45 @@ int SoundPluginChooser::get_selected_plugin_idx() {
 	
 }
 
-SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths) {
+
+void SoundPluginChooser::accept() {
+	
+	if (selected_idx==-1)
+		return;
+	
+	QDialog::accept();
+}
+void SoundPluginChooser::selected_slot(SoundPluginChooserItem * p_item) {
+	
+	for (int i=0;i<items.size();i++) {
+		
+		items[i]->set_selected( items[i]==p_item );
+	}
+	
+	selected_idx=p_item->get_index();
+	
+	bool synth_selected=SoundPluginList::get_singleton()->get_plugin_info(selected_idx)->is_synth;
+	
+	append->setText(synth_selected?"Connect Synth to Output":"Append Effect to Output");
+}
+
+
+bool SoundPluginChooser::append_to_output() {
+	
+	return append->isChecked();
+}
+
+SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths) : QDialog(p_parent) {
 	
 	setLayout(new QVBoxLayout);
-	tree = new QTreeWidget(this);
-	layout()->addWidget(tree);
-	tree->setColumnCount(3);
 	
-	QStringList strlist;
-	strlist << "Preview" << "Synth" << "Plugin";
-	tree->setHeaderLabels(strlist);
-
-	tree->header()->setResizeMode(3,QHeaderView::Stretch);
+	scroll = new QScrollArea(this);
+	layout()->addWidget(scroll);
 	
+	CVBox *vb = new CVBox(scroll);
+		
+	scroll->setWidget(vb);
+	scroll->setWidgetResizable(true);
 	
 	SoundPluginList *list=SoundPluginList::get_singleton();
 	for (int i=0;i<list->get_plugin_count();i++) {
@@ -59,18 +169,45 @@ SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths) {
 		if (list->get_plugin_info(i)->is_synth && !p_show_synths)
 			continue;
 		
-		QTreeWidgetItem *ti = new QTreeWidgetItem(tree);
+		const SoundPluginInfo *info=list->get_plugin_info(i);
 		
-		ti->setData(2,ROLE_ID,i);
-		ti->setData(2,ROLE_INDEX,QStrify(list->get_plugin_info(i)->unique_ID));
-		ti->setText(2, QStrify( list->get_plugin_info(i)->caption ) );
-		ti->setIcon(1,QPixmap( (const char**)note_xpm ) );
+		QPixmap px=info->xpm_preview?QPixmap((const char **)info->xpm_preview):QPixmap();
+		
+		items.push_back( new SoundPluginChooserItem(vb,px,QStrify(info->caption),QStrify(info->description),QStrify(info->long_description),i));
+		
+		QObject::connect( items[ items.size() -1 ], SIGNAL(selected_signal(SoundPluginChooserItem*)),this,SLOT(selected_slot( SoundPluginChooserItem* )));
+		
+
 	}
-	QPushButton *ab = new QPushButton("Accept",this); //accept button
-	layout()->addWidget(ab);
+	
+	(new QFrame(vb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	vb->show();
+	
+	CHBox *hb = new CHBox(this);
+	layout()->addWidget(hb);
+	
+//	(new QFrame(hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	
+	append = new QCheckBox("Append Effect to Output",hb); //accept button
+	append->setChecked(true);
+	
+	(new QFrame(hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	
+	hb = new CHBox(this);
+	layout()->addWidget(hb);
+	
+	(new QFrame(hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	
+	QPushButton *ab = new QPushButton("Accept",hb); //accept button
 	QObject::connect(ab,SIGNAL(clicked()),this,SLOT(accept()));
 	
+	(new QFrame(hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	
+	setWindowTitle("Choose Sound Plugin");
 	selected_idx=-1;
+	
+	setMinimumSize(410,400);
+
 }
 
 

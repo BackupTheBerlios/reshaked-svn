@@ -69,6 +69,8 @@ public slots:
 	void add_plugin_slot();
 public:
 	
+	void select_track(int p_track);
+	void select_global();
 	
 	
 	RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater);

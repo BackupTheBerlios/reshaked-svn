@@ -16,6 +16,7 @@
 #include <Qt/qcombobox.h>
 #include <Qt/qdialog.h>
 #include <Qt/qpushbutton.h>
+#include "ui_blocks/helpers.h"
 
 namespace ReShaked {
 
@@ -30,7 +31,8 @@ class NewTrackDialog : public QDialog {
 	static int default_channels;
 			    
 	QLineEdit *line_edit;
-	QComboBox *combo;
+	QComboBox *combo_channels;
+	QComboBox *combo_type;
 	QPushButton *acceptb;
 	
 	
@@ -41,7 +43,7 @@ public:
 	QString get_name();
 	int get_channels();
 	
-	NewTrackDialog();
+	NewTrackDialog(QWidget *p_parent);
 	~NewTrackDialog();
 
 };

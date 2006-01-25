@@ -37,35 +37,50 @@ QString NewTrackDialog::get_name() {
 }
 int NewTrackDialog::get_channels() {
 	
-	return combo->currentIndex()+1;
+	return combo_channels->currentIndex()+1;
 	
 }
 
 
-NewTrackDialog::NewTrackDialog()
+NewTrackDialog::NewTrackDialog(QWidget *p_parent) : QDialog(p_parent)
 {
 	
 	QVBoxLayout *vl = new QVBoxLayout(this);
 	setLayout(vl);
 	
-	setWindowTitle("New Track");
+	setWindowTitle("New Track Options");
 	
-	vl->addWidget(new QLabel("Name:",this));
+	QLabel *label = new QLabel("Name:",this);
+	QFont font=label->font();
+	font.setBold(true);
+	label->setFont(font);
+	vl->addWidget(label);
 	
 	QString new_name="New Track " + QString::number(track_idx);
-	line_edit=new QLineEdit(new_name,this);
-	vl->addWidget(line_edit);
+	CHBox *hb = new CHBox(this);
+	vl->addWidget(hb);
+	(new QFrame(hb))->setFixedWidth(20);
+	line_edit=new QLineEdit(new_name,hb);
 	
-	vl->addWidget(new QLabel("Channels:",this));
+	
+	label = new QLabel("Channels:",this);
+	font=label->font();
+	font.setBold(true);
+	label->setFont(font);
+	vl->addWidget(label);
+	
+	hb = new CHBox(this);
+	vl->addWidget(hb);
+	(new QFrame(hb))->setFixedWidth(20);
 	
 	QStringList sl;
 	sl << "Mono" << "Stereo" << "3" << "Quad" << "5" << "6" << "7" << "8"; //BluRay and HD-DVD support up to 8 :D
 	
-	combo = new QComboBox(this);
-	combo->addItems(sl);
-	combo->setCurrentIndex(default_channels-1);
 	
-	vl->addWidget(combo);
+	combo_channels = new QComboBox(hb);
+	combo_channels->addItems(sl);
+	combo_channels->setCurrentIndex(default_channels-1);
+	
 	
 	acceptb = new QPushButton("Accept",this);
 	acceptb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);

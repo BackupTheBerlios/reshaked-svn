@@ -26,6 +26,7 @@
 #include "visual_settings.h"
 #include "engine/sound_driver_list.h"
 
+#include "interface/automation_tree.h"
 
 namespace ReShaked {
 
@@ -38,9 +39,9 @@ void MainWindow::menu_action_callback(int p_action) {
 	
 	switch (p_action) {
 
-		case ITEM_TRACK_ADD_PATTERN: {
+		case ITEM_TRACK_ADD: {
 
-			NewTrackDialog *new_dialog = new NewTrackDialog;
+			NewTrackDialog *new_dialog = new NewTrackDialog(this);
 			if (new_dialog->exec()!=QDialog::Accepted) {
 				delete new_dialog;
 				return; //not accepted!
@@ -50,6 +51,9 @@ void MainWindow::menu_action_callback(int p_action) {
 			blui_list->update_track_list();
 			delete new_dialog;
 
+			/* make it ready for adding a new plugin */
+			rack->select_track(data.song.get_track_count() -1 );
+			rack->rack_front_selected();
 			/*
 			if (data.song.get_track_count()) {
 
@@ -222,7 +226,7 @@ void MainWindow::add_menus() {
 	create_action(ITEM_EDIT_UNDO,"Undo","undo",NULL,top_bar->icon_undo);
 	create_action(ITEM_EDIT_REDO,"Redo","redo",NULL,top_bar->icon_redo);
 
-	create_action(ITEM_TRACK_ADD_PATTERN,"Add Pattern Track","add_pattern",top_bar->get_add_menu());
+	create_action(ITEM_TRACK_ADD,"Add Track","add_track",NULL,top_bar->icon_menu_add);
 	//create_action(ITEM_TRACK_ADD_AUDIO,"Add Audio Track",track,NULL);
 
 	create_action(NAVIGATION_GLOBAL_VIEW,"Global View","switch_to_global_view",NULL);
@@ -271,6 +275,32 @@ void MainWindow::ui_update_slot() {
 	
 }
 
+/* MVC Hacks (read QT_UpdateNotify) */
+void MainWindow::current_track_add_column_slot() {
+	
+	data.editor->track_pattern_add_column();
+}
+void MainWindow::current_track_remove_column_slot() {
+	
+	data.editor->track_pattern_remove_column();
+	
+}
+
+void MainWindow::automation_editor_popup_slot(int p_track) {
+	Track *t;
+	if (p_track==-1)
+		t=&data.song.get_global_track();
+	else
+		t=data.song.get_track(p_track);
+	
+	if (!t)
+		return;
+	
+	AutomationTreeeDialog *atd = new AutomationTreeeDialog(this,t,data.editor);
+	atd->exec();
+	delete atd;
+	
+}
 
 MainWindow::MainWindow() {
 
@@ -369,6 +399,10 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(track_names_changed()),rack,SLOT(update_rack_combo_names_slot()));
 		
 	QObject::connect(top_bar,SIGNAL(screen_changed_signal( ScreenList )),this,SLOT(screen_changed_slot( TopBarControls::ScreenList )));
+	
+	QObject::connect(update_notify,SIGNAL(current_track_add_column()),this,SLOT(current_track_add_column_slot()),Qt::QueuedConnection);
+	QObject::connect(update_notify,SIGNAL(current_track_remove_column()),this,SLOT(current_track_remove_column_slot()),Qt::QueuedConnection);
+	QObject::connect(update_notify,SIGNAL(automation_editor_popup( int )),this,SLOT(automation_editor_popup_slot( int )),Qt::QueuedConnection);
 	
 	ui_updater = new QTimer(this);
 	QObject::connect(ui_updater,SIGNAL(timeout()),this,SLOT(ui_update_slot()));

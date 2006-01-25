@@ -15,8 +15,10 @@
 
 #include "ui_blocks/helpers.h"
 #include <Qt/qtreewidget.h>
+#include <Qt/qdialog.h>
 #include "engine/track.h"
 #include <vector>
+#include "editor/editor.h"
 
 namespace ReShaked {
 
@@ -59,6 +61,29 @@ public:
 	~AutomationTree();
 
 };
+
+
+
+class AutomationTreeeDialog : public QDialog {
+		
+	Q_OBJECT
+	
+	Editor *editor;
+	Track *track;
+	
+public slots:	
+		
+		
+	void attempt_automation_add_slot(int p_index);	
+	void attempt_automation_remove_slot(int p_index);	
+		
+public:
+		
+		
+	AutomationTreeeDialog(QWidget *p_parent,Track *p_track,Editor *p_editor);
+		
+};
+
 
 }
 

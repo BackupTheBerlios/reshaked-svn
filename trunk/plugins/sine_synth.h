@@ -13,6 +13,7 @@
 #define RESHAKEDSINE_SYNTH_H
 
 #include "engine/sound_plugin.h"
+#include "dsp/midi_synth.h"
 
 
 namespace ReShaked {
@@ -24,15 +25,32 @@ class SineSynth : public SoundPlugin {
 				       
 	AudioPlug *output_plug;
 	
-	float freq,amp;
-	float amp_decr;
-	bool sust;
-	int ofs; //ofset in frames;
+	class Voice : public MidiSynth::Voice {
+		
+		
+		float amp,amp_decr;
+		int ofs;
+		
+		Property *release;		    
+	public:
+		
+		
+		virtual void event(Event p_event);	
+		virtual void process(int p_frames);	
+		
+		
+		virtual float priority(); ///< 1 is max priority, 0 means it finished
+		
+		Voice(Property *p_release);
+	};
+	
+	
+	MidiSynth *midi_synth;
 		
 	LocalProperty release;		    
-	float mixing_rate;
 	
 	
+	void reset();		
 public:
 
 	static const SoundPluginInfo *create_info();

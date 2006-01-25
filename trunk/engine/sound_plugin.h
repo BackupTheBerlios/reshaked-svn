@@ -32,10 +32,11 @@ struct SoundPluginInfo {
 	String long_description; ///< Long description of the plugin
 	String unique_ID; ///< Unique String ID of plugin
 	String category_path; ///< path to categorize this plugin
-	bool can_custom_channels; ///< can create with custom channels (as mono/stereo/etc)
+	bool can_custom_channels; ///< If true, then it can instance in ANY amount of channels, limited only by custom_channels
+	std::vector<int> custom_channels; ///< Limit the can_custom_channesls value to the given ones.
 	bool has_internal_UI; ///< Plugin uses internal UI, for external plugins (VST/DSSI/ETC)
 	bool is_synth; ///< Receives MIDI events (synth)
-	const char ** xpm_preview; ///< There is a xpm preview image of it
+	const char ** xpm_preview; ///< There is a xpm preview image of it, preferably 48x48
 
 	SoundPlugin* (*creation_func)(const SoundPluginInfo *,int);
 
@@ -71,7 +72,7 @@ public:
 	
 	/* Setting up */
 	virtual void set_mixing_rate(float p_mixing_rate)=0;
-	
+	virtual void reset();	
 	/* tell it to skip processing */
 	void set_skip_processing(bool p_skip);
 	bool skips_processing();

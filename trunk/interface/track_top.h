@@ -62,6 +62,7 @@ protected slots:
 	void action_slot(QAction *p_action);
 	void automation_add_slot(int p_prop_idx);
 	void automation_remove_slot(int p_prop_idx);
+	void automation_editor_requested_slot();
 	
 	
 public:

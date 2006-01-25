@@ -12,6 +12,9 @@
 #include "automation_tree.h"
 #include <Qt/qhash.h>
 #include <Qt/qheaderview.h>
+#include <Qt/qpushbutton.h>
+#include <Qt/qlayout.h>
+
 namespace ReShaked {
 
 
@@ -114,13 +117,20 @@ void AutomationTree::update_automation_tree() {
 				
 		}
 		
+		QString captionstr=QStrify( track->get_property( i)->get_caption());
+
+		if (captionstr.lastIndexOf("/",-1)>=0) {
+			
+			captionstr=captionstr.right( captionstr.length()-(captionstr.lastIndexOf("/")+1));
+		}
+		
 		if (track->get_property_automation(i)->get_block_count()) {
 				
-			item->setText( 0, QStrify( track->get_property( i)->get_caption()+"(*)" ) );
+			item->setText( 0, captionstr+"(*)"  );
 		
 		} else {
 		
-			item->setText( 0, QStrify( track->get_property( i)->get_caption() ) );
+			item->setText( 0, captionstr );
 		
 		}
 		
@@ -218,5 +228,45 @@ AutomationTree::~AutomationTree()
 {
 }
 
+
+void AutomationTreeeDialog::attempt_automation_add_slot(int p_index) {
+	
+	editor->show_automation( p_index, track );
+}
+void AutomationTreeeDialog::attempt_automation_remove_slot(int p_index) {
+	
+	editor->hide_automation( p_index, track );
+	
+}
+
+AutomationTreeeDialog::AutomationTreeeDialog(QWidget *p_parent,Track *p_track,Editor *p_editor) : QDialog(p_parent) {
+	
+	editor=p_editor;
+	track=p_track;	
+	setLayout( new QVBoxLayout(this) );
+	
+	AutomationTree *at = new AutomationTree(this);
+	layout()->addWidget(at);
+	
+	at->set_track( track );
+	
+	QObject::connect(at,SIGNAL(attempt_automation_add_signal( int )),this,SLOT(attempt_automation_add_slot( int )));
+	QObject::connect(at,SIGNAL(attempt_automation_remove_signal( int )),this,SLOT(attempt_automation_remove_slot( int )));
+	
+	CHBox *hb = new CHBox(this);
+	layout()->addWidget(hb);
+	
+	(new QFrame(hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	
+	QPushButton *ab = new QPushButton("Accept",hb); //accept button
+	QObject::connect(ab,SIGNAL(clicked()),this,SLOT(accept()));
+	
+	(new QFrame(hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	
+	setWindowTitle("Automations of '"+QStrify(p_track->get_name())+"'");
+	setMinimumSize(650,400);
+	
+	
+}
 
 }

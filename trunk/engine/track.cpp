@@ -190,8 +190,8 @@ void Track::feed_input(int p_frames) {
 }
 void Track::read_output(int p_frames) {
 	
-	AudioBuffer *output_buff=base_private.output_plug->get_buffer();
-	AudioBuffer *track_output_buff=base_private.output_proxy.get_input_plug(0)->get_buffer();
+	AudioBuffer *track_output_buff=base_private.output_plug->get_buffer();
+	AudioBuffer *output_buff=base_private.output_proxy.get_input_plug(0)->get_buffer();
 	
 	float max_nrg=0;
 	
@@ -236,6 +236,16 @@ void Track::process(int p_frames) {
 	process_automations();
 	track_pre_process(p_frames);
 	base_private.plugin_graph.process( p_frames );
+}
+
+AudioNode *Track::get_record_node() {
+	
+	return &base_private.input_proxy;
+}
+AudioNode *Track::get_playback_node() {
+	
+	
+	return &base_private.output_proxy;
 }
 
 
@@ -528,6 +538,12 @@ void Track::reset_automations() {
 		Automation *a=get_property_automation(i);
 		a->get_property()->set( a->get_initial_value() );
 	}
+}
+
+void Track::reset_plugins() {
+	
+	for (int i=0;i<base_private.sound_plugins.size();i++) 
+		base_private.sound_plugins[i]->reset();
 }
 
 AudioNode *Track::get_node_at_visual_pos(int p_pos) {

@@ -47,6 +47,7 @@ Export('env');
 
 
 SConscript('types/SCsub');
+SConscript('dsp/SCsub');
 SConscript('engine/SCsub');
 SConscript('editor/SCsub');
 SConscript('interface/SCsub');

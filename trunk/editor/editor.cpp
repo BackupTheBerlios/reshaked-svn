@@ -105,6 +105,7 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		
 		}
 
+		
 
 		CASE( KEYBIND("global/raise_octave") ) {
 		
@@ -243,10 +244,13 @@ void Editor::revalidate_cursor() {
 		
 		d->global_edit.current_blocklist=0; //and that's all
 	
-	} else if (d->global_edit.current_blocklist>=get_blocklist_count()) {
-		d->global_edit.current_blocklist=get_blocklist_count()-1;
+	} else {
+		
+		if (d->global_edit.current_blocklist>=get_blocklist_count()) 
+			d->global_edit.current_blocklist=get_blocklist_count()-1;
 		if (d->global_edit.current_blocklist<0)
 			d->global_edit.current_blocklist=0;
+		
 		if (get_current_blocklist()==-1 || get_blocklist(get_current_blocklist())==NULL || get_blocklist(get_current_blocklist())->get_type_name()!="pattern") {
 			
 			d->pattern_edit.column=0;

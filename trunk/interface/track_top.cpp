@@ -21,6 +21,7 @@
 #include "interface/indexed_action.h"
 
 #include "engine/sound_plugin_list.h"
+#include "interface/automation_tree.h"
 
 namespace ReShaked {
 
@@ -78,6 +79,7 @@ void TrackTop::mousePressEvent(QMouseEvent *e) {
 		
 		automation_menu->rebuild();
 		menu->popup(mapToGlobal( QPoint(0,height()) ) );
+		
 	} else
 		rename();
 }
@@ -166,6 +168,14 @@ void TrackTop::automation_remove_slot(int p_prop_idx) {
 }
 
 
+void TrackTop::automation_editor_requested_slot() {
+
+	if (can_rename)
+		editor->get_ui_update_notify()->automation_editor_popup(editor->find_track_idx(track));
+	else
+		editor->get_ui_update_notify()->automation_editor_popup(-1);
+}
+
 TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p_type) :QWidget(p_parent) {
 	track=p_track;
 	editor=p_editor;
@@ -185,6 +195,7 @@ TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p
 	QAction *amenu = menu->addMenu(automation_menu);
 	amenu->setText("Automations..");
 	amenu->setIcon(GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS));
+	QObject::connect(automation_menu,SIGNAL(editor_requested()),this,SLOT(automation_editor_requested_slot()));
 	
 	if (p_type!=TYPE_GLOBAL) {
 	

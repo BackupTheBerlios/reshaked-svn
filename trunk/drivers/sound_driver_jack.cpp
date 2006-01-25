@@ -274,6 +274,34 @@ bool SoundDriver_JACK::init() {
 	   running.
 	*/
 	
+	if (!output_port_list.empty() && !output_port_list[0].ports.empty()) {
+		const char **port_names_array;
+		if ((port_names_array = jack_get_ports (client, NULL, NULL, 
+		JackPortIsPhysical|JackPortIsInput)) != NULL) {
+			
+			
+			std::vector<jack_port_t*> &ports=output_port_list[0].ports;
+			const char ** names=port_names_array;
+			int idx=0;
+			while (names[idx]!=NULL) {
+				
+				if (idx>=output_port_list[0].ports.size())
+					break;
+				
+				if(jack_connect(client, jack_port_name (output_port_list[0].ports[idx]), names[idx])) 
+					printf("Coudlnt connect %s to %s\n",jack_port_name (output_port_list[0].ports[idx]),names[idx]);
+				idx++;
+			}
+				
+			/* should I free anything? without const it doesnt work, but the docs says i should erase it?
+			however examples i saw dont erase it*/
+		} else {
+			
+			printf("JACK: Found no physical output ports (??)\n");
+		}
+
+	}
+
 	/*
 	
 	if (jack_connect (client, jack_port_name (output_port_l), 	"alsa_pcm:playback_1")) {

@@ -129,13 +129,20 @@ void AutomationPopup::rebuild() {
 				
 		}
 		
+		QString captionstr=QStrify( track->get_property( i)->get_caption());
+
+		if (captionstr.lastIndexOf("/",-1)>=0) {
+			
+			captionstr=captionstr.right( captionstr.length()-(captionstr.lastIndexOf("/")+1));
+		}
+		
 		if (track->get_property_automation(i)->get_block_count()) {
 				
-			item->setText( QStrify( track->get_property( i)->get_caption()+"(*)" ) );
+			item->setText( captionstr+"(*)" );
 		
 		} else {
 		
-			item->setText( QStrify( track->get_property( i)->get_caption() ) );
+			item->setText( captionstr );
 		
 		}
 		item->setCheckable(true);
@@ -147,6 +154,13 @@ void AutomationPopup::rebuild() {
 		
 		
 	}
+	
+	
+	addSeparator();
+	
+	manage = new QAction("Editor..",this);
+	addAction(manage);
+	QObject::connect(manage,SIGNAL(activated()),this,SIGNAL(editor_requested()));
 	
 }
 

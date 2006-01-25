@@ -67,6 +67,10 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 	PixmapVU::Skin vu_skin(effect_panel_generic_vu_empty_xpm,effect_panel_generic_vu_fill_xpm);
 	
 	for (int i=0;i<p_plugin->get_port_count();i++) {
+		
+		if (QStrify(p_plugin->get_port(i).get_caption()).indexOf("/")>=0)
+			continue;
+		
 		CVBox *vb_port = new CVBox(hb);
 		
 		CHBox *hb_port = new CHBox(vb_port);

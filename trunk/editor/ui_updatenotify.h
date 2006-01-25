@@ -37,6 +37,12 @@ public:
 	virtual void block_layout_changed()=0;
 	
 	virtual void track_names_changed()=0;
+	
+	/* MVC Hacks */
+	virtual void current_track_add_column()=0;	
+	virtual void current_track_remove_column()=0;
+	virtual void automation_editor_popup(int p_track)=0;
+	
 	virtual ~UI_UpdateNotify(){}
 	
 };

@@ -100,8 +100,13 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/move_note_down","Move Note Down",Qt::CTRL+Qt::Key_Down,true);
 
 	data.keyboard_codes.add_key_bind("editor/next_pattern","Next Pattern",Qt::Key_Plus);
+	
 
 	data.keyboard_codes.add_key_bind("editor/previous_pattern","Prev Pattern",Qt::Key_Minus);
+	
+	data.keyboard_codes.add_key_bind("editor/add_column","Add Column",Qt::ALT+Qt::Key_BracketRight);
+	data.keyboard_codes.add_key_bind("editor/remove_column","Remove Column",Qt::ALT+Qt::Key_BracketLeft);
+
 
 	data.keyboard_codes.add_key_bind("editor/automation_mode_stream","Stream Automation Edit",Qt::CTRL+Qt::Key_T,false,NULL,new QWidget_KeybindDescription(blui_list->automation_stream));
 	data.keyboard_codes.add_key_bind("editor/automation_mode_envelope","Envelope Automation Edit",Qt::CTRL+Qt::Key_E,false,NULL,new QWidget_KeybindDescription(blui_list->automation_envelope));
@@ -134,6 +139,8 @@ void MainWindow::create_keybindings() {
 	
 	data.keyboard_codes.set_key_bind_key_by_name("actions/play_block",Qt::Key_F6);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/play_from_cursor",Qt::Key_F7);
+	
+	data.keyboard_codes.set_key_bind_key_by_name("actions/add_track",Qt::CTRL+Qt::Key_T);
 	
 }
 

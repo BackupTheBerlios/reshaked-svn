@@ -173,6 +173,18 @@ bool Editor::pattern_edit_key_press(int p_event) {
 		
 		}
 	
+		CASE( KEYBIND("editor/add_column") ) {
+		
+		
+			d->ui_update_notify->current_track_add_column();		
+		}
+		
+		CASE( KEYBIND("editor/remove_column") ) {
+		
+			d->ui_update_notify->current_track_remove_column();
+		
+		}
+		
 		CASE( KEYBIND("editor/insert") ) {
 	
 		

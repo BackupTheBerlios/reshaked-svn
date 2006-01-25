@@ -362,7 +362,9 @@ CommandFunc* EditorCommands::track_pattern_add_column(bool p_no_undo,Track_Patte
 	
 	p_pattern->set_visible_columns( p_pattern->get_visible_columns() + 1);
 	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
+	editor->revalidate_cursor();
 	d->ui_update_notify->track_list_changed();	
+	d->ui_update_notify->cursor_changed_blocklist(); //put the cursor back to the blocklist
 	/* THEN, NOTIFY IT */
 	return ret;
 	
@@ -378,7 +380,9 @@ CommandFunc* EditorCommands::track_pattern_remove_column(bool p_no_undo,Track_Pa
 	p_pattern->set_visible_columns( p_pattern->get_visible_columns() - 1);
 	
 	/* FIRST THING TO DO, ALWAYS VALIDATE TRACK LIST UI */
+	editor->revalidate_cursor();
 	d->ui_update_notify->track_list_changed();
+	d->ui_update_notify->cursor_changed_blocklist(); //put the cursor back to the blocklist
 	return ret;
 	
 }

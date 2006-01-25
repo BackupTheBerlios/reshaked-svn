@@ -62,8 +62,7 @@ class MainWindow : public QMainWindow {
 		ITEM_EDIT_UNDO,
 		ITEM_EDIT_REDO,
 
-		ITEM_TRACK_ADD_PATTERN,
-		ITEM_TRACK_ADD_AUDIO,
+		ITEM_TRACK_ADD,
 
 		NAVIGATION_GLOBAL_VIEW,
 		NAVIGATION_EDIT_VIEW,
@@ -130,10 +129,18 @@ class MainWindow : public QMainWindow {
 	
 public slots:
 	
+	
+	
 	void screen_changed_slot(TopBarControls::ScreenList p_screen);
 	void menu_action_callback(int p_action);
 	
 	void ui_update_slot();
+	
+	/* MVC Hacks (read QT_UpdateNotify) */
+	void current_track_add_column_slot();	
+	void current_track_remove_column_slot();
+	void automation_editor_popup_slot(int p_track);
+	
 public:
 
 	MainWindow();

@@ -639,6 +639,7 @@ VisualSettings::VisualSettings() {
 	
 	constant_map[CONSTANT_EDIT_TOOLBAR_FONT_HEIGHT]=10;
 	constant_map[CONSTANT_RACK_MINIMUM_HEIGHT]=176;
+	constant_map[CONSTANT_PLUGIN_CHOOSER_ITEM_MARGIN]=8;
 	
 	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#0123456789-*");
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#0123456789-*"); 

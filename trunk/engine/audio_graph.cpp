@@ -282,6 +282,12 @@ AudioGraph::ConnectError AudioGraph::connect_plugs(int p_node_from,int p_plug_fr
 	return CONNECT_OK;
 }
 
+void AudioGraph::disconnect_plugs(Connection p_connection) {
+	
+	disconnect_plugs( p_connection.node_from, p_connection.plug_from, p_connection.node_to, p_connection.plug_to );
+	
+}
+
 void AudioGraph::disconnect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to) {
 
 	AudioControl::mutex_lock();
@@ -339,6 +345,7 @@ int AudioGraph::process(int p_frames) {
 	
 	return graph_process.process(p_frames);	
 }
+
 
 AudioGraph::AudioGraph() {
 	

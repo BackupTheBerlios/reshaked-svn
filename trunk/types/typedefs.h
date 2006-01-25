@@ -53,6 +53,8 @@ enum TrackType {
         for( typeof(m_container.begin()) m_itname=m_container.begin() ; \
         m_itname!=m_container.end() ; \
         m_itname++ )
+        
+        
 
 template<class T>
 inline void SWAP(T&a, T&b) {

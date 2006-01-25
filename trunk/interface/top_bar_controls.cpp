@@ -39,12 +39,6 @@ void TopBarControls::show_file_menu() {
 	
 }
 
-void TopBarControls::show_add_menu() {
-	
-	add_menu->adjustSize();
-	add_menu->popup(icon_menu_add->mapToGlobal( QPoint(0,icon_menu_add->height()) ) );
-	
-}
 
 void TopBarControls::undo_pressed() {
 	
@@ -195,10 +189,6 @@ QMenu * TopBarControls::get_file_menu() {
 	
 	return file_menu;
 }
-QMenu * TopBarControls::get_add_menu() {
-	
-	return add_menu;
-}
 QMenu * TopBarControls::get_settings_menu() {
 	
 	return settings_menu;
@@ -235,7 +225,6 @@ TopBarControls::TopBarControls(QWidget *p_parent,Editor *p_editor,PropertyEditUp
 	QObject::connect(icon_menu_file,SIGNAL(mouse_pressed_signal()),this,SLOT(show_file_menu()));
 	
 	icon_menu_add = new PixmapButton(controls_hbox,PixmapButton::Skin(GET_QPIXMAP(THEME_TOP__ICON_ADD),GET_QPIXMAP(THEME_TOP__ICON_ADD_ACTIVATED)));
-	QObject::connect(icon_menu_add,SIGNAL(mouse_pressed_signal()),this,SLOT(show_add_menu()));
 	
 	icon_undo = new PixmapButton(controls_hbox,PixmapButton::Skin(GET_QPIXMAP(THEME_TOP__ICON_UNDO),GET_QPIXMAP(THEME_TOP__ICON_UNDO_ACTIVATED)));
 	QObject::connect(icon_undo,SIGNAL(mouse_pressed_signal()),this,SLOT(undo_pressed()));
@@ -329,7 +318,7 @@ TopBarControls::TopBarControls(QWidget *p_parent,Editor *p_editor,PropertyEditUp
 	file_menu = new QMenu(this);
 	settings_menu = new QMenu(this);
 	help_menu = new QMenu(this);
-	add_menu = new QMenu(this);
+
 
 	
 }

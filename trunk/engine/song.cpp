@@ -147,6 +147,14 @@ void Song::set_mix_rate(float p_mix_rate) {
 
 int Song::process(int p_frames) {
 	
+	
+	song_playback.advance(p_frames);
+	global_track.process_automations(true);
+	track_graph.process( p_frames );
+	return p_frames;
+	
+
+	
 	int todo=p_frames;
 	int process_size=(1<<process_data.buffer_exp);
 	while (todo) {
@@ -162,6 +170,8 @@ int Song::process(int p_frames) {
 		}
 		todo-=to_write;
 	}
+	
+	return p_frames;
 }
 
 void Song::play(Tick p_from_pos) {
@@ -196,8 +206,10 @@ void Song::stop() {
 	
 	AudioControl::mutex_lock();
 	song_playback.stop();
-	for (int i=0;i<track_list.size();i++)
+	for (int i=0;i<track_list.size();i++) {
 		track_list[i]->reset_automations();
+		track_list[i]->reset_plugins();
+	}
 	AudioControl::mutex_unlock();
 }
 

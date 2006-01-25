@@ -51,6 +51,10 @@ int SoundPlugin::get_channels_created() {
 	
 }
 
+void SoundPlugin::reset() {
+	
+	
+}
 
 void SoundPlugin::set_event_buffer(const EventBuffer *p_buffer) {
 	

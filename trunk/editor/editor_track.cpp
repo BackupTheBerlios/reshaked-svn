@@ -37,14 +37,18 @@ void Editor::track_move_plugin_right(Track *p_track,int p_plugin) {
 }
 
 
-void Editor::add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin) {
+void Editor::add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin,bool p_append_to_end) {
 	
 	
 	
 	
 	Track::PluginInsertData data;
 	data.plugin=p_plugin;
-	data.pos=-1;
+	if (p_plugin->get_info()->is_synth)
+		data.pos=0; // if this is a synth, insert at pos 0 
+	else
+		data.pos=-1; //insert at the end
+	
 	
 	/* For plugins, the automations must be created here, otherwise, no undo/redo is possible */
 	
@@ -61,6 +65,52 @@ void Editor::add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin) {
 	
 	d->undo_stream.begin("Add Plugin - " + p_plugin->get_info()->caption);
 	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_add,p_track,data));
+	
+	/* autoconnect! */
+	if (p_append_to_end) {
+		AudioGraph *plugin_graph=&p_track->get_plugin_graph();
+		AudioNode *playback_node=p_track->get_playback_node();
+		int plugin_idx=plugin_graph->get_node_index( p_plugin );
+		int playback_idx=plugin_graph->get_node_index( playback_node );
+		
+		
+		if (p_plugin->get_info()->is_synth  && p_plugin->get_output_plug_count()>0) {
+		
+			if (p_plugin->get_output_plug(0)->get_channels()==playback_node->get_input_plug(0)->get_channels() )
+				d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_create,plugin_graph,plugin_idx,0,playback_idx,0));
+		} else {
+			
+			std::list<AudioGraph::Connection> connections_to_erase;
+			std::list<AudioGraph::Connection> connections_to_make;
+			for (int i=0;i<plugin_graph->get_connection_count();i++) {
+				
+				AudioGraph::Connection connection=*plugin_graph->get_connection( i );
+				
+				if (connection.node_to==playback_idx) {
+					connections_to_erase.push_back(connection);
+					AudioGraph::Connection to_replace=connection;
+					to_replace.node_to=plugin_idx;
+					connections_to_make.push_back(to_replace);
+				}
+							
+			}
+			
+			foreach(I,connections_to_erase) {
+				
+				d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_erase,plugin_graph,I->node_from,I->plug_from,I->node_to,I->plug_to));
+				
+			}
+			
+			foreach(I,connections_to_make) {
+				
+				d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_create,plugin_graph,I->node_from,I->plug_from,I->node_to,I->plug_to));
+				
+			}
+			
+			d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_create,plugin_graph,plugin_idx,0,playback_idx,0));
+			
+		}
+	}	
 	d->undo_stream.end();
 	
 }

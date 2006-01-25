@@ -33,12 +33,13 @@ class AutomationPopup : public QMenu {
 				    
 	};				    
 			    
-	
+	QAction *manage;
 	Track *track;
 signals:
 	void attempt_automation_add_signal(int p_property_idx);	
 	void attempt_automation_remove_signal(int p_property_idx);	
 			
+	void editor_requested();
 public:
 	bool check_action(QAction *p_action);	
 	

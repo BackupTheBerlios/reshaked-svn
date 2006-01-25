@@ -1,0 +1,9 @@
+Import('env');
+
+env_dsp = env.Copy();
+env_dsp.target_list=[];
+
+
+env_dsp.find_source_files(env_dsp.target_list,"*.cpp");
+
+env.Library('dsp', env_dsp.target_list)

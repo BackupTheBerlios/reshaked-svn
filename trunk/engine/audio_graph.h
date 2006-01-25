@@ -98,6 +98,8 @@ public:
 	 */
 	void disconnect_plugs(int p_node_from,int p_plug_from,int p_node_to,int p_plug_to);
 	
+	void disconnect_plugs(Connection p_connection);
+	
 	/**
 	 * Get the last error code from a call to connect_plugs()
 	 * @return CONNECT_OK (equal zero) or a ConnectError otherwise
@@ -123,6 +125,7 @@ public:
 	 * @return Amount of frames actually processed, equal or less to p_frames
 	 */
 	int process(int p_frames);
+	
 	
 	AudioGraph();
 

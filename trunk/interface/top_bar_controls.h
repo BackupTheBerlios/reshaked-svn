@@ -69,7 +69,6 @@ friend class MainWindow;
 	PixmapButton *icon_menu_help;
 	
 	QMenu * file_menu;
-	QMenu * add_menu;
 	QMenu * settings_menu;
 	QMenu * help_menu;
 
@@ -79,7 +78,7 @@ public slots:
 	void show_settings_menu();
 	void show_help_menu();
 	void show_file_menu();
-	void show_add_menu();
+	
 	
 	void octave_edit_popup();
 	void octave_raise();
@@ -112,7 +111,6 @@ public:
 	QMenu * get_file_menu();
 	QMenu * get_settings_menu();
 	QMenu * get_help_menu();
-	QMenu * get_add_menu();
 	
 	
 	void set_screen(ScreenList p_screen);
