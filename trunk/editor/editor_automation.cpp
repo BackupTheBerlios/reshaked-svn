@@ -104,20 +104,27 @@ bool Editor::automation_edit_key_press(int p_key_value) {
 			
 			CASE( KEYBIND("left") ) {
 
-		if (d->global_edit.current_blocklist>0) {
-			d->global_edit.current_blocklist--;
-			enter_blocklist(EditorData::ENTER_RIGHT);
-		}				
+				begin_check_shift_selection();
+		
+				if (d->global_edit.current_blocklist>0) {
+					d->global_edit.current_blocklist--;
+					enter_blocklist(EditorData::ENTER_RIGHT);
+				}				
+				end_check_shift_selection();
 			}			
 			CASE( KEYBIND("right") ) {
+				
+				begin_check_shift_selection();
+				
 				if (d->global_edit.current_blocklist<(get_blocklist_count()-1)) {
 					d->global_edit.current_blocklist++;
 					enter_blocklist(EditorData::ENTER_LEFT);
 				}				
+				end_check_shift_selection();
 			}
 			DEFAULT
 		
-					handled=false;
+				handled=false;
 	
 		
 			END_SWITCH;			

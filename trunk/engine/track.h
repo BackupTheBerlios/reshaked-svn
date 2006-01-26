@@ -127,8 +127,11 @@ protected:
 	void rebuild_active_automation_cache();	
 	AudioNode *get_node_at_visual_pos(int p_pos);	
 	
+	void process_automations_at_tick(Tick p_tick);	
 public:
 	
+
+	void offline_process_automations(Tick p_tick);
 	void process_automations(bool p_use_current_tick_to=false);
 
 	/* plugins */

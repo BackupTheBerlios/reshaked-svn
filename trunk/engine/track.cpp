@@ -218,17 +218,36 @@ float Track::read_highest_energy() {
 	base_private.audio.highest_energy=0;
 	return highest_nrg;
 }
+
+void Track::process_automations_at_tick(Tick p_tick) {
+	
+	/* update automations */
+	for (int i=0;i<base_private.active_automation_cache.size();i++) {
+		
+		base_private.active_automation_cache[i]->apply(p_tick);
+	}
+}
+
+void Track::offline_process_automations(Tick p_tick) {
+	
+	if (base_private.song_playback->get_status()==SongPlayback::STATUS_PLAY)
+		return; //if playing, then dont do this
+	
+	AudioControl::mutex_lock();
+	process_automations_at_tick(p_tick);
+	AudioControl::mutex_unlock();
+	
+}
+
 void Track::process_automations(bool p_use_current_tick_to) {
 	
-	if (base_private.song_playback->get_status()==SongPlayback::STATUS_PLAY) {
-		/* update automations */
-		for (int i=0;i<base_private.active_automation_cache.size();i++) {
-			
-			Tick tick = p_use_current_tick_to?base_private.song_playback->get_current_tick_to():base_private.song_playback->get_current_tick_from();
-			base_private.active_automation_cache[i]->apply(tick);
-		}
-		
-	}
+	if (base_private.song_playback->get_status()!=SongPlayback::STATUS_PLAY)
+		return; // only process if playing
+
+	Tick tick = p_use_current_tick_to?base_private.song_playback->get_current_tick_to():base_private.song_playback->get_current_tick_from();
+	
+	process_automations_at_tick( tick );
+	
 	
 }
 void Track::process(int p_frames) {

@@ -124,7 +124,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 	
 		}
 	
-		CASE( KEYBIND("move_note_down") ) {
+		CASE( KEYBIND("editor/move_note_down") ) {
 	
 			Tick cursor_pos=d->cursor.get_tick_pos();
 			Tick next_pos=d->cursor.get_tick_pos()+d->cursor.get_snap_tick_size();
@@ -148,7 +148,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			d->cursor.set_pos( d->cursor.get_pos() +1 );
 		
 		}
-		CASE( KEYBIND("move_note_up") ) {
+		CASE( KEYBIND("editor/move_note_up") ) {
 	
 			Tick cursor_pos=d->cursor.get_tick_pos();
 			Tick prev_pos=d->cursor.get_tick_pos()-d->cursor.get_snap_tick_size();
@@ -201,6 +201,8 @@ bool Editor::pattern_edit_key_press(int p_event) {
 		
 			d->undo_stream.begin("Insert");
 		
+			/* need to cache the operationsm, otherwise when deleting a note, the index will act funny */
+			std::list<Track_Pattern::NoteListElement> operations;
 			for (int i=(p->get_note_count()-1);i>=0;i--) {
 			
 				Track_Pattern::Position pos=p->get_note_pos(i);
@@ -211,15 +213,31 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			
 				Track_Pattern::Note note=p->get_note(i);
 			
+
 			//erase
-				SET_NOTE(Track_Pattern::Position( pos.tick+block_pos, pos.column), Track_Pattern::Note() );
+				Track_Pattern::NoteListElement op_clear;
+				op_clear.note=Track_Pattern::Note();
+				op_clear.pos=Track_Pattern::Position( pos.tick+block_pos, pos.column);
+				operations.push_back(op_clear);
+				
 			//set again above
 				Tick new_pos=pos.tick+block_pos+d->cursor.get_snap_tick_size();
-				if (pattern_track->is_pos_editable( new_pos ))
-					SET_NOTE(Track_Pattern::Position( new_pos, pos.column), note );
+				if (!pattern_track->is_pos_editable( new_pos ))
+					continue;
+				
+				Track_Pattern::NoteListElement op_insert;
+				op_insert.note=note;;
+				op_insert.pos=Track_Pattern::Position( new_pos, pos.column);
+				operations.push_back(op_insert);
+
+			}
 			
+			foreach(I,operations) {
+				
+				SET_NOTE(I->pos, I->note);
 			}
 					
+			
 			d->undo_stream.end();
 		
 		}
@@ -238,6 +256,8 @@ bool Editor::pattern_edit_key_press(int p_event) {
 		
 			d->undo_stream.begin("Delete");
 		
+			/* need to cache the operationsm, otherwise when deleting a note, the index will act funny */
+			std::list<Track_Pattern::NoteListElement> operations;
 			for (int i=0;i<p->get_note_count();i++) {
 			
 				Track_Pattern::Position pos=p->get_note_pos(i);
@@ -249,23 +269,39 @@ bool Editor::pattern_edit_key_press(int p_event) {
 				Track_Pattern::Note note=p->get_note(i);
 			
 			//erase
-				SET_NOTE( Track_Pattern::Position( pos.tick+block_pos, pos.column), Track_Pattern::Note() );
+				Track_Pattern::NoteListElement op_clear;
+				op_clear.note=Track_Pattern::Note();
+				op_clear.pos=Track_Pattern::Position( pos.tick+block_pos, pos.column);
+				operations.push_back(op_clear);
+				
 			//set again above
 				Tick new_pos=pos.tick+block_pos-d->cursor.get_snap_tick_size();
 			
 				if (new_pos<cursor_block_pos)
 					continue;
 				
-				if (pattern_track->is_pos_editable( new_pos ))
-					SET_NOTE( Track_Pattern::Position( new_pos, pos.column), note );
-			
+				if (!pattern_track->is_pos_editable( new_pos ))
+					continue;
+		
+				Track_Pattern::NoteListElement op_insert;
+				op_insert.note=note;;
+				op_insert.pos=Track_Pattern::Position( new_pos, pos.column);
+				operations.push_back(op_insert);
+					
 			
 			}
 		
+			foreach(I,operations) {
+				
+				SET_NOTE(I->pos, I->note);
+			}
+			
 			d->undo_stream.end();
 		
 		}
 	
+		
+		
 		CASE( KEYBIND("note_entry/toggle_note_edit") ) {
 	
 	
@@ -279,6 +315,51 @@ bool Editor::pattern_edit_key_press(int p_event) {
 	
 		}
 
+		CASE( KEYBIND("note_entry/play_row_at_cursor") ) {
+			
+			if (d->pattern_edit.field==0) {
+				
+				for (int i=0;i<pattern_track->get_visible_columns();i++) {
+					
+					Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), i ) );
+					if (note.is_empty())
+						continue;
+				
+					EventMidi em;
+					em.channel=0;
+					em.midi_type=EventMidi::MIDI_NOTE_ON;
+					em.data.note.note=note.note;
+					em.data.note.velocity=note.volume;
+					
+					pattern_track->add_edit_event( em, i );
+				}	
+				
+				pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
+				d->cursor.set_pos( d->cursor.get_pos() +1 );
+			}			
+		}
+		
+		CASE( KEYBIND("note_entry/play_note_at_cursor") ) {
+			if (d->pattern_edit.field==0) {
+				
+					
+				Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column ) );
+				if (!note.is_empty()) {
+				
+					EventMidi em;
+					em.channel=0;
+					em.midi_type=EventMidi::MIDI_NOTE_ON;
+					em.data.note.note=note.note;
+					em.data.note.velocity=note.volume;
+					
+					pattern_track->add_edit_event( em,d->pattern_edit.column );
+				}	
+				
+				pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
+				d->cursor.set_pos( d->cursor.get_pos() +1 );
+			}
+		}
+		
 		DEFAULT
 		
 			repaint=false;
@@ -300,7 +381,16 @@ bool Editor::pattern_edit_key_press(int p_event) {
 					SET_NOTE(Track_Pattern::Position(tickpos,d->pattern_edit.column),Track_Pattern::Note(note,60));
 					d->undo_stream.end();
 					d->cursor.set_pos( d->cursor.get_pos() +1 );
-
+					
+					/* play event! */
+					EventMidi em;
+					em.channel=0;
+					em.midi_type=EventMidi::MIDI_NOTE_ON;
+					em.data.note.note=note;
+					em.data.note.velocity=60;
+			
+					pattern_track->add_edit_event( em,d->pattern_edit.column );
+					pattern_track->offline_process_automations( tickpos );
 				}
 			}
 		}

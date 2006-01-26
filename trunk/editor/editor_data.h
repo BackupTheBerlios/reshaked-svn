@@ -79,20 +79,14 @@ friend class EditorCommands;
 		} begin,end;
 		bool enabled;
 
-		enum ShiftSelectingChanging {
-			CHANGE_BEGIN,
-			CHANGE_END
-		};
-
 		enum PasteMode {
 			PASTE_OVERWRITE,
 			PASTE_MIX,
 		};
 		
 		bool shift_selecting;
-		ShiftSelectingChanging shift_selecton_change_tick;
-		ShiftSelectingChanging shift_selecton_change_blocklist_column;
-		
+		Pos shift_selection_begin;		
+		bool shift_selection_valid;
 		Pos mouse_drag_begin;
 		Pos mouse_drag_end;
 		

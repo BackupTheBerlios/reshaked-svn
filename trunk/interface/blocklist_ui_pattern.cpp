@@ -370,6 +370,14 @@ void BlockListUI_Pattern::paint_frames(QPainter& p) {
 
 	}
 
+	p.setPen(GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
+	for (int i=0;i<(track->get_visible_columns()-1);i++ ) {
+		
+		int font_width=VisualSettings::get_singleton()->get_pattern_font()->get_width();
+		int ofs=font_width/2+font_width*4*(i+1);	
+		
+		p.fillRect(ofs,0,1,height(),GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
+	}
 	
 }
 

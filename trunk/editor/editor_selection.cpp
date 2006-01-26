@@ -220,9 +220,9 @@ void Editor::selection_copy() {
 
 void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::Selection::Pos p_to) {
 	
+	
 	Tick tick_from=p_from.tick;
 	Tick tick_to=p_to.tick+TICKS_PER_BEAT/d->cursor.get_snap()-1; //until next row, but not next row
-	
 	d->undo_stream.begin("Selection Zap");
 	
 
@@ -234,15 +234,14 @@ void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::
 			
 			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
 			int columns=tp->get_visible_columns();
-			int column_from=(i==0)?p_from.column:0;
+			int column_from=(i==p_from.blocklist)?p_from.column:0;
 			int column_to=(i==p_to.blocklist)?p_to.column:(columns-1);
 						
 			std::list<Track_Pattern::Position> note_list;
 			
 			for (int j=column_from;j<=column_to;j++) {
 				
-				
-				
+		
 				int block_from,block_to;
 				if (tp->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
 					continue;
@@ -256,7 +255,7 @@ void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::
 						Track_Pattern::Position notepos;
 						notepos=pb->get_note_pos( l );
 						notepos.tick+=tp->get_block_pos(k);
-						if (notepos.tick<tick_from || notepos.tick >tick_to)
+						if (notepos.tick<tick_from || notepos.tick >tick_to || notepos.column!=j)
 							continue;
 						
 						note_list.push_back(notepos);
@@ -385,52 +384,47 @@ void Editor::selection_paste_at(EditorData::Selection::Pos p_pos) {
 
 void Editor::begin_check_shift_selection() {
 	
+	printf("begin shift selecting %i\n",d->selection.shift_selecting);
+	
+	
+	if (d->selection.enabled) {
+		/* if the cursor is in some place where shift selection wont work, invalidate it */
+		
+		EditorData::Selection::Pos top_right=d->selection.end;
+		top_right.tick=d->selection.begin.tick;
+		EditorData::Selection::Pos bottom_left=d->selection.begin;
+		bottom_left.tick=d->selection.end.tick;
+		EditorData::Selection::Pos cursor=get_cursor_selection_pos();
+		
+		if ((d->selection.end!=cursor && d->selection.begin!=cursor && top_right!=cursor && bottom_left!=cursor)) {
+			printf("changing valid to false from %i\n",d->selection.shift_selection_valid);
+			d->selection.shift_selection_valid=false;		
+		}		
+	}
+	
 	if (!d->selection.shift_selecting)
 		return;
 	
-	EditorData::Selection::Pos top_right=d->selection.end;
-	top_right.tick=d->selection.begin.tick;
-	EditorData::Selection::Pos bottom_left=d->selection.begin;
-	bottom_left.tick=d->selection.end.tick;
-	EditorData::Selection::Pos cursor=get_cursor_selection_pos();
-	
-	if (d->selection.enabled==false || (d->selection.end!=cursor && d->selection.begin!=cursor && top_right!=cursor && bottom_left!=cursor)) {
-			
-		d->selection.begin=cursor;
-		d->selection.end=cursor;
-		d->selection.enabled=true;
-	
-	}
+	if (!d->selection.enabled || !d->selection.shift_selection_valid) {
 		
-	d->selection.shift_selecton_change_blocklist_column=(cursor.blocklist==d->selection.begin.blocklist && cursor.column==d->selection.begin.column)?EditorData::Selection::CHANGE_BEGIN:EditorData::Selection::CHANGE_END;
-	d->selection.shift_selecton_change_tick=(cursor.tick==d->selection.begin.tick)?EditorData::Selection::CHANGE_BEGIN:EditorData::Selection::CHANGE_END;
+		d->selection.begin=get_cursor_selection_pos();
+		d->selection.end=get_cursor_selection_pos();
+		d->selection.enabled=true;
+		d->selection.shift_selection_begin=get_cursor_selection_pos();
+		d->selection.shift_selection_valid=true;
+	}
 }
 void Editor::end_check_shift_selection() {
 	
-	if (!d->selection.shift_selecting)
+	printf("end shift selecting %i\n",d->selection.shift_selecting);
+	if (!d->selection.shift_selecting || !d->selection.shift_selection_valid)
 		return;
 	
-	EditorData::Selection::Pos cursor=get_cursor_selection_pos();
-	
-	if (d->selection.shift_selecton_change_blocklist_column==EditorData::Selection::CHANGE_BEGIN) {
-		d->selection.begin.blocklist=cursor.blocklist;
-		d->selection.begin.column=cursor.column;
-		
-	} else {
-		d->selection.end.blocklist=cursor.blocklist;
-		d->selection.end.column=cursor.column;
-		
-	}
-	
-	if (d->selection.shift_selecton_change_tick==EditorData::Selection::CHANGE_BEGIN) {
-		d->selection.begin.tick=cursor.tick;
-
-		
-	} else {
-		d->selection.end.tick=cursor.tick;	
-	}
+	d->selection.begin=d->selection.shift_selection_begin;
+	d->selection.end=get_cursor_selection_pos();
 	
 	fix_selection();
+	
 	d->ui_update_notify->edit_window_changed();
 }
 

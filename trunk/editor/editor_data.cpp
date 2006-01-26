@@ -19,6 +19,7 @@ EditorData::EditorData(Song *p_song,UI_UpdateNotify *p_ui_update_notify) :cursor
 	global_edit.setnote_dont_update=false;
 	global_edit.automation_point_dont_update=false;
 	selection.shift_selecting=false;
+	selection.shift_selection_valid=false;
 }
 
 

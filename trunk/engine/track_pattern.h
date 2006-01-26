@@ -153,6 +153,7 @@ private:
 		LocalProperty volume;
 		LocalProperty balance;
 		EventBuffer event_buffer;
+		EventBuffer edit_event_buffer;
 		
 		Note last_note[MAX_COLUMNS];
 	} data;
@@ -164,8 +165,14 @@ private:
 	
 	void reset_last_notes();
 	bool can_use_synths();
+	void add_noteon_event_to_buffer(char p_note,char p_velocity,int p_column,EventBuffer &p_buffer,int p_frame_offset);
+	
+	
 public:
 
+	//called from non-player_thread
+	void add_edit_event(const EventMidi &p_event_midi,int p_column);
+	
 	Property &swing();
 	Property &volume();
 	Property &balance();

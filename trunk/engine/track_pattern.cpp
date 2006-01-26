@@ -10,6 +10,7 @@
 //
 //
 #include "track_pattern.h"
+#include "engine/audio_control.h"
 
 namespace ReShaked {
 
@@ -302,9 +303,79 @@ void Track_Pattern::plugin_added_notify(SoundPlugin *p_plugin) {
 		p_plugin->set_event_buffer( &data.event_buffer );
 }
 
+
+void Track_Pattern::add_noteon_event_to_buffer(char p_note,char p_velocity,int p_column,EventBuffer &p_buffer,int p_frame_offset) {
+	
+	if (data.last_note[p_column].is_note() && data.last_note[p_column].note==p_note) {
+		/* IF the note is the same, we must mute it before */
+		Event e;
+		SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[p_column].note,0);
+		e.frame_offset=p_frame_offset; //off te
+		p_buffer.push_event(e);
+
+	}
+	
+	/* send new note */
+	{
+		int velocity=(int)p_velocity*127/99;
+		Event e;
+		SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_ON,0,p_note,velocity);
+		e.frame_offset=p_frame_offset;
+		p_buffer.push_event(e);
+
+	}
+	
+	if (data.last_note[p_column].is_note() && data.last_note[p_column].note!=p_note) {
+		/* IF the note is the same, we must mute it before */
+		Event e;
+		SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[p_column].note,0);
+		e.frame_offset=p_frame_offset; //off te
+		p_buffer.push_event(e);
+
+	}
+	
+	
+	data.last_note[p_column]=Note(p_note);	
+	
+}
+
+void Track_Pattern::add_edit_event(const EventMidi &p_event_midi,int p_column) {
+	
+	ERR_FAIL_INDEX(p_column,MAX_COLUMNS);
+	
+	AudioControl::mutex_lock();	
+	
+	if (p_event_midi.midi_type==EventMidi::MIDI_NOTE_ON) {
+		
+		add_noteon_event_to_buffer(p_event_midi.data.note.note,p_event_midi.data.note.velocity,p_column,data.edit_event_buffer,0);
+	} else {
+		
+		Event e;
+		e.type=Event::TYPE_MIDI;
+		e.param.midi=p_event_midi;
+		e.frame_offset=0;
+		data.edit_event_buffer.push_event(e);
+		
+		
+	}
+	AudioControl::mutex_unlock();	
+
+}
+
 void Track_Pattern::track_pre_process(int p_frames) {
 	
-	data.event_buffer.clear(); //first of all, always clear event buffer
+	data.event_buffer.clear(); //first of all, always clear event buffer	
+	
+	
+	//add the edit events (if any) at offset 0
+	for (int i=0;i<data.edit_event_buffer.get_event_count();i++) {
+		
+		Event e=*data.edit_event_buffer.get_event(i);
+		e.frame_offset=0;
+		data.event_buffer.push_event(e);
+	}
+	data.edit_event_buffer.clear();
+
 	
 	if (get_song_playback()->get_status()!=SongPlayback::STATUS_PLAY)
 		return; //nothing much to do
@@ -320,6 +391,7 @@ void Track_Pattern::track_pre_process(int p_frames) {
 	//printf("PAT: from %i to %i\n",(int)tick_from,(int)tick_to);
 	
 	if (block_idx==-1 || (get_block_pos(block_idx)+get_block(block_idx)->get_length())<tick_from) {
+		
 		block_idx++;
 	}
 	
@@ -356,22 +428,8 @@ void Track_Pattern::track_pre_process(int p_frames) {
 				
 				if (n.is_note()) {
 					
-					//printf("AT %i - note %i\n",(int)tick_to,(int)n.note);
-					if (data.last_note[col].is_note()) {
-						/* if there was a previous note, set noteoff! */						
-						Event e;
-						SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[col].note,0);
-						e.frame_offset=frame; //off te
-						data.event_buffer.push_event(e);
-					}
 					
-					int velocity=(int)n.volume*127/99;
-					Event e;
-					SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_ON,0,n.note,velocity);
-					e.frame_offset=frame;
-					data.event_buffer.push_event(e);
-					data.last_note[col]=n;
-	
+					add_noteon_event_to_buffer(n.note,n.volume,col,data.event_buffer,frame);
 					
 				} else if (n.is_note_off()) {
 					
@@ -389,6 +447,8 @@ void Track_Pattern::track_pre_process(int p_frames) {
 		
 		block_idx++;
 	}
+	
+	
 	
 }
 

@@ -57,6 +57,7 @@ void MainWindow::create_keybindings() {
 	for (int i=0;i<10;i++)
 		data.keyboard_codes.set_number(i,Qt::Key_0+i);
 
+	
 	data.keyboard_codes.add_key_bind("up","Move Up",Qt::Key_Up,true);
 	data.keyboard_codes.add_key_bind("down","Move Down",Qt::Key_Down,true);
 	data.keyboard_codes.add_key_bind("left","Move Left",Qt::Key_Left,true);
@@ -124,7 +125,10 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("note_entry/toggle_note_edit","Note Edit Mode Toggle",Qt::Key_Space);
 	for (int i=0;i<MAX_KEYS;i++)
 		data.keyboard_codes.add_key_bind((String)"note_entry/"+key_name[i],key_name[i],default_pianokey_bind[i]);
+	
+	data.keyboard_codes.add_key_bind("note_entry/play_note_at_cursor","Play Note Under Cursor",Qt::Key_4);
 
+	data.keyboard_codes.add_key_bind("note_entry/play_row_at_cursor","Play Note Under Cursor",Qt::Key_8);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/undo",Qt::CTRL+Qt::Key_Z);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/redo",Qt::SHIFT+Qt::CTRL+Qt::Key_Z);
 

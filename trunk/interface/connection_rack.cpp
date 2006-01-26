@@ -51,11 +51,11 @@ bool ConnectionRack::get_plug_data_at_pos(int p_x,int p_y,PlugData* p_data) {
 	for (int i=0;i<graph->get_node_count();i++) {
 		
 		for (int j=0;j<graph->get_node(i)->get_output_plug_count();j++) {
-			
+			printf("search in node %lls\n",	graph->get_node(i)->get_caption().c_str() );
 			QPoint p = get_output_plug_pos( i, j);
 			
 			int sqr_distance=POW2(p_x-p.x())+POW2(p_y-p.y());
-			printf("Compare output %i,%i against %i,%i - %i<%i\n",p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
+			printf("Node: %lls, plug %iCompare output %i,%i against %i,%i - %i<%i\n",graph->get_node(i)->get_caption().c_str(),j,p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
 			if (sqr_distance>jack_sqr_len)
 				continue;
 			
@@ -155,7 +155,7 @@ QPoint ConnectionRack::get_output_plug_pos(int p_node,int p_plug) {
 	ofs+=skin()->get_left();
 	int y_ofs=skin()->get_top();
 	
-	int input_plugs=get_node_at_pos( p_node )->get_input_plug_count();
+	int input_plugs=graph->get_node( p_node )->get_input_plug_count();
 	int input_columns=input_plugs?((input_plugs-1)/get_plugs_for_height()+1):0;
 
 	ofs+=jack_hole().width()*2*input_columns;
