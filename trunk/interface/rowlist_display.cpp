@@ -64,6 +64,8 @@ void RowListDisplay::paint_marker(QPainter& p, int p_marker_idx,int p_row,bool p
 
 void RowListDisplay::paintEvent(QPaintEvent *pe) {
 
+	cursor->set_window_size( height() / VisualSettings::get_singleton()->get_editing_row_height() );
+	
 	PixmapFont *pfont = VisualSettings::get_singleton()->get_pattern_font();
 	PixmapFont *rfont = VisualSettings::get_singleton()->get_rowcount_font();
 	PixmapFont *bfont = VisualSettings::get_singleton()->get_rowcount_subbeat_font();

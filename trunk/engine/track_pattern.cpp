@@ -66,14 +66,21 @@ Track_Pattern::NoteList Track_Pattern::get_notes_in_range(Tick p_from, Tick p_to
 /****************************************************************************/
 /****************************************************************************/
 
-BlockList::Block* Track_Pattern::create_block(BlockCreationData *p_creation_data) {
 
-
+Track_Pattern::PatternBlock* Track_Pattern::create_pattern_block() {
+	
 	Pattern *p = new Pattern;
 	PatternBlock *pb = new PatternBlock(p);
 	
 	return pb;
+	
+}
 
+BlockList::Block* Track_Pattern::create_block(BlockCreationData *p_creation_data) {
+
+
+	
+	return create_pattern_block();
 }
 
 

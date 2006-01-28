@@ -297,7 +297,7 @@ bool SoundDriver_JACK::init() {
 			however examples i saw dont erase it*/
 		} else {
 			
-			printf("JACK: Found no physical output ports (??)\n");
+			printf("JACK: Found no physical output ports ( ? ? )\n");
 		}
 
 	}

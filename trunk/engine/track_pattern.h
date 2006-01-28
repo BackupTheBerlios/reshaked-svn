@@ -125,7 +125,7 @@ public:
 	};
 	
 private:
-
+friend class Saver; //saver needs access to Pattern structure for comparing it
 	struct Pattern : public SharedData {
 
 		int length; //length in beats
@@ -137,6 +137,7 @@ private:
 
 
 
+	
 	Block *create_duplicate_block(Block *p_block);
 	Block *create_link_block(Block *p_block);
 
@@ -177,6 +178,8 @@ public:
 	Property &volume();
 	Property &balance();
 	
+	static PatternBlock* create_pattern_block();
+
 	Block* create_block(BlockCreationData *p_creation_data);
 	
 	bool shares_block_data(Block *p_block);

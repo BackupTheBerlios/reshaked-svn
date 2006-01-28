@@ -45,6 +45,7 @@ public:
 	friend class Automation;
 		int length; //in beats
 		
+		BlockInterpolationMethod interpolation;
 	public:
 
 		float get_tick_val(Tick p_tick);
@@ -96,6 +97,7 @@ public:
 	
 	float get_tick_val(Tick p_tick); // 0.0 - 1.0
 	
+	static AutomationBlock* create_automation_block();
 	Block* create_block(BlockCreationData *p_creation_data=NULL);
 
 	void apply(Tick p_pos);

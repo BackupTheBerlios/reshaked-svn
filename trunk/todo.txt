@@ -88,6 +88,7 @@ BIG TODO AFTER 80%: Order doesnt matter anymore?
 	*-Change beats/bar
 	*-Make a menubutton thing?
 	*-display shortcuts on buttons
+	-Display volume mask?
 
 	
 -Qt Property Editors

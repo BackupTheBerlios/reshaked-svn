@@ -15,6 +15,9 @@
 #include "engine/audio_node.h"
 #include "engine/event_buffer.h"
 #include "property.h"
+#include "tree_saver.h"
+#include "tree_loader.h"
+
 
 namespace ReShaked {
 
@@ -88,6 +91,10 @@ public:
 	int get_duplicate();
 	void set_duplicate(int p_duplicate);
 	int get_channels_created();
+	
+	
+	virtual void save(TreeSaver *p_saver);	
+	virtual void load(TreeLoader *p_saver);	
 	
 	/**
 	 * Sound Plugin Constructor

@@ -19,6 +19,30 @@ namespace ReShaked {
 */
 				    
 				    
+				    
+class CharString {
+					    
+	struct Shared {
+		
+		int refcount;
+		char *data;	
+	};
+	
+	Shared *shared;
+	void free_shared();
+	void take_shared(Shared *p_shared);
+	
+friend class String;	
+	CharString(char *p_data);	
+public:	
+	
+	const CharString& operator=(CharString &p_str);
+	const char *get_data();	
+	CharString();	
+	CharString(const CharString &p_src);
+	~CharString();
+};
+
 class String {
 public:			    
 	typedef wchar_t CharType;
@@ -111,6 +135,9 @@ public:
 	static String num(double p_num,int p_digits=-1);
 	
 	String left(int p_chars);
+	
+	CharString ascii(bool p_allow_extended=false);
+	CharString utf8();
 	/**
 	 * The constructors must not depend on other overloads
 	 */

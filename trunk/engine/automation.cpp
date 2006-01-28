@@ -62,13 +62,19 @@ float Automation::get_tick_val(Tick p_tick) {
 	
 }
 
-BlockList::Block* Automation::create_block(BlockCreationData *p_creation_data) {
-
-
+Automation::AutomationBlock* Automation::create_automation_block() {
+	
+	
 	AutomationData *a = new AutomationData;
 	AutomationBlock *ab = new AutomationBlock(a);
 
 	return ab;
+}
+
+BlockList::Block* Automation::create_block(BlockCreationData *p_creation_data) {
+
+	return create_automation_block();
+	
 }
 
 BlockList::BlockCreationBehavior Automation::get_block_creation_behavior() {

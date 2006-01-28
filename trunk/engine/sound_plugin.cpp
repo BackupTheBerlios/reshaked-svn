@@ -81,6 +81,25 @@ void SoundPlugin::hide_internal_UI() {
 	
 }
 
+
+void SoundPlugin::save(TreeSaver *p_saver) {
+	
+	/* Default code for saving a sound plugin. As long as EVERY parameter can be automatable, this will work */
+	for (int i=0;i<get_port_count();i++) {
+		
+		if (get_port_type(i)==TYPE_READ)
+			continue;
+		p_saver->add_float( get_port(i).get_name(), get_port(i).get() );
+		
+	}
+	
+}
+void SoundPlugin::load(TreeLoader *p_saver) {
+	
+	
+}
+
+
 SoundPlugin::SoundPlugin(const SoundPluginInfo *p_info,int p_channels) {
 	
 	_plugin_info=p_info;

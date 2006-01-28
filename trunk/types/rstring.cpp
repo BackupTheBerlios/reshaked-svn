@@ -21,7 +21,75 @@
 namespace ReShaked {
 
 
- 
+void CharString::free_shared() {
+	
+	if (shared->refcount==1) {
+		
+		free(shared->data);
+		free(shared);
+	} else {
+		
+		shared->refcount--;
+	}
+	
+	shared=NULL;
+	
+}
+void CharString::take_shared(Shared *p_shared) {
+	
+	if (shared!=NULL)
+		free_shared();
+	shared=p_shared;
+	shared->refcount++;
+	
+}
+
+
+const char *CharString::get_data() {
+	
+	if (!shared)
+		return "";
+	
+	return shared->data;
+}
+
+const CharString& CharString::operator=(CharString &p_str) {
+	
+	take_shared(p_str.shared);
+	return *this;
+	
+}
+
+CharString::CharString() {
+	
+	shared=NULL;
+}
+
+CharString::CharString(const CharString &p_src) {
+	
+	CharString src=p_src;
+	shared=NULL;
+	take_shared(src.shared);
+	
+}
+
+CharString::CharString(char *p_data) {
+	if (p_data==NULL)
+		shared=NULL;
+	else {
+		shared = (Shared*)malloc(sizeof(Shared));
+		shared->data=p_data;
+		shared->refcount=1;
+	}
+	
+}
+CharString::~CharString() {
+	
+	free_shared();
+}
+
+
+/** STRING **/ 
 void String::copy_on_write() {
 	
 	if (shared->refcount==1)
@@ -426,6 +494,82 @@ String String::num(double p_num,int p_digits) {
 	return s;
 	
 }
+
+
+CharString String::ascii(bool p_allow_extended) {
+	
+	if (!length())
+		return CharString();
+	
+	char * ascii = (char*)malloc(length()+1);
+	for (int i=0;i<length();i++) {
+		
+		int max=p_allow_extended?0xFF:0x7F;
+		if ((*this)[i]>max)
+			ascii[i]='?';
+		else {
+			
+			unsigned char uc=(unsigned char)((*this)[i]);
+			signed char *sc=(signed char*)&uc;
+			ascii[i]=*sc;
+			
+		}
+	}
+	ascii[length()]=0;
+	
+	return CharString(ascii);
+
+	
+}
+CharString String::utf8() {
+	
+	if (!length())
+		return CharString();
+	
+	String utf8s;
+
+	for (int i=0;i<length();i++) {
+		
+		CharType c=(*this)[i];
+		
+		if (c <= 0x7f) // 7 bits.
+			utf8s+=c;
+		else if (c <= 0x7ff) {   // 11 bits
+			
+			utf8s+=CharType(0xc0 | ((c >> 6) & 0x1f));  // Top 5 bits.
+			utf8s+=CharType(0x80 | (c & 0x3f));        // Bottom 6 bits.
+		} else if (c <= 0xffff) { // 16 bits
+			
+			utf8s+=CharType(0xe0 | ((c >> 12) & 0x0f)); // Top 4 bits.
+			utf8s+=CharType(0x80 | ((c >> 6) & 0x3f));  // Middle 6 bits.
+			utf8s+=CharType(0x80 | (c & 0x3f));        // Bottom 6 bits.
+		} else if (c <= 0x001fffff) { // 21 bits
+			
+			utf8s+=CharType(0xf0 | ((c >> 18) & 0x07)); // Top 3 bits.
+			utf8s+=CharType(0x80 | ((c >> 12) & 0x3f)); // Upper middle 6 bits.
+			utf8s+=CharType(0x80 | ((c >> 6) & 0x3f));  // Lower middle 6 bits.
+			utf8s+=CharType(0x80 | (c & 0x3f));        // Bottom 6 bits.
+		} else if (c <= 0x03ffffff) { // 26 bits
+			
+			utf8s+=CharType(0xf8 | ((c >> 24) & 0x03)); // Top 2 bits.
+			utf8s+=CharType(0x80 | ((c >> 18) & 0x3f)); // Upper middle 6 bits.
+			utf8s+=CharType(0x80 | ((c >> 12) & 0x3f)); // middle 6 bits.
+			utf8s+=CharType(0x80 | ((c >> 6) & 0x3f));  // Lower middle 6 bits.
+			utf8s+=CharType(0x80 | (c & 0x3f));        // Bottom 6 bits.
+		} else if (c <= 0x7fffffff) {  // 31 bits
+			
+			utf8s+=CharType(0xfc | ((c >> 30) & 0x01)); // Top 1 bit.
+			utf8s+=CharType(0x80 | ((c >> 24) & 0x3f)); // Upper upper middle 6 bits.
+			utf8s+=CharType(0x80 | ((c >> 18) & 0x3f)); // Lower upper middle 6 bits.
+			utf8s+=CharType(0x80 | ((c >> 12) & 0x3f)); // Upper lower middle 6 bits.
+			utf8s+=CharType(0x80 | ((c >> 6) & 0x3f));  // Lower lower middle 6 bits.
+			utf8s+=CharType(0x80 | (c & 0x3f));        // Bottom 6 bits.
+		} 
+	}
+	
+	return utf8s.ascii(true); //allow extended
+}
+
 
 String::String(CharType p_char) {
 	

@@ -87,6 +87,8 @@ class MainWindow : public QMainWindow {
 	};
 
 
+	QString last_saved_file;
+	
 
 	struct Data {
 

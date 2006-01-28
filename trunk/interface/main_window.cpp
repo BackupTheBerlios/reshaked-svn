@@ -26,7 +26,13 @@
 #include "visual_settings.h"
 #include "engine/sound_driver_list.h"
 
+#include "tree_saver_disk.h"
+#include "tree_loader_disk.h"
+#include "engine/saver.h""
+
 #include "interface/automation_tree.h"
+#include <Qt/qfiledialog.h>
+#include <Qt/qmessagebox.h>
 
 namespace ReShaked {
 
@@ -39,6 +45,48 @@ void MainWindow::menu_action_callback(int p_action) {
 	
 	switch (p_action) {
 
+		case ITEM_SONG_OPEN : {
+		
+			QString open_file= QFileDialog::getOpenFileName ( this, "Open Song","","ReShaked Songs (*.rsh)");			
+			
+			TreeLoaderDisk tld;
+			
+			TreeLoaderDisk::ErrorReading err=tld.open_file(DeQStrify(open_file));
+			
+			if (err==TreeLoaderDisk::ERROR_CANT_OPEN_FILE) 
+				QMessageBox::critical ( this, "Error", "Cant Open File", QMessageBox::Ok, QMessageBox::NoButton);
+			else if (err==TreeLoaderDisk::ERROR_FILE_UNRECOGNIZED) 
+				QMessageBox::critical ( this, "Error", "File Unrecognized", QMessageBox::Ok, QMessageBox::NoButton);
+			else if (err==TreeLoaderDisk::ERROR_FILE_CORRUPTED) 
+				QMessageBox::critical ( this, "Error", "File is Corrupted", QMessageBox::Ok, QMessageBox::NoButton);
+				
+			if (err)
+				break;
+			
+			tld.close_file();
+			
+		} break;
+		case ITEM_SONG_SAVE_AS : {
+			
+					
+			QString save_file=QFileDialog::getSaveFileName ( this, "Save Song As..","", "ReShaked Songs (*.rsh)");
+			TreeSaverDisk tsd;
+			
+			if (tsd.open_file(DeQStrify(save_file))) {
+				
+				QMessageBox::critical ( this, "Error", "Unable to Save File", QMessageBox::Ok, QMessageBox::NoButton);
+
+				break;
+			}
+
+			Saver saver;
+			
+			saver.save_song(&data.song,&tsd);
+			
+			tsd.close_file();
+	
+		} break;
+		
 		case ITEM_TRACK_ADD: {
 
 			NewTrackDialog *new_dialog = new NewTrackDialog(this);
