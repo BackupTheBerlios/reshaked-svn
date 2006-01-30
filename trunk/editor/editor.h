@@ -128,6 +128,7 @@ public:
 	void track_move_plugin_left(Track *p_track,int p_plugin);
 	void track_move_plugin_right(Track *p_track,int p_plugin);
 	
+	
 	/** SELECTION EDITING */
 	
 	int get_selection_begin_column();

@@ -48,6 +48,7 @@ public:
 		String visual_path;
 		TrackAutomation *automation;
 		bool automation_visible;
+		bool builtin;
 		
 	};
 	
@@ -114,7 +115,7 @@ protected:
 	const EventBuffer& get_seq_event_buffer();
 	GlobalProperties &get_global_props();
 
-	void add_property(String p_visual_path,Property *p_prop,TrackAutomation *p_automation=NULL,int p_pos=-1);
+	void add_property(String p_visual_path,Property *p_prop,TrackAutomation *p_automation=NULL,int p_pos=-1,bool p_builtin=true);
 	
 	
 
@@ -161,7 +162,10 @@ public:
 	int get_visible_automation_count();
 	Automation *get_visible_automation(int p_index);
 	bool has_property_visible_automation(int p_index);
+	bool is_property_builtin(int p_index); ///< property is builtin of track (as in, not from a plugin)
 	
+	int find_plugin_idx_for_property(Property *p_property);
+
 	
 	void set_name(String p_name);
 	String get_name();

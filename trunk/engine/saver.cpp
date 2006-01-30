@@ -187,9 +187,26 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 		if ( a->get_block_count()==0 && !p_track->has_property_visible_automation(i))
 			continue; 
 		
+		bool builtin=p_track->is_property_builtin(i);
+		int plugin_idx=-1;
+		
+		if (!builtin) { //belongs to a plugin
+			
+			plugin_idx=p_track->find_plugin_idx_for_property(a->get_property());
+			ERR_CONTINUE(plugin_idx==-1);
+		}
+		
+		
+		
 		p_saver->enter("automation_"+String::num(i));
 		
 		p_saver->add_int("initial",a->get_initial_value());
+		p_saver->add_int("builtin",builtin); //belongs to plugin or not
+		p_saver->add_string("name",a->get_property()->get_name());
+		if (builtin) 
+			p_saver->add_int("plugin_idx",plugin_idx); //plugin it belongs to
+	
+		
 		{
 			p_saver->enter("blocks");
 		

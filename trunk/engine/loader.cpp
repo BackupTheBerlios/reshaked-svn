@@ -79,6 +79,17 @@ void Loader::load_pattern_block(TreeLoader *p_loader) {
 }
 
 
+Automation::AutomationBlock* Loader::get_shared_automation_block_idx(int p_idx) {
+	
+	std::map<int,Automation::AutomationBlock*>::iterator I=shared_automation_blocks.find(p_idx);
+		
+	if (I==shared_automation_blocks.end())
+		return NULL;
+	
+	return I->second;
+
+}
+
 
 void Loader::load_graph(AudioGraph *p_graph,const std::vector<int> &p_node_remap,TreeLoader *p_loader) {
 	
@@ -95,57 +106,120 @@ void Loader::load_track(Track *p_track, TreeLoader *p_loader) {
 	
 	
 
-	/** SAVE STANDARD TRACK INFO */
-	p_track->set_name( p_saver->get_string( "name "));
-
-	/** SAVE RACK */
-	p_saver->enter("rack");
-	load_track_rack(p_track,p_saver);
-	p_saver->exit(); //rack
-
-	/** AUTOMATIONS */
-	p_saver->enter("automations");
-
-	for (int i=0;i<p_loader->get_child_count();i++) {
-		
-		p_loader->enter(p_loader->get_child_name(i));
-		/* FIX AUTOMATIONS! Which property is EACH FOR? , ORDER?! BLEHLER! XOX
-		Automation *a=p_track->get_property_automation(i);
-		/// Dont save unused automations, to save space in file 
-		if ( a->get_block_count()==0 && !p_track->has_property_visible_automation(i))
-			continue; 
-	
-		p_saver->enter("automation_"+String::num(i));
-	
-		p_saver->add_int("initial",a->get_initial_value());
-		{
-			p_saver->enter("blocks");
-	
-			for (int j=0;j<a->get_block_count();j++) {
-						
-				p_saver->enter("block_"+String::num(j));
-				int block_idx=index_automation_block( a->get_block(j) );
-				p_saver->add_int("index",block_idx);
-				p_saver->add_int("pos",a->get_block_pos(j));
-				p_saver->exit(); //block_idx
-			
-			}
-			p_saver->exit(); //blocks
-						
-		}
-		*/	
-		p_saver->exit(); //automation_idx
-	
-	
-	}
-	p_saver->exit(); //automations
+	/** LOAD STANDARD TRACK INFO */
+	p_track->set_name( p_loader->get_string( "name "));
 
 	/** Track Type specific */
 
 	if (dynamic_cast<Track_Pattern*>(p_track)) 
-		save_track_pattern(dynamic_cast<Track_Pattern*>(p_track),p_saver);
+		load_track_pattern(dynamic_cast<Track_Pattern*>(p_track),p_loader);
+	
+	/** LOAD RACK */
+	p_loader->enter("rack");
+	load_track_rack(p_track,p_loader);
+	p_loader->exit(); //rack
 
 
+	//for loading automations, everything else bust have been loaded, so, loading them now
+		
+	/** AUTOMATIONS */
+	p_loader->enter("automations");
+
+	for (int i=0;i<p_loader->get_child_count();i++) {
+		
+		p_loader->enter(p_loader->get_child_name(i));
+		
+		
+		String name=p_loader->get_int("name");
+		int prop_idx=-1;
+		if (p_loader->get_int("builtin")) { //load builtin property
+			
+			for (int j=0;j<p_track->get_property_count();j++) {
+				
+				if (p_track->get_property(j)->get_name()==name && p_track->is_property_builtin(j)) {
+					
+					prop_idx=j;
+					break;
+				}
+			
+			}
+			
+		} else { //loading plugin property
+			
+			SoundPlugin *p=p_track->get_plugin(p_loader->get_int("plugin_idx"));
+			
+			if (p) {
+				
+				Property *pr=NULL;
+				for (int j=0;j<p->get_port_count();j++) {
+					
+					if (p->get_port(j).get_name()==name) {
+						
+						pr=&p->get_port(j);
+						break;
+					}
+					
+				}
+				
+				if (pr) {
+					
+					for (int j=0;j<p_track->get_property_count();j++) {
+						
+						if (p_track->get_property(j)==pr) {
+							
+							prop_idx=j;
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		if (prop_idx==-1) {
+			
+			p_loader->exit();
+			ERR_CONTINUE(prop_idx==-1);
+		}
+		
+		Automation *a=p_track->get_property_automation(prop_idx);
+		/* Dont save unused automations, to save space in file */
+		a->set_initial_value( p_loader->get_int("initial") );
+		{
+			p_loader->enter("blocks");
+		
+			for (int j=0;j<p_loader->get_child_count();j++) {
+		
+				p_loader->enter(p_loader->get_child_name(j));
+			
+				int block_idx=p_loader->get_int("index");
+				Tick pos=p_loader->get_int("pos");
+				Automation::AutomationBlock *ab=get_shared_automation_block_idx(block_idx);
+				if (ab==NULL) {
+					
+					p_loader->exit();
+					ERR_CONTINUE(ab==NULL);
+				}
+				
+				ab=dynamic_cast<Automation::AutomationBlock*>(a->create_link_block( ab )); //make it a link block
+				if (ab==NULL) {
+					
+					p_loader->exit();
+					ERR_CONTINUE(ab==NULL);
+				}
+				
+				a->insert_block(ab,pos);
+				
+				p_loader->exit(); //block_idx
+				
+			}
+			p_loader->exit(); //blocks
+						  
+		}
+		
+		p_loader->exit(); //automation_idx
+	
+	}
+	p_loader->exit(); //automations
 	
 }
 
@@ -276,9 +350,9 @@ void Loader::load_song(Song *p_song,TreeLoader *p_loader) {
 		
 		p_loader->enter(p_loader->get_child_name(i));
 		
-		int channels=p_saver->get_int( "channels " );
+		int channels=p_loader->get_int( "channels " );
 		Track *track=NULL;
-		if (p_saver->get_string("type")=="pattern") {
+		if (p_loader->get_string("type")=="pattern") {
 			
 			track = new Track_Pattern(channels,&p_song->get_global_properties(),&p_song->get_song_playback());
 		}

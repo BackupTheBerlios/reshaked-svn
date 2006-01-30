@@ -16,7 +16,7 @@
 namespace ReShaked {
 
 
-void Track::add_property(String p_visual_path,Property *p_prop,TrackAutomation *p_automation,int p_pos) {
+void Track::add_property(String p_visual_path,Property *p_prop,TrackAutomation *p_automation,int p_pos,bool p_builtin) {
 	
 	AudioControl::mutex_lock();
 	
@@ -32,6 +32,8 @@ void Track::add_property(String p_visual_path,Property *p_prop,TrackAutomation *
 	p->visual_path=p_visual_path;
 	p->property=p_prop;
 	p->automation=p_automation?p_automation:(new TrackAutomation(p_prop));
+	p->builtin=p_builtin;
+	
 	if (p_pos<0 && p_pos>=base_private.property_list.size()) {
 		
 		base_private.property_list.push_back(p);	
@@ -303,6 +305,13 @@ String Track::get_property_visual_path(int p_idx) {
 	
 }	
 
+bool Track::is_property_builtin(int p_idx) { ///< property is builtin of track (as in, not from a plugin)
+	
+	ERR_FAIL_INDEX_V(p_idx,get_property_count(),false);
+	
+	return base_private.property_list[p_idx]->builtin;
+	
+}
 void Track::set_name(String p_name) {
 	
 	base_private.name=p_name;
@@ -431,7 +440,7 @@ void Track::add_plugin(PluginInsertData* p_plugin) {
 			}
 		}
 		ERR_CONTINUE(automation==NULL); //no automation for prop?!
-		add_property(path,&p_plugin->plugin->get_port(i),automation,pos );	
+		add_property(path,&p_plugin->plugin->get_port(i),automation,pos,false);	
 	}
 	
 
@@ -581,6 +590,26 @@ AudioNode *Track::get_node_at_visual_pos(int p_pos) {
 	return NULL;
 	
 }
+
+
+int Track::find_plugin_idx_for_property(Property *p_property) {
+
+	for (int i=0;i<get_plugin_count();i++) {
+	
+		SoundPlugin *p=get_plugin(i);
+		for (int j=0;j<p->get_port_count();j++) {
+		
+			if (&p->get_port(i)==p_property)
+				return i;
+		
+		}
+	
+	}
+
+	return -1;
+}
+
+
 Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback) : BlockList(p_type) {
 	
 	base_private.channels=p_channels;
