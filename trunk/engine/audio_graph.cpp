@@ -21,6 +21,9 @@ AudioNode *AudioGraph::get_node_at_visual_pos(int p_pos) {
 
 bool AudioGraph::recompute_process_order() {
 
+	if (nodes.size()==0)
+		return false;
+	
 	/* This is my own algorithm for non-recursive graph solving, I call it Squirrel-Graph-Sort  */
 	
 	/* Fill the domain/image inverted process order list 
@@ -346,6 +349,16 @@ int AudioGraph::process(int p_frames) {
 	return graph_process.process(p_frames);	
 }
 
+void AudioGraph::clear() {
+	
+	nodes.clear();
+	process_order.clear();
+	inv_process_order.clear();
+	connections.clear();
+	recompute_process_order();
+	recompute_graph();
+
+}
 
 AudioGraph::AudioGraph() {
 	

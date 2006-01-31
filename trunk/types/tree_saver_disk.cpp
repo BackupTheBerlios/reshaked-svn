@@ -143,8 +143,13 @@ bool TreeSaverDisk::open_file(String p_file) {
 		if (f) {
 			ERR_PRINT("COUDNT SAVE UTF-8 FILENAME");
 		}
-	}
+	} 
+	if (f) {
 	
+		fprintf(f,"%s",mime.ascii().get_data());
+		write_byte(0); //zero
+		write_int(version);
+	}	
 	return (!f);
 }
 void TreeSaverDisk::close_file() {
@@ -154,8 +159,10 @@ void TreeSaverDisk::close_file() {
 }
 
 
-TreeSaverDisk::TreeSaverDisk()
+TreeSaverDisk::TreeSaverDisk(String p_mime,int p_version)
 {
+	mime=p_mime;
+	version=p_version;
 }
 
 

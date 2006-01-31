@@ -42,6 +42,18 @@ SoundPlugin *SoundPluginList::instance_plugin(int p_idx,int p_channels) {
 	return info_list[p_idx]->creation_func( info_list[p_idx], p_channels );
 }
 
+SoundPlugin *SoundPluginList::instance_plugin(String p_ID,int p_channels) {
+	
+	for (int i=0;i<info_list.size();i++) {
+		
+		if (info_list[i]->unique_ID==p_ID)
+			return instance_plugin(i,p_channels);
+	}
+	
+	return NULL;
+}
+
+
 void SoundPluginList::add_info(const SoundPluginInfo* p_info) {
 	
 	info_list.push_back(p_info);	

@@ -57,7 +57,10 @@ class MainWindow : public QMainWindow {
 		ITEM_SONG_SAVE,
 		ITEM_SONG_SAVE_AS,
 
+		ITEM_SONG_INFO,
+		
 		ITEM_SONG_EXIT,
+		
 
 		ITEM_EDIT_UNDO,
 		ITEM_EDIT_REDO,

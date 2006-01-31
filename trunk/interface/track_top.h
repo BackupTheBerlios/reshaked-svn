@@ -31,6 +31,10 @@ class TrackTop : public QWidget {
 	Q_OBJECT
 			    
 	enum TrackActions {
+		/* sound */
+		ACTION_MUTE,
+		ACTION_SOLO,
+		
 		/* for pattern tracks */
 		ACTION_PATTERN_ADD_COLUMN,
 		ACTION_PATTERN_REMOVE_COLUMN,
@@ -49,6 +53,7 @@ class TrackTop : public QWidget {
 	Editor *editor;
 
 	AutomationPopup *automation_menu;
+	QAction *mute;
 	QMenu *menu;
 	void paintEvent(QPaintEvent *e);
 	

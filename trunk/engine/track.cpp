@@ -192,6 +192,9 @@ void Track::feed_input(int p_frames) {
 }
 void Track::read_output(int p_frames) {
 	
+	if (base_private.audio.mute)
+		return; //process all, just dont read from output
+	
 	AudioBuffer *track_output_buff=base_private.output_plug->get_buffer();
 	AudioBuffer *output_buff=base_private.output_proxy.get_input_plug(0)->get_buffer();
 	
@@ -219,6 +222,15 @@ float Track::read_highest_energy() {
 	float highest_nrg=base_private.audio.highest_energy;
 	base_private.audio.highest_energy=0;
 	return highest_nrg;
+}
+
+void Track::set_mute(bool p_mute) {
+	
+	base_private.audio.mute=p_mute;
+}
+bool Track::is_mute() {
+	
+	return base_private.audio.mute;
 }
 
 void Track::process_automations_at_tick(Tick p_tick) {
@@ -439,7 +451,6 @@ void Track::add_plugin(PluginInsertData* p_plugin) {
 				break;
 			}
 		}
-		ERR_CONTINUE(automation==NULL); //no automation for prop?!
 		add_property(path,&p_plugin->plugin->get_port(i),automation,pos,false);	
 	}
 	
@@ -634,6 +645,7 @@ Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,So
 	
 	base_private.audio.highest_energy=0;
 	base_private.audio.volume_ratio=1;
+	base_private.audio.mute=0;
 	
 	base_private.plugin_graph.set_visual_node_order( this );
 	
@@ -642,8 +654,17 @@ Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,So
 
 Track::~Track()
 {
-
+	//delete plugins
+	for (int i=0;i<base_private.sound_plugins.size();i++)
+		delete base_private.sound_plugins[i];
 	
+	//delete property list
+	for (int i=0;i<base_private.property_list.size();i++) {
+		
+		delete base_private.property_list[i]->automation;
+		delete base_private.property_list[i];
+	}
+	//delete plugs
 	delete base_private.input_plug;
 	delete base_private.output_plug;
 }

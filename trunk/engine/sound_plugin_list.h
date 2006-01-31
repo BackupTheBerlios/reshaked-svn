@@ -32,6 +32,7 @@ public:
 	int get_plugin_count();
 	const SoundPluginInfo* get_plugin_info(int p_idx);
 	SoundPlugin *instance_plugin(int p_idx,int p_channels=-1);
+	SoundPlugin *instance_plugin(String p_ID,int p_channels=-1);
 	
 	void add_info(const SoundPluginInfo* p_info);
 	

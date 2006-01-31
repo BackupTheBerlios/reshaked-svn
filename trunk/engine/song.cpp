@@ -242,6 +242,41 @@ int Song::get_loop_end() {
 	
 }
 
+AudioNode *Song::get_node_at_visual_pos(int p_pos) {
+	
+	if (!input_node || !output_node)
+		return track_list[p_pos];
+	
+	if (p_pos==0)
+		return input_node;
+	else if (p_pos==(track_graph.get_node_count()-1))
+		return output_node;
+	
+	return track_list[p_pos-1];
+}
+
+
+
+void Song::clear() {
+	
+	for (int i=0;i<track_list.size();i++) {
+			
+		delete track_list[i];
+	}
+	track_list.clear();
+	bar_map.reset();
+	marker_list.clear();
+	audio_port_layout.port_in_info.clear();
+	audio_port_layout.port_out_info.clear();
+	track_graph.clear();
+	global_track.clear();
+	input_node=NULL;
+	output_node=NULL;
+	loopdata.begin_beat=0;
+	loopdata.end_beat=0;
+		
+}
+
 Song::Song() : song_playback(&global_properties), global_track(&global_properties,&song_playback) {
 	
 	input_node=NULL;
@@ -252,9 +287,11 @@ Song::Song() : song_playback(&global_properties), global_track(&global_propertie
 	loopdata.begin_beat=0;
 	loopdata.end_beat=0;
 	process_data.buffer_exp = 7;
+	track_graph.set_visual_node_order( this );
 
 }
 
+		
 Song::~Song() {
 	
 }

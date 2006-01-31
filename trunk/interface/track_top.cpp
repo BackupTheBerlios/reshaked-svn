@@ -66,7 +66,7 @@ void TrackTop::paintEvent(QPaintEvent *e) {
 	}
 		
 	
-	p.setPen(GET_QCOLOR(COLORLIST_TRACK_TITLE));
+	p.setPen(track->is_mute()?GET_QCOLOR(COLORLIST_TRACK_TITLE_MUTE):GET_QCOLOR(COLORLIST_TRACK_TITLE));
 	p.drawText(px.width()+2,height()-m.descent(),name);
 	
 	
@@ -77,11 +77,19 @@ void TrackTop::mousePressEvent(QMouseEvent *e) {
 	QPixmap px = VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS );
 	if (e->x()<px.width()) {
 		
+		mute->setChecked(track->is_mute());
+		mute->setText(track->is_mute()?"Un-Mute":"Mute");
 		automation_menu->rebuild();
 		menu->popup(mapToGlobal( QPoint(0,height()) ) );
 		
-	} else
-		rename();
+	} else if (can_rename) {
+		if (e->modifiers()&Qt::ShiftModifier)
+			editor->set_track_mute( track, !track->is_mute() );
+		else if (e->modifiers()&Qt::ControlModifier)
+			editor->set_track_solo( editor->find_track_idx( track ) );
+		else
+			rename();
+	}
 }
 
 void TrackTop::rename() {
@@ -143,6 +151,13 @@ void TrackTop::action_slot(QAction *p_action) {
 			
 		} break;
 	
+		case ACTION_MUTE: {
+			
+			editor->set_track_mute( track, !track->is_mute() );
+		} break;
+		case ACTION_SOLO: {
+			editor->set_track_solo( editor->find_track_idx( track ) );
+		} break;
 		case ACTION_DELETE: {
 			
 			editor->remove_track( editor->find_track_idx( track ) );
@@ -184,8 +199,19 @@ TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p
 	setBackgroundRole(QPalette::NoRole);
 	
 	menu =new QMenu("Track Options",this);
+	mute=NULL;
+	if (p_type!=TYPE_GLOBAL) {
+		mute= new IndexedAction(ACTION_MUTE,"Mute",GET_QPIXMAP(ICON_MUTE),this);
+		mute->setCheckable(true);
+		menu->addAction(mute);
+		menu->addAction(new IndexedAction(ACTION_SOLO,"Solo",GET_QPIXMAP(ICON_SOLO),this));
+		menu->addSeparator();
+	} 
+		
+	
 	
 	if (p_type==TYPE_PATTERN) {
+		
 		menu->addAction(new IndexedAction(ACTION_PATTERN_ADD_COLUMN,"Add Column",GET_QPIXMAP(ICON_COLUMN_ADD),this));
 		menu->addAction(new IndexedAction(ACTION_PATTERN_REMOVE_COLUMN,"Remove Column",GET_QPIXMAP(ICON_COLUMN_REMOVE),this));
 		menu->addSeparator();

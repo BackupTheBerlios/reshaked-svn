@@ -37,6 +37,7 @@ class Loader{
 	void load_pattern_block(TreeLoader *p_loader);
 	
 	Automation::AutomationBlock* get_shared_automation_block_idx(int p_idx);
+	Track_Pattern::PatternBlock* get_shared_pattern_block_idx(int p_idx);
 	
 public:
 	

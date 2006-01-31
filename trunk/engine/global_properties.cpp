@@ -27,7 +27,12 @@ LocalProperty &GlobalProperties::get_tempo() {
 	return tempo;	
 }
 
-
+void GlobalProperties::clear() {
+	
+	swing.set(0);
+	tempo.set(125);
+	volume.set(0);
+}
 GlobalProperties::GlobalProperties() {
 	
 	swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "global_swing","Global Swing","%","Disabled");

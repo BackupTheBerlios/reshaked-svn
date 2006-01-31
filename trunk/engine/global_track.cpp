@@ -73,7 +73,11 @@ GlobalTrack::GlobalTrack(GlobalProperties *p_global_props,SongPlayback *p_song_p
 	
 }
 
-
+void GlobalTrack::clear() {
+	
+	for (int i=0;i<get_property_count();i++)
+		property_hide_automation(i);
+}
 GlobalTrack::~GlobalTrack()
 {
 }

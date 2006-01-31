@@ -10,6 +10,8 @@
 //
 //
 #include "loader.h"
+#include "engine/sound_plugin_list.h"
+#include "engine/sound_driver_list.h"
 
 namespace ReShaked {
 
@@ -27,6 +29,7 @@ void Loader::load_automation_block(TreeLoader *p_loader) {
 	for (int i=0;i<p_loader->get_child_count();i++) {
 		
 		p_loader->enter(p_loader->get_child_name(i));
+		
 		
 		float val=p_loader->get_float("val");
 		Tick pos=p_loader->get_int("pos");
@@ -46,6 +49,7 @@ void Loader::load_automation_block(TreeLoader *p_loader) {
 	shared_automation_blocks[index]=a;
 		
 }
+
 
 void Loader::load_pattern_block(TreeLoader *p_loader) {
 	
@@ -79,6 +83,16 @@ void Loader::load_pattern_block(TreeLoader *p_loader) {
 }
 
 
+Track_Pattern::PatternBlock* Loader::get_shared_pattern_block_idx(int p_idx) {
+	
+	std::map<int,Track_Pattern::PatternBlock*>::iterator I=shared_pattern_blocks.find(p_idx);
+		
+	if (I==shared_pattern_blocks.end())
+		return NULL;
+	
+	return I->second;	
+}
+
 Automation::AutomationBlock* Loader::get_shared_automation_block_idx(int p_idx) {
 	
 	std::map<int,Automation::AutomationBlock*>::iterator I=shared_automation_blocks.find(p_idx);
@@ -93,10 +107,123 @@ Automation::AutomationBlock* Loader::get_shared_automation_block_idx(int p_idx) 
 
 void Loader::load_graph(AudioGraph *p_graph,const std::vector<int> &p_node_remap,TreeLoader *p_loader) {
 	
+	ERR_FAIL_COND(p_node_remap.size()!=p_graph->get_node_count());
+
+	for (int i=0;i<p_loader->get_child_count();i++) {
+		
+		p_loader->enter(p_loader->get_child_name(i));
+	
+		int node_from= p_node_remap[p_loader->get_int("node_from")];
+		int plug_from=p_loader->get_int("plug_from");
+		int node_to=p_node_remap[p_loader->get_int("node_to")];
+		int plug_to=p_loader->get_int("plug_to");
+		
+		//printf("connect from %s:%i - %s:%i\n",p_graph->get_node(node_from)->get_caption().ascii().get_data(),plug_from,p_graph->get_node(node_to)->get_caption().ascii().get_data(),plug_to);
+		//printf("connect from %s:%i - %s:%i\n",p_graph->get_node(node_from)->get_caption().ascii().get_data(),plug_from,p_graph->get_node(node_to)->get_caption().ascii().get_data(),plug_to);
+		
+		p_graph->connect_plugs(node_from,plug_from,node_to,plug_to);
+		
+		p_loader->exit();
+		
+	}
 	
 }
 void Loader::load_track_rack(Track *p_track,TreeLoader *p_loader) {
 	
+	/** PLUGINS */
+	
+	p_loader->enter("plugins");
+	
+	for (int i=0;i<p_loader->get_child_count();i++) {
+		
+		p_loader->enter(p_loader->get_child_name(i));
+		
+		String ID=p_loader->get_string("ID");
+		printf("Request Plugin ID: %s\n",ID.ascii().get_data());
+		int channels=p_loader->get_int("channels_created");
+		SoundPlugin *p=SoundPluginList::get_singleton()->instance_plugin(ID,channels);
+		
+		p->set_skip_processing( p_loader->get_int("skips_processing") );
+		p->set_duplicate( p_loader->get_int("duplicate") );
+		
+		
+		{ //plugin data
+			p_loader->enter("data");
+			
+			p->load(p_loader); //plugin handles its own loading
+			
+			p_loader->exit(); //data
+		}
+		
+		Track::PluginInsertData pinsd(p);
+		p_track->add_plugin(&pinsd);
+		p_loader->exit(); //plugin
+		
+	}
+	
+	p_loader->exit(); //plugins
+	
+	/** PLUGIN GRAPH */
+	
+	p_loader->enter("plugin_graph");
+	
+	
+	std::vector<int> node_remap;
+	node_remap.push_back( p_track->get_plugin_graph().get_node_index( p_track->get_record_node() ) );
+	for (int i=0;i<p_track->get_plugin_count();i++)
+		node_remap.push_back( p_track->get_plugin_graph().get_node_index( p_track->get_plugin(i) ) );
+	node_remap.push_back( p_track->get_plugin_graph().get_node_index( p_track->get_playback_node() ) );
+	
+	
+	load_graph( &p_track->get_plugin_graph(), node_remap, p_loader );
+	
+	p_loader->exit(); //plugin_graph
+	
+}
+
+void Loader::load_track_pattern(Track_Pattern *p_pattern_track,TreeLoader *p_loader) {
+	
+	
+	p_loader->enter("track_pattern");
+	
+	
+	p_pattern_track->swing().set( p_loader->get_float( "swing" ) );
+	p_pattern_track->volume().set( p_loader->get_float( "volume" ) );
+	
+	{
+		p_loader->enter("blocks");
+		
+	
+		for (int i=0;i<p_loader->get_child_count();i++) {
+		
+			p_loader->enter(p_loader->get_child_name(i));
+			
+			int block_idx=p_loader->get_int("index");
+			Tick pos = p_loader->get_int("pos");
+			
+			Track_Pattern::PatternBlock *pb=get_shared_pattern_block_idx(block_idx);
+			if (pb==NULL) {
+					
+				p_loader->exit();
+				ERR_CONTINUE(pb==NULL);
+			}
+				
+			pb=dynamic_cast<Track_Pattern::PatternBlock*>(p_pattern_track->create_link_block( pb )); //make it a link block
+			if (pb==NULL) {
+					
+				p_loader->exit();
+				ERR_CONTINUE(pb==NULL);
+			}			
+						
+			p_pattern_track->insert_block( pb, pos );
+			
+			p_loader->exit(); //block_idx
+					
+		}
+		p_loader->exit(); //blocks
+	}	
+	
+	p_loader->exit(); //track_pattern	
 	
 	
 }
@@ -107,7 +234,8 @@ void Loader::load_track(Track *p_track, TreeLoader *p_loader) {
 	
 
 	/** LOAD STANDARD TRACK INFO */
-	p_track->set_name( p_loader->get_string( "name "));
+	p_track->set_name( p_loader->get_string( "name"));
+	p_track->set_mute( p_loader->get_int("mute"));
 
 	/** Track Type specific */
 
@@ -130,7 +258,7 @@ void Loader::load_track(Track *p_track, TreeLoader *p_loader) {
 		p_loader->enter(p_loader->get_child_name(i));
 		
 		
-		String name=p_loader->get_int("name");
+		String name=p_loader->get_string("name");
 		int prop_idx=-1;
 		if (p_loader->get_int("builtin")) { //load builtin property
 			
@@ -213,6 +341,9 @@ void Loader::load_track(Track *p_track, TreeLoader *p_loader) {
 				
 			}
 			p_loader->exit(); //blocks
+			
+			if (p_loader->get_int("visible"))
+				p_track->property_show_automation(prop_idx);
 						  
 		}
 		
@@ -231,7 +362,7 @@ void Loader::load_song(Song *p_song,TreeLoader *p_loader) {
 	p_song->stop(); 
 	shared_automation_blocks.clear();
 	shared_pattern_blocks.clear();
-	
+	p_song->clear(); //empty song.
 	
 	/** LOAD GLOBAL PROPERTIES */
 	
@@ -313,6 +444,10 @@ void Loader::load_song(Song *p_song,TreeLoader *p_loader) {
 
 	p_loader->exit(); //audio_ports
 				
+	/* Reset the audio driver, which will set the audio ports nodes back */
+	
+	SoundDriverList::get_singleton()->reset_driver();
+	
 	/** Load Automation and Pattern Blocks */
 
 	p_loader->enter("automation_blocks"); //tracks
@@ -355,6 +490,7 @@ void Loader::load_song(Song *p_song,TreeLoader *p_loader) {
 		if (p_loader->get_string("type")=="pattern") {
 			
 			track = new Track_Pattern(channels,&p_song->get_global_properties(),&p_song->get_song_playback());
+			p_song->add_track( track );
 		}
 
 		load_track(track,p_loader);		
@@ -382,7 +518,22 @@ void Loader::load_song(Song *p_song,TreeLoader *p_loader) {
 	
 	}
 	
+	/* delete the blocks */
 	
+	foreach(I,shared_automation_blocks) {
+		
+		delete I->second;
+	}
+	
+	foreach(I,shared_pattern_blocks) {
+		
+		delete I->second;
+	}
+	
+	
+	/* reset the song again */
+	
+	p_song->stop();
 }
 
 

@@ -102,10 +102,14 @@ int BarMap::get_bar_idx_count() {
 }
 
 
-
+void BarMap::reset() {
+	
+	bar_len_map.clear();
+	bar_len_map.insert( 0, DEFAULT_BAR_LEN); //default	
+}
 BarMap::BarMap() {
 	
-	bar_len_map.insert( 0, DEFAULT_BAR_LEN); //default
+	reset();
 	
 }
 

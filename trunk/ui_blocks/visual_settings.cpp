@@ -71,6 +71,9 @@
 #include "pixmaps/control_record_automations.xpm"
 #include "pixmaps/control_stop.xpm"
 
+#include "pixmaps/icon_solo.xpm"
+#include "pixmaps/icon_mute.xpm"
+
 #include "pixmaps/row_icon_loop_begin.xpm"
 #include "pixmaps/row_icon_loop_end.xpm"
 #include "pixmaps/row_icon_play.xpm"
@@ -409,6 +412,7 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_RACK_CABLE]=QColor(0x97,0xd5,0x2b);
 	color_map[COLORLIST_RACK_CABLE_DARK]=QColor(0x2b,0x8f,0x1a);
 	color_map[COLORLIST_TRACK_TITLE]=QColor(200,233,255);
+	color_map[COLORLIST_TRACK_TITLE_MUTE]=QColor(120,120,120);
 	
 	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);
 	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);
@@ -430,6 +434,9 @@ VisualSettings::VisualSettings() {
 	pixmap_map[PIXMAP_TRACK_SLIDER_SWING_ICON]=QPixmap((const char**)track_variables_swing_xpm);
 
 
+	pixmap_map[ICON_MUTE]=QPixmap((const char**)icon_mute_xpm);
+	pixmap_map[ICON_SOLO]=QPixmap((const char**)icon_solo_xpm);
+	
 	pixmap_map[ICON_TRACK_MOVE_LEFT]=QPixmap((const char**)track_move_left_xpm);
 	pixmap_map[ICON_TRACK_MOVE_RIGHT]=QPixmap((const char**)track_move_right_xpm);
 	pixmap_map[ICON_TRACK_DELETE]=QPixmap((const char**)track_delete_xpm);

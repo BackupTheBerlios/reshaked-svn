@@ -138,8 +138,6 @@ friend class Saver; //saver needs access to Pattern structure for comparing it
 
 
 	
-	Block *create_duplicate_block(Block *p_block);
-	Block *create_link_block(Block *p_block);
 
 	BlockCreationBehavior get_block_creation_behavior();
 
@@ -171,6 +169,9 @@ friend class Saver; //saver needs access to Pattern structure for comparing it
 	
 public:
 
+	Block *create_duplicate_block(Block *p_block);
+	Block *create_link_block(Block *p_block);
+	
 	//called from non-player_thread
 	void add_edit_event(const EventMidi &p_event_midi,int p_column);
 	

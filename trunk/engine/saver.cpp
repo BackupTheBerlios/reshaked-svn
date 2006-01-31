@@ -86,6 +86,8 @@ void Saver::save_track_rack(Track *p_track,TreeSaver *p_saver) {
 		p_saver->add_int("skips_processing",p->skips_processing());
 		if (p->get_info()->can_custom_channels)
 			p_saver->add_int("channels_created",p->get_channels_created());
+		else
+			p_saver->add_int("channels_created",-1);
 		
 		{ //plugin data
 			p_saver->enter("data");
@@ -170,6 +172,7 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 	p_saver->add_string( "name" , p_track->get_name() );
 	p_saver->add_int( "channels ", p_track->get_channels() );
 	p_saver->add_string("type",p_track->get_type_name());
+	p_saver->add_int("mute",p_track->is_mute());
 	
 	/** SAVE RACK */
 	p_saver->enter("rack");
@@ -200,6 +203,7 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 		
 		p_saver->enter("automation_"+String::num(i));
 		
+		p_saver->add_int("visible",p_track->has_property_visible_automation(i));
 		p_saver->add_int("initial",a->get_initial_value());
 		p_saver->add_int("builtin",builtin); //belongs to plugin or not
 		p_saver->add_string("name",a->get_property()->get_name());
@@ -406,7 +410,7 @@ void Saver::save_song(Song *p_song,TreeSaver *p_saver) {
 					
 					if (p_song->get_track(j)==n) {
 						
-						node_remap.push_back(j);
+						node_remap.push_back(j+1);
 						break;
 						
 					}

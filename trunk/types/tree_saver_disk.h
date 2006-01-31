@@ -35,7 +35,9 @@ class TreeSaverDisk : public TreeSaver{
 	std::list<String> path;
 	
 	FILE *f;
-	
+
+	String mime;
+	int version;
 public:
 	
 	void enter(String p_dir);
@@ -52,7 +54,7 @@ public:
 	bool open_file(String p_file);
 	void close_file();
 	
-	TreeSaverDisk();
+	TreeSaverDisk(String p_mime,int p_version);
 	~TreeSaverDisk();
 
 };

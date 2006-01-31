@@ -44,13 +44,14 @@ private:
 	std::vector<int> process_order; /* process order of audionodes position -> node*/
 	std::vector<int> inv_process_order; /* process order of audionodes, node -> position*/
 	std::vector<Connection> connections;
-	bool recompute_process_order(); /* return true if cyclic connection found */
-	void recompute_graph();
 	AudioGraphProcess graph_process;
 	ConnectError last_error;
 	
 	VisualNodeOrder * visual_node_order;
 
+	bool recompute_process_order(); /* return true if cyclic connection found */
+	void recompute_graph();
+	
 public:
 	
 	void set_visual_node_order(VisualNodeOrder * p_visual_node_order);
@@ -126,6 +127,7 @@ public:
 	 */
 	int process(int p_frames);
 	
+	void clear();
 	
 	AudioGraph();
 

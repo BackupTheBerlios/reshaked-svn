@@ -40,6 +40,8 @@ public:
 	int get_bar_idx_at_beat(int p_beat);
 	int get_bar_idx(int p_bar_idx);
 	int get_bar_idx_count();
+	
+	void reset();
 	BarMap();
 	~BarMap();
 

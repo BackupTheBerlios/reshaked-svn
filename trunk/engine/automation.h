@@ -104,6 +104,8 @@ public:
 
 	void apply(Tick p_pos);
 	
+	void clear();
+	
 	DisplaySize get_display_size();
 
 	Automation(Property *property);

@@ -288,4 +288,45 @@ void Editor::set_plugin_skips_processing(SoundPlugin *p_plugin, bool p_skips) {
 	
 }
 
+void Editor::set_track_mute(Track *p_track,bool p_mute) {
+	
+	if (p_track->is_mute()==p_mute)
+		return; //dont bother!
+	
+	d->undo_stream.begin(String(p_mute?"Mute ":"Unmute ")+p_track->get_name());
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_mute,p_track,p_mute));
+	d->undo_stream.end();
+	
+}
+void Editor::set_track_solo(int p_track_idx) {
+	
+	/* check if it's soloed */
+	
+	bool unsolo=true;
+	
+	for (int i=0;i<d->song->get_track_count();i++) {
+			
+		if ((i==p_track_idx && d->song->get_track(i)->is_mute()) || (i!=p_track_idx && !d->song->get_track(i)->is_mute()) ) {
+			
+			unsolo=false;
+		}
+	}
+	begin_meta_undo_block(unsolo?"Un-Solo":"Solo");
+	if (!unsolo) { //not unsoloing, then solo
+		
+		for (int i=0;i<d->song->get_track_count();i++) {
+		
+			set_track_mute(d->song->get_track(i),i!=p_track_idx);
+		}
+	} else {
+		
+		for (int i=0;i<d->song->get_track_count();i++) {
+		
+			set_track_mute(d->song->get_track(i),false);
+		}
+		
+	}
+	end_meta_undo_block();
+}
+
 } //end of namespace

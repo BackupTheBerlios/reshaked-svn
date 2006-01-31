@@ -36,6 +36,7 @@ class GlobalTrack : public Track {
 	bool can_use_synths();
 public:
 	
+	void clear();
 	GlobalTrack(GlobalProperties *p_global_props,SongPlayback *p_song_playback);
 	~GlobalTrack();
 

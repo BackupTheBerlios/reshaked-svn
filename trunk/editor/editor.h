@@ -128,6 +128,8 @@ public:
 	void track_move_plugin_left(Track *p_track,int p_plugin);
 	void track_move_plugin_right(Track *p_track,int p_plugin);
 	
+	void set_track_mute(Track *p_track,bool p_mute);
+	void set_track_solo(int p_track_idx);
 	
 	/** SELECTION EDITING */
 	

@@ -32,6 +32,8 @@ public:
 	LocalProperty &get_volume();
 	LocalProperty &get_tempo();
 	
+	void clear();
+	
 	GlobalProperties();
 	~GlobalProperties();
 

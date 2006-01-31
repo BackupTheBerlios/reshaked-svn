@@ -229,11 +229,16 @@ double Automation::get_initial_value() {
 	return initial_value;
 }
 
+void Automation::clear() {
+	
+	clear_blocks();
+	display_size=DISPLAY_SIZE_SMALL;
+	initial_value=property->get();
+}
 Automation::Automation(Property *p_property) : BlockList(BLOCK_TYPE_FIXED_TO_BEAT) {
 
 	property=p_property;
-	display_size=DISPLAY_SIZE_SMALL;
-	initial_value=p_property->get();
+	clear();
 }
 
 

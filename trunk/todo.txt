@@ -56,13 +56,13 @@ Goals for 80%
 BIG TODO AFTER 80%: Order doesnt matter anymore?
 
 *-Song Loop
--Sounds when editing
--Virtual pianito
--proper reset on stop and other things
--MIDI in the DRIVERS
-	-MIDI Input
--DDS improvement
-	-SAVE/LOAD
+*-Sounds when editing
+NB-Virtual pianito
+*-proper reset on stop and other things
+NB-MIDI in the DRIVERS
+	NB-MIDI Input
+*-DDS improvement
+	*-SAVE/LOAD
 		-Presets
 	-Track Duplicate
 -UI:
@@ -119,11 +119,11 @@ excite harmonics to midi input.. good!
 
 
 BUGS:
--Shift selection doesnt work
+*-Shift selection doesnt work
 -Move_COPYing blocks in global view can overlap two blocks, check for overlaps when seeing
 if the block is valid too.
 -While connecting cables, am i locking the undo system?
--it is possible to click on a wrong colum in pattern editor
+*-it is possible to click on a wrong colum in pattern editor
 -move undostream locking to a safer place in automation stuff
 -if shared block is the only one (after deleting) it is still reported
 as shared because of the one at the undo buffer!

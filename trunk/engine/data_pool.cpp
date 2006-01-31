@@ -21,7 +21,6 @@ void SharedData::reference() {
 void SharedData::dereference() {
 	
 	ERR_FAIL_COND(refcount<=0); //bug if it happens
-		return;
 		
 	refcount--;
 	
@@ -36,22 +35,7 @@ int SharedData::get_refcount() {
 }
 void SharedData::reset_refcount() {
 	
-	claimcount=0;
 	refcount=0;
-}
-void SharedData::claim() {
-	
-	claimcount++;	
-}
-void SharedData::unclaim() {
-	
-	claimcount--;	
-	
-}
-
-int SharedData::get_claimcount() {
-	
-	return claimcount;
 }
 
 SharedData::SharedData() {

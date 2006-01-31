@@ -61,6 +61,11 @@ class TreeLoaderDisk : public TreeLoader {
 	Value *extract_value(FileFieldType p_type);
 	
 	void erase_node(Node *p_node);
+	
+	String mime;
+	int version;
+	int compatible_version;
+	
 public:
 	
 	enum ErrorReading {
@@ -68,7 +73,9 @@ public:
 		ERROR_NONE,
 		ERROR_CANT_OPEN_FILE,
 		ERROR_FILE_UNRECOGNIZED,
-		ERROR_FILE_CORRUPTED
+		ERROR_FILE_CORRUPTED,
+		ERROR_VERSION_TOO_OLD,
+		ERROR_VERSION_TOO_NEW,
 	};
 	
 	
@@ -96,7 +103,7 @@ public:
 	ErrorReading open_file(String p_filename);
 	void close_file();
 	
-	TreeLoaderDisk();
+	TreeLoaderDisk(String p_mime,int p_version,int p_compatible_version);
 	~TreeLoaderDisk();
 
 };

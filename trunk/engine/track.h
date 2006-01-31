@@ -63,7 +63,7 @@ public:
 			
 		std::list<AutomationTrack> automated_tracks; //automations in use by the plugin
 		std::list<AudioGraph::Connection> connections; //connections of the plugin
-		PluginInsertData() { plugin=NULL; pos=-1; }
+		PluginInsertData(SoundPlugin *p_plugin=NULL) { plugin=p_plugin; pos=-1; }
 	};
 private:
 	
@@ -76,10 +76,6 @@ private:
 		AudioPlug *input_plug;
 		AudioPlug *output_plug;
 
-		ValueStream<Tick,Block*> block_list;
-		
-		
-	
 		std::vector<PropertyRef*> property_list;
 		AudioGraph plugin_graph;
 		std::vector<SoundPlugin*> sound_plugins;
@@ -94,6 +90,7 @@ private:
 		struct Audio {
 			float highest_energy;
 			float volume_ratio;
+			bool mute;
 		} audio;
 		
 	} base_private;
@@ -173,6 +170,8 @@ public:
 	
 	void reset_automations();
 	float read_highest_energy();
+	void set_mute(bool p_mute);
+	bool is_mute();
 	
 	void reset_plugins();
 	

@@ -302,6 +302,8 @@ bool SoundDriver_JACK::init() {
 
 	}
 
+	active=true;
+	
 	/*
 	
 	if (jack_connect (client, jack_port_name (output_port_l), 	"alsa_pcm:playback_1")) {
@@ -321,7 +323,7 @@ bool SoundDriver_JACK::init() {
 void SoundDriver_JACK::finish() {
 	
 	ERR_FAIL_COND(!active);
-	
+	active=false;
 	for (int i=0;i<input_port_list.size();i++) 
 		for (int j=0;j<input_port_list[i].ports.size();j++) 
 			jack_port_unregister(client,input_port_list[i].ports[j]);
@@ -336,8 +338,9 @@ void SoundDriver_JACK::finish() {
 	
 	jack_client_close(client);
 	
-	active=false;
+	
 	last_error="";
+	sleep(1);
 }
 
 /********* VIRTUALS ***********/

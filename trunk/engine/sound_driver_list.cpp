@@ -25,6 +25,11 @@ void SoundDriverList::add_driver(SoundDriver* p_driver) {
 	driver_list.push_back(p_driver);
 	current=driver_list.size()-1;
 }
+
+void SoundDriverList::reset_driver() {
+	
+	init_driver( current );
+}
 bool SoundDriverList::init_driver(int p_index,bool p_internal_init) {
 	
 	ERR_FAIL_COND_V(song==NULL,true);

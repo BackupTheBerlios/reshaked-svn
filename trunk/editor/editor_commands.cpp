@@ -613,5 +613,17 @@ CommandFunc* EditorCommands::bar_length_remove(bool p_no_undo,int p_at_beat) {
 	
 	
 }
-
+CommandFunc* EditorCommands::track_mute(bool p_no_undo,Track *p_track,bool p_mute) {
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+	
+		ret=Command2(this,&EditorCommands::track_mute, p_track,p_track->is_mute());
+	}
+	
+	p_track->set_mute(p_mute);
+	d->ui_update_notify->track_names_changed(); //name changes color
+	return ret;
+}
 }

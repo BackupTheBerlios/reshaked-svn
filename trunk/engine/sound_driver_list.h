@@ -32,6 +32,7 @@ public:
 	void add_driver(SoundDriver* p_driver);
 	bool init_driver(int p_index=-1,bool p_internal_init=true); //-1 for current
 	void finish_driver();
+	void reset_driver();
 	
 
 	int get_driver_count();

@@ -28,7 +28,9 @@
 
 #include "tree_saver_disk.h"
 #include "tree_loader_disk.h"
-#include "engine/saver.h""
+#include "engine/saver.h"
+#include "engine/loader.h"
+#include "engine/audio_control.h"
 
 #include "interface/automation_tree.h"
 #include <Qt/qfiledialog.h>
@@ -48,8 +50,9 @@ void MainWindow::menu_action_callback(int p_action) {
 		case ITEM_SONG_OPEN : {
 		
 			QString open_file= QFileDialog::getOpenFileName ( this, "Open Song","","ReShaked Songs (*.rsh)");			
-			
-			TreeLoaderDisk tld;
+			if (open_file=="")
+				break;
+			TreeLoaderDisk tld("RESHAKED",5,5);
 			
 			TreeLoaderDisk::ErrorReading err=tld.open_file(DeQStrify(open_file));
 			
@@ -59,22 +62,30 @@ void MainWindow::menu_action_callback(int p_action) {
 				QMessageBox::critical ( this, "Error", "File Unrecognized", QMessageBox::Ok, QMessageBox::NoButton);
 			else if (err==TreeLoaderDisk::ERROR_FILE_CORRUPTED) 
 				QMessageBox::critical ( this, "Error", "File is Corrupted", QMessageBox::Ok, QMessageBox::NoButton);
+			else if (err==TreeLoaderDisk::ERROR_VERSION_TOO_NEW) 
+				QMessageBox::critical ( this, "Error", "You need a newer version to open this file", QMessageBox::Ok, QMessageBox::NoButton);
+			else if (err==TreeLoaderDisk::ERROR_VERSION_TOO_OLD) 
+				QMessageBox::critical ( this, "Error", "File format too old, not supported.", QMessageBox::Ok, QMessageBox::NoButton);
 				
 			if (err)
 				break;
-			
+			Loader load;
+			AudioControl::mutex_lock();
+			load.load_song( &data.song, &tld );
+			AudioControl::mutex_unlock();
 			tld.close_file();
+			data.editor->get_ui_update_notify()->track_list_changed();
 			
 		} break;
 		case ITEM_SONG_SAVE_AS : {
 			
 					
 			QString save_file=QFileDialog::getSaveFileName ( this, "Save Song As..","", "ReShaked Songs (*.rsh)");
-			TreeSaverDisk tsd;
+			TreeSaverDisk tsd("RESHAKED",5);
 			
 			if (tsd.open_file(DeQStrify(save_file))) {
 				
-				QMessageBox::critical ( this, "Error", "Unable to Save File", QMessageBox::Ok, QMessageBox::NoButton);
+				QMessageBox::critical( this, "Error", "Unable to Save File", QMessageBox::Ok, QMessageBox::NoButton);
 
 				break;
 			}
@@ -87,6 +98,10 @@ void MainWindow::menu_action_callback(int p_action) {
 	
 		} break;
 		
+		case ITEM_SONG_INFO: {
+			
+			
+		} break;
 		case ITEM_TRACK_ADD: {
 
 			NewTrackDialog *new_dialog = new NewTrackDialog(this);
@@ -269,6 +284,8 @@ void MainWindow::add_menus() {
 	create_action(ITEM_SONG_SAVE,"Save Song","save",top_bar->get_file_menu());
 	create_action(ITEM_SONG_SAVE_AS,"Save song As..","save_as",top_bar->get_file_menu());
 	top_bar->get_file_menu()->addSeparator();
+	create_action(ITEM_SONG_INFO,"Edit Song Info..","edit_song_info",top_bar->get_file_menu());
+	top_bar->get_file_menu()->addSeparator();
 	create_action(ITEM_SONG_EXIT,"Quit!","quit",top_bar->get_file_menu());
 
 	create_action(ITEM_EDIT_UNDO,"Undo","undo",NULL,top_bar->icon_undo);
@@ -432,8 +449,8 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(track_list_changed()),rack,SLOT(update_rack()));
 	QObject::connect(update_notify,SIGNAL(editing_octave_changed()),top_bar,SLOT(octave_changed_slot()));
 	
-	//QObject::connect(track_settings,SIGNAL(update_track_names_signal()),global_view_frame,SLOT(update()));
-	//QObject::connect(track_settings,SIGNAL(update_track_names_signal()),blui_list,SLOT(repaint_names()));
+	QObject::connect(update_notify,SIGNAL(track_names_changed()),global_view_frame,SLOT(update()));
+	QObject::connect(update_notify,SIGNAL(track_names_changed()),blui_list,SLOT(repaint_names()));
 	
 	QObject::connect(global_view_frame,SIGNAL(global_view_changed_blocks_signal()),blui_list,SLOT(update_h_scroll()));
 	QObject::connect(update_notify,SIGNAL(update_blocklist_list( const std::list< int >& )),blui_list,SLOT(update_blocklist_list(const std::list<int>&)));

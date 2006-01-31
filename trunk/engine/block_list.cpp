@@ -253,19 +253,23 @@ BlockList::BlockType BlockList::get_block_type() {
 	return block_type;
 }
 
+void BlockList::clear_blocks() {
+	
+	for (int i=0;i<bl_private.block_list.get_stream_size();i++) {
+		
+		delete bl_private.block_list.get_index_value_w(i);
+	}
+}
+
+
 BlockList::BlockList(BlockType p_type) {
 
 	block_type=p_type;
 }
 
-
 BlockList::~BlockList() {
 
-	for (int i=0;i<bl_private.block_list.get_stream_size();i++) {
-		
-		delete bl_private.block_list.get_index_value_w(i);
-	}
-
+	clear_blocks();
 }
 
 }

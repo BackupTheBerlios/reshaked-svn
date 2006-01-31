@@ -124,7 +124,11 @@ int TreeLoaderDisk::get_int(String p_name) {
 		
 		return -1;
 	}
-	
+	if (v->type!=FILE_FIELD_INT) {
+		
+		ERR_PRINT("WRONG_PROPERTY_TYPE:");
+		printf("***PATH: %s : %s\n",get_path().ascii().get_data(), p_name.ascii().get_data() );
+	}
 	ERR_FAIL_COND_V(v->type!=FILE_FIELD_INT,0);
 	
 	return read_sint();
@@ -137,6 +141,12 @@ void TreeLoaderDisk::get_int_array(String p_name,int *p_arr) {
 		
 		return ;
 	}
+	if (v->type!=FILE_FIELD_INT_ARRAY) {
+		
+		ERR_PRINT("WRONG_PROPERTY_TYPE:");
+		printf("***PATH: %s : %s\n",get_path().ascii().get_data(), p_name.ascii().get_data() );
+	}
+
 	ERR_FAIL_COND(v->type!=FILE_FIELD_INT_ARRAY);
 	
 	for (int i=0;i<v->len;i++) {
@@ -153,6 +163,11 @@ int TreeLoaderDisk::get_int_array_len(String p_name) {
 		
 		return 0;
 	}
+	if (v->type!=FILE_FIELD_INT_ARRAY) {
+		
+		ERR_PRINT("WRONG_PROPERTY_TYPE:");
+		printf("***PATH: %s : %s\n",get_path().ascii().get_data(), p_name.ascii().get_data() );
+	}
 	ERR_FAIL_COND_V(v->type!=FILE_FIELD_INT_ARRAY,0);
 	
 	return v->len;
@@ -165,6 +180,11 @@ float TreeLoaderDisk::get_float(String p_name) {
 		return 0;
 	}
 	
+	if (v->type!=FILE_FIELD_FLOAT) {
+		
+		ERR_PRINT("WRONG_PROPERTY_TYPE:");
+		printf("***PATH: %s : %s\n",get_path().ascii().get_data(), p_name.ascii().get_data() );
+	}
 	ERR_FAIL_COND_V(v->type!=FILE_FIELD_FLOAT,0);
 	
 	return read_float();
@@ -177,6 +197,11 @@ void TreeLoaderDisk::get_float_array(String p_name,float* p_arr) {
 		return;
 	}
 
+	if (v->type!=FILE_FIELD_FLOAT_ARRAY) {
+		
+		ERR_PRINT("WRONG_PROPERTY_TYPE:");
+		printf("***PATH: %s : %s\n",get_path().ascii().get_data(), p_name.ascii().get_data() );
+	}
 	ERR_FAIL_COND(v->type!=FILE_FIELD_FLOAT_ARRAY);
 	
 	for (int i=0;i<v->len;i++) {
@@ -195,6 +220,11 @@ int TreeLoaderDisk::get_float_array_len(String p_name) {
 		return 0;
 	}
 	
+	if (v->type!=FILE_FIELD_FLOAT_ARRAY) {
+		
+		ERR_PRINT("WRONG_PROPERTY_TYPE:");
+		printf("***PATH: %s : %s\n",get_path().ascii().get_data(), p_name.ascii().get_data() );
+	}
 	ERR_FAIL_COND_V(v->type!=FILE_FIELD_FLOAT_ARRAY,0);
 
 	return v->len;
@@ -208,6 +238,11 @@ String TreeLoaderDisk::get_string(String p_name) {
 		return "";
 	}
 	
+	if (v->type!=FILE_FIELD_STRING) {
+		
+		ERR_PRINT("WRONG_PROPERTY_TYPE:");
+		printf("***PATH: %s : %s\n",get_path().ascii().get_data(), p_name.ascii().get_data() );
+	}
 	ERR_FAIL_COND_V(v->type!=FILE_FIELD_STRING,"");
 	
 	return read_string();
@@ -222,6 +257,11 @@ void TreeLoaderDisk::get_raw(String p_name,unsigned char *p_raw) {
 		return;
 	}
 	
+	if (v->type!=FILE_FIELD_RAW) {
+		
+		ERR_PRINT("WRONG_PROPERTY_TYPE:");
+		printf("***PATH: %s : %s\n",get_path().ascii().get_data(), p_name.ascii().get_data() );
+	}
 	ERR_FAIL_COND(v->type!=FILE_FIELD_RAW);
 	
 	for (int i=0;i<v->len;i++) {
@@ -241,6 +281,11 @@ int TreeLoaderDisk::get_raw_len(String p_name) {
 		return 0;
 	}
 	
+	if (v->type!=FILE_FIELD_RAW) {
+		
+		ERR_PRINT("WRONG_PROPERTY_TYPE:");
+		printf("***PATH: %s : %s\n",get_path().ascii().get_data(), p_name.ascii().get_data() );
+	}
 	ERR_FAIL_COND_V(v->type!=FILE_FIELD_RAW,0);
 	
 	return v->len;
@@ -309,6 +354,29 @@ TreeLoaderDisk::ErrorReading TreeLoaderDisk::open_file(String p_file) {
 		return ERROR_CANT_OPEN_FILE;
 	}
 	
+	char *buffer=new char[mime.length()+1];
+	fread(buffer,mime.length()+1,1,f);
+	buffer[mime.length()]=0;//zero just in case
+	String mime_compare=buffer;
+	delete buffer;
+	if (mime_compare!=mime) {
+		
+		fclose(f);
+		return ERROR_FILE_UNRECOGNIZED;
+	}
+	
+	int version_compare=read_int();
+	if (version<version_compare) {
+		
+		fclose(f);
+		return ERROR_VERSION_TOO_NEW;
+	}
+	if (compatible_version>version_compare) {
+		
+		fclose(f);
+		return ERROR_VERSION_TOO_OLD;
+	}
+		
 	
 	tree = new Node;
 	tree->parent=NULL;
@@ -434,8 +502,12 @@ void TreeLoaderDisk::close_file() {
 
 
 
-TreeLoaderDisk::TreeLoaderDisk()
+TreeLoaderDisk::TreeLoaderDisk(String p_mime,int p_version,int p_compatible_version)
 {
+	mime=p_mime;
+	version=p_version;
+	compatible_version=p_compatible_version;
+	
 }
 
 

@@ -66,6 +66,8 @@ friend class Editor;
 	CommandFunc* track_plugin_move_left(bool p_no_undo,Track *p_track,int p_which);
 	CommandFunc* track_plugin_move_right(bool p_no_undo,Track *p_track,int p_which);
 	
+	CommandFunc* track_mute(bool p_no_undo,Track *p_track,bool p_mute);
+		
 	CommandFunc* plugin_set_skip(bool p_no_undo,SoundPlugin *p_plugin,bool p_skip);
 	
 	CommandFunc* automation_initial_value_changed(bool p_no_undo,Automation *p_auto,double p_to_val);

@@ -49,6 +49,7 @@ public:
 	void erase_index_range(int p_from_index, int p_to_index);
 	
 	bool find_values_in_range(T p_begin, T p_end, int *p_from_idx, int *p_to_idx); ///< return values inside a certain range
+	void clear();
 
 };
 
@@ -243,4 +244,9 @@ bool ValueStream<T,V>::find_values_in_range(T p_begin, T p_end, int *p_from_idx,
 
 }
 
+template<class T, class V>
+void ValueStream<T,V>::clear() {
+	
+	stream.clear();	
+}
 #endif

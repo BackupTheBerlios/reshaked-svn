@@ -15,7 +15,7 @@
 namespace ReShaked {
 
 
-class Song : public AudioProcessBase {
+class Song : public AudioProcessBase, public AudioGraph::VisualNodeOrder {
 private:
 	std::vector<Track*> track_list;
 	AudioGraph track_graph;
@@ -39,8 +39,9 @@ private:
 	AudioNode *input_node; ///< Global Input Node
 	AudioNode *output_node; ///< Global Output Node
 
- 
+	
 	ValueStream<int,String> marker_list; ///< beat/name
+	virtual AudioNode *get_node_at_visual_pos(int p_pos);
 public:
 
 	GlobalProperties& get_global_properties();
@@ -76,6 +77,8 @@ public:
 	
 	int process(int p_frames);
 	void set_mix_rate(float p_mix_rate);
+	
+	void clear();
 	
 	Song();
 	~Song();

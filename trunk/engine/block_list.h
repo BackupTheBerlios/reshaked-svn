@@ -29,7 +29,7 @@ public:
 
 	class Block {
 
-		public:
+	public:
 			
 		virtual bool shared_with(Block *p_block)=0;
 
@@ -102,6 +102,7 @@ public:
 	BlockType get_block_type();
 	virtual bool can_resize_from_begining()=0;
 	
+	virtual void clear_blocks();
 	
 /* properties */
 
