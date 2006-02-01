@@ -469,6 +469,8 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(current_track_remove_column()),this,SLOT(current_track_remove_column_slot()),Qt::QueuedConnection);
 	QObject::connect(update_notify,SIGNAL(automation_editor_popup( int )),this,SLOT(automation_editor_popup_slot( int )),Qt::QueuedConnection);
 	
+	QObject::connect(update_notify,SIGNAL(volume_mask_changed()),blui_list,SLOT(update_mask()));
+	
 	ui_updater = new QTimer(this);
 	QObject::connect(ui_updater,SIGNAL(timeout()),this,SLOT(ui_update_slot()));
 	ui_updater->start(50);

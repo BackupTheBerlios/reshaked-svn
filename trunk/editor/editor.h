@@ -174,6 +174,11 @@ public:
 	void bar_length_set(int p_at_beat,int p_len);
 	void bar_length_remove(int p_at_beat);
 	
+	int get_volume_mask();
+	void set_volume_mask(int p_val);
+	bool is_volume_mask_active();
+	void set_volume_mask_active(bool p_active);
+	
 	/** UNDO SYSTEM (edit.cpp) */
 	
 	void begin_meta_undo_block(String p_name);

@@ -176,6 +176,11 @@
 #include "pixmaps/default_skin/global_toolbar__zoom_grabber.xpm"
 #include "pixmaps/default_skin/global_toolbar__zoom_icon.xpm"
 #include "pixmaps/default_skin/global_toolbar__bottom_right_pixmap.xpm"
+#include "pixmaps/default_skin/edit_toolbar__volume_mask_active.xpm"
+#include "pixmaps/default_skin/edit_toolbar__volume_mask_label_bottom.xpm"
+#include "pixmaps/default_skin/edit_toolbar__volume_mask_label_top.xpm"
+#include "pixmaps/default_skin/edit_toolbar__volume_mask_label.xpm"
+#include "pixmaps/default_skin/edit_toolbar__volume_mask.xpm"
 #include "pixmaps/default_skin/edit_toolbar__automation_mode_envelope_active.xpm"
 #include "pixmaps/default_skin/edit_toolbar__automation_mode_envelope.xpm"
 #include "pixmaps/default_skin/edit_toolbar__automation_mode_stream_active.xpm"
@@ -258,6 +263,10 @@
 #include "pixmaps/default_skin/rack_panel__jack_in.xpm"
 #include "pixmaps/default_skin/rack_panel__jack_out.xpm"
 #include "pixmaps/default_skin/rack_panel__jack_forbidden.xpm"
+
+#include "pixmaps/icon_file_open.xpm"
+#include "pixmaps/icon_file_save.xpm"
+#include "pixmaps/icon_file_saveas.xpm"
 
 #include <iostream>
 
@@ -436,6 +445,9 @@ VisualSettings::VisualSettings() {
 
 	pixmap_map[ICON_MUTE]=QPixmap((const char**)icon_mute_xpm);
 	pixmap_map[ICON_SOLO]=QPixmap((const char**)icon_solo_xpm);
+	pixmap_map[ICON_FILE_OPEN]=QPixmap((const char**)icon_file_open_xpm);
+	pixmap_map[ICON_FILE_SAVE]=QPixmap((const char**)icon_file_save_xpm);
+	pixmap_map[ICON_FILE_SAVEAS]=QPixmap((const char**)icon_file_saveas_xpm);
 	
 	pixmap_map[ICON_TRACK_MOVE_LEFT]=QPixmap((const char**)track_move_left_xpm);
 	pixmap_map[ICON_TRACK_MOVE_RIGHT]=QPixmap((const char**)track_move_right_xpm);
@@ -551,6 +563,13 @@ VisualSettings::VisualSettings() {
 	pixmap_map[THEME_GLOBAL_TOOLBAR__ZOOM_GRABBER]=QPixmap((const char**)global_toolbar__zoom_grabber_xpm);
 	pixmap_map[THEME_GLOBAL_TOOLBAR__ZOOM_ICON]=QPixmap((const char**)global_toolbar__zoom_icon_xpm);
 	pixmap_map[THEME_GLOBAL_TOOLBAR__BOTTOM_RIGHT_PIXMAP]=QPixmap((const char**)global_toolbar__bottom_right_pixmap_xpm);
+	
+	
+	pixmap_map[THEME_EDIT_TOOLBAR__VOLUME_MASK]=QPixmap((const char**)edit_toolbar__volume_mask_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__VOLUME_MASK_ACTIVE]=QPixmap((const char**)edit_toolbar__volume_mask_active_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__VOLUME_MASK_LABEL]=QPixmap((const char**)edit_toolbar__volume_mask_label_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__VOLUME_MASK_LABEL_TOP]=QPixmap((const char**)edit_toolbar__volume_mask_label_top_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__VOLUME_MASK_LABEL_BOTTOM]=QPixmap((const char**)edit_toolbar__volume_mask_label_bottom_xpm);
 	
 	pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE_ACTIVE]=QPixmap((const char**)edit_toolbar__automation_mode_envelope_active_xpm);
 	pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE]=QPixmap((const char**)edit_toolbar__automation_mode_envelope_xpm);

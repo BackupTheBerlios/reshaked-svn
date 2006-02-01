@@ -114,6 +114,8 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/midi_input_assign","Midi Input Assign",Qt::CTRL+Qt::Key_M,false,NULL,new QWidget_KeybindDescription(blui_list->midi_in_config));
 	data.keyboard_codes.add_key_bind("editor/quantize","Quantize",Qt::ALT+Qt::Key_T);
 	
+	data.keyboard_codes.add_key_bind("note_entry/toggle_volume_mask","Toggle Volume Mask",Qt::Key_Comma,false,NULL,new QWidget_KeybindDescription(blui_list->edit_mask));
+	
 
 	data.keyboard_codes.add_key_bind("global/raise_octave","Raise Octave",Qt::Key_Asterisk);
 

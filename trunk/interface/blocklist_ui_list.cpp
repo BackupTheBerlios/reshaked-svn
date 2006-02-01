@@ -51,7 +51,7 @@ void BlockListUIList::vscroll_track_list() {
 }
 
 void BlockListUIList::property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val) {
-	printf("callbackGRH!\n");
+
 	BlockListUIList *instance=(BlockListUIList*)_this;
 	instance->property_editor_property_edited( p_editor,p_old_val );
 }
@@ -422,6 +422,12 @@ void BlockListUIList::edit_menu_selected_item(int p_item) {
 }
 
 
+void BlockListUIList::volume_mask_togled(bool p_active) {
+	
+	
+	editor->set_volume_mask_active( p_active );
+}
+
 void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 	
 	/* Play buttons */
@@ -449,6 +455,21 @@ void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 	edit_button->set_text("Edit");
 	QObject::connect(edit_button,SIGNAL(clicked_signal()),this,SLOT(show_edit_menu()));
 	edit_menu = new QMenu(this);
+	
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
+	
+	edit_mask= new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__VOLUME_MASK),GET_QPIXMAP(THEME_EDIT_TOOLBAR__VOLUME_MASK_ACTIVE)),PixmapButton::TYPE_TOGGLE);
+	edit_mask->set_pressed(true);
+	CVBox *mask_vb = new CVBox(p_hb_top);
+	mask_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	QObject::connect(edit_mask,SIGNAL(mouse_toggled_signal( bool )),this,SLOT(volume_mask_togled(bool)));
+
+	new PixmapLabel(mask_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__VOLUME_MASK_LABEL_TOP));
+	mask_label = new PixmapLabel(mask_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__VOLUME_MASK_LABEL));
+	mask_label->get_font().setPixelSize(GET_CONSTANT(CONSTANT_EDIT_TOOLBAR_FONT_HEIGHT));
+	new PixmapLabel(mask_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__VOLUME_MASK_LABEL_BOTTOM));
+	mask_label->set_text("99");
+	//QObject::connect(mask_label,SIGNAL(clicked_signal()),this,SLOT(change_volume_mask()));
 	
 	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
 	
@@ -515,7 +536,11 @@ void BlockListUIList::h_qscrollbar_changed(int p_val) {
 }	
 	
 
-
+void BlockListUIList::update_mask() {
+	printf("UPDATING MASK!\n");
+	edit_mask->set_pressed( editor->is_volume_mask_active() );
+	mask_label->set_text( QString::number( editor->get_volume_mask() ) );
+}
 void BlockListUIList::update_play_position() {
 	
 	play_position->check_pos_changed();

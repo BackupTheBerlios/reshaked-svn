@@ -15,6 +15,7 @@
 #include <Qt/qmessagebox.h>
 #include <Qt/qmenu.h>
 #include <Qt/qcursor.h>
+#include "interface/plugin_preset_browser.h"
 
 namespace ReShaked {
 
@@ -30,6 +31,10 @@ void PluginTop::info_pressed() {
 }
 void PluginTop::file_pressed() {
 	
+	
+	//QList<QAction *> actions
+	
+	//QAction * exec ( QList<QAction *> actions, const QPoint & pos, QAction * at = 0 )	
 	action_signal(ACTION_FILE,plugin);
 	
 }
@@ -65,7 +70,7 @@ PluginTop::PluginTop(QWidget *p_parent,int p_plugin,bool p_skipping) :CHBox(p_pa
 	
 	new PixmapLabel(this,GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET_NAME),PixmapLabel::EXPAND_TILE_H);	
 	
-	PixmapButton *file = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET_PUSHED)));
+	file = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET_PUSHED)));
 	QObject::connect(file,SIGNAL(mouse_pressed_signal()),this,SLOT(file_pressed()));
 	
 	new PixmapLabel(this,GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__SEPARATOR));	
@@ -137,6 +142,12 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 			
 		} break;
 		
+		case PluginTop::ACTION_FILE: {
+			
+			PluginPresetBrowser *ppb = new PluginPresetBrowser(this,plugin);
+			ppb->exec();
+			
+		} break;
 	}
 }
 

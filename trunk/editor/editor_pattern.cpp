@@ -315,86 +315,107 @@ bool Editor::pattern_edit_key_press(int p_event) {
 	
 		}
 
-		CASE( KEYBIND("note_entry/play_row_at_cursor") ) {
-			
-			if (d->pattern_edit.field==0) {
-				
-				for (int i=0;i<pattern_track->get_visible_columns();i++) {
-					
-					Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), i ) );
-					if (note.is_empty())
-						continue;
-				
-					EventMidi em;
-					em.channel=0;
-					em.midi_type=EventMidi::MIDI_NOTE_ON;
-					em.data.note.note=note.note;
-					em.data.note.velocity=note.volume;
-					
-					pattern_track->add_edit_event( em, i );
-				}	
-				
-				pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
-				d->cursor.set_pos( d->cursor.get_pos() +1 );
-			}			
-		}
+		CASE( KEYBIND("note_entry/toggle_volume_mask") ) {
 		
-		CASE( KEYBIND("note_entry/play_note_at_cursor") ) {
-			if (d->pattern_edit.field==0) {
-				
-					
-				Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column ) );
-				if (!note.is_empty()) {
-				
-					EventMidi em;
-					em.channel=0;
-					em.midi_type=EventMidi::MIDI_NOTE_ON;
-					em.data.note.note=note.note;
-					em.data.note.velocity=note.volume;
-					
-					pattern_track->add_edit_event( em,d->pattern_edit.column );
-				}	
-				
-				pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
-				d->cursor.set_pos( d->cursor.get_pos() +1 );
-			}
+			set_volume_mask_active( !is_volume_mask_active() );
+			d->ui_update_notify->volume_mask_changed();
 		}
-		
 		DEFAULT
 		
 			repaint=false;
 
 	END_SWITCH;
 
-	/* NOTE EDIT */
-	if (pattern_track->is_pos_editable( d->cursor.get_tick_pos() ) ) {
+	if (d->pattern_edit.note_edit_mode==EditorData::MODE_NOTE && d->pattern_edit.field==0) {
 	
-		if (d->pattern_edit.field==0 && d->pattern_edit.note_edit_mode==EditorData::MODE_NOTE) {
+		if (IS_KEYBIND("note_entry/play_row_at_cursor",p_event)) {
+	
+				
+			if (d->pattern_edit.field==0) {
+					
+				for (int i=0;i<pattern_track->get_visible_columns();i++) {
+						
+					Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), i ) );
+					if (note.is_empty())
+						continue;
+					
+					EventMidi em;
+					em.channel=0;
+					em.midi_type=EventMidi::MIDI_NOTE_ON;
+					em.data.note.note=note.note;
+					em.data.note.velocity=note.volume;
+						
+					pattern_track->add_edit_event( em, i );
+				}	
+					
+				pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
+				d->cursor.set_pos( d->cursor.get_pos() +1 );
+			}		
+			repaint=true;	
+		} else if (IS_KEYBIND("note_entry/play_note_at_cursor",p_event) && d->pattern_edit.note_edit_mode==EditorData::MODE_NOTE) {
+			if (d->pattern_edit.field==0) {
+					
+						
+				Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column ) );
+				if (!note.is_empty()) {
+					
+					EventMidi em;
+					em.channel=0;
+					em.midi_type=EventMidi::MIDI_NOTE_ON;
+					em.data.note.note=note.note;
+					em.data.note.velocity=note.volume;
+						
+					pattern_track->add_edit_event( em,d->pattern_edit.column );
+				}	
+					
+				pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
+				d->cursor.set_pos( d->cursor.get_pos() +1 );
+			}
+			repaint=true;	
+		} else if (pattern_track->is_pos_editable( d->cursor.get_tick_pos() ) ) {
+	
 
-	
 			for (int i=0;i<MAX_KEYS;i++) {
 				if (IS_KEYBIND((String)"note_entry/"+key_name[i],p_event)) {
 					/* @TODO default volume */
 					int note=d->global_edit.editing_octave*12+i;
 					Tick tickpos=d->cursor.get_tick_pos();
+					
+					
+					int volume=99;
+					if (d->pattern_edit.volume_mask_active) {
+						volume=d->pattern_edit.volume_mask;
+					} else {
+						
+						Track_Pattern::Note note=pattern_track->get_note(Track_Pattern::Position(tickpos,d->pattern_edit.column));
+						
+						if (note.is_note())
+							volume=note.volume;
+					}
+					
 					d->undo_stream.begin("Set Note");
-					SET_NOTE(Track_Pattern::Position(tickpos,d->pattern_edit.column),Track_Pattern::Note(note,60));
+					SET_NOTE(Track_Pattern::Position(tickpos,d->pattern_edit.column),Track_Pattern::Note(note,volume));
 					d->undo_stream.end();
 					d->cursor.set_pos( d->cursor.get_pos() +1 );
 					
+					if (d->pattern_edit.volume_mask_active)
+						d->pattern_edit.volume_mask=volume;
 					/* play event! */
 					EventMidi em;
 					em.channel=0;
 					em.midi_type=EventMidi::MIDI_NOTE_ON;
 					em.data.note.note=note;
-					em.data.note.velocity=60;
+					em.data.note.velocity=volume;
 			
 					pattern_track->add_edit_event( em,d->pattern_edit.column );
 					pattern_track->offline_process_automations( tickpos );
+					d->ui_update_notify->volume_mask_changed();
+					break;
 				}
 			}
 		}
-
+	} else if (pattern_track->is_pos_editable( d->cursor.get_tick_pos() ) ) {
+		
 		if (d->pattern_edit.note_edit_mode==EditorData::MODE_VOLUME && Keyboard_Input::get_singleton_instance()->is_number(p_event)) {
 
 			int number=Keyboard_Input::get_singleton_instance()->get_number(p_event);
@@ -414,7 +435,8 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			d->undo_stream.begin("Set Volume");
 			SET_NOTE(Track_Pattern::Position(tick,d->pattern_edit.column),note);
 			d->undo_stream.end();
-	
+			d->pattern_edit.volume_mask=note.volume;
+			d->ui_update_notify->volume_mask_changed();
 
 		} else if (d->pattern_edit.note_edit_mode==EditorData::MODE_NOTE && d->pattern_edit.field==1 && Keyboard_Input::get_singleton_instance()->is_number(p_event)) {
 

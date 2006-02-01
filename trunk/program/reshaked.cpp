@@ -1,5 +1,6 @@
 
 
+#include "editor/plugin_preset_manager.h"
 #include "interface/main_window.h"
 #include <Qt/qapplication.h>
 #include "engine/sound_driver_list.h"
@@ -11,13 +12,27 @@
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 #include "drivers/get_time_posix.h"
 
+#include <Qt/qdir.h>
+
 #include "interface/sound_plugin_ui_list.h"
 #ifdef POSIX_ENABLED
 
 #include "drivers/mutex_lock_pthreads.h"
 
+#define CONFIG_DIR QString(".reshaked")
+#define CONFIG_DIR_PATH QString(getenv("HOME"))
 #endif
 
+#ifdef WIN32_ENABLED
+
+#define CONFIG_DIR QString("ReShaked")
+#define CONFIG_DIR_PATH QString(getenv("APPDATA"))
+
+#endif
+
+
+
+/* WINDOWS CONFIG DIR SHOULD BE APPDATA */
 
 ReShaked::SoundPluginList sound_plugin_list;
 
@@ -37,14 +52,41 @@ static void init_sound_plugin_UI_list() {
 	
 }
 
+static void test_config_dir() {
+	
+	QDir config_dir(CONFIG_DIR_PATH);
+	if (!config_dir.cd(CONFIG_DIR)) {
+		ERR_FAIL_COND( !config_dir.mkdir(CONFIG_DIR) );
+		config_dir.cd(CONFIG_DIR);
+				
+	}
+	
+	if (!config_dir.cd("presets")) {
+		
+		ERR_FAIL_COND( !config_dir.mkdir("presets") );
+		
+		
+		/* copy all default presets */
+	}
+	
+}
+
 int main(int argc, char *argv[]) {
 
+	
+	QApplication *q = new QApplication(argc,argv);
+	
 #ifdef POSIX_ENABLED
 	
 	MutexLock::create_mutex=MutexLock_Pthreads::create_mutex_pthreads;
 	ReShaked::GetTime_Posix get_time_posix;
+	
 #endif
 	
+#ifdef WIN32_ENABLED
+
+
+#endif
 	
 	init_sound_plugin_list();
 	init_sound_plugin_UI_list();
@@ -55,6 +97,10 @@ int main(int argc, char *argv[]) {
 	
 	ReShaked::SoundDriverList driver_list;
 	
+	test_config_dir();
+	
+	ReShaked::PluginPresetManager plugin_preset_manager(ReShaked::DeQStrify(CONFIG_DIR_PATH+"/"+CONFIG_DIR+"/presets"));
+	
 #ifdef DRIVER_JACK_ENABLED
 	
 	ReShaked::SoundDriver_JACK driver_jack;
@@ -63,7 +109,6 @@ int main(int argc, char *argv[]) {
 #endif
 	
 	
-	QApplication *q = new QApplication(argc,argv);
 	ReShaked::MainWindow *w = new ReShaked::MainWindow;
 	driver_list.init_driver( -1);
 	

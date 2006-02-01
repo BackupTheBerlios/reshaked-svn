@@ -148,17 +148,6 @@ Automation *Track::get_visible_automation(int p_index) {
 	
 }
 
-/* Some day i'll need this again?
-int Track::get_automation_count() {
-	
-	return base_private.automations.size();	
-}
-Automation *Track::get_automation(int p_index) {
-	
-	ERR_FAIL_INDEX_V(p_index,(int)base_private.automations.size(),NULL);
-	return base_private.automations[p_index];
-}
-*/
 int Track::get_input_plug_count() {
 
     return 1;
@@ -324,6 +313,7 @@ bool Track::is_property_builtin(int p_idx) { ///< property is builtin of track (
 	return base_private.property_list[p_idx]->builtin;
 	
 }
+
 void Track::set_name(String p_name) {
 	
 	base_private.name=p_name;

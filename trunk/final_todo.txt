@@ -4,7 +4,7 @@
 4-Save/Load Presets (plugin)
 5-Save/Load Presets (rack)
 6-Settings Dialog
-7-Volume Mask
+*7-Volume Mask
 8-More Hints
 9-Move Rack select to List UI-type 
 10-Rewrite linked block system so shared works better

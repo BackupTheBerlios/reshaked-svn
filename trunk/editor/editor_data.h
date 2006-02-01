@@ -52,7 +52,8 @@ friend class EditorCommands;
 		PatternNoteEditMode note_edit_mode;
 		int column;
 		int field;
-		
+		int volume_mask;
+		bool volume_mask_active;
 
 	} pattern_edit;
 

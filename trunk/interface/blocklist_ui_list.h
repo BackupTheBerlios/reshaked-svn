@@ -57,6 +57,9 @@ friend class MainWindow;
 	QComboBox *snap;
 	PropertyEditUpdater *property_ui_updater;
 	
+
+	PixmapButton *edit_mask;
+	PixmapLabel *mask_label;
 	PixmapButton *play_cursor;
 	PixmapButton *play_block;
 	PixmapLabel *edit_button;
@@ -121,11 +124,14 @@ public slots:
 	
 	void update_play_position();
 	void update_vus();
+	void update_mask();
 	
 	void h_qscrollbar_range_changed(int p_min,int p_max);
 	void h_qscrollbar_changed(int p_val);
 	
 	void blocklist_ui_under_cursor_request_signal(BlockListUI_Base*p_ui);	
+	
+	void volume_mask_togled(bool);
 public:
 
 	BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_property_ui_updater);

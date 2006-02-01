@@ -63,7 +63,8 @@ private:
 			
 	int plugin;
 	PixmapButton *skip;
-private slots:
+	PixmapButton *file;
+	private slots:
 	
 	void info_pressed();
 	void file_pressed();

@@ -389,6 +389,24 @@ void Editor::bar_length_remove(int p_at_beat) {
 }
 
 
+int Editor::get_volume_mask() {
+	
+	return d->pattern_edit.volume_mask;
+}
+void Editor::set_volume_mask(int p_val) {
+	ERR_FAIL_INDEX(p_val,100);
+	d->pattern_edit.volume_mask=p_val;
+}
+bool Editor::is_volume_mask_active() {
+	
+	return d->pattern_edit.volume_mask_active;
+}
+void Editor::set_volume_mask_active(bool p_active){ 
+	
+	d->pattern_edit.volume_mask_active=p_active;
+}
+
+
 Editor::Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify) {
 	
 	d = new EditorData(p_song,p_ui_update_notify);
