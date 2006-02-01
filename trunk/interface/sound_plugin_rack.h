@@ -79,7 +79,7 @@ signals:
 public:	
 	void set_skipping_state(bool p_state);
 	
-	PluginTop(QWidget *p_parent,int p_plugin_index,bool p_skipping);
+	PluginTop(QWidget *p_parent,int p_plugin_index,bool p_skipping,int p_total_plugins);
 };
 
 class SoundPluginRack : public QScrollArea {

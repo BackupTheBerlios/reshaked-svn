@@ -59,7 +59,7 @@ void PluginTop::remove_pressed() {
 	
 }
 	
-PluginTop::PluginTop(QWidget *p_parent,int p_plugin,bool p_skipping) :CHBox(p_parent) {
+PluginTop::PluginTop(QWidget *p_parent,int p_plugin,bool p_skipping,int p_total_plugins) :CHBox(p_parent) {
 	
 	plugin=p_plugin;
 	
@@ -82,12 +82,14 @@ PluginTop::PluginTop(QWidget *p_parent,int p_plugin,bool p_skipping) :CHBox(p_pa
 	
 	skip->set_pressed( p_skipping );
 	
-	PixmapButton *move_left = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__MOVE_LEFT),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__MOVE_LEFT_PUSHED)));
-	QObject::connect(move_left,SIGNAL(mouse_pressed_signal()),this,SLOT(move_left_pressed()));
-	
-	PixmapButton *move_right = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__MOVE_RIGHT),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__MOVE_RIGHT_PUSHED)));
-	QObject::connect(move_right,SIGNAL(mouse_pressed_signal()),this,SLOT(move_right_pressed()));
-	
+	if (p_plugin>0) {
+		PixmapButton *move_left = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__MOVE_LEFT),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__MOVE_LEFT_PUSHED)));
+		QObject::connect(move_left,SIGNAL(mouse_pressed_signal()),this,SLOT(move_left_pressed()));
+	}
+	if (p_plugin<(p_total_plugins-1)) {	
+		PixmapButton *move_right = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__MOVE_RIGHT),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__MOVE_RIGHT_PUSHED)));
+		QObject::connect(move_right,SIGNAL(mouse_pressed_signal()),this,SLOT(move_right_pressed()));
+	}	
 	PixmapButton *remove = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__REMOVE),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__REMOVE_PUSHED)));
 	QObject::connect(remove,SIGNAL(mouse_pressed_signal()),this,SLOT(remove_pressed()));
 	
@@ -246,7 +248,7 @@ void SoundPluginRack::update_rack() {
 		ui->set_property_editor_updater( property_edit_updater );
 		RackElement e;
 		e.plugin_ui=ui;
-		e.top=new PluginTop(plugin_vb,i,track->get_plugin( i )->skips_processing());
+		e.top=new PluginTop(plugin_vb,i,track->get_plugin( i )->skips_processing(),track->get_plugin_count());
 		rack_elements.push_back(e);
 		QObject::connect(ui,SIGNAL(property_edited_signal( Property*, double )),this,SLOT(property_edited_slot( Property*, double )));
 		QObject::connect(e.top,SIGNAL(action_signal( int,int )),this,SLOT(plugin_action_signal( int,int )),Qt::QueuedConnection);

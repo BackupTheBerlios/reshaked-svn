@@ -17,14 +17,198 @@
 #include <Qt/qdir.h>
 #include <Qt/qheaderview.h>
 #include <Qt/qlabel.h>
+#include <Qt/qinputdialog.h>
+#include <Qt/qfile.h>
 
 namespace ReShaked {
 
 
-void PluginPresetBrowser::tree_item_changed ( QTreeWidgetItem * current, QTreeWidgetItem * previous ) {
+void PluginPresetBrowser::rename_slot() {
 	
-	//	save->setEnabled(current->data(0,ROLE_TYPE).toInt()==TYPE_FILE);
-	//working_path=current->data(0,ROLE_PATH).toString();
+	
+	
+}
+
+void PluginPresetBrowser::open_slot() {
+	
+	if (selected_file=="") 
+		return;
+	action=ACTION_OPEN;
+	accept();
+	
+}
+void PluginPresetBrowser::save_as_slot() {
+	
+	QString folder_alone=working_path;
+	folder_alone.remove(0,dir_path.length());
+	if (folder_alone.length())
+		folder_alone.remove(0,1);
+	folder_alone+="/";
+	
+	QString existing="";
+	if (selected_file!="") {
+		existing=selected_file;
+		if (existing.lastIndexOf("/")!=-1) {
+			
+			existing.remove(0,existing.lastIndexOf("/")+1);
+		}
+	}	
+	
+	QString filename=QInputDialog::getText ( this, "New File", "Saving at: "+folder_alone+"\nEnter Filename:",QLineEdit::Normal,existing);
+
+	if (filename.lastIndexOf("/")!=-1) {
+		
+		filename.remove(0,filename.lastIndexOf("/")+1);
+	}
+	if (filename=="")
+		return;
+	
+	QString temptative_file=working_path+"/"+filename;
+	
+	
+	if (QFile::exists(selected_file)) {
+		
+		int action=QMessageBox::warning ( this, "Warning", "File Exists, Overwrite??" , QMessageBox::Yes, QMessageBox::No);
+		
+		if (action==QMessageBox::No)
+			return;
+		
+	}
+	
+	selected_file=temptative_file;
+	action=ACTION_SAVE;
+	accept();
+	
+}
+void PluginPresetBrowser::save_slot() {
+	
+	if (selected_file=="") 
+		return;
+	
+	if (initial_file!=selected_file) {
+		
+		QString file_alone=selected_file;
+		if (file_alone.lastIndexOf("/")!=-1) {
+		
+			file_alone.remove(0,file_alone.lastIndexOf("/")+1);
+		}
+			
+		int action=QMessageBox::warning ( this, "Save Current", "Overwrite: "+file_alone+" ?" , QMessageBox::Yes, QMessageBox::No);
+		
+		if (action==QMessageBox::No)
+			return;
+	}
+	
+	action=ACTION_SAVE;
+	accept();
+	
+}
+
+void PluginPresetBrowser::remove_slot() {
+	
+	
+	QDir location(working_path);
+	
+	if (selected_file!="") {
+		
+		QString file_alone=selected_file;
+		if (file_alone.lastIndexOf("/")!=-1) {
+		
+			file_alone.remove(0,file_alone.lastIndexOf("/")+1);
+		}
+		
+		
+		int action=QMessageBox::warning ( this, "Remove File", "Remove: "+file_alone+" ?" , QMessageBox::Yes, QMessageBox::No);
+		
+		if (action==QMessageBox::No)
+			return;
+		
+		location.remove(selected_file);
+		
+	} else { 
+		
+		if (working_path==dir_path)
+			return;
+			
+		QString folder_alone=working_path;
+		if (folder_alone.lastIndexOf("/")!=-1) {
+		
+			folder_alone.remove(0,folder_alone.lastIndexOf("/")+1);
+		}
+			
+		//printf("subfiles %i\n",location.entryList(QDir::Files|QDir::Dirs).size());
+		
+		if (location.entryList(QDir::Files|QDir::Dirs).size()>2) { // there is . and .. by default, so..
+			
+			QMessageBox::information ( this, "Info", "Folder '"+folder_alone+"'\n is not empty." , QMessageBox::Ok);
+			return;
+		}
+			
+		
+		
+		int action=QMessageBox::warning ( this, "Remove Folder", "Remove: "+folder_alone+" ?" , QMessageBox::Yes, QMessageBox::No);
+		
+		if (action==QMessageBox::No)
+			return;
+		
+		location.rmdir(working_path);
+		
+	}
+	
+	selected_file="";
+	working_path=dir_path;
+	rebuild_tree();
+}
+
+void PluginPresetBrowser::make_dir() {
+	
+	QString dirname=QInputDialog::getText ( this, "New Folder", "Folder Name:");
+	if (dirname=="")
+		return;
+	
+	if (dirname.lastIndexOf("/")!=-1) {
+		
+		dirname.remove(0,dirname.lastIndexOf("/")+1);
+	}
+	
+	if (dirname=="")
+		return;
+	
+	QDir cdir(working_path);
+	ERR_FAIL_COND(!cdir.mkdir(dirname));
+	
+	printf("Now at %s\n",working_path.toAscii().data());
+	
+	rebuild_tree();
+}
+
+
+PluginPresetBrowser::TreeItem::TreeItem(QTreeWidgetItem *p_parent) : QTreeWidgetItem(p_parent) {
+	
+	
+}
+PluginPresetBrowser::TreeItem::TreeItem(QTreeWidget *p_parent) : QTreeWidgetItem(p_parent) {
+	
+	
+	
+}
+
+
+void PluginPresetBrowser::tree_item_changed (  ) {
+	
+	QTreeWidgetItem * current=tree->currentItem();
+	TreeItem *ti = dynamic_cast<TreeItem*>(current);
+	ERR_FAIL_COND(!ti);
+	
+	printf("Item Changed\n");
+	save->setEnabled(ti->file!="");
+	open->setEnabled(ti->file!="");
+	if (ti->file!="")
+		selected_file=ti->file;
+	else
+		selected_file="";
+	working_path=ti->path;
+	
 	
 	
 }
@@ -33,21 +217,25 @@ void PluginPresetBrowser::tree_item_changed ( QTreeWidgetItem * current, QTreeWi
 void PluginPresetBrowser::parse_dir(QDir &p_dir,QTreeWidgetItem *p_parent,QTreeWidget *p_tree_base) {
 	
 	printf("Enter %s\n",p_dir.path().toAscii().data());
-	QTreeWidgetItem *dir_item;
+	TreeItem *dir_item;
 	
 	if (p_tree_base) {
 		
-		dir_item  = new QTreeWidgetItem(p_tree_base);
+		dir_item  = new TreeItem(p_tree_base);
 		dir_item->setText(0,"/");
 	} else  {
 
-		dir_item  = new QTreeWidgetItem(p_parent);
+		dir_item  = new TreeItem(p_parent);
 		dir_item->setText(0,p_dir.dirName()+"/");
 		
 	}
 	
-	dir_item->setIcon(0,GET_QPIXMAP(ICON_FILE_OPEN));
+	dir_item->path=p_dir.path();
+	dir_item->setIcon(0,GET_QPIXMAP(ICON_FILE_FOLDER));
 	tree->expandItem(dir_item);
+	
+	if (working_path==p_dir.path() && selected_file=="")
+		tree->setCurrentItem(dir_item);
 	
 	QStringList subdirs=p_dir.entryList(QDir::Dirs);
 	
@@ -63,16 +251,16 @@ void PluginPresetBrowser::parse_dir(QDir &p_dir,QTreeWidgetItem *p_parent,QTreeW
 	QStringList files=p_dir.entryList(QDir::Files);
 	foreach(I,files) {
 		
-		QTreeWidgetItem *file = new QTreeWidgetItem(dir_item);
+		TreeItem *file = new TreeItem(dir_item);
 		file->setText(0,*I);
 
 		QFont f;
 		f.setBold(true);
 		file->setFont(0,f);
-		
-
-		//file->setData(0,ROLE_FILE,p_dir.path()+"/"+*I);
-		
+		file->path=p_dir.path();
+		file->file=p_dir.path()+"/"+*I;
+		if (file->file==selected_file)
+			tree->setCurrentItem(file);
 	}
 	
 }
@@ -130,12 +318,20 @@ PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin
 	layout()->addWidget( vb );
 	vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
 	
-	open = new QPushButton(GET_QPIXMAP(ICON_FILE_OPEN),"Open Preset",vb);
-	save = new QPushButton(GET_QPIXMAP(ICON_FILE_SAVE),"Replace Preset",vb);
+	open = new QPushButton(GET_QPIXMAP(ICON_FILE_OPEN),"Open",vb);
+	open->setEnabled(false);
+	QObject::connect(open,SIGNAL(clicked()),this,SLOT(open_slot()));
+	save = new QPushButton(GET_QPIXMAP(ICON_FILE_SAVE),"Save Current",vb);
 	save->setEnabled(false);
-	save_as= new QPushButton(GET_QPIXMAP(ICON_FILE_SAVEAS),"New Preset",vb);
-	new_subfolder= new QPushButton(GET_QPIXMAP(ICON_FILE_SAVEAS),"New SubFolder",vb);
-	
+	QObject::connect(save,SIGNAL(clicked()),this,SLOT(save_slot()));
+	save_as= new QPushButton(GET_QPIXMAP(ICON_FILE_SAVEAS),"Save As",vb);
+	(new QFrame(vb))->setFixedHeight(16);
+	QObject::connect(save_as,SIGNAL(clicked()),this,SLOT(save_as_slot()));
+	new_subfolder= new QPushButton(GET_QPIXMAP(ICON_FILE_FOLDER_NEW),"New SubFolder",vb);
+	QObject::connect(new_subfolder,SIGNAL(clicked()),this,SLOT(make_dir()));
+	(new QFrame(vb))->setFixedHeight(16);
+	remove = new QPushButton("Remove",vb);
+	QObject::connect(remove,SIGNAL(clicked()),this,SLOT(remove_slot()));
 	(new QFrame(vb))->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
 	
 	if (p_plugin->get_info()->xpm_preview) {
@@ -146,7 +342,7 @@ PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin
 
 	
 	cancel = new QPushButton("Cancel",vb);
-	
+	QObject::connect(cancel,SIGNAL(clicked()),this,SLOT(reject()));
 	
 	
 	dir=QStrify(p_plugin->get_info()->unique_ID); //the dir is the unique ID
@@ -160,7 +356,9 @@ PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin
 	setMinimumSize(450,350);
 	setWindowTitle(QStrify(p_plugin->get_info()->caption)+" Presets");
 	
-	QObject::connect(tree,SIGNAL(currentItemChanged ( QTreeWidgetItem * current, QTreeWidgetItem * previous )),this,SLOT(tree_item_changed( QTreeWidgetItem*, QTreeWidgetItem* )));
+	QObject::connect(tree,SIGNAL(itemSelectionChanged ()),this,SLOT(tree_item_changed()));
+	
+	action=ACTION_NONE;
 }
 
 

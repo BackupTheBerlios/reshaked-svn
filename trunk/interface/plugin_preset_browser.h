@@ -30,7 +30,29 @@ namespace ReShaked {
 class PluginPresetBrowser : public QDialog {
 	
 	Q_OBJECT
+public:	
 	
+	enum Action {
+		
+		ACTION_OPEN,
+		ACTION_SAVE,
+		ACTION_NONE,
+	};
+	
+private:
+			
+			
+	class TreeItem : public QTreeWidgetItem {
+	public:
+		QString path;
+		QString file;
+		
+		TreeItem(QTreeWidgetItem *p_parent);
+		TreeItem(QTreeWidget *p_parent);
+
+	};
+	
+	Action action;
 	
 	QTreeWidget *tree;
 	
@@ -39,13 +61,15 @@ class PluginPresetBrowser : public QDialog {
 	QPushButton *save_as;	
 	QPushButton *new_subfolder;	
 	QPushButton *cancel;	
+	QPushButton *remove;	
 	
 	QString dir_path;
 	QString dir;
 	SoundPlugin *plugin;
 	
+	QString initial_file;
 	QString working_path;
-	QString current_file;
+	QString selected_file;
 	
 	void parse_dir(QDir &p_dir,QTreeWidgetItem *p_parent,QTreeWidget *p_tree_base=NULL);
 	
@@ -53,7 +77,15 @@ class PluginPresetBrowser : public QDialog {
 	void ensure_dir_exists();
 private slots:
 		
-	void tree_item_changed ( QTreeWidgetItem * current, QTreeWidgetItem * previous );
+	void open_slot();
+	void save_as_slot();
+	void save_slot();
+	
+	void rename_slot();
+	void remove_slot();
+	void make_dir();
+	
+	void tree_item_changed ();
 	
 public:
 	PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin);

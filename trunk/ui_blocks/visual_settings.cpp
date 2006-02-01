@@ -267,6 +267,8 @@
 #include "pixmaps/icon_file_open.xpm"
 #include "pixmaps/icon_file_save.xpm"
 #include "pixmaps/icon_file_saveas.xpm"
+#include "pixmaps/icon_file_folder.xpm"
+#include "pixmaps/icon_file_folder_new.xpm"
 
 #include <iostream>
 
@@ -448,6 +450,8 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_FILE_OPEN]=QPixmap((const char**)icon_file_open_xpm);
 	pixmap_map[ICON_FILE_SAVE]=QPixmap((const char**)icon_file_save_xpm);
 	pixmap_map[ICON_FILE_SAVEAS]=QPixmap((const char**)icon_file_saveas_xpm);
+	pixmap_map[ICON_FILE_FOLDER]=QPixmap((const char**)icon_file_folder_xpm);
+	pixmap_map[ICON_FILE_FOLDER_NEW]=QPixmap((const char**)icon_file_folder_new_xpm);
 	
 	pixmap_map[ICON_TRACK_MOVE_LEFT]=QPixmap((const char**)track_move_left_xpm);
 	pixmap_map[ICON_TRACK_MOVE_RIGHT]=QPixmap((const char**)track_move_right_xpm);
