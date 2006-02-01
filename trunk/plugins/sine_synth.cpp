@@ -37,6 +37,7 @@ const SoundPluginInfo *SineSynth::create_info() {
 	info.is_synth=true;
 	info.xpm_preview=(const char**)synth_sine_xpm;
 	info.creation_func=&create_sine_synth;
+	info.version=1;
 	
 	return &info;
 }

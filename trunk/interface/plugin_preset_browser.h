@@ -88,6 +88,9 @@ private slots:
 	void tree_item_changed ();
 	
 public:
+	
+	Action get_action();
+	QString get_file();
 	PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin);
 	
 	~PluginPresetBrowser();

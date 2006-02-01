@@ -41,6 +41,8 @@ struct SoundPluginInfo {
 	bool is_synth; ///< Receives MIDI events (synth)
 	const char ** xpm_preview; ///< There is a xpm preview image of it, preferably 48x48
 
+	int version; ///plugin_version, use any scheme you feel like inside
+	
 	SoundPlugin* (*creation_func)(const SoundPluginInfo *,int);
 
 };

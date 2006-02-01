@@ -34,7 +34,7 @@ const SoundPluginInfo *AmplifierPlugin::create_info() {
 	info.is_synth=false;
 	info.xpm_preview=(const char**)effect_amplifier_xpm;
 	info.creation_func=&create_amplifier;
-	
+	info.version=1;	
 	return &info;
 }
 

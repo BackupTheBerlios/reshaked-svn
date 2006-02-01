@@ -16,6 +16,7 @@
 #include <Qt/qmenu.h>
 #include <Qt/qcursor.h>
 #include "interface/plugin_preset_browser.h"
+#include "editor/plugin_preset_manager.h"
 
 namespace ReShaked {
 
@@ -149,6 +150,20 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 			PluginPresetBrowser *ppb = new PluginPresetBrowser(this,plugin);
 			ppb->exec();
 			
+			switch (ppb->get_action()) {
+				
+				case PluginPresetBrowser::ACTION_OPEN: {
+					
+					
+				} break;
+				case PluginPresetBrowser::ACTION_SAVE: {
+					
+					PluginPresetManager::get_singleton()->save_plugin_preset(DeQStrify( ppb->get_file() ), plugin );
+				} break;
+				
+			}
+		
+			delete ppb;
 		} break;
 	}
 }

@@ -13,7 +13,7 @@
 #define RESHAKEDPLUGIN_PRESET_MANAGER_H
 
 #include "typedefs.h"
-
+#include "engine/sound_plugin.h"
 namespace ReShaked {
 
 /**
@@ -25,6 +25,8 @@ class PluginPresetManager {
 	
 	static PluginPresetManager* singleton;
 public:
+	
+	bool save_plugin_preset(String p_path,SoundPlugin *p_plugin);
 	
 	String get_preset_dir();
 	

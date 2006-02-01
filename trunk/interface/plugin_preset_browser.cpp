@@ -308,6 +308,16 @@ void PluginPresetBrowser::ensure_dir_exists() {
 	
 }
 
+PluginPresetBrowser::Action PluginPresetBrowser::get_action() {
+	
+	return action;
+}
+QString PluginPresetBrowser::get_file() {
+	
+	return selected_file;
+}
+
+
 PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin) : QDialog(p_parent) {
 	
 	setLayout( new QHBoxLayout(this) );
