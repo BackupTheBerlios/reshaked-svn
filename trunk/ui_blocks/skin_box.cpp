@@ -62,11 +62,16 @@ void SkinBox::paint_into(QPainter&p, int p_x, int p_y, int p_w, int p_h) {
 	p.drawPixmap(p_x,p_y,pix_top_left);	
 	
 	/* center */
-	if (!no_center) {
+	if (!no_center && !use_center_color) {
 		if (stretch) 
 			p.drawPixmap(p_x+left,p_y+top,center_w,center_h,pix_center);
 		else		
 			p.drawTiledPixmap(p_x+left,p_y+top,center_w,center_h,pix_center);
+	}
+	
+	if (use_center_color) {
+		
+		p.fillRect(p_x+left,p_y+top,center_w,center_h,center_color);
 	}
 	
 	/* Margins */
@@ -160,15 +165,27 @@ void SkinBox::load_from_xpm(const char** p_xpm,int p_top, int p_left, int p_bott
 	
 }
 
+void SkinBox::set_center_color(QColor p_color) {
+	
+	center_color=p_color;
+}
+void SkinBox::set_center_use_color(bool p_color) {
+	
+	use_center_color=p_color;
+}
+
+
 SkinBox::SkinBox(const char ** p_xpm,int p_top, int p_left, int p_bottom, int p_right, bool p_stretch) {
 	
 	load_from_xpm(p_xpm,p_top,p_left,p_bottom,p_right,p_stretch);
 	no_center=false;
+	use_center_color=false;
 }
 SkinBox::SkinBox()
 {
 	top=left=right=bottom=1;
 	no_center=false;
+	use_center_color=false;
 	
 }
 

@@ -476,6 +476,7 @@ MainWindow::MainWindow() {
 	ui_updater->start(50);
 
 	setMinimumSize(750,550); //dont mess with my app!
+
 }
 
 MainWindow::~MainWindow()

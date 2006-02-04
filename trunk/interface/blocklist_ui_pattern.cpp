@@ -386,10 +386,23 @@ void BlockListUI_Pattern::paint_row_lines(QPainter &p) {
 	int visible_rows=editor->get_cursor().get_window_size()+1;
 	int row_size=VisualSettings::get_singleton()->get_editing_row_height();
 
+	int font_w=VisualSettings::get_singleton()->get_pattern_font()->get_width();
+	
 	for (int i=0;i<visible_rows;i++) {
 		
 		Tick tick=editor->get_cursor().get_snapped_window_tick_pos(i);
 
+		int from_x; 
+		int width_x; 
+			
+		if (track->is_pos_editable( editor->get_cursor().get_snapped_window_tick_pos(i))) {
+			from_x = font_w;
+			width_x = width()-from_x*2;
+		} else {
+			from_x=0;
+			width_x=width();
+				
+		}		
 		if ( (tick % TICKS_PER_BEAT)==0 ) {//beat
 			
 			int block=track->get_prev_block_from_idx( tick );
@@ -403,15 +416,17 @@ void BlockListUI_Pattern::paint_row_lines(QPainter &p) {
 					paint=false;
 				
 			}
+			
+			
 			if (paint)
-				p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
+				p.fillRect(from_x,i*row_size,width_x,1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
 		
 			if (song->get_bar_map().get_bar_beat(tick/TICKS_PER_BEAT)==0)  {
-				p.fillRect(0,i*row_size,width(),row_size,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
+				//p.fillRect(from_x,i*row_size,width_x,row_size,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
 			}
 
 		} else
-			p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
+			p.fillRect(from_x,i*row_size,width_x,1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
 
 		
 		//p.drawRect(0,i*row_size,width(),0);

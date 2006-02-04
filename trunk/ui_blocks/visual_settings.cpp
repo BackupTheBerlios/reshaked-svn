@@ -388,6 +388,10 @@ VisualSettings::VisualSettings() {
 	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]=new SkinBox((const char**)pattern_glob_bg_sel_xpm,7,7,7,7,true);
 	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_glob_bg_sel_xpm,7,7,7,7,true);
 	skin_box_map[SKINBOX_EDITING_PATTERN]=new SkinBox((const char**)pattern_bg_xpm,8,8,8,8);
+	skin_box_map[SKINBOX_EDITING_PATTERN]->set_center_use_color(true);
+	skin_box_map[SKINBOX_EDITING_PATTERN]->set_center_color(QColor(0xd,0x17,0x19));
+	
+	
 	skin_box_map[SKINBOX_EDITING_PATTERN_SELECTED]=new SkinBox((const char**)pattern_bg_sel_xpm,8,8,8,8);
 	skin_box_map[SKINBOX_EDITING_AUTOMATION]=new SkinBox((const char**)automation_bg_xpm,8,8,8,8);
 	
@@ -412,8 +416,8 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0,33,0);
 	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(255,190,170);
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
-	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(200,233,255,128);
-	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(150,170,200,64);
+	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(0x6a,0x80,0x8c);
+	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(0x2f,0x3b,0x45);
 	color_map[COLORLIST_AUTOMATION_ENVELOPE]=QColor(255,255,200,200);
 	color_map[COLORLIST_GLOBAL_VIEW_BAR_LINE]=QColor(80,120,140);
 	color_map[COLORLIST_GLOBAL_VIEW_BEAT_LINE]=QColor(50,60,80);
