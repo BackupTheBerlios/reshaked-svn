@@ -60,11 +60,9 @@ public:
 		AutomationData *data;
 	public:
 		
-		bool shared_with(Block *p_block);
 
 		Tick get_length();
 		void set_length(Tick p_length);
-		bool is_shared();
 
 		AutomationData *get_data();
 		AutomationBlock(AutomationData *p_data);

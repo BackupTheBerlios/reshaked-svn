@@ -154,11 +154,19 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 				
 				case PluginPresetBrowser::ACTION_OPEN: {
 					
-					
+					editor->load_plugin_preset(plugin,DeQStrify( ppb->get_file() ),track);
 				} break;
 				case PluginPresetBrowser::ACTION_SAVE: {
 					
-					PluginPresetManager::get_singleton()->save_plugin_preset(DeQStrify( ppb->get_file() ), plugin );
+					if (PluginPresetManager::get_singleton()->save_plugin_preset(DeQStrify( ppb->get_file() ), plugin )) {
+						
+						QMessageBox::critical ( this, "Error", "Error Saving File." , QMessageBox::Ok,QMessageBox::NoButton);
+					} else {
+						
+						plugin->set_current_file( DeQStrify( ppb->get_file() ) );
+					}
+					
+					
 				} break;
 				
 			}

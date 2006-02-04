@@ -496,7 +496,7 @@ String String::num(double p_num,int p_digits) {
 }
 
 
-CharString String::ascii(bool p_allow_extended) {
+CharString String::ascii(bool p_allow_extended) const {
 	
 	if (!length())
 		return CharString();
@@ -521,7 +521,7 @@ CharString String::ascii(bool p_allow_extended) {
 
 	
 }
-CharString String::utf8() {
+CharString String::utf8() const {
 	
 	if (!length())
 		return CharString();

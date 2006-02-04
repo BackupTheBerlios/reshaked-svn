@@ -15,7 +15,7 @@
 
 
 #include "editor/editor_commands.h"
-
+#include "tree_loader_disk.h"
 namespace ReShaked {
 
 /**
@@ -190,11 +190,18 @@ public:
 	void undo();
 	void redo();
 	
+
 	/** INTERNAL DATA (editor.cpp) */
 	
 	Cursor &get_cursor();
 	Song* get_song();
 	UI_UpdateNotify *get_ui_update_notify();
+	
+	/** PRESETS */
+	
+	TreeLoaderDisk::ErrorReading load_plugin_preset(SoundPlugin *p_plugin,String p_filename,Track *p_track);
+	TreeLoaderDisk::ErrorReading load_track_preset(Track *p_track,String p_filename);
+	
 	
 	/** INITIALIZATION (editor.cpp) */
 

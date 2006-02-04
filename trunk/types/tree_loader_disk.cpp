@@ -468,6 +468,66 @@ String TreeLoaderDisk::get_var_name(int i) {
 	return current->values[i]->name;
 }
 
+bool TreeLoaderDisk::is_var(String p_var) {
+	
+	for (int i=0;i<current->values.size();i++)
+		if (current->values[i]->name==p_var)
+			return true;
+	
+	return false;
+}
+TreeLoader::VarType TreeLoaderDisk::get_var_type(String p_var) {
+	Value *v=NULL;
+	for (int i=0;i<current->values.size();i++) { 
+		if (current->values[i]->name==p_var) {
+			v=current->values[i];
+		}
+	}
+		
+	if (v==NULL)
+		return VAR_NONE;		
+		
+	switch (v->type) {
+		
+		case FILE_FIELD_INT: {
+			
+			return VAR_INT;
+		} break;
+		case FILE_FIELD_INT_ARRAY: {
+			
+			return VAR_INT_ARRAY;
+		} break;
+		case FILE_FIELD_FLOAT: {
+			
+			return VAR_FLOAT;
+		} break;
+		case FILE_FIELD_FLOAT_ARRAY: {
+		
+			return VAR_FLOAT_ARRAY;
+		} break;
+		case FILE_FIELD_STRING: {
+		
+			return VAR_STRING;
+		} break;
+		case FILE_FIELD_RAW: {
+			
+			return VAR_RAW;
+		} break;
+		
+		default: return VAR_NONE; break;
+		
+	}
+
+	//unreachable code
+	
+	return VAR_NONE;
+}
+
+void TreeLoaderDisk::goto_root() {
+	
+	current=tree;
+}
+
 int TreeLoaderDisk::get_child_count() {
 	
 	return current->childs.size();

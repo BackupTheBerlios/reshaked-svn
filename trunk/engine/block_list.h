@@ -9,6 +9,7 @@
 
 #include "typedefs.h"
 #include "value_stream.h"
+#include "engine/data_pool.h"
 #include <list>
 
 namespace ReShaked {
@@ -27,17 +28,16 @@ public:
 		BLOCK_CREATE_AND_RESIZE
 	};
 
-	class Block {
+	class Block : public SharedBlock {
 
 	public:
 			
-		virtual bool shared_with(Block *p_block)=0;
 
 		virtual Tick get_length()=0;
 		virtual void set_length(Tick p_length)=0;
-		virtual bool is_shared()=0;
 	
-		virtual ~Block() {}
+		Block(SharedData *p_data);
+
 	};
 
 	class BlockCreationData {

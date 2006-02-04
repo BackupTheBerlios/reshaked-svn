@@ -87,6 +87,8 @@ private:
 		ProxyNode output_proxy;
 		SongPlayback *song_playback;
 		
+		
+		String rack_file;
 		struct Audio {
 			float highest_energy;
 			float volume_ratio;
@@ -174,6 +176,9 @@ public:
 	bool is_mute();
 	
 	void reset_plugins();
+	
+	void set_rack_file(String p_file);
+	String get_rack_file();
 	
 	virtual bool can_use_synths()=0;
 	

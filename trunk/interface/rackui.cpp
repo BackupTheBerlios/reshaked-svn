@@ -12,10 +12,13 @@
 #include "rackui.h"
 #include <Qt/qlabel.h>
 #include <Qt/qinputdialog.h>
+#include <Qt/qmessagebox.h>
 #include "ui_blocks/visual_settings.h"
 #include "engine/sound_plugin_list.h"
 #include "interface/sound_plugin_chooser.h"
 
+#include "interface/plugin_preset_browser.h"
+#include "editor/plugin_preset_manager.h"
 
 namespace ReShaked {
 
@@ -129,9 +132,8 @@ void RackUI::update_selected_rack_slot() {
 		plugins->set_track( NULL );
 		
 		rack_back_selected();
-		add_plugin->hide();
-		rack_front->hide();
-		rack_back->hide();
+		
+		hbox_options->hide();
 	} else {
 		
 		connections->set_audio_graph( &editor->get_song()->get_track(selected_rack-1)->get_plugin_graph() );		
@@ -142,9 +144,8 @@ void RackUI::update_selected_rack_slot() {
 		else
 			rack_back_selected();
 			
-		add_plugin->show();
-		rack_front->show();
-		rack_back->show();
+		hbox_options->show();
+		update_rack_file_label();
 		
 	}
 	
@@ -163,45 +164,108 @@ void RackUI::rack_back_selected() {
 	
 }
 
+
+void RackUI::update_rack_file_label() {
+	
+	Track *track;
+	track=editor->get_song()->get_track( selected_rack-1 );
+	
+	if (!track) 
+		return;
+	
+	QString label=QStrify(track->get_rack_file());
+	
+	if (label.lastIndexOf("/")!=-1)
+		label.remove(0,label.lastIndexOf("/")+1);
+	
+	rack_label->set_text( label );
+	
+}
+
+void RackUI::rack_presets() {
+	
+	
+	Track *track;
+	track=editor->get_song()->get_track( selected_rack-1 );
+	
+	if (!track)
+		return;
+	
+	PluginPresetBrowser *ppb = new PluginPresetBrowser(this,"");
+	ppb->exec();
+			
+	switch (ppb->get_action()) {
+				
+		case PluginPresetBrowser::ACTION_OPEN: {
+					
+			
+			editor->load_track_preset(track,DeQStrify( ppb->get_file() ));
+			update_rack_file_label();
+		} break;
+		case PluginPresetBrowser::ACTION_SAVE: {
+					
+			if (PluginPresetManager::get_singleton()->save_track_rack(DeQStrify( ppb->get_file()), track)) {
+				QMessageBox::critical ( this, "Error", "Error Saving File." , QMessageBox::Ok,QMessageBox::NoButton);
+			} else {
+				track->set_rack_file(  DeQStrify( ppb->get_file() ) );
+			}
+			
+			update_rack_file_label();
+		} break;
+				
+	}
+		
+	delete ppb;
+	
+	
+}
+
 RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater) : CVBox(p_parent) {
 	
 	editor=p_editor;
 	
-	CHBox *hbox_top = new CHBox(this);
+	CHBox *hbox_main = new CHBox(this); //holding all
 	
 	
-	
-	new PixmapLabel(hbox_top,GET_QPIXMAP(THEME_RACK_TOOLBAR__BEGIN));
+	new PixmapLabel(hbox_main,GET_QPIXMAP(THEME_RACK_TOOLBAR__BEGIN));
 	
 
-	CVBox *rack_choose_vb = new CVBox(hbox_top);
+	CVBox *rack_choose_vb = new CVBox(hbox_main);
 	new PixmapLabel(rack_choose_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__TRACK_DROPDOWN_TOP));
 	rack_choose = new PixmapCombo(rack_choose_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__TRACK_DROPDOWN));
 	new PixmapLabel(rack_choose_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__TRACK_DROPDOWN_BOTTOM));
 	rack_choose_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
-	add_plugin = new PixmapButton(hbox_top,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__ADD_PLUGIN),GET_QPIXMAP(THEME_RACK_TOOLBAR__ADD_PLUGIN_PUSHED)));
+	new PixmapLabel(hbox_main,GET_QPIXMAP(THEME_RACK_TOOLBAR__SPACER),PixmapLabel::EXPAND_TILE_H);
+		
+	hbox_options = new CHBox(hbox_main); //
+	
+	hbox_options->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	
+
+	add_plugin = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__ADD_PLUGIN),GET_QPIXMAP(THEME_RACK_TOOLBAR__ADD_PLUGIN_PUSHED)));
 	QObject::connect(add_plugin,SIGNAL(mouse_pressed_signal()),this,SLOT(add_plugin_slot()));
 	
-	new PixmapLabel(hbox_top,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
+	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
 	
-	rack_front = new PixmapButton(hbox_top,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT_ACTIVE)),PixmapButton::TYPE_TOGGLE);
-	rack_back = new PixmapButton(hbox_top,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK_ACTIVE)),PixmapButton::TYPE_TOGGLE);	
+	rack_front = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT_ACTIVE)),PixmapButton::TYPE_TOGGLE);
+	rack_back = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK_ACTIVE)),PixmapButton::TYPE_TOGGLE);	
 	
-	new PixmapLabel(hbox_top,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
-	new PixmapLabel(hbox_top,GET_QPIXMAP(THEME_RACK_TOOLBAR__SPACER),PixmapLabel::EXPAND_TILE_H);
-	new PixmapLabel(hbox_top,GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_ICON));
+	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
+	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SPACER),PixmapLabel::EXPAND_TILE_H);
+	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_ICON));
 	
-	CVBox *preset_name_vb = new CVBox(hbox_top);
+	CVBox *preset_name_vb = new CVBox(hbox_options);
 	new PixmapLabel(preset_name_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_LABEL_TOP));
 	rack_label = new PixmapLabel(preset_name_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_LABEL));
 	new PixmapLabel(preset_name_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_LABEL_BOTTOM));
 	preset_name_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 	
-	rack_file = new PixmapButton(hbox_top,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_FILE),GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_FILE_PUSHED)));	
+	rack_file = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_FILE),GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_FILE_PUSHED)));	
+	QObject::connect(rack_file,SIGNAL(mouse_pressed_signal()),this,SLOT(rack_presets()));
 	
 	
-	new PixmapLabel(hbox_top,GET_QPIXMAP(THEME_RACK_TOOLBAR__END));
+	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__END));
 	
 	
 	
@@ -216,8 +280,8 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	stack->setMinimumHeight(GET_CONSTANT(CONSTANT_RACK_MINIMUM_HEIGHT));	
 	QObject::connect(rack_choose,SIGNAL(item_selected( int )),this,SLOT(rack_selected_slot( int )));
 	
-	hbox_top->layout()->setSpacing(0);
-	hbox_top->layout()->setMargin(0);
+	hbox_options->layout()->setSpacing(0);
+	hbox_options->layout()->setMargin(0);
 	
 	selected_rack=0;
 	update_rack();

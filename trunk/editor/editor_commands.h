@@ -28,9 +28,7 @@ friend class Editor;
 	EditorData *d;
 	Editor *editor;
 	
-	
-	
-	
+
 	
 	CommandFunc* add_track(bool p_no_undo,Track *p_track,int p_at_pos,std::list<AudioGraph::Connection> *p_node_connections=NULL);
 	CommandFunc* remove_track(bool p_no_undo,int p_which);
@@ -76,6 +74,7 @@ friend class Editor;
 	CommandFunc* bar_length_add(bool p_no_undo,int p_at_beat,int p_len);
 	CommandFunc* bar_length_remove(bool p_no_undo,int p_at_beat);
 
+	CommandFunc* plugin_load_preset(bool p_no_undo,SoundPlugin *p_plugin, TreeLoader *p_old_preset, TreeLoader *p_new_preset,Track *p_track);
 	
 };
 

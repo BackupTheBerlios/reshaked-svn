@@ -106,7 +106,7 @@ public:
 		
 	public:
 		
-		bool shared_with(Block *p_block);
+
 		bool copy_shared();
 		
 		bool get_notes_in_local_range(Tick p_from, Tick p_to, int *p_note_from,int *p_note_to);
@@ -119,7 +119,7 @@ public:
 		Pattern *get_pattern();
 		Tick get_length();
 		void set_length(Tick p_length);
-		bool is_shared();
+
 		PatternBlock(Pattern*);
 		~PatternBlock();
 	};

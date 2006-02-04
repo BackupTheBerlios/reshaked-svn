@@ -43,6 +43,9 @@ void Saver::save_track_rack(Track *p_track,TreeSaver *p_saver) {
 	
 	/** PLUGIN GRAPH */
 	
+	
+	p_saver->add_int("track_channels",p_track->get_channels());
+	
 	p_saver->enter("plugin_graph");
 	std::vector<int> node_remap;
 	

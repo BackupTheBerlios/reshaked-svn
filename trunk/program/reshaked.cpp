@@ -12,6 +12,9 @@
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 #include "drivers/get_time_posix.h"
 
+#include "drivers/get_time_win32.h"
+
+
 #include <Qt/qdir.h>
 
 #include "interface/sound_plugin_ui_list.h"
@@ -24,6 +27,8 @@
 #endif
 
 #ifdef WIN32_ENABLED
+
+#include "drivers/mutex_lock_win32.h"
 
 #define CONFIG_DIR QString("ReShaked")
 #define CONFIG_DIR_PATH QString(getenv("APPDATA"))
@@ -85,6 +90,8 @@ int main(int argc, char *argv[]) {
 	
 #ifdef WIN32_ENABLED
 
+	MutexLock::create_mutex=MutexLock_Win32::create_mutex_pthreads;
+	ReShaked::GetTime_Win32 get_time_win32;
 
 #endif
 	

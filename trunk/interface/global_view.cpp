@@ -1263,7 +1263,7 @@ void GlobalView::unlink_selected_slot() {
 		BlockList::Block *sb=bl->get_block(block);
 		if (!sb)
 			continue;
-		if (!sb->is_shared())
+		if (!sb->is_active_shared())
 			continue;
 		
 		BlockList::Block *db=bl->create_duplicate_block( sb );

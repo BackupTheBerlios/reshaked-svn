@@ -25,8 +25,53 @@ namespace ReShaked {
 
 void PluginPresetBrowser::rename_slot() {
 	
+	QString item=(selected_file=="")?working_path:selected_file;
 	
+	QString item_dir;
+	QString item_entry;
+	if (item.lastIndexOf("/")!=-1) {
+		
+		item_dir=item.left( item.lastIndexOf("/") );
+		item_entry=item;
+		item_entry.remove(0,item.lastIndexOf("/")+1);
+		
+	} else {
+		
+		item_entry=item;
+		
+	}
 	
+	QString new_name=QInputDialog::getText ( this, "Rename", "Rename:",QLineEdit::Normal,item_entry);
+	
+	if (new_name=="")
+		return;
+	
+	if (new_name.lastIndexOf("/")!=-1) {
+		
+		new_name.remove(new_name.lastIndexOf("/")+1);
+	}
+	
+	new_name=item_dir+"/"+new_name;
+	
+	if (QFile::exists(new_name)) {
+		
+		QMessageBox::information ( this, "Info", "File Exists!" , QMessageBox::Ok);
+		return;
+
+	}
+
+	QDir d;
+	printf("RENAME %s -> %s\n",item.toAscii().data(),new_name.toAscii().data());
+	if (!d.rename(item,new_name)) {
+		
+		QMessageBox::information ( this, "Info", "Rename Failed" , QMessageBox::Ok);
+		return;		
+	}
+	if (selected_file!="")
+		selected_file=new_name;
+	else
+		working_path=new_name;
+	rebuild_tree();
 }
 
 void PluginPresetBrowser::open_slot() {
@@ -209,7 +254,7 @@ void PluginPresetBrowser::tree_item_changed (  ) {
 		selected_file="";
 	working_path=ti->path;
 	
-	
+	initial_file="";
 	
 }
 
@@ -235,7 +280,7 @@ void PluginPresetBrowser::parse_dir(QDir &p_dir,QTreeWidgetItem *p_parent,QTreeW
 	tree->expandItem(dir_item);
 	
 	if (working_path==p_dir.path() && selected_file=="")
-		tree->setCurrentItem(dir_item);
+		tree->setItemSelected(dir_item,true);
 	
 	QStringList subdirs=p_dir.entryList(QDir::Dirs);
 	
@@ -260,7 +305,7 @@ void PluginPresetBrowser::parse_dir(QDir &p_dir,QTreeWidgetItem *p_parent,QTreeW
 		file->path=p_dir.path();
 		file->file=p_dir.path()+"/"+*I;
 		if (file->file==selected_file)
-			tree->setCurrentItem(file);
+			tree->setItemSelected(file,true);
 	}
 	
 }
@@ -272,7 +317,7 @@ void PluginPresetBrowser::rebuild_tree() {
 	tree->clear();
 	
 	QDir plugin_dir(dir_path);
-	plugin_dir.setSorting(QDir::Name);
+	plugin_dir.setSorting(QDir::Name|QDir::IgnoreCase);
 	
 	parse_dir(plugin_dir,NULL,tree);
 	
@@ -318,7 +363,10 @@ QString PluginPresetBrowser::get_file() {
 }
 
 
-PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin) : QDialog(p_parent) {
+
+
+void PluginPresetBrowser::init(QString p_dir,QString p_current) {
+	
 	
 	setLayout( new QHBoxLayout(this) );
 	tree = new QTreeWidget(this);
@@ -339,10 +387,47 @@ PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin
 	QObject::connect(save_as,SIGNAL(clicked()),this,SLOT(save_as_slot()));
 	new_subfolder= new QPushButton(GET_QPIXMAP(ICON_FILE_FOLDER_NEW),"New SubFolder",vb);
 	QObject::connect(new_subfolder,SIGNAL(clicked()),this,SLOT(make_dir()));
+	rename = new QPushButton("Rename",vb);
+	QObject::connect(rename,SIGNAL(clicked()),this,SLOT(rename_slot()));
 	(new QFrame(vb))->setFixedHeight(16);
 	remove = new QPushButton("Remove",vb);
 	QObject::connect(remove,SIGNAL(clicked()),this,SLOT(remove_slot()));
 	(new QFrame(vb))->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
+	
+	cancel = new QPushButton("Cancel",vb);
+	QObject::connect(cancel,SIGNAL(clicked()),this,SLOT(reject()));
+	
+
+	dir=p_dir;
+	ensure_dir_exists();
+	
+	working_path=dir_path;
+	if (QFile::exists(p_current)) {
+		selected_file=p_current;
+		open->setEnabled(true);
+		save->setEnabled(true);
+		initial_file=selected_file;
+	}
+	
+	rebuild_tree();
+	tree->header()->hide();
+	setMinimumSize(450,350);
+	
+	
+	QObject::connect(tree,SIGNAL(itemSelectionChanged ()),this,SLOT(tree_item_changed()));
+	
+	
+	
+	action=ACTION_NONE;
+		
+}
+
+
+
+
+PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin) : QDialog(p_parent) {
+	
+	init(QStrify(p_plugin->get_info()->unique_ID),QStrify(p_plugin->get_current_file()));
 	
 	if (p_plugin->get_info()->xpm_preview) {
 		
@@ -350,27 +435,16 @@ PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin
 
 	}
 
-	
-	cancel = new QPushButton("Cancel",vb);
-	QObject::connect(cancel,SIGNAL(clicked()),this,SLOT(reject()));
-	
-	
-	dir=QStrify(p_plugin->get_info()->unique_ID); //the dir is the unique ID
-	
-	
-	ensure_dir_exists();
-	working_path=dir_path;
-	
-	rebuild_tree();
-	tree->header()->hide();
-	setMinimumSize(450,350);
-	setWindowTitle(QStrify(p_plugin->get_info()->caption)+" Presets");
-	
-	QObject::connect(tree,SIGNAL(itemSelectionChanged ()),this,SLOT(tree_item_changed()));
-	
-	action=ACTION_NONE;
+	setWindowTitle(QStrify(p_plugin->get_info()->caption)+" Presets");	
 }
 
+PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,QString p_current_file) :QDialog (p_parent){
+	
+	init("racks",p_current_file);
+	setWindowTitle("Rack Presets");
+
+	
+}
 
 PluginPresetBrowser::~PluginPresetBrowser()
 {

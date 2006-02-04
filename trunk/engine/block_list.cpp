@@ -10,6 +10,11 @@
 namespace ReShaked {
 
 
+BlockList::Block::Block(SharedData *p_data) : SharedBlock(p_data) {
+	
+	
+}
+
 Tick BlockList::get_next_empty_pos(Tick p_tick) {
 
 	while (bl_private.block_list.get_exact_index( p_tick )!=INVALID_STREAM_INDEX)
@@ -33,6 +38,7 @@ bool BlockList::add_block(Block *p_block,Tick p_pos) {
 	
 	bl_private.block_list.insert(p_pos,p_block);
 
+	p_block->set_active(true);
 	AudioControl::mutex_unlock();
 	
 	return false;
@@ -54,6 +60,7 @@ void BlockList::remove_block(int p_index) {
 
 	AudioControl::mutex_lock();
 	
+	get_block(p_index)->set_active(false);
 	bl_private.block_list.erase_index( p_index );
 
 	AudioControl::mutex_unlock();
@@ -266,6 +273,7 @@ BlockList::BlockList(BlockType p_type) {
 
 	block_type=p_type;
 }
+
 
 BlockList::~BlockList() {
 

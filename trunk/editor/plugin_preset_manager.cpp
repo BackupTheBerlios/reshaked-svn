@@ -11,6 +11,7 @@
 //
 #include "plugin_preset_manager.h"
 #include "tree_saver_disk.h"
+#include "engine/saver.h"
 namespace ReShaked {
 
 
@@ -26,6 +27,21 @@ bool PluginPresetManager::save_plugin_preset(String p_path,SoundPlugin *p_plugin
 		return true;
 	
 	p_plugin->save( &tsd );
+	
+	tsd.close_file();
+	
+	return false;
+	
+}
+
+bool PluginPresetManager::save_track_rack(String p_path,Track *p_rack) {
+		
+	TreeSaverDisk tsd("RESHAKED_TRACK_RACK",0);
+	
+	if (tsd.open_file(p_path))
+		return true;
+	
+	Saver::save_track_rack( p_rack, &tsd );
 	
 	tsd.close_file();
 	

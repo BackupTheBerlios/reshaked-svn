@@ -22,6 +22,16 @@ namespace ReShaked {
 class TreeLoader{
 public:
 	
+	enum VarType {
+		VAR_INT,
+		VAR_FLOAT,
+		VAR_STRING,
+		VAR_INT_ARRAY,
+		VAR_FLOAT_ARRAY,
+		VAR_RAW,
+		VAR_NONE, //if the var doesnt exist
+	};
+	
 	virtual void enter(String p_dir)=0;
 	virtual void exit()=0;
 	virtual String get_path()=0;
@@ -42,6 +52,10 @@ public:
 	virtual int get_child_count()=0;
 	virtual String get_child_name(int i)=0;
 	
+	virtual bool is_var(String p_var)=0;
+	virtual VarType get_var_type(String p_var)=0;
+	
+	virtual void goto_root()=0;
 	
 	TreeLoader();
 	virtual ~TreeLoader();

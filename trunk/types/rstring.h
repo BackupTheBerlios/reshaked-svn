@@ -136,8 +136,8 @@ public:
 	
 	String left(int p_chars);
 	
-	CharString ascii(bool p_allow_extended=false);
-	CharString utf8();
+	CharString ascii(bool p_allow_extended=false) const;
+	CharString utf8() const;
 	/**
 	 * The constructors must not depend on other overloads
 	 */

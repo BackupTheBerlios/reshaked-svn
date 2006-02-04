@@ -91,7 +91,7 @@ BlockList::Block *Automation::create_duplicate_block(Block *p_block) {
 	//new data
 	AutomationData *nd = new AutomationData;
 	*nd=*b->get_data(); //copy
-	nd->reset_refcount();
+	nd->reset();
 
 	//new block
 	AutomationBlock *nb = new AutomationBlock(nd);
@@ -143,7 +143,7 @@ Tick Automation::AutomationBlock::get_length() {
 
 void Automation::AutomationBlock::set_length(Tick p_length) {
 
-	if (is_shared())
+	if (is_active_shared())
 		return;
 
 	if (p_length<TICKS_PER_BEAT)
@@ -152,10 +152,6 @@ void Automation::AutomationBlock::set_length(Tick p_length) {
 	data->length=p_length/TICKS_PER_BEAT;
 }
 
-bool Automation::AutomationBlock::is_shared() {
-
-	return data->get_refcount()>1;
-}
 String Automation::get_type_name() {
 
 	return "automation";
@@ -190,21 +186,12 @@ bool Automation::shares_block_data(Block *p_block) {
 	
 }
 
-Automation::AutomationBlock::AutomationBlock(AutomationData *p_data) {
+Automation::AutomationBlock::AutomationBlock(AutomationData *p_data) : Block(p_data) {
 
 	data=p_data;
-	p_data->reference();
-	
 	
 }
 
-bool Automation::AutomationBlock::shared_with(Block *p_block) {
-	
-	AutomationBlock *ab = dynamic_cast<AutomationBlock*>(p_block);
-	if (!ab)
-		return false;
-	return ab->data==data;
-}
 
 
 void Automation::apply(Tick p_pos) {
@@ -217,7 +204,6 @@ void Automation::apply(Tick p_pos) {
 
 Automation::AutomationBlock::~AutomationBlock() {
 
-	data->dereference();
 }
 
 void Automation::set_initial_value(double p_value) {

@@ -626,4 +626,37 @@ CommandFunc* EditorCommands::track_mute(bool p_no_undo,Track *p_track,bool p_mut
 	d->ui_update_notify->track_names_changed(); //name changes color
 	return ret;
 }
+
+CommandFunc* EditorCommands::plugin_load_preset(bool p_no_undo,SoundPlugin *p_plugin, TreeLoader *p_old_preset, TreeLoader *p_new_preset,Track *p_track) {
+	
+
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) {
+	
+		ret=Command4(this,&EditorCommands::plugin_load_preset,p_plugin,p_new_preset,p_old_preset,p_track);
+		ret->add_create_data( p_old_preset );
+		ret->add_create_data( p_new_preset );
+	}
+	
+	p_plugin->load(p_new_preset);
+	p_new_preset->goto_root();
+	
+	/* update automation inital values */
+	for (int i=0;i<p_track->get_property_count();i++) {
+		
+		for (int j=0;j<p_plugin->get_port_count();j++) {
+			
+			if (p_track->get_property(i)==&p_plugin->get_port(j)) {
+				
+				p_track->get_property_automation(i)->set_initial_value( p_plugin->get_port(j).get() );
+		
+			}
+		}
+	}
+	
+	return ret;
+	
+}
+
 }

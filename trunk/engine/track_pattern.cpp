@@ -98,7 +98,7 @@ BlockList::Block *Track_Pattern::create_duplicate_block(Block *p_block) {
 	//new pattern
 	Pattern *np = new Pattern;
 	*np=*b->get_pattern(); //copy
-	np->reset_refcount();
+	np->reset();
 
 	//new block
 	PatternBlock *nb = new PatternBlock(np);
@@ -144,7 +144,7 @@ Tick Track_Pattern::PatternBlock::get_length() {
 
 void Track_Pattern::PatternBlock::set_length(Tick p_length) {
 
-	if (is_shared())
+	if (is_active_shared())
 		return;
 
 	if (p_length<TICKS_PER_BEAT)
@@ -157,24 +157,11 @@ void Track_Pattern::PatternBlock::set_length(Tick p_length) {
 }
 
 
-bool Track_Pattern::PatternBlock::is_shared() {
-
-	return pattern->get_refcount()>1;
-
-}
-
 bool Track_Pattern::PatternBlock::get_notes_in_local_range(Tick p_from, Tick p_to, int *p_note_from,int *p_note_to) {
 	
 	return pattern->data.find_values_in_range(p_from,p_to,p_note_from,p_note_to);
 }
 
-bool Track_Pattern::PatternBlock::shared_with(Block *p_block) {
-	
-	PatternBlock *pb = dynamic_cast<PatternBlock*>(p_block);
-	if (!pb)
-		return false;
-	return pb->pattern==pattern;
-}
 
 
 int Track_Pattern::PatternBlock::get_note_count() {
@@ -196,17 +183,15 @@ Track_Pattern::Position Track_Pattern::PatternBlock::get_note_pos(int p_index) {
 }
 
 
-Track_Pattern::PatternBlock::PatternBlock(Pattern* p) {
+Track_Pattern::PatternBlock::PatternBlock(Pattern* p) : Block(p) {
 
-	
 	pattern = p;
-	p->reference();
+
 }
 
 Track_Pattern::PatternBlock::~PatternBlock() {
 	
-	
-	pattern->dereference();
+
 
 	
 }
@@ -485,7 +470,7 @@ void Track_Pattern::reset_last_notes() {
 bool Track_Pattern::can_use_synths() {
 	
 	
-	true;
+	return true;
 }
 
 Track_Pattern::Track_Pattern(int p_channels,GlobalProperties *p_global_props,SongPlayback *p_song_playback) : Track(p_channels,BLOCK_TYPE_FIXED_TO_BEAT,p_global_props,p_song_playback), swing_process(p_song_playback) {

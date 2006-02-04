@@ -610,6 +610,14 @@ int Track::find_plugin_idx_for_property(Property *p_property) {
 	return -1;
 }
 
+void Track::set_rack_file(String p_file) {
+	
+	base_private.rack_file=p_file;
+}
+String Track::get_rack_file() {
+	
+	return base_private.rack_file;
+}
 
 Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback) : BlockList(p_type) {
 	

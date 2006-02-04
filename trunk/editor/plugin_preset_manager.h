@@ -14,6 +14,8 @@
 
 #include "typedefs.h"
 #include "engine/sound_plugin.h"
+#include "engine/track.h"
+
 namespace ReShaked {
 
 /**
@@ -27,6 +29,8 @@ class PluginPresetManager {
 public:
 	
 	bool save_plugin_preset(String p_path,SoundPlugin *p_plugin);
+	bool save_track_rack(String p_path,Track *p_rack);
+	
 	
 	String get_preset_dir();
 	

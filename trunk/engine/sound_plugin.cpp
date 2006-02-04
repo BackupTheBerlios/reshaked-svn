@@ -94,22 +94,36 @@ void SoundPlugin::save(TreeSaver *p_saver) {
 	}
 	
 }
-void SoundPlugin::load(TreeLoader *p_saver) {
+void SoundPlugin::load(TreeLoader *p_loader) {
 	
-	for (int i=0;i<p_saver->get_var_count();i++) {
+
+	
+	for (int i=0;i<p_loader->get_var_count();i++) {
 		
-		String var_name=p_saver->get_var_name(i);
+		String var_name=p_loader->get_var_name(i);
 		
+
 		for (int j=0;j<get_port_count();j++) {
 		
+
 			if (get_port(j).get_name()==var_name) {
-				get_port(j).set( p_saver->get_float( var_name ) );
+				get_port(j).set( p_loader->get_float( var_name ) );
 				break;
 			}
 		}	
 		
 	}
 	
+}
+
+String SoundPlugin::get_current_file() {
+	
+	return _current_file;
+	
+}
+void SoundPlugin::set_current_file(String p_current_file) {
+	
+	_current_file=p_current_file;	
 }
 
 

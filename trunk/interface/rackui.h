@@ -42,7 +42,7 @@ class RackUI : public CVBox {
 	
 	PixmapLabel *rack_label;
 	PixmapButton *rack_file;
-
+	CHBox * hbox_options;
 	
 	
 	int selected_rack;
@@ -51,6 +51,9 @@ class RackUI : public CVBox {
 	
 	ConnectionRack *connections;
 	SoundPluginRack *plugins;
+	
+	
+	void update_rack_file_label();
 	
 public slots:	
 	
@@ -67,6 +70,8 @@ public slots:
 	void repaint_rack();
 	
 	void add_plugin_slot();
+	
+	void rack_presets();
 public:
 	
 	void select_track(int p_track);

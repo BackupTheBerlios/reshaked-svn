@@ -62,6 +62,7 @@ private:
 	QPushButton *new_subfolder;	
 	QPushButton *cancel;	
 	QPushButton *remove;	
+	QPushButton *rename;	
 	
 	QString dir_path;
 	QString dir;
@@ -75,6 +76,8 @@ private:
 	
 	void rebuild_tree();
 	void ensure_dir_exists();
+	
+	void init(QString p_dir,QString p_current);
 private slots:
 		
 	void open_slot();
@@ -91,7 +94,20 @@ public:
 	
 	Action get_action();
 	QString get_file();
+	/**
+	 * Build a preset browser for plugins
+	 * @param p_parent Parent Widget
+	 * @param p_plugin Plugin to use for preset
+	 * 
+	 */
 	PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin);
+	/**
+	 * Build a preset browser for racks
+	 * @param p_parent parent widget
+	 * @param p_current_file last saved/loaded file
+	 * @return 
+	 */
+	PluginPresetBrowser(QWidget *p_parent,QString p_current_file);
 	
 	~PluginPresetBrowser();
 

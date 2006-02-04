@@ -28,7 +28,7 @@ struct NoteTmp {
 void GlobalViewBlocks::paint_block_contents(QPainter &p, int p_x,int p_y,int p_w, int p_h, BlockList::Block *p_block,bool p_selected,int p_clip_to_len) {
 	
 	
-	if (p_block && p_block->is_shared())
+	if (p_block && p_block->is_active_shared())
 		GET_SKIN(SKINBOX_LINKED_BLOCK)->paint_into(p,p_x,p_y,p_w,p_h);
 	
 	if (dynamic_cast<Automation::AutomationBlock*>(p_block)) {

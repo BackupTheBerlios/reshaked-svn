@@ -54,7 +54,8 @@ class SoundPlugin : public AudioNode {
 	const SoundPluginInfo *_plugin_info;
 	bool _skip_processing;
 	int _duplicate;
-
+	String _current_file;
+	
 	const EventBuffer *_event_buffer;
 
 protected:	
@@ -95,6 +96,8 @@ public:
 	int get_channels_created();
 	
 	
+	String get_current_file(); //current file the plugin last saved to
+	void set_current_file(String p_current_file);
 	virtual void save(TreeSaver *p_saver);	
 	virtual void load(TreeLoader *p_saver);	
 	
