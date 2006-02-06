@@ -70,6 +70,16 @@ void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Patter
 
 	int fontxofs=font->get_width()+p_note.pos.column*columnwidth;
 
+	Tick row_ticks=editor->get_cursor().get_snap_tick_size();
+	Tick note_ofs=p_note.pos.tick-editor->get_cursor().get_snapped_window_tick_pos(p_row);
+	if (note_ofs!=0) {
+		int pix_ofs=(int)note_ofs*get_row_size()/(int)row_ticks;
+		textofs+=pix_ofs;
+		volofs+=pix_ofs;
+		font=VisualSettings::get_singleton()->get_pattern_font_nofit();
+		font_vol=VisualSettings::get_singleton()->get_pattern_font_nofit();
+		
+	}
 
 
 	static char buf[4]={0,0,0,0};
@@ -134,29 +144,32 @@ void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Patter
 
 }
 
-/*
-void TrackViewPattern::paint_multiple_nonvisible_events( QPainter& p, int p_row, const Track_Pattern::NoteList& p_list) {
+
+void BlockListUI_Pattern::paint_multiple_nonvisible_events( QPainter& p, int p_row, const Track_Pattern::NoteList& p_list) {
 
 	PixmapFont * font=VisualSettings::get_singleton()->get_pattern_font();
-	int rowsize=VisualSettings::get_singleton()->get_editing_row_height();
+	
+	
+	
+	int font_width=font->get_width();
+	int rowsize=get_row_size();
 	int fontofs=(rowsize-font->get_height())/2;
-	int textofs=p_row*rowsize+fontofs;
-	int barofs=textofs+font->get_height()+1;
+	int eventofs=p_row*rowsize+fontofs;
 	int notewidth=font->get_width()*3;
 	int columnwidth=font->get_width()*4;
 
 	Track_Pattern::NoteList::const_iterator I=p_list.begin();
 
 	int howmany=p_list.size();
-	int maxevents=(rowsize-5)/2;
+	int maxevents=(rowsize-4)/2;
 	if (howmany>maxevents)
 		howmany=maxevents;
-	int maxsize=(rowsize-5)-(howmany-1);
+	int maxsize=(rowsize-4)-(howmany-1);
 
 	for (int i=0;i<howmany;I++,i++) {
 
-		PatternEdit::EdNote note = *I;
-		int xofs=MARGIN_SIZE+note.pos.column*columnwidth;
+		Track_Pattern::NoteListElement note = *I;
+		int xofs=font_width+note.pos.column*columnwidth;
 
 		int from=i*maxsize/howmany;
 		int to=((i+1)*maxsize/howmany);
@@ -164,44 +177,44 @@ void TrackViewPattern::paint_multiple_nonvisible_events( QPainter& p, int p_row,
 		if (eheight<=0) eheight=1;
 		from+=i;
 
-		printf("%i - from %i, height %i\n",i,from,eheight);
-		QColor col=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_FONT);
+		//printf("%i - from %i, height %i\n",i,from,eheight);
+		QColor col=GET_QCOLOR(COLORLIST_PATTERN_EDIT_NOTE);
 
 
 
 		if (note.note.is_note()) {
 
-			switch( pattern_edit->get_note_edit_mode() ) {
-			case PatternEdit::MODE_NOTE: {
-				QColor bg=QColor(0,0,0);
-				QColor fg=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_FONT);
+			switch( editor->get_pattern_note_edit_mode() ) {
+				case EditorData::MODE_NOTE: {
+					QColor bg=QColor(0,0,0);
+					QColor fg=GET_QCOLOR(COLORLIST_PATTERN_EDIT_NOTE);
+	
+					int note_w=get_note_display_column_pos(notewidth,note.note.note);
+	
+					p.fillRect(xofs,eventofs+from,notewidth,eheight,bg);
+					p.fillRect(xofs+note_w,eventofs+from,2,eheight,fg);
+				} break;
 
-				int note_w=get_note_display_column_pos(notewidth,note.note.note);
+				case EditorData::MODE_VOLUME: {
 
-				p.fillRect(xofs,eventofs+from,notewidth,eheight,bg);
-				p.fillRect(xofs+note_w,eventofs+from,2,eheight,fg);
-			} break;
-
-			case PatternEdit::MODE_VOLUME: {
-
-				QColor bg=QColor(0,0,0);
-				QColor fg=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_VOLUME);
-
-				int vol_w=(note.note.volume*notewidth)/PatternNote::MAX_VOLUME;
-				p.fillRect(xofs,eventofs+from,notewidth,eheight,bg);
-				p.fillRect(xofs,eventofs+from,vol_w,eheight,fg);
-			} break;
+					QColor bg=QColor(0,0,0);
+					QColor fg=GET_QCOLOR(COLORLIST_PATTERN_EDIT_VOL );
+	
+					int vol_w=(note.note.volume*notewidth)/Track_Pattern::Note::MAX_VOLUME;
+					p.fillRect(xofs,eventofs+from,notewidth,eheight,bg);
+					p.fillRect(xofs,eventofs+from,vol_w,eheight,fg);
+				} break;
 			}
 		} else if (note.note.is_note_off()) {
-			QColor col=PatternSettings::get_singleton()->get_color(PatternSettings::COLOR_PATTERN_NOTEOFF);
+			QColor col=GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE);
 			p.fillRect(xofs,eventofs+from,notewidth,eheight,col);
 		} else {
 
-			printf("WTF!!\n");
+			//printf("WTF!!\n");
 		}
 	}
 }
-*/
+
 
 void BlockListUI_Pattern::paint_multiple_note_events( QPainter& p, int p_row , const Track_Pattern::NoteList& p_list ) {
 
@@ -225,10 +238,14 @@ void BlockListUI_Pattern::paint_multiple_note_events( QPainter& p, int p_row , c
 		if (notes_in_column[i].empty())
 			continue;
 
-		if (notes_in_column[i].size()==1)
+		if (notes_in_column[i].size()==1) {
+			
+
 			paint_note_event(p,p_row,*notes_in_column[i].begin());
-		//else
-		//	paint_multiple_nonvisible_events(p,p_row,notes_in_column[i]);
+			
+			
+		} else
+			paint_multiple_nonvisible_events(p,p_row,notes_in_column[i]);
 
 	}
 

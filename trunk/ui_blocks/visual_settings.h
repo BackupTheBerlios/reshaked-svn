@@ -378,6 +378,7 @@ class VisualSettings{
 	ConstantMap constant_map;
 			
 	PixmapFont pattern_font;
+	PixmapFont pattern_font_nofit;
 	PixmapFont pattern_vol_font;
 	PixmapFont rowcount_font;
 	PixmapFont rowcount_subbeat_font;
@@ -393,6 +394,7 @@ public:
 	QPoint get_pattern_cursor_offset();
 	int get_editing_row_height();
 	PixmapFont* get_pattern_font();
+	PixmapFont* get_pattern_font_nofit();
 	PixmapFont* get_pattern_vol_font();
 	PixmapFont* get_rowcount_font();
 	PixmapFont* get_rowcount_subbeat_font();

@@ -15,6 +15,7 @@
 #include "pixmaps/pattern_glob_bg_sel.xpm"
 #include "pixmaps/automation_glob_bg_sel.xpm"
 #include "pixmaps/pattern_font.xpm"
+#include "pixmaps/pattern_font_nofit.xpm"
 #include "pixmaps/pattern_vol_font.xpm"
 #include "pixmaps/rowcount_font.xpm"
 #include "pixmaps/rowcount_font_subbeat.xpm"
@@ -329,6 +330,12 @@ PixmapFont* VisualSettings::get_global_beat_font() {
 PixmapFont* VisualSettings::get_pattern_font() {
 
 	return &pattern_font;
+}
+
+PixmapFont* VisualSettings::get_pattern_font_nofit() {
+	
+	return &pattern_font_nofit;
+	
 }
 PixmapFont* VisualSettings::get_pattern_vol_font() {
 
@@ -740,6 +747,7 @@ VisualSettings::VisualSettings() {
 	constant_map[CONSTANT_PLUGIN_CHOOSER_ITEM_MARGIN]=8;
 	
 	pattern_font.set_font( QPixmap((const char**)pattern_font_xpm), "ABCDEFG#0123456789-*");
+	pattern_font_nofit.set_font( QPixmap((const char**)pattern_font_nofit_xpm), "ABCDEFG#0123456789-*");
 	pattern_vol_font.set_font( QPixmap((const char**)pattern_vol_font_xpm), "ABCDEFG#0123456789-*"); 
 
 	rowcount_font.set_font( QPixmap((const char**)rowcount_font_xpm), "ABCDEFG#0123456789-*"); 

@@ -301,7 +301,7 @@ void BlockListUIList::update_track_list() {
 			BlockListUI_Automation *au_wg= new BlockListUI_Automation(track_hb,editor,a);
 			block_list_ui_list.push_back( au_wg );
 			
-			BlockList_Separator *s = new BlockList_Separator(track_hb,QStrify(a->get_property()->get_caption()));
+			new BlockList_Separator(track_hb,QStrify(a->get_property()->get_caption()));
 		}
 	}
 
