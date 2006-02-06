@@ -129,4 +129,5 @@ if the block is valid too.
 as shared because of the one at the undo buffer!
 -stereo image.. make an histogram of sounds in l/r ?
 -erase empty undo groups when finished
+-resize block doesnt erase automation poitns!
 -REWRITE THE DAMN GLOBAL VIEW!!

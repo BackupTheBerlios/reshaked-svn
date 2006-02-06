@@ -43,6 +43,10 @@ class Editor {
 	void selection_clear_area(EditorData::Selection::Pos p_from,EditorData::Selection::Pos p_to);
 	EditorData::Selection::Pos get_selection_end_from_pos(EditorData::Selection::Pos p_pos);
 	
+	void play_note_at_cursor();
+	
+	void selection_transpose(bool p_up);	
+	
 friend class EditorCommands;	
 	
 	void revalidate_cursor();
@@ -205,6 +209,8 @@ public:
 	
 	/** INITIALIZATION (editor.cpp) */
 
+	
+	void reset();
 	Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify);
 	~Editor();
 

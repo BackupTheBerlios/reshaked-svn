@@ -12,7 +12,10 @@
 #ifndef RESHAKEDSOUND_DRIVER_JACK_H
 #define RESHAKEDSOUND_DRIVER_JACK_H
 
+#include "version.h"
+
 #ifdef DRIVER_JACK_ENABLED
+
 
 #include <jack/jack.h>
 #include "engine/sound_driver.h"

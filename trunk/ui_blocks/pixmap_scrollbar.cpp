@@ -12,7 +12,7 @@
 #include "pixmap_scrollbar.h"
 #include <Qt/qpainter.h>
 #include <Qt/qevent.h>
-
+#include "typedefs.h"
 namespace ReShaked {
 
 PixmapScrollBar::Skin::Skin(SkinBox* p_bottom, SkinBox* p_grabber) {
@@ -146,7 +146,15 @@ void PixmapScrollBar::mouseReleaseEvent(QMouseEvent *e) {
 	drag.active=false;
 }
 
-
+void PixmapScrollBar::wheelEvent ( QWheelEvent * e ) {
+	
+	if (e->delta()>0)
+		set_value( get_value() - step );
+	else
+		set_value( get_value() + step );
+	
+	value_changed_signal(value);
+}
 void PixmapScrollBar::set_value(int p_value) {
 	
 	
@@ -197,12 +205,21 @@ int PixmapScrollBar::get_pagesize() {
 }
 
 
+void PixmapScrollBar::set_stepsize(int p_step) {
+	
+	ERR_FAIL_INDEX(p_step,max);
+	step=p_step;
+	
+}
 PixmapScrollBar::PixmapScrollBar(QWidget *p_parent,const Skin& p_skin,Type p_type) : QWidget(p_parent) {
 	
+
+
 	skin=p_skin;
 	value=0;
 	max=1;
 	pagesize=1;
+	step=1;
 	type=p_type;
 	drag.active=false;
 	if (p_type==TYPE_HORIZONTAL)

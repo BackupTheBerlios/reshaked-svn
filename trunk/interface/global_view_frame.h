@@ -47,6 +47,7 @@ public slots:
 	void h_scollbar_changed_slot(int p_new_idx);
 	void v_scollbar_changed_slot(int p_new_idx);
 	void zoom_changed_slot(float p_to_val);
+	void delete_blocks_slot(); //you just NEED IT
 signals:
 	void global_view_changed_blocks_signal();		
 public:

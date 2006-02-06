@@ -33,6 +33,7 @@ void Editor::show_automation(int p_property,Track *p_track) {
 	d->undo_stream.begin("Show Automation");
 	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_show,p_track,p_property) );
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	
 }
@@ -47,6 +48,7 @@ void Editor::hide_automation(int p_property,Track *p_track) {
 	d->undo_stream.begin("Hide Automation");
 	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_hide,p_track,p_property) );
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 
@@ -70,6 +72,7 @@ void Editor::add_automation_point(Automation *p_automation,Tick p_tick, float p_
 			
 	d->undo_stream.add_command( Command4(&commands,&EditorCommands::add_automation_point,p_automation,p_tick,p_val,p_lfo_depth) );
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	
 }
@@ -78,6 +81,7 @@ void Editor::move_automation_point(Automation *p_automation,int p_block, int p_p
 	d->undo_stream.begin("Move Point");
 	d->undo_stream.add_command( Command5(&commands,&EditorCommands::move_automation_point,p_automation,p_block,p_point,p_to_tick,p_to_val) );
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 void Editor::remove_automation_point(Automation *p_automation,int p_block,int p_point) {
@@ -85,6 +89,7 @@ void Editor::remove_automation_point(Automation *p_automation,int p_block,int p_
 	d->undo_stream.begin("Remove Point");
 	d->undo_stream.add_command( Command3(&commands,&EditorCommands::remove_automation_point,p_automation,p_block,p_point) );
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	
 }

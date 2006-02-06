@@ -41,7 +41,7 @@ public:
 	PixmapButton *select_linked;
 	PixmapButton *unlink_selected;
 	PixmapSlider *zoom;
-	void add_button(GlobalView::EditMode p_mode, PixmapList p_pixmap_fg, PixmapList p_pixmap_bg);
+	void add_button(GlobalView::EditMode p_mode, PixmapList p_pixmap_fg, PixmapList p_pixmap_bg,QString p_hint);
 	
 	
 signals:	

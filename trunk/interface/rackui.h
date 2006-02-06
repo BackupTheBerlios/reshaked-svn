@@ -35,6 +35,7 @@ class RackUI : public CVBox {
 			    
 			
 	Editor *editor;
+	PixmapButton *follow_cursor;
 	PixmapButton *add_plugin;
 	PixmapCombo *rack_choose;
 	PixmapButton *rack_front;
@@ -57,6 +58,9 @@ class RackUI : public CVBox {
 	
 public slots:	
 	
+	void blocklist_changed_slot();
+
+	
 	void rack_front_selected();
 	void rack_back_selected();
 	
@@ -72,6 +76,10 @@ public slots:
 	void add_plugin_slot();
 	
 	void rack_presets();
+	
+	void test_note(int p_note,int p_vel=99);
+	void test_note_off(int p_note_off);
+	
 public:
 	
 	void select_track(int p_track);

@@ -5,6 +5,9 @@ import detect;
 import sys;
 import os;
 
+import version
+
+
 # PRE-detect Qt3 QTDIR
 
 QT_VERSION_MAJOR_NEEDED = 4
@@ -19,12 +22,12 @@ print env['TOOLS']
 if (os.name=='nt'): #WINDOWS
 
 	env.Append(LIBS=['QtGui4','QtCore4']);
-	env.Append(CXXFLAGS=['-DWIN32_ENABLED']);
+	version.enables+=['WIN32_ENABLED'];
 
 else: #POSIX
 	env.Append(LIBS=['QtGui','QtCore']);
 	env.Append(LIBS=['pthread']);
-	env.Append(CXXFLAGS=['-DPOSIX_ENABLED']);
+	version.enables+=['POSIX_ENABLED'];
 
 env.Append(CXXFLAGS=['-DQT_NO_KEYWORDS']);
 #env.Append(CPPPATH=['#types/','#engine/','#interface/','#ui_blocks/']);
@@ -41,10 +44,11 @@ detect.check_pkg_config();
 #detect.check_pkg(env,"alsa","0.9");
 
 if (detect.check_pkg(env,"jack","0.100.0")):
-	env.Append(CXXFLAGS=['-DDRIVER_JACK_ENABLED']);
+	version.enables+=['DRIVER_JACK_ENABLED'];
 
 Export('env');
 
+version.save();
 
 SConscript('types/SCsub');
 SConscript('dsp/SCsub');

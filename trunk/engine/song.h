@@ -42,6 +42,14 @@ private:
 	
 	ValueStream<int,String> marker_list; ///< beat/name
 	virtual AudioNode *get_node_at_visual_pos(int p_pos);
+	
+	struct Info {
+		
+		String title;
+		String author;
+		String notes;
+		
+	} info;
 public:
 
 	GlobalProperties& get_global_properties();
@@ -78,7 +86,15 @@ public:
 	int process(int p_frames);
 	void set_mix_rate(float p_mix_rate);
 	
-	void clear();
+	void clear(bool p_new=false);
+	
+	void set_info_title(String p_title);
+	void set_info_author(String p_author);
+	void set_info_notes(String p_notes);
+	
+	String get_info_title();
+	String get_info_author();
+	String get_info_notes();
 	
 	Song();
 	~Song();

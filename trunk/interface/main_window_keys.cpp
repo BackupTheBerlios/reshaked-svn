@@ -75,6 +75,10 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/insert","Insert",Qt::Key_Insert);
 	data.keyboard_codes.add_key_bind("editor/delete","Delete",Qt::Key_Delete);
 
+	
+	data.keyboard_codes.add_key_bind("editor/transpose_up","Transpose Up",Qt::ALT+Qt::Key_Q);
+	data.keyboard_codes.add_key_bind("editor/transpose_down","Transpose Down",Qt::ALT+Qt::Key_A);
+	
 	data.keyboard_codes.add_key_bind("editor/selection_begin","Selection Begin",Qt::ALT+Qt::Key_B);
 	data.keyboard_codes.add_key_bind("editor/selection_end","Selection Begin",Qt::ALT+Qt::Key_E);
 	data.keyboard_codes.add_key_bind("editor/selection_copy","Selection Copy",Qt::ALT+Qt::Key_C);
@@ -147,6 +151,14 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.set_key_bind_key_by_name("actions/play_from_cursor",Qt::Key_F7);
 	
 	data.keyboard_codes.set_key_bind_key_by_name("actions/add_track",Qt::CTRL+Qt::Key_T);
+	
+	data.keyboard_codes.set_key_bind_key_by_name("actions/toggle_rack",Qt::Key_F4);
+	
+	data.keyboard_codes.set_key_bind_key_by_name("actions/delete_blocks",Qt::Key_Delete);
+	
+	data.keyboard_codes.set_key_bind_key_by_name("actions/song_view",Qt::Key_F1);
+	data.keyboard_codes.set_key_bind_key_by_name("actions/edit_view",Qt::Key_F2);
+	data.keyboard_codes.set_key_bind_key_by_name("actions/mix_view",Qt::Key_F3);
 	
 }
 

@@ -62,6 +62,7 @@ private:
 	
 	void emit_qactions();
 	
+	bool ignore_actions;
 protected:
 			
 	virtual void mouse_press_event_override();
@@ -74,7 +75,7 @@ public:
 	bool is_pressed();
 	void set_pressed(bool p_pressed); //for toggles
 	
-	
+	void set_ignore_actions(bool p_ignore);	
 	PixmapButton(QWidget *p_parent,const Skin& p_skin,Type p_type=TYPE_PUSH);
 	~PixmapButton();
 

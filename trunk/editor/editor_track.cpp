@@ -23,6 +23,7 @@ void Editor::track_move_plugin_left(Track *p_track,int p_plugin) {
 	d->undo_stream.begin("Move Plugin Left",true);
 	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_move_left,p_track,p_plugin));
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 void Editor::track_move_plugin_right(Track *p_track,int p_plugin) {
@@ -32,6 +33,7 @@ void Editor::track_move_plugin_right(Track *p_track,int p_plugin) {
 	d->undo_stream.begin("Move Plugin Right",true);
 	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_move_right,p_track,p_plugin));
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	
 }
@@ -112,6 +114,7 @@ void Editor::add_plugin_to_track(Track *p_track,SoundPlugin *p_plugin,bool p_app
 		}
 	}	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 void Editor::remove_plugin_from_track(Track *p_track,int p_which) {
@@ -121,6 +124,8 @@ void Editor::remove_plugin_from_track(Track *p_track,int p_which) {
 	d->undo_stream.begin("Remove Plugin");
 	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_remove,p_track,p_which));
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
 	
 }
 
@@ -132,6 +137,7 @@ void Editor::set_track_name(int p_track,String p_name) {
 	ERR_FAIL_COND(t==NULL);
 	t->set_name( p_name );
 	d->ui_update_notify->track_names_changed();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 }
 
 void Editor::add_track(TrackType p_type,int p_channels,String p_name) {
@@ -165,6 +171,7 @@ void Editor::add_track(TrackType p_type,int p_channels,String p_name) {
 	}
 	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	/* select the newly added track */
 	for (int i=0;i<d->song->get_track_count();i++) {
@@ -185,6 +192,7 @@ void Editor::remove_track(int p_which) {
 	d->undo_stream.begin("Remove Track");
 	d->undo_stream.add_command(Command1(&commands,&EditorCommands::remove_track,p_which));
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 
@@ -199,6 +207,7 @@ void Editor::move_track_left(int p_which) {
 	d->undo_stream.begin("Track Move Left",true);
 	d->undo_stream.add_command(Command1(&commands,&EditorCommands::track_move_left,p_which));
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 void Editor::move_track_right(int p_which) {
@@ -210,6 +219,7 @@ void Editor::move_track_right(int p_which) {
 	d->undo_stream.begin("Track Move Right",true);
 	d->undo_stream.add_command(Command1(&commands,&EditorCommands::track_move_right,p_which));
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	
 }
@@ -220,7 +230,7 @@ AudioGraph::ConnectError Editor::connection_create(AudioGraph *p_graph, int p_no
 	d->undo_stream.begin("Connect Plugs");
 	d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_create,p_graph,p_node_from,p_plug_from,p_node_to,p_plug_to));
 	d->undo_stream.end();
-	
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	return p_graph->get_last_conect_error();
 }
 void Editor::connection_erase(AudioGraph *p_graph, int p_node_from,int p_plug_from, int p_node_to, int p_plug_to) {
@@ -228,6 +238,7 @@ void Editor::connection_erase(AudioGraph *p_graph, int p_node_from,int p_plug_fr
 	d->undo_stream.begin("Disconnect Plugs");
 	d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_erase,p_graph,p_node_from,p_plug_from,p_node_to,p_plug_to));
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	
 }
@@ -267,6 +278,7 @@ void Editor::property_changed(Property * p_property,double p_old_value,Track *p_
 			d->undo_stream.begin("Automation Initial Changed",can_collapse);
 			d->undo_stream.add_command(Command2(&commands,&EditorCommands::automation_initial_value_changed ,a,p_property->get()));
 			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 		}		
 	} else {
 		
@@ -275,6 +287,7 @@ void Editor::property_changed(Property * p_property,double p_old_value,Track *p_
 		d->undo_stream.begin("Property Changed",can_collapse);
 		d->undo_stream.add_command(Command3(&commands,&EditorCommands::property_value_changed,p_property,p_old_value,p_property->get()));
 		d->undo_stream.end();
+		d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 		
 	}
 }
@@ -284,6 +297,7 @@ void Editor::set_plugin_skips_processing(SoundPlugin *p_plugin, bool p_skips) {
 	d->undo_stream.begin(p_skips?(p_plugin->get_info()->caption+" Skips Processing"):(p_plugin->get_info()->caption+" Resumes Processing"));
 	d->undo_stream.add_command(Command2(&commands,&EditorCommands::plugin_set_skip,p_plugin,p_skips));
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	
 }
@@ -296,6 +310,7 @@ void Editor::set_track_mute(Track *p_track,bool p_mute) {
 	d->undo_stream.begin(String(p_mute?"Mute ":"Unmute ")+p_track->get_name());
 	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_mute,p_track,p_mute));
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 void Editor::set_track_solo(int p_track_idx) {

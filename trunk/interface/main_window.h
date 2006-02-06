@@ -34,6 +34,7 @@
 #include "interface/rackui.h"
 #include "ui_blocks/qaction_keybind.h"
 #include "interface/top_bar_controls.h"
+#include "interface/bottom_bar_controls.h"
 
 
 namespace ReShaked {
@@ -69,6 +70,7 @@ class MainWindow : public QMainWindow {
 
 		NAVIGATION_GLOBAL_VIEW,
 		NAVIGATION_EDIT_VIEW,
+		NAVIGATION_MIX_VIEW,
 			
 		CONTROL_RW,
 		CONTROL_PLAY,
@@ -85,6 +87,8 @@ class MainWindow : public QMainWindow {
 		HELP_HELP,
 		HELP_ABOUT,
 				
+		DELETE_BLOCKS, //you.. just need it :(
+		RACK_TOGGLE,
 			
 		MAX_ITEMS
 	};
@@ -102,6 +106,8 @@ class MainWindow : public QMainWindow {
 
 	} data;
 
+	QString current_file;
+	
 	std::map<int,QAction*> action_map;
 
 	void create_keybindings();
@@ -123,17 +129,19 @@ class MainWindow : public QMainWindow {
 	Qt_UpdateNotify *update_notify;
 	
 	TopBarControls *top_bar;
+	BottomBarControls *bottom_bar;
 	//TrackSettings *track_settings;
 	RackUI *rack;
+	CVBox *rack_vbox;
 
-	
 	void set_top_screen(TopScreenList p_list);
 	//void set_track_settings_page(TrackSettings::TrackSettingsPage p_page);
 
-
 	
+	void update_titlebar();
+	
+	void closeEvent ( QCloseEvent * e );
 public slots:
-	
 	
 	
 	void screen_changed_slot(TopBarControls::ScreenList p_screen);
@@ -146,6 +154,7 @@ public slots:
 	void current_track_remove_column_slot();
 	void automation_editor_popup_slot(int p_track);
 	
+	void toggle_rack_visibility_slot(bool p_visible);
 public:
 
 	MainWindow();

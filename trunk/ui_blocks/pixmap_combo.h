@@ -27,6 +27,7 @@ class PixmapCombo : public PixmapLabel {
 	int selected;
 	
 	void click_override();
+	void wheelEvent ( QWheelEvent * e ) ;
 	
 	void update_internal();
 signals:

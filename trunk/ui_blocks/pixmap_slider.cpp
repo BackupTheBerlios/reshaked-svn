@@ -128,6 +128,29 @@ void PixmapSlider::mouseMoveEvent(QMouseEvent *e) {
 
 	
 }
+
+void PixmapSlider::wheelEvent ( QWheelEvent * e ) {
+	
+	int range=(type==TYPE_VERTICAL)?height():width();
+	int grabber=(type==TYPE_VERTICAL)?skin.grabber.height():skin.grabber.width();
+	range-=margin_beg+margin_end+grabber;
+	
+	if (range==0)
+		range=0.0001;
+	float step=1.0/(float)range;
+	
+	if (!e->modifiers()&Qt::ShiftModifier)
+		step*=5.0;
+	
+	if (e->delta()>0)
+		set_value( value + step );
+	else if (e->delta()<0)
+		set_value( value - step );
+	
+	value_changed( value );
+	value_changed_signal(value);
+}
+
 void PixmapSlider::mouseReleaseEvent(QMouseEvent *e) {
 	
 	if (e->button()!=Qt::LeftButton)

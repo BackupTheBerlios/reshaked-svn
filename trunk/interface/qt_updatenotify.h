@@ -41,6 +41,8 @@ signals:
 	
 	void volume_mask_changed();
 	
+	void notify_action(String p_action);	
+	
 	/* MVC Hacks */
 	/* I have no way to fix this. The problem is that i cant remove/recreate the pattern display widget from itself when a keypress (shortcut) from within happens. Connecting to thse in a queued fashion is the only way */
 	void current_track_add_column();	

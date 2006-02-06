@@ -77,7 +77,13 @@ PixmapUpDown::PixmapUpDown(QWidget *p_parent,const Skin &p_skin) : QWidget(p_par
 	
 }
 
-
+void PixmapUpDown::wheelEvent ( QWheelEvent * e )  {
+	
+	if (e->delta()>0)
+		up_pressed_signal();
+	else if (e->delta()<0)
+		down_pressed_signal();
+}
 PixmapUpDown::~PixmapUpDown()
 {
 }

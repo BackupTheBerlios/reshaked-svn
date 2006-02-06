@@ -168,6 +168,7 @@ void SkinBox::load_from_xpm(const char** p_xpm,int p_top, int p_left, int p_bott
 void SkinBox::set_center_color(QColor p_color) {
 	
 	center_color=p_color;
+	use_center_color=true;
 }
 void SkinBox::set_center_use_color(bool p_color) {
 	

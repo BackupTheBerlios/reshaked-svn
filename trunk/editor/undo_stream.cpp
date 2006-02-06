@@ -60,12 +60,14 @@ void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 	if (p_can_collapse_to_previous && !undo_stream.empty() && undo_stream.back().name==p_name && (GetTime::get_time_msec()-undo_stream.back().timestamp)<collapse_max_time_window) {
 		/* can collapse it to previous one! */
 		printf("collapsing %lls\n",p_name.c_str());
+		undo_stream.back().collapses++;
 		
 	} else {
 	
 		UndoGroup undo_group;
 		undo_group.name=p_name;
 		undo_group.timestamp=GetTime::get_time_msec();
+		undo_group.collapses=0;
 		printf("adding at time %i\n",undo_group.timestamp);
 		
 		undo_stream.push_back( undo_group );
@@ -105,6 +107,37 @@ void UndoStream::end() {
 	
 	//i could put something here someday..
 
+}
+
+
+String UndoStream::get_current_action_name() {
+	
+	std::list<UndoGroup>::iterator I=get_block_iterator(current_index);
+	if (I==undo_stream.end())
+		return "";
+	return I->name;
+	
+}
+int UndoStream::get_current_action_collapses() {
+	
+	
+	std::list<UndoGroup>::iterator I=get_block_iterator(current_index);
+	if (I==undo_stream.end())
+		return 0;
+	return I->collapses;
+	
+}
+
+String UndoStream::get_current_action_text() {
+	
+	int coll=get_current_action_collapses()+1;
+	
+	String text=get_current_action_name();
+	if (coll>1)
+		text+=" x"+String::num(coll);
+	
+	return text;
+	
 }
 
 std::list<UndoStream::UndoGroup>::iterator UndoStream::get_block_iterator(int p_index) {
@@ -185,6 +218,25 @@ void UndoStream::unlock() {
 	
 }
 
+void UndoStream::clear() {
+	
+	foreach(I,undo_stream) {
+			
+		foreach(J,I->command_list) {
+			
+			delete J->undo;
+			delete J->redo;
+		}
+		
+	}
+	
+	undo_stream.clear();
+	lock_count=0;
+	current_index=-1;
+	inside_count=0;
+
+}
+
 UndoStream::UndoStream() {
 
 	lock_count=0;
@@ -193,4 +245,8 @@ UndoStream::UndoStream() {
 	collapse_max_time_window=2000; //2 seconds
 }
 
+UndoStream::~UndoStream() {
+	
+	clear();
+}
 } //end of namespace

@@ -35,6 +35,7 @@ public:
 		Skin(QPixmap p_normal=QPixmap(),QPixmap p_up=QPixmap(),QPixmap p_down=QPixmap()) { normal=p_normal; up=p_up; down=p_down; }
 	};
 	
+	
 private:
 		
 	Skin skin;	
@@ -49,7 +50,7 @@ private:
 	void paintEvent(QPaintEvent *e);
 	void mousePressEvent(QMouseEvent *e);
 	void mouseReleaseEvent(QMouseEvent *e);
-	
+	void wheelEvent ( QWheelEvent * e ) ;
 signals:		
 	
 	void max_pressed_signal();

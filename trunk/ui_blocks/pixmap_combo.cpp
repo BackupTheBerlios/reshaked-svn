@@ -11,11 +11,23 @@
 //
 #include "pixmap_combo.h"
 #include <Qt/qmenu.h>
+#include <Qt/qevent.h>
 #include "typedefs.h"
 
 namespace ReShaked {
 
 
+void PixmapCombo::wheelEvent ( QWheelEvent * e )  {
+	
+	int prev=selected;
+	if (e->delta()>0) 
+		select_item( selected -1 );
+	else if (e->delta()<0)
+		select_item( selected +1 );
+		
+	if (prev!=selected)
+		item_selected(selected);
+}
 void PixmapCombo::click_override() {
 	
 	if (string_list.empty())
@@ -95,8 +107,8 @@ void PixmapCombo::set_item_text(int p_item,QString p_text) {
 void PixmapCombo::select_item(int p_item){
 	if (p_item==selected)
 		return;
-	
-	ERR_FAIL_INDEX(p_item,string_list.size());
+	if (p_item<0 || p_item>=string_list.size())
+		return;
 	selected=p_item;
 	update_internal();
 	

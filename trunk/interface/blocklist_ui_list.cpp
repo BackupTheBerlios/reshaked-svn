@@ -347,9 +347,9 @@ void BlockListUIList::v_scrollbar_changed(int p_scroll) {
 	
 	scrolling=true;	
 	
-	int cursor_ofs=editor->get_cursor().get_pos()-editor->get_cursor().get_window_offset();
+	//int cursor_ofs=editor->get_cursor().get_pos()-editor->get_cursor().get_window_offset();
 	editor->get_cursor().set_window_offset( p_scroll );
-	editor->get_cursor().set_pos( p_scroll+cursor_ofs);
+	//editor->get_cursor().set_pos( p_scroll+cursor_ofs);
 	
 	
 	scrolling=false;
@@ -583,7 +583,7 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEdit
 	
 	v_scroll=new PixmapScrollBar(hb,PixmapScrollBar::Skin(GET_SKIN(SKINBOX_THEME_SCROLLBAR_V_BG),GET_SKIN(SKINBOX_THEME_SCROLLBAR_GRABBER)),PixmapScrollBar::TYPE_VERTICAL);
 	QObject::connect(v_scroll,SIGNAL(value_changed_signal( int )),this,SLOT(v_scrollbar_changed(int)));
-	
+	v_scroll->setFocusPolicy(Qt::ClickFocus); //very extremely clever hack so scrollign is smooth
 	
 	h_scroll = new PixmapScrollBar(scrollarea_vb,PixmapScrollBar::Skin(GET_SKIN(SKINBOX_THEME_SCROLLBAR_H_BG),GET_SKIN(SKINBOX_THEME_SCROLLBAR_GRABBER)),PixmapScrollBar::TYPE_HORIZONTAL);
 	

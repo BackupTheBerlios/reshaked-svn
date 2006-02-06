@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 	
 	
 	ReShaked::MainWindow *w = new ReShaked::MainWindow;
-	driver_list.init_driver( -1);
+	driver_list.init_driver();
 	
 	//q.setMainWidget(&w);
 	w->show();

@@ -44,7 +44,7 @@ private:
 	
 	Status status;
 	bool record_automation;
-			    
+	unsigned int play_start_time;			    
 	LatencyBuffer latency_buffer;
 public:
 
@@ -73,6 +73,8 @@ public:
 	Tick get_current_tick_to();
 	
 	Tick get_playback_pos_tick();
+	
+	unsigned int get_song_playback_time();
 	
 	SongPlayback(GlobalProperties *p_properties);
 	~SongPlayback();

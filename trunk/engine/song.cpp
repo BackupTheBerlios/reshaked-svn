@@ -257,7 +257,7 @@ AudioNode *Song::get_node_at_visual_pos(int p_pos) {
 
 
 
-void Song::clear() {
+void Song::clear(bool p_new) {
 	
 	for (int i=0;i<track_list.size();i++) {
 			
@@ -275,6 +275,42 @@ void Song::clear() {
 	loopdata.begin_beat=0;
 	loopdata.end_beat=0;
 		
+	if (p_new) {
+		
+		audio_port_layout.port_out_info.push_back(2);
+		audio_port_layout.port_in_info.push_back(2);
+		marker_list.insert(0,"Markers");
+		
+	}
+}
+
+void Song::set_info_title(String p_title) {
+	
+	info.title=p_title;
+}
+void Song::set_info_author(String p_author) {
+	
+	info.author=p_author;
+}
+void Song::set_info_notes(String p_notes) {
+	
+	info.notes=p_notes;
+}
+
+String Song::get_info_title() {
+	
+	
+	return info.title;
+}
+String Song::get_info_author() {
+	
+	
+	return info.author;
+}
+String Song::get_info_notes() {
+	
+	
+	return info.notes;
 }
 
 Song::Song() : song_playback(&global_properties), global_track(&global_properties,&song_playback) {

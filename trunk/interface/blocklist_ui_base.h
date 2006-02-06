@@ -29,6 +29,8 @@ Q_OBJECT
 protected:	
 	
 	
+	void wheelEvent ( QWheelEvent * e );
+
 	virtual void get_pos_at_pointer(QPoint p_pointer, int *p_blocklist,int *p_column, int *p_row)=0;
 	
 	void mouse_selection_begin(QPoint p_pos);

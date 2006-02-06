@@ -333,6 +333,18 @@ void Track_Pattern::add_noteon_event_to_buffer(char p_note,char p_velocity,int p
 
 void Track_Pattern::add_edit_event(const EventMidi &p_event_midi,int p_column) {
 	
+	if (p_column==-1) {
+		
+		AudioControl::mutex_lock();	
+		Event e;
+		e.type=Event::TYPE_MIDI;
+		e.param.midi=p_event_midi;
+		e.frame_offset=0;
+		data.edit_event_buffer.push_event(e);
+		AudioControl::mutex_unlock();	
+		return;
+	}
+	
 	ERR_FAIL_INDEX(p_column,MAX_COLUMNS);
 	
 	AudioControl::mutex_lock();	

@@ -40,6 +40,7 @@ BlockList_Separator::BlockList_Separator(QWidget *p_parent,QString p_string) : Q
 	string=p_string;
 	setFixedWidth(WIDTH);
 	setMouseTracking(true);
+	setBackgroundRole(QPalette::NoRole);
 
 }
 

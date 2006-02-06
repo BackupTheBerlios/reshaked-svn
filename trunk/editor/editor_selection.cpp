@@ -305,7 +305,78 @@ void Editor::selection_clear_area(EditorData::Selection::Pos p_from,EditorData::
 	}
 	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
+}
+
+
+void Editor::selection_transpose(bool p_up) {
+	
+	if (!d->selection.enabled)
+		return;
+	
+	
+	Tick tick_from=d->selection.begin.tick;
+	Tick tick_to=d->selection.end.tick+TICKS_PER_BEAT/d->cursor.get_snap();
+	
+	d->undo_stream.begin(String("Selection Transpose ")+(p_up?"Up":"Down"));
+	
+	for (int i=d->selection.begin.blocklist;i<=d->selection.end.blocklist;i++) {
+		
+		BlockList *bl=get_blocklist(i);
+		
+		if (dynamic_cast<Track_Pattern*>(bl)) {
+			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
+			int columns=tp->get_visible_columns();
+			int column_from=(i==0)?d->selection.begin.column:0;
+			int column_to=(i==d->selection.end.blocklist)?d->selection.end.column:(columns-1);
+						
+			for (int j=column_from;j<=column_to;j++) {
+				
+				int block_from,block_to;
+				if (tp->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
+					continue;
+				for (int k=block_from;k<=block_to;k++) {
+					
+					Track_Pattern::PatternBlock *pb=tp->get_block( k );
+					
+					for (int l=0;l<pb->get_note_count();l++) {
+								
+						Track_Pattern::Note note=pb->get_note( l );;
+						Track_Pattern::Position pos=pb->get_note_pos( l );
+						pos.tick+=tp->get_block_pos(k);	
+				
+						if (pos.column!=j)
+							continue;
+						if (pos.tick<tick_from || pos.tick >tick_to)
+							continue;
+						
+						Track_Pattern *pattern_track=tp;
+							
+						if (p_up) {
+							
+							if (note.note>=(Track_Pattern::Note::MAX_NOTES-1))
+								continue;
+							note.note++;
+							
+							SET_NOTE(pos,note);	
+							
+						} else {
+							
+							if (note.note==0)
+								continue;
+							
+							note.note--;
+							SET_NOTE(pos,note);	
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 }
 
 
@@ -379,6 +450,7 @@ void Editor::selection_paste_at(EditorData::Selection::Pos p_pos) {
 	}
 	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 
@@ -618,6 +690,7 @@ void Editor::selection_paste_overwrite() {
 		selection_clear_area( get_cursor_selection_pos(), get_selection_end_from_pos( get_cursor_selection_pos()) );
 		selection_paste_at( get_cursor_selection_pos() );
 		d->undo_stream.end();
+		d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	}
 	
 }
@@ -629,6 +702,7 @@ void Editor::selection_paste_mix() {
 		d->undo_stream.begin("Paste Mix");
 		selection_paste_at( get_cursor_selection_pos() );
 		d->undo_stream.end();
+		d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	}
 	
 }

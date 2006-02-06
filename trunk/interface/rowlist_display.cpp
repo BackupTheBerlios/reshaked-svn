@@ -118,7 +118,7 @@ void RowListDisplay::paintEvent(QPaintEvent *pe) {
 			
 			p.fillRect(0,i*rowsize,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
 			if (song->get_bar_map().get_bar_beat( beat)==0)  {
-				p.fillRect(0,i*rowsize,width(),rowsize,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
+				p.fillRect(0,i*rowsize,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
 			}
 			
 		} else {

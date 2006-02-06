@@ -111,6 +111,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			d->undo_stream.begin("Clear Field");
 			SET_NOTE_AT_CURSOR(Track_Pattern::Note(Track_Pattern::Note::NO_NOTE));
 			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 		
 			d->cursor.set_pos( d->cursor.get_pos() +1 );
 	
@@ -120,6 +121,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			d->undo_stream.begin("Note Off");
 			SET_NOTE_AT_CURSOR(Track_Pattern::Note(Track_Pattern::Note::NOTE_OFF));
 			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 			d->cursor.set_pos( d->cursor.get_pos() +1 );
 	
 		}
@@ -144,6 +146,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			SET_NOTE(Track_Pattern::Position( cursor_pos, d->pattern_edit.column) ,Track_Pattern::Note()  );
 		
 			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 					
 			d->cursor.set_pos( d->cursor.get_pos() +1 );
 		
@@ -168,6 +171,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			SET_NOTE(Track_Pattern::Position( cursor_pos, d->pattern_edit.column) ,Track_Pattern::Note()  );
 		
 			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 		
 			d->cursor.set_pos( d->cursor.get_pos() -1 );
 		
@@ -239,6 +243,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 					
 			
 			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 		
 		}
 		CASE( KEYBIND("editor/delete") ) {
@@ -297,9 +302,59 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			}
 			
 			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 		
 		}
 	
+		
+		CASE( KEYBIND("editor/transpose_up") ) {
+			
+			if (!d->selection.enabled) {
+				
+				Track_Pattern::Position pos=Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column );
+				
+				Track_Pattern::Note note=pattern_track->get_note( pos );
+				if (note.is_empty())
+					return false;
+				note.note++;
+				if (note.note>=Track_Pattern::Note::MAX_NOTES)
+					note.note=Track_Pattern::Note::MAX_NOTES-1;
+				
+				d->undo_stream.begin("Transpose Note Up");				
+				SET_NOTE(pos ,note);
+				d->undo_stream.end();
+				d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+				play_note_at_cursor();
+			} else
+				selection_transpose(true);	
+			
+		}
+		CASE( KEYBIND("editor/transpose_down") ) {
+			
+			if (!d->selection.enabled) {
+				
+
+				
+				Track_Pattern::Position pos=Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column );
+				
+				Track_Pattern::Note note=pattern_track->get_note( pos );
+				if (note.is_empty() || note.note==0)
+					return false;
+				
+				note.note--;
+				if (note.note>=Track_Pattern::Note::MAX_NOTES)
+					note.note=Track_Pattern::Note::MAX_NOTES-1;
+				
+				d->undo_stream.begin("Transpose Note Down");				
+				SET_NOTE( pos ,note);
+				d->undo_stream.end();
+				d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+				play_note_at_cursor();
+			} else
+				selection_transpose(false);	
+			
+			
+		}
 		
 		
 		CASE( KEYBIND("note_entry/toggle_note_edit") ) {
@@ -341,9 +396,9 @@ bool Editor::pattern_edit_key_press(int p_event) {
 					
 					EventMidi em;
 					em.channel=0;
-					em.midi_type=EventMidi::MIDI_NOTE_ON;
+					em.midi_type=note.is_note_off()?EventMidi::MIDI_NOTE_OFF:EventMidi::MIDI_NOTE_ON;
 					em.data.note.note=note.note;
-					em.data.note.velocity=note.volume;
+					em.data.note.velocity=note.is_note_off()?0:note.volume;
 						
 					pattern_track->add_edit_event( em, i );
 				}	
@@ -355,20 +410,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 		} else if (IS_KEYBIND("note_entry/play_note_at_cursor",p_event) && d->pattern_edit.note_edit_mode==EditorData::MODE_NOTE) {
 			if (d->pattern_edit.field==0) {
 					
-						
-				Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column ) );
-				if (!note.is_empty()) {
-					
-					EventMidi em;
-					em.channel=0;
-					em.midi_type=EventMidi::MIDI_NOTE_ON;
-					em.data.note.note=note.note;
-					em.data.note.velocity=note.volume;
-						
-					pattern_track->add_edit_event( em,d->pattern_edit.column );
-				}	
-					
-				pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
+				play_note_at_cursor();
 				d->cursor.set_pos( d->cursor.get_pos() +1 );
 			}
 			repaint=true;	
@@ -396,20 +438,13 @@ bool Editor::pattern_edit_key_press(int p_event) {
 					d->undo_stream.begin("Set Note");
 					SET_NOTE(Track_Pattern::Position(tickpos,d->pattern_edit.column),Track_Pattern::Note(note,volume));
 					d->undo_stream.end();
+					play_note_at_cursor();
 					d->cursor.set_pos( d->cursor.get_pos() +1 );
 					
 					if (d->pattern_edit.volume_mask_active)
 						d->pattern_edit.volume_mask=volume;
-					/* play event! */
-					EventMidi em;
-					em.channel=0;
-					em.midi_type=EventMidi::MIDI_NOTE_ON;
-					em.data.note.note=note;
-					em.data.note.velocity=volume;
-			
-					pattern_track->add_edit_event( em,d->pattern_edit.column );
-					pattern_track->offline_process_automations( tickpos );
 					d->ui_update_notify->volume_mask_changed();
+					d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 					break;
 				}
 			}
@@ -437,6 +472,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			d->undo_stream.end();
 			d->pattern_edit.volume_mask=note.volume;
 			d->ui_update_notify->volume_mask_changed();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 
 		} else if (d->pattern_edit.note_edit_mode==EditorData::MODE_NOTE && d->pattern_edit.field==1 && Keyboard_Input::get_singleton_instance()->is_number(p_event)) {
 
@@ -451,6 +487,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			SET_NOTE(Track_Pattern::Position(tick,d->pattern_edit.column),note);
 			d->undo_stream.end();
 			d->cursor.set_pos( d->cursor.get_pos() +1 );
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 		};
 
 //d->ui_update_notify->edit_window_changed(); //there may be linked patterns, update all <- not necesary now
@@ -474,6 +511,7 @@ void Editor::track_pattern_add_column(int p_which) {
 	d->undo_stream.add_command( Command1(&commands,&EditorCommands::track_pattern_add_column,p));
 
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 
 }
@@ -491,6 +529,7 @@ void Editor::track_pattern_remove_column(int p_which) {
 	d->undo_stream.add_command( Command1(&commands,&EditorCommands::track_pattern_remove_column,p));
 
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	
 }

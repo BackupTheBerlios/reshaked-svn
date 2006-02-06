@@ -13,11 +13,12 @@
 #include <Qt/qframe.h>
 namespace ReShaked {
 
-void GlobalViewCursor::add_button(GlobalView::EditMode p_mode,PixmapList p_pixmap_fg,PixmapList p_pixmap_bg) {
+void GlobalViewCursor::add_button(GlobalView::EditMode p_mode,PixmapList p_pixmap_fg,PixmapList p_pixmap_bg,QString p_hint) {
 
 	PixmapButton::Skin skin(GET_QPIXMAP(p_pixmap_fg),GET_QPIXMAP(p_pixmap_bg));
 	mode_button[p_mode]= new PixmapButton(this,skin,PixmapButton::TYPE_TOGGLE);
 	connect_bind_int(mode_button[p_mode],SIGNAL(mouse_pressed_signal()),this,SLOT(mode_selected(int)),p_mode);
+	mode_button[p_mode]->setToolTip(p_hint);
 
 }
 
@@ -37,24 +38,26 @@ void GlobalViewCursor::mode_selected(int p_mode) {
 GlobalViewCursor::GlobalViewCursor(QWidget *p_parent) : CHBox(p_parent) {
 	
 	new PixmapLabel(this,GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__LEFT));
-	add_button(GlobalView::EDIT_MODE_SELECT,THEME_GLOBAL_TOOLBAR__SELECT,THEME_GLOBAL_TOOLBAR__SELECT_ACTIVE);
-	add_button(GlobalView::EDIT_MODE_ADD_BLOCK,THEME_GLOBAL_TOOLBAR__ADD,THEME_GLOBAL_TOOLBAR__ADD_ACTIVE);
-	add_button(GlobalView::EDIT_MODE_COPY_BLOCK,THEME_GLOBAL_TOOLBAR__COPY,THEME_GLOBAL_TOOLBAR__COPY_ACTIVE);
-	add_button(GlobalView::EDIT_MODE_COPY_LINK_BLOCK,THEME_GLOBAL_TOOLBAR__COPY_LINK,THEME_GLOBAL_TOOLBAR__COPY_LINK_ACTIVE);
+	add_button(GlobalView::EDIT_MODE_SELECT,THEME_GLOBAL_TOOLBAR__SELECT,THEME_GLOBAL_TOOLBAR__SELECT_ACTIVE,"Select Blocks (Click)\nAdd Blocks (Ctrl+Click and Motion)\nMove Blocks (Drag)\nCopy Blocks (Shift+Drag)\nCopy-Link Blocks (Shift+Ctrl+Drag)");
+	add_button(GlobalView::EDIT_MODE_ADD_BLOCK,THEME_GLOBAL_TOOLBAR__ADD,THEME_GLOBAL_TOOLBAR__ADD_ACTIVE,"Add Blocks");
+	add_button(GlobalView::EDIT_MODE_COPY_BLOCK,THEME_GLOBAL_TOOLBAR__COPY,THEME_GLOBAL_TOOLBAR__COPY_ACTIVE,"Copy Blocks");
+	add_button(GlobalView::EDIT_MODE_COPY_LINK_BLOCK,THEME_GLOBAL_TOOLBAR__COPY_LINK,THEME_GLOBAL_TOOLBAR__COPY_LINK_ACTIVE,"Copy Link Blocks");
 	delete_selected=new PixmapButton(this,PixmapButton::Skin( GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__ERASER),GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__ERASER_PUSHED)));;
 	QObject::connect(delete_selected,SIGNAL(mouse_pressed_signal()),this,SIGNAL(delete_clicked_signal()));
+	delete_selected->setToolTip("Erase Selected Blocks (Delete)");
 		
 	select_linked=new PixmapButton(this,PixmapButton::Skin( GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__SELECT_LINKED),GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__SELECT_LINKED_PUSHED)));;
 	QObject::connect(select_linked,SIGNAL(mouse_pressed_signal()),this,SIGNAL(select_linked_signal()));
-	
+	select_linked->setToolTip("Select Linked Blocks\n to a Selected Block");
 	unlink_selected=new PixmapButton(this,PixmapButton::Skin( GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__UNLINK_SELECTED),GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__UNLINK_SELECTED_PUSHED)));;
 	QObject::connect(unlink_selected,SIGNAL(mouse_pressed_signal()),this,SIGNAL(unlink_selected_signal()));
+	unlink_selected->setToolTip("Unlink Selected Blocks");
 	
 	new PixmapLabel(this,GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__HSPACER),PixmapLabel::EXPAND_TILE_H);
 	
 	zoom = new PixmapSlider(this,PixmapSlider::Skin(GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__ZOOM_BG),GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__ZOOM_FG),GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__ZOOM_GRABBER)),PixmapSlider::TYPE_HORIZONTAL,1,1);
 	QObject::connect(zoom,SIGNAL(value_changed_signal( float )),this,SIGNAL(zoom_changed(float)));
-	
+	zoom->setToolTip("Zoom View");
 	new PixmapLabel(this,GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__ZOOM_ICON));
 	new PixmapLabel(this,GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__RIGHT));
 	

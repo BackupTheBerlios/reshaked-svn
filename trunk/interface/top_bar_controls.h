@@ -62,8 +62,6 @@ friend class MainWindow;
 	PropertyEditLabel *label_prop_bpm;
 	PropertyEditUpDown *updown_prop_bpm;
 	
-	PixmapLabel *label_octave;
-	PixmapUpDown *updown_octave;
 	
 	PixmapButton *icon_menu_settings;
 	PixmapButton *icon_menu_help;
@@ -80,10 +78,6 @@ public slots:
 	void show_file_menu();
 	
 	
-	void octave_edit_popup();
-	void octave_raise();
-	void octave_lower();
-	void octave_changed_slot();
 	
 	void song_screen_selected(bool p_selected);
 	void edit_screen_selected(bool p_selected);

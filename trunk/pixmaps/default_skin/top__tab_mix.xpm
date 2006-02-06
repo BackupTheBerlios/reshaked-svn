@@ -1,6 +1,6 @@
 /* XPM */
 static char * top__tab_mix_xpm[] = {
-"54 48 1335 2",
+"54 48 1330 2",
 "  	c None",
 ". 	c #2E2F39",
 "+ 	c #2D2E38",
@@ -1330,12 +1330,7 @@ static char * top__tab_mix_xpm[] = {
 "0'	c #0D3456",
 "a'	c #0D3455",
 "b'	c #0C3455",
-"c'	c #154D7C",
-"d'	c #144C7B",
-"e'	c #144C7A",
-"f'	c #144976",
-"g'	c #12456F",
-"h'	c #113F66",
+"c'	c #144B7A",
 ". + + @ # $ % & * = - ; ; > , , ' ' ' ) ) ) ! ) ) ! ) ) ) ) ) ' , ) ' > > ; ; - = * ~ % { ] ^ / ( _ : : : : ",
 "< [ } | 1 2 3 4 5 6 7 8 8 9 0 a b b 8 c c 8 c c c c 9 c d 0 8 0 b a b b 0 9 e f 6 g h 3 2 i j k l m n o p q ",
 "r s t u v w x y z A B C D E E E E E F E E F F F F E F F F F E E E E G E E D C H A z I J K L M N O P Q R Q S ",
@@ -1377,10 +1372,10 @@ static char * top__tab_mix_xpm[] = {
 "+'+'2,W,@'#.}.V,V,V,V,#'$'%'&'*'*'&'%'='#'-'-'$'%';'*'>'&','''#'V,$'='&'*'>'I,)'!'$'~'}.#.@'{'+'A,]'^'},/'('",
 "#.#.#.#.#.#.#.#.#.#.#._':'<'['}'|'['1'2'_'#._':'3'4'5'|'['6'2'_'_'2'1'['5'}'7'8'9':'#.#.#.#.#.#.#.#.#.#.#.#.",
 "}.}.}.}.}.}.}.}.}.}.}.}.<*0'0'a'a'a'0'<*}.}.}.<*0'b'a'a'a'0'<*}.}.<*0'b'a'a'a'0'<*<*}.}.}.}.}.}.}.}.}.}.}.}.",
-"c'c'c'c'c'c'c'c'c'c'c'c'c'd'd'd'd'd'd'c'c'c'c'c'd'd'd'd'd'd'c'c'c'c'd'd'd'd'd'd'c'c'c'c'c'c'c'c'c'c'c'c'c'c'",
 "c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'",
-"d'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'd'",
-"e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'e'",
-"f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'f'",
-"g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'g'",
-"h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'h'"};
+"c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'",
+"c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'",
+"c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'",
+"c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'",
+"c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'",
+"c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'c'"};

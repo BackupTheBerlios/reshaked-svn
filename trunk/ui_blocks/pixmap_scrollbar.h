@@ -41,9 +41,12 @@ public:
 	};
 
 protected:			
+	
+	
 	int value;
 	int max;
 	int pagesize;
+	int step;
 	
 	Skin skin;		
 	Type type;
@@ -60,7 +63,7 @@ protected:
 	void mousePressEvent(QMouseEvent *e);
 	void mouseMoveEvent(QMouseEvent *e);
 	void mouseReleaseEvent(QMouseEvent *e);
-
+	void wheelEvent ( QWheelEvent * e ) ;
 	virtual void value_changed(int p_new_val);
 
 	int get_grabber_offset();
@@ -74,6 +77,7 @@ public:
 	void set_value(int p_value);
 	void set_max(int p_max);
 	void set_pagesize(int p_pagesize);
+	void set_stepsize(int p_stepsize);
 	
 	int get_value();
 	int get_max();

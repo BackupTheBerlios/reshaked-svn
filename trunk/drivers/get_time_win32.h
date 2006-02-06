@@ -12,6 +12,7 @@
 #ifndef RESHAKEDGET_TIME_WIN32_H
 #define RESHAKEDGET_TIME_WIN32_H
 
+#include "version.h"
 
 #ifdef WIN32_ENABLED
 

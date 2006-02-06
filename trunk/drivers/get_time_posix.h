@@ -12,6 +12,8 @@
 #ifndef RESHAKEDGET_TIME_POSIX_H
 #define RESHAKEDGET_TIME_POSIX_H
 
+#include "version.h"
+
 #ifdef POSIX_ENABLED
 
 #include "get_time.h"

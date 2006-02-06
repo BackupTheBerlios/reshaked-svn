@@ -10,6 +10,7 @@
 //
 //
 #include "saver.h"
+#include "version.h"
 
 namespace ReShaked {
 
@@ -303,7 +304,16 @@ void Saver::save_song(Song *p_song,TreeSaver *p_saver) {
 	shared_automation_blocks.clear();
 	shared_pattern_blocks.clear();
 	
+	/** GLOBAL SONG INFO */
 	
+	p_saver->enter("info");
+	
+	p_saver->add_string("title",p_song->get_info_title());
+	p_saver->add_string("author",p_song->get_info_author());
+	p_saver->add_string("notes",p_song->get_info_notes());
+	p_saver->add_string("version_saved",VERSION_STRING);
+	
+	p_saver->exit(); //info
 	/** SAVE GLOBAL PROPERTIES */
 	
 	p_saver->enter("global_properties");

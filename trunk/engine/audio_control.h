@@ -24,6 +24,8 @@ public:
 		
 	static int get_output_latency();
 	
+	static void reset();
+	
 	static void init();
 
 };

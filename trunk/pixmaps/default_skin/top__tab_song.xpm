@@ -1,6 +1,6 @@
 /* XPM */
 static char * top__tab_song_xpm[] = {
-"48 48 983 2",
+"48 48 981 2",
 "  	c None",
 ". 	c #2D2E39",
 "+ 	c #2C2D38",
@@ -982,8 +982,6 @@ static char * top__tab_song_xpm[] = {
 "t-	c #144A77",
 "u-	c #144976",
 "v-	c #144B7A",
-"w-	c #12456F",
-"x-	c #113F66",
 ". + @ # $ % & * = - ; > > , ' ' , ; ) ; ! ; ; ; ; ; ; ; ! , , , , ~ ~ - - = * { % ] ^ / ( . . _ ",
 ": < [ } | 1 2 3 4 5 5 6 6 7 8 7 9 6 0 6 a 5 9 a 5 9 9 5 9 9 7 7 8 6 7 0 b 4 c d e | } f < g h i ",
 "j k l m n o p q 6 r r s s s s s t t s s s s t t t s s t t t s s s s s r r 6 u p o n v w x y z A ",
@@ -1025,10 +1023,10 @@ static char * top__tab_song_xpm[] = {
 "[-}-|-M +.,-,-,-,-,-,-,-,-,-,-,-,-,-1-2-3-U*4-5-6-7-8-9-0-a-b-c-d-,-,-_-_-_---,-d-+.M |-e-f-K=g-",
 "M M M M M M M M M M M M M M M M M M x#h-i-j-k-l-l-m-n-o-i-$$x#M M M M M M M M M M M M M M M M M ",
 "+.+.+.+.+.p-p-p-p-p-p-p-p-p-p-p-p-p-p-q-r-s-t-u-u-u-t-s-r-q-p-p-p-p-p-p-p-p-p-p-p-+.+.+.+.+.+.+.",
-"p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-q-r-v-s-s-s-v-q-q-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-",
-"p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-q-q-q-q-q-q-q-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-p-",
-"q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-q-",
-"r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-",
-"u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-u-",
-"w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-w-",
-"x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-"};
+"v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-",
+"v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-",
+"v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-",
+"v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-",
+"v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-",
+"v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-",
+"v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-"};

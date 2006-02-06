@@ -364,6 +364,16 @@ void Loader::load_song(Song *p_song,TreeLoader *p_loader) {
 	shared_pattern_blocks.clear();
 	p_song->clear(); //empty song.
 	
+	/** LOAD INFO **/
+	
+	p_loader->enter("info");
+	
+	p_song->set_info_title(p_loader->get_string("title"));
+	p_song->set_info_author(p_loader->get_string("author"));
+	p_song->set_info_notes(p_loader->get_string("notes"));
+	
+	p_loader->exit(); //info
+	
 	/** LOAD GLOBAL PROPERTIES */
 	
 	p_loader->enter("global_properties");

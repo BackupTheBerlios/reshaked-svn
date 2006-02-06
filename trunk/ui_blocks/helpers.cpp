@@ -44,6 +44,7 @@ CHBox::CHBox(QWidget *p_parent,bool p_vertical) : QWidget(p_parent) {
 
 	l->setMargin(0);	
 	l->setSpacing(0);
+	
 }
 
 

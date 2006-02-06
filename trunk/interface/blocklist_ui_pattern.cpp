@@ -112,6 +112,10 @@ void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Patter
 
 		}
 
+		p.setPen(GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
+		p.drawLine(fontxofs,volofs,fontxofs,volofs+2);
+		p.drawLine(width()-fontxofs,volofs,width()-fontxofs,volofs+2);
+		
 	} else if (p_note.note.is_note_off()) {
 
 		buf[0]='*';
@@ -418,11 +422,14 @@ void BlockListUI_Pattern::paint_row_lines(QPainter &p) {
 			}
 			
 			
-			if (paint)
-				p.fillRect(from_x,i*row_size,width_x,1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
 		
 			if (song->get_bar_map().get_bar_beat(tick/TICKS_PER_BEAT)==0)  {
-				//p.fillRect(from_x,i*row_size,width_x,row_size,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
+				p.fillRect(from_x,i*row_size,width_x,1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
+			} else  if (paint) {
+				p.fillRect(from_x,i*row_size,width_x,1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
+
+				
+				
 			}
 
 		} else

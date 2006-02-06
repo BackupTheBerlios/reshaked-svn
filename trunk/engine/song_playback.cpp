@@ -11,9 +11,14 @@
 //
 #include "song_playback.h"
 #include "engine/audio_control.h"
+#include "get_time.h"
 namespace ReShaked {
 
 
+unsigned int SongPlayback::get_song_playback_time() {
+	
+	return play_start_time;
+}
 
 void SongPlayback::play(Tick p_from_pos) {
 	
@@ -22,6 +27,7 @@ void SongPlayback::play(Tick p_from_pos) {
 	current_tick=p_from_pos;
 	prev_tick=0;
 	latency_buffer.clear();
+	play_start_time=GetTime::get_time_msec();
 }
 void SongPlayback::loop(Tick p_begin,Tick p_end) {
 	
@@ -33,6 +39,7 @@ void SongPlayback::loop(Tick p_begin,Tick p_end) {
 	current_tick=p_begin;
 	prev_tick=p_begin;
 	latency_buffer.clear();
+	play_start_time=GetTime::get_time_msec();
 	
 }
 void SongPlayback::set_pause(bool p_paused) {
@@ -125,6 +132,7 @@ SongPlayback::SongPlayback(GlobalProperties *p_properties) {
 	prev_tick=0;
 	latency_buffer.clear();
 	record_automation=false;
+	play_start_time=0;
 }
 
 

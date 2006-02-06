@@ -93,13 +93,27 @@ void BlockListUI_Automation::paint_row_lines(QPainter &p,int p_from_row, int p_t
 	
 	int visible_rows=editor->get_cursor().get_window_size();
 	int row_size=get_row_size();
+	int font_w=VisualSettings::get_singleton()->get_pattern_font()->get_width();
 
 	for (int i=p_from_row;i<=p_to_row;i++) {
 		//if (i==0) cant implement this either, sadly
 		//	continue;
 		
+		
 		Tick tick=editor->get_cursor().get_snapped_window_tick_pos(i);
 
+		int from_x; 
+		int width_x; 
+			
+		if (automation->get_block_idx_at_pos(editor->get_cursor().get_snapped_window_tick_pos(i))>=0) {
+			from_x = font_w;
+			width_x = width()-from_x*2;
+		} else {
+			from_x=0;
+			width_x=width();
+				
+		}		
+		
 		if ( (tick % TICKS_PER_BEAT)==0 ) {//beat
 			
 			int block=automation->get_prev_block_from_idx( tick );
@@ -114,14 +128,14 @@ void BlockListUI_Automation::paint_row_lines(QPainter &p,int p_from_row, int p_t
 				
 			}
 			if (paint)
-				p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BEAT_LINE));
+				p.fillRect(from_x,i*row_size,width_x,1,GET_QCOLOR(COLORLIST_AUTOMATION_EDIT_BEAT_LINE));
 		
 			if (editor->get_song()->get_bar_map().get_bar_beat(tick/TICKS_PER_BEAT)==0)  {
-				p.fillRect(0,i*row_size,width(),row_size,GET_QCOLOR(COLORLIST_PATTERN_EDIT_BAR));
+				p.fillRect(from_x,i*row_size,width_x,1,GET_QCOLOR(COLORLIST_AUTOMATION_EDIT_BAR));
 			}
 			
 		} else
-			p.fillRect(0,i*row_size,width(),1,GET_QCOLOR(COLORLIST_PATTERN_EDIT_SUBBEAT_LINE));
+			p.fillRect(from_x,i*row_size,width_x,1,GET_QCOLOR(COLORLIST_AUTOMATION_EDIT_SUBBEAT_LINE));
 
 		
 		//p.drawRect(0,i*row_size,width(),0);
@@ -145,7 +159,7 @@ void BlockListUI_Automation::paint_frames(QPainter& p,int p_from_row,int p_to_ro
 	
 	p_to_row++; //always add one just in case
 	
-	
+	int font_width=	VisualSettings::get_singleton()->get_pattern_font()->get_width();
 	SkinBox *sb=VisualSettings::get_singleton()->get_skin_box( SKINBOX_EDITING_AUTOMATION );
 	SkinBox *sb_shared=VisualSettings::get_singleton()->get_skin_box(  SKINBOX_EDITING_AUTOMATION_SHARED );
 	
@@ -171,7 +185,13 @@ void BlockListUI_Automation::paint_frames(QPainter& p,int p_from_row,int p_to_ro
 			sb_shared->paint_into( p, 0,from_y, width(), height_y );
 		else
 			sb->paint_into( p, 0,from_y, width(), height_y );
+		
+		p.setPen(GET_QCOLOR(COLORLIST_AUTOMATION_EDIT_BEAT_LINE));
+		p.drawLine(font_width,from_y,font_width,height_y);
+		p.drawLine(width()-font_width,from_y,width()-font_width,height_y);
 	
+		p.setPen(GET_QCOLOR(COLORLIST_AUTOMATION_EDIT_SUBBEAT_LINE));
+		p.drawLine(width()/2,from_y,width()/2,height_y);
 	
 	}
 	
@@ -394,8 +414,8 @@ void BlockListUI_Automation::paintEvent(QPaintEvent *pe) {
 	p.fillRect(0,row_size*row_from,width(),(row_to-row_from)*row_size,QColor(0,0,0));
 	paint_frames(p,row_from,row_to); //paint all by default
 	paint_selection(p, pe->rect().y(),pe->rect().y()+pe->rect().height());
-	paint_envelopes( p,row_from,row_to );
 	paint_row_lines( p,row_from,row_to );
+	paint_envelopes( p,row_from,row_to );
 	//printf("paint from %i to %i, screen is %i lines to paint\n",row_from,row_to,(height()/row_size)+1);
 	
 	//if (paint_name_enabled)

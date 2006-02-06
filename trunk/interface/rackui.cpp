@@ -16,7 +16,7 @@
 #include "ui_blocks/visual_settings.h"
 #include "engine/sound_plugin_list.h"
 #include "interface/sound_plugin_chooser.h"
-
+#include "engine/track_pattern.h"
 #include "interface/plugin_preset_browser.h"
 #include "editor/plugin_preset_manager.h"
 
@@ -104,6 +104,8 @@ void RackUI::rack_selected_slot(int p_selected_rack) {
 }
 
 void RackUI::select_track(int p_track) {
+	if ((p_track+1)==selected_rack)
+		return;
 	
 	ERR_FAIL_INDEX(p_track,editor->get_song()->get_track_count());
 	selected_rack=p_track+1;
@@ -220,6 +222,65 @@ void RackUI::rack_presets() {
 	
 }
 
+void RackUI::test_note(int p_note,int p_vel) {
+	
+	if (selected_rack==0)
+		return;
+	Track *track;
+	track=editor->get_song()->get_track( selected_rack-1 );
+
+	if (!track)
+		return;
+	
+	
+	Track_Pattern *tp=dynamic_cast<Track_Pattern*>(track);
+	
+	EventMidi em;
+	em.channel=0;
+	em.data.note.note=p_note;
+	em.data.note.velocity=p_vel;
+	em.midi_type=EventMidi::MIDI_NOTE_ON;
+	
+	tp->add_edit_event( em, -1 );
+}
+void RackUI::test_note_off(int p_note_off) {
+	
+	if (selected_rack==0)
+		return;
+	Track *track;
+	track=editor->get_song()->get_track( selected_rack-1 );
+
+	if (!track)
+		return;
+	
+	
+	Track_Pattern *tp=dynamic_cast<Track_Pattern*>(track);
+	
+	EventMidi em;
+	em.channel=0;
+	em.data.note.note=p_note_off;
+	em.data.note.velocity=0;
+	em.midi_type=EventMidi::MIDI_NOTE_OFF;
+	
+	tp->add_edit_event( em, -1 );
+	
+}
+
+void RackUI::blocklist_changed_slot() {
+	
+	if (!follow_cursor->is_pressed())
+		return;
+	
+	int ct=editor->get_current_track();
+	
+	if (ct<0)
+		return;
+	
+	select_track(ct);
+	
+}
+
+
 RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater) : CVBox(p_parent) {
 	
 	editor=p_editor;
@@ -236,20 +297,30 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	new PixmapLabel(rack_choose_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__TRACK_DROPDOWN_BOTTOM));
 	rack_choose_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
+	follow_cursor = new PixmapButton(hbox_main,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__RACK_FOLLOW_CURSOR),GET_QPIXMAP(THEME_RACK_TOOLBAR__RACK_FOLLOW_CURSOR_ACTIVE)),PixmapButton::TYPE_TOGGLE);
+	follow_cursor->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	follow_cursor->setToolTip("Rack Follows Cursor");
+	
+	
 	new PixmapLabel(hbox_main,GET_QPIXMAP(THEME_RACK_TOOLBAR__SPACER),PixmapLabel::EXPAND_TILE_H);
 		
 	hbox_options = new CHBox(hbox_main); //
 	
 	hbox_options->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 	
+	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
 
 	add_plugin = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__ADD_PLUGIN),GET_QPIXMAP(THEME_RACK_TOOLBAR__ADD_PLUGIN_PUSHED)));
 	QObject::connect(add_plugin,SIGNAL(mouse_pressed_signal()),this,SLOT(add_plugin_slot()));
+	add_plugin->setToolTip("Add Synth/Effect Plugin");
 	
 	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
 	
 	rack_front = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT_ACTIVE)),PixmapButton::TYPE_TOGGLE);
+	rack_front->setToolTip("Show Rack Front (Controls)");
+
 	rack_back = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK_ACTIVE)),PixmapButton::TYPE_TOGGLE);	
+	rack_back->setToolTip("Show Rack Back (Connections)");
 	
 	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
 	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SPACER),PixmapLabel::EXPAND_TILE_H);
@@ -263,6 +334,7 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	
 	rack_file = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_FILE),GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_FILE_PUSHED)));	
 	QObject::connect(rack_file,SIGNAL(mouse_pressed_signal()),this,SLOT(rack_presets()));
+	rack_back->setToolTip("Presets");
 	
 	
 	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__END));

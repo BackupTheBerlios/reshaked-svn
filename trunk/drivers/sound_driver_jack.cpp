@@ -177,13 +177,14 @@ float SoundDriver_JACK::get_mix_rate() {
 
 bool SoundDriver_JACK::init() {
 	
+	printf("JACK ATTEMPT INIT\n");
 	if (active) {
 		last_error="Driver Already Active";
 		ERR_PRINT("Driver Already Active");
 		return true;
 	}
-	if (get_port_layout()==NULL)
-		return true;
+	ERR_FAIL_COND_V((get_port_layout()==NULL),true);
+
 	
 	if ((client = jack_client_new ("ReShaked")) == 0) {
 		last_error="JACK server doesn't seem to be running";
@@ -274,6 +275,7 @@ bool SoundDriver_JACK::init() {
 	   running.
 	*/
 	
+	printf("JACK: outputs %i\n",output_port_list.size());
 	if (!output_port_list.empty() && !output_port_list[0].ports.empty()) {
 		const char **port_names_array;
 		if ((port_names_array = jack_get_ports (client, NULL, NULL, 

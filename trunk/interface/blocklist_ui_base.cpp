@@ -11,9 +11,18 @@
 //
 #include "blocklist_ui_base.h"
 #include "ui_blocks/visual_settings.h"
+#include <Qt/qevent.h>
 namespace ReShaked {
 
 
+void BlockListUI_Base::wheelEvent ( QWheelEvent * e ) {
+	
+	if (e->delta()>0)
+		_editor->get_cursor().set_window_offset( _editor->get_cursor().get_window_offset() -1 );
+	else if (e->delta()<0)
+		_editor->get_cursor().set_window_offset( _editor->get_cursor().get_window_offset() +1 );
+	
+}
 
 void BlockListUI_Base::set_blocklist_ui_under_cursor(BlockListUI_Base *p_ui, QPoint p_pos) {
 	

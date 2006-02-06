@@ -94,7 +94,7 @@
 
 #include "pixmaps/default_skin/top__bpm_bottom.xpm"
 #include "pixmaps/default_skin/top__bpm_display.xpm"
-#include "pixmaps/default_skin/top__bpm_octave_separator.xpm"
+#include "pixmaps/default_skin/top__bpm_end.xpm"
 #include "pixmaps/default_skin/top__bpm_top.xpm"
 #include "pixmaps/default_skin/top__bpm_updown.xpm"
 #include "pixmaps/default_skin/top__button_fastforward_active.xpm"
@@ -119,11 +119,6 @@
 #include "pixmaps/default_skin/top__margin_bottom.xpm"
 #include "pixmaps/default_skin/top__margin_left.xpm"
 #include "pixmaps/default_skin/top__margin_right.xpm"
-#include "pixmaps/default_skin/top__octave_bottom.xpm"
-#include "pixmaps/default_skin/top__octave_display.xpm"
-#include "pixmaps/default_skin/top__octave_end.xpm"
-#include "pixmaps/default_skin/top__octave_top.xpm"
-#include "pixmaps/default_skin/top__octave_updown.xpm"
 #include "pixmaps/default_skin/top__tab_edit_active.xpm"
 #include "pixmaps/default_skin/top__tab_edit.xpm"
 #include "pixmaps/default_skin/top__tab_mix_active.xpm"
@@ -147,6 +142,35 @@
 #include "pixmaps/default_skin/top__icon_undo_activated.xpm"
 #include "pixmaps/default_skin/top__icon_undo_disabled.xpm"
 #include "pixmaps/default_skin/top__icon_undo.xpm"
+
+#include "pixmaps/default_skin/bottom__begin.xpm"
+#include "pixmaps/default_skin/bottom__end.xpm"
+#include "pixmaps/default_skin/bottom__information_begin.xpm"
+#include "pixmaps/default_skin/bottom__information_end.xpm"
+#include "pixmaps/default_skin/bottom__information_label_bottom.xpm"
+#include "pixmaps/default_skin/bottom__information_label_end.xpm"
+#include "pixmaps/default_skin/bottom__information_label_top.xpm"
+#include "pixmaps/default_skin/bottom__information_label.xpm"
+#include "pixmaps/default_skin/bottom__octave_bottom.xpm"
+#include "pixmaps/default_skin/bottom__octave_label.xpm"
+#include "pixmaps/default_skin/bottom__octave_spin.xpm"
+#include "pixmaps/default_skin/bottom__octave_top.xpm"
+#include "pixmaps/default_skin/bottom__rack_active.xpm"
+#include "pixmaps/default_skin/bottom__rack.xpm"
+#include "pixmaps/default_skin/bottom__separator.xpm"
+#include "pixmaps/default_skin/bottom__time_begin.xpm"
+#include "pixmaps/default_skin/bottom__time_end.xpm"
+#include "pixmaps/default_skin/bottom__time_label_bottom.xpm"
+#include "pixmaps/default_skin/bottom__time_label_top.xpm"
+#include "pixmaps/default_skin/bottom__time_label.xpm"
+#include "pixmaps/default_skin/bottom__vpiano_begin.xpm"
+#include "pixmaps/default_skin/bottom__vpiano_black_key_pressed.xpm"
+#include "pixmaps/default_skin/bottom__vpiano_black_key.xpm"
+#include "pixmaps/default_skin/bottom__vpiano_octave_separator.xpm"
+#include "pixmaps/default_skin/bottom__vpiano_top.xpm"
+#include "pixmaps/default_skin/bottom__vpiano_white_key_pressed.xpm"
+#include "pixmaps/default_skin/bottom__vpiano_white_key.xpm"
+
 
 #include "pixmaps/default_skin/left__margin.xpm"
 #include "pixmaps/default_skin/right__margin.xpm"
@@ -241,6 +265,8 @@
 #include "pixmaps/default_skin/rack_plugin_top__skip_active.xpm"
 #include "pixmaps/default_skin/rack_plugin_top__skip.xpm"
 
+#include "pixmaps/default_skin/rack_toolbar__rack_follow_cursor.xpm"
+#include "pixmaps/default_skin/rack_toolbar__rack_follow_cursor_active.xpm"
 #include "pixmaps/default_skin/rack_toolbar__add_plugin_pushed.xpm"
 #include "pixmaps/default_skin/rack_toolbar__add_plugin.xpm"
 #include "pixmaps/default_skin/rack_toolbar__begin.xpm"
@@ -384,9 +410,13 @@ VisualSettings::VisualSettings() {
 	singleton=this;    
 
 	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN]=new SkinBox((const char**)pattern_glob_bg_xpm,7,7,7,7,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN]->set_center_color(QColor(0x81,0xab,0xb3));
 	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION]=new SkinBox((const char**)automation_glob_bg_xpm,7,7,7,7,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION]->set_center_color(QColor(0xac,0xb3,0x81));
 	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]=new SkinBox((const char**)pattern_glob_bg_sel_xpm,7,7,7,7,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]->set_center_color(QColor(0x91,0x6e,0x69));
 	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_glob_bg_sel_xpm,7,7,7,7,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]->set_center_color(QColor(0xb3,0x88,0x81));
 	skin_box_map[SKINBOX_EDITING_PATTERN]=new SkinBox((const char**)pattern_bg_xpm,8,8,8,8);
 	skin_box_map[SKINBOX_EDITING_PATTERN]->set_center_use_color(true);
 	skin_box_map[SKINBOX_EDITING_PATTERN]->set_center_color(QColor(0xd,0x17,0x19));
@@ -394,6 +424,7 @@ VisualSettings::VisualSettings() {
 	
 	skin_box_map[SKINBOX_EDITING_PATTERN_SELECTED]=new SkinBox((const char**)pattern_bg_sel_xpm,8,8,8,8);
 	skin_box_map[SKINBOX_EDITING_AUTOMATION]=new SkinBox((const char**)automation_bg_xpm,8,8,8,8);
+	skin_box_map[SKINBOX_EDITING_AUTOMATION]->set_center_color(QColor(47,55,30));
 	
 	skin_box_map[SKINBOX_EDITING_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_bg_sel_xpm,8,8,8,8);
 	skin_box_map[SKINBOX_EDITING_PATTERN_SHARED]=new SkinBox((const char**)pattern_bg_shared_xpm,8,8,8,8);
@@ -413,21 +444,27 @@ VisualSettings::VisualSettings() {
 	skin_box_map[SKINBOX_LINKED_BLOCK]->set_no_center_hint(true);
 	
 	
-	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(0,33,0);
+	color_map[COLORLIST_PATTERN_EDIT_NOTE]=QColor(200,220,255);
 	color_map[COLORLIST_PATTERN_EDIT_VOL]=QColor(255,190,170);
 	color_map[COLORLIST_PATTERN_EDIT_FOCUS_RECT]=QColor(255,0,0);
 	color_map[COLORLIST_PATTERN_EDIT_BEAT_LINE]=QColor(0x6a,0x80,0x8c);
 	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(0x2f,0x3b,0x45);
-	color_map[COLORLIST_AUTOMATION_ENVELOPE]=QColor(255,255,200,200);
+	color_map[COLORLIST_PATTERN_EDIT_BAR]=QColor(210,230,255);
+	color_map[COLORLIST_AUTOMATION_ENVELOPE]=QColor(255,255,200);
+	color_map[COLORLIST_AUTOMATION_EDIT_BEAT_LINE]=QColor(0x70,0x7a,0x63);
+	color_map[COLORLIST_AUTOMATION_EDIT_SUBBEAT_LINE]=QColor(0x41,0x47,0x2e);
+	color_map[COLORLIST_AUTOMATION_EDIT_BAR]=QColor(0xcd,0xd7,0xbc);
 	color_map[COLORLIST_GLOBAL_VIEW_BAR_LINE]=QColor(80,120,140);
 	color_map[COLORLIST_GLOBAL_VIEW_BEAT_LINE]=QColor(50,60,80);
-	color_map[COLORLIST_PATTERN_EDIT_BAR]=QColor(222,242,255,40);
 	color_map[COLORLIST_EDITOR_SELECTION_AUTOMATION]=QColor(0x75,0x7f,0x09);
 	color_map[COLORLIST_EDITOR_SELECTION_PATTERN]=QColor(0x28,0x56,0x7c);
 	color_map[COLORLIST_RACK_CABLE]=QColor(0x97,0xd5,0x2b);
 	color_map[COLORLIST_RACK_CABLE_DARK]=QColor(0x2b,0x8f,0x1a);
 	color_map[COLORLIST_TRACK_TITLE]=QColor(200,233,255);
 	color_map[COLORLIST_TRACK_TITLE_MUTE]=QColor(120,120,120);
+	color_map[COLORLIST_TIME_LABEL]=QColor(255,255,255);
+	color_map[COLORLIST_TIME_LABEL_PLAY]=QColor(200,255,210);
+
 	
 	pixmap_map[PIXMAP_TRACK_OPTIONS]=QPixmap((const char**)track_options_xpm);
 	pixmap_map[PIXMAP_KNOB_BASE]=QPixmap((const char**)knob_base_xpm);
@@ -489,7 +526,7 @@ VisualSettings::VisualSettings() {
 		
 	pixmap_map[THEME_TOP__BPM_BOTTOM]=QPixmap((const char**)top__bpm_bottom_xpm);
 	pixmap_map[THEME_TOP__BPM_DISPLAY]=QPixmap((const char**)top__bpm_display_xpm);
-	pixmap_map[THEME_TOP__BPM_OCTAVE_SEPARATOR]=QPixmap((const char**)top__bpm_octave_separator_xpm);
+	pixmap_map[THEME_TOP__BPM_END]=QPixmap((const char**)top__bpm_end_xpm);
 	pixmap_map[THEME_TOP__BPM_TOP]=QPixmap((const char**)top__bpm_top_xpm);
 	pixmap_map[THEME_TOP__BPM_UPDOWN]=QPixmap((const char**)top__bpm_updown_xpm);
 	pixmap_map[THEME_TOP__BUTTON_FASTFORWARD_ACTIVE]=QPixmap((const char**)top__button_fastforward_active_xpm);
@@ -514,11 +551,6 @@ VisualSettings::VisualSettings() {
 	pixmap_map[THEME_TOP__MARGIN_BOTTOM]=QPixmap((const char**)top__margin_bottom_xpm);
 	pixmap_map[THEME_TOP__MARGIN_LEFT]=QPixmap((const char**)top__margin_left_xpm);
 	pixmap_map[THEME_TOP__MARGIN_RIGHT]=QPixmap((const char**)top__margin_right_xpm);
-	pixmap_map[THEME_TOP__OCTAVE_BOTTOM]=QPixmap((const char**)top__octave_bottom_xpm);
-	pixmap_map[THEME_TOP__OCTAVE_DISPLAY]=QPixmap((const char**)top__octave_display_xpm);
-	pixmap_map[THEME_TOP__OCTAVE_END]=QPixmap((const char**)top__octave_end_xpm);
-	pixmap_map[THEME_TOP__OCTAVE_TOP]=QPixmap((const char**)top__octave_top_xpm);
-	pixmap_map[THEME_TOP__OCTAVE_UPDOWN]=QPixmap((const char**)top__octave_updown_xpm);
 	pixmap_map[THEME_TOP__TAB_EDIT_ACTIVE]=QPixmap((const char**)top__tab_edit_active_xpm);
 	pixmap_map[THEME_TOP__TAB_EDIT]=QPixmap((const char**)top__tab_edit_xpm);
 	pixmap_map[THEME_TOP__TAB_MIX_ACTIVE]=QPixmap((const char**)top__tab_mix_active_xpm);
@@ -542,6 +574,34 @@ VisualSettings::VisualSettings() {
 	pixmap_map[THEME_TOP__ICON_UNDO_ACTIVATED]=QPixmap((const char**)top__icon_undo_activated_xpm);
 	pixmap_map[THEME_TOP__ICON_UNDO_DISABLED]=QPixmap((const char**)top__icon_undo_disabled_xpm);
 	pixmap_map[THEME_TOP__ICON_UNDO]=QPixmap((const char**)top__icon_undo_xpm);
+	
+	pixmap_map[THEME_BOTTOM__BEGIN]=QPixmap((const char**)bottom__begin_xpm);
+	pixmap_map[THEME_BOTTOM__END]=QPixmap((const char**)bottom__end_xpm);
+	pixmap_map[THEME_BOTTOM__INFORMATION_BEGIN]=QPixmap((const char**)bottom__information_begin_xpm);
+	pixmap_map[THEME_BOTTOM__INFORMATION_END]=QPixmap((const char**)bottom__information_end_xpm);
+	pixmap_map[THEME_BOTTOM__INFORMATION_LABEL_BOTTOM]=QPixmap((const char**)bottom__information_label_bottom_xpm);
+	pixmap_map[THEME_BOTTOM__INFORMATION_LABEL_END]=QPixmap((const char**)bottom__information_label_end_xpm);
+	pixmap_map[THEME_BOTTOM__INFORMATION_LABEL_TOP]=QPixmap((const char**)bottom__information_label_top_xpm);
+	pixmap_map[THEME_BOTTOM__INFORMATION_LABEL]=QPixmap((const char**)bottom__information_label_xpm);
+	pixmap_map[THEME_BOTTOM__OCTAVE_BOTTOM]=QPixmap((const char**)bottom__octave_bottom_xpm);
+	pixmap_map[THEME_BOTTOM__OCTAVE_LABEL]=QPixmap((const char**)bottom__octave_label_xpm);
+	pixmap_map[THEME_BOTTOM__OCTAVE_SPIN]=QPixmap((const char**)bottom__octave_spin_xpm);
+	pixmap_map[THEME_BOTTOM__OCTAVE_TOP]=QPixmap((const char**)bottom__octave_top_xpm);
+	pixmap_map[THEME_BOTTOM__RACK_ACTIVE]=QPixmap((const char**)bottom__rack_active_xpm);
+	pixmap_map[THEME_BOTTOM__RACK]=QPixmap((const char**)bottom__rack_xpm);
+	pixmap_map[THEME_BOTTOM__SEPARATOR]=QPixmap((const char**)bottom__separator_xpm);
+	pixmap_map[THEME_BOTTOM__TIME_BEGIN]=QPixmap((const char**)bottom__time_begin_xpm);
+	pixmap_map[THEME_BOTTOM__TIME_END]=QPixmap((const char**)bottom__time_end_xpm);
+	pixmap_map[THEME_BOTTOM__TIME_LABEL_BOTTOM]=QPixmap((const char**)bottom__time_label_bottom_xpm);
+	pixmap_map[THEME_BOTTOM__TIME_LABEL_TOP]=QPixmap((const char**)bottom__time_label_top_xpm);
+	pixmap_map[THEME_BOTTOM__TIME_LABEL]=QPixmap((const char**)bottom__time_label_xpm);
+	pixmap_map[THEME_BOTTOM__VPIANO_BEGIN]=QPixmap((const char**)bottom__vpiano_begin_xpm);
+	pixmap_map[THEME_BOTTOM__VPIANO_BLACK_KEY_PRESSED]=QPixmap((const char**)bottom__vpiano_black_key_pressed_xpm);
+	pixmap_map[THEME_BOTTOM__VPIANO_BLACK_KEY]=QPixmap((const char**)bottom__vpiano_black_key_xpm);
+	pixmap_map[THEME_BOTTOM__VPIANO_OCTAVE_SEPARATOR]=QPixmap((const char**)bottom__vpiano_octave_separator_xpm);
+	pixmap_map[THEME_BOTTOM__VPIANO_TOP]=QPixmap((const char**)bottom__vpiano_top_xpm);
+	pixmap_map[THEME_BOTTOM__VPIANO_WHITE_KEY_PRESSED]=QPixmap((const char**)bottom__vpiano_white_key_pressed_xpm);
+	pixmap_map[THEME_BOTTOM__VPIANO_WHITE_KEY]=QPixmap((const char**)bottom__vpiano_white_key_xpm);
 	
 	pixmap_map[THEME_LEFT__MARGIN]=QPixmap((const char**)left__margin_xpm);
 	pixmap_map[THEME_RIGHT__MARGIN]=QPixmap((const char**)right__margin_xpm);
@@ -609,6 +669,10 @@ VisualSettings::VisualSettings() {
 	pixmap_map[THEME_MIDDLE__SEPARATOR_BEGIN]=QPixmap((const char**)middle__separator_begin_xpm);
 	pixmap_map[THEME_MIDDLE__SEPARATOR_CENTER]=QPixmap((const char**)middle__separator_center_xpm);
 	pixmap_map[THEME_MIDDLE__SEPARATOR_END]=QPixmap((const char**)middle__separator_end_xpm);
+	
+	
+	pixmap_map[THEME_RACK_TOOLBAR__RACK_FOLLOW_CURSOR]=QPixmap((const char**)rack_toolbar__rack_follow_cursor_xpm);
+	pixmap_map[THEME_RACK_TOOLBAR__RACK_FOLLOW_CURSOR_ACTIVE]=QPixmap((const char**)rack_toolbar__rack_follow_cursor_active_xpm);
 	
 	
 	pixmap_map[THEME_RACK_TOOLBAR__ADD_PLUGIN_PUSHED]=QPixmap((const char**)rack_toolbar__add_plugin_pushed_xpm);

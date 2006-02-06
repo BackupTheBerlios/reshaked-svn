@@ -173,6 +173,7 @@ bool Editor::blocklist_insert_block(BlockList *p_blocklist,BlockList::Block *p_b
 	d->undo_stream.begin("Insert Block");
 	d->undo_stream.add_command( Command3(&commands,&EditorCommands::blocklist_insert_block,p_blocklist,p_block,p_pos) );
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	return false;
 	
@@ -183,6 +184,7 @@ void Editor::blocklist_remove_block(BlockList *p_blocklist,int p_which) {
 	d->undo_stream.begin("Remove Block");
 	d->undo_stream.add_command( Command2(&commands,&EditorCommands::blocklist_remove_block,p_blocklist,p_which) );
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 
@@ -254,6 +256,7 @@ void Editor::blocklist_resize_block(BlockList *p_blocklist,int p_which,Tick p_ne
 	d->undo_stream.add_command( Command3(&commands,&EditorCommands::blocklist_set_block_length,p_blocklist,p_which,p_new_size) );
 	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	
 }
@@ -279,6 +282,7 @@ void Editor::enter_blocklist(EditorData::EnterBLDir p_dir) {
 	}
 
 	d->ui_update_notify->cursor_changed_blocklist();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 }
 
 int Editor::get_current_blocklist() {

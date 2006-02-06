@@ -5,7 +5,7 @@
 #include "error_macros.h"
 #include <iostream>
 #include "rstring.h"
-
+#include "version.h"
 
 #define MAX_DIVISORS 12
 static const char divisors[MAX_DIVISORS]={1,2,3,4,6,8,12,16,24,32,48,64};

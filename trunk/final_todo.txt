@@ -1,17 +1,20 @@
 *1-Version en formato de archivo, y.. que tenga mime y esas cosas
 *2-Mute/Solo
-3-Add input/output ports to track/driver
+*PP3-Add input/output ports to track/driver
 *4-Save/Load Presets (plugin)
 *5-Save/Load Presets (rack)
 6-Settings Dialog
 *7-Volume Mask
 8-More Hints
-9-Move Rack select to List UI-type 
+*PP9-Move Rack select to List UI-type 
 *10-Rewrite linked block system so shared works better
 11-Transpose stuff
--Bottom thing:
-	12-Show/Hide rack
-	13-Show Last Action
-	14-Show Playback Pos
+*-Bottom thing:
+	*12-Show/Hide rack
+	*13-Show Last Action
+	*14-Show Playback Pos
 15-Simpler, the simple sampler
-16-Song title - info
+*16-Song title - info
+*17-Rack follows cursor
+18-Use mouse wheel
+

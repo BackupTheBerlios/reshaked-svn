@@ -37,6 +37,7 @@ void GlobalViewFrame::block_list_changed_slot() {
 		h_scroll->set_pagesize(0);
 		h_scroll->hide();
 		
+		
 	} else  {
 		int h_scroll_max=global_view->get_total_pixel_width()-global_view->width();
 		h_scroll->set_max(h_scroll_max);
@@ -44,6 +45,7 @@ void GlobalViewFrame::block_list_changed_slot() {
 		
 		h_scroll->set_pagesize(global_view->width() * h_scroll_max / global_view->get_total_pixel_width());
 		h_scroll->show();
+		h_scroll->set_stepsize(global_view->width()/20);
 	}
 //	}
 			
@@ -59,6 +61,7 @@ void GlobalViewFrame::block_list_changed_slot() {
 //		v_scroll->show();
 		v_scroll->set_value( global_view->get_pixel_v_offset() );
 		v_scroll->set_pagesize(global_view->height());
+		v_scroll->set_stepsize(global_view->height()/20);
 //	}
 	
 }
@@ -78,6 +81,11 @@ void GlobalViewFrame::update() {
 GlobalView *GlobalViewFrame::get_global_view() {
 	
 	return global_view;
+}
+
+void GlobalViewFrame::delete_blocks_slot() {
+	
+	global_view->delete_selected_blocks();	
 }
 
 GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p_parent) {

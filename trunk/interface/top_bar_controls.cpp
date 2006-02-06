@@ -157,33 +157,6 @@ void TopBarControls::set_screen(ScreenList p_screen) {
 	screen_changed_signal( p_screen );
 }
 
-void TopBarControls::octave_edit_popup() {
-	bool ok;
-	
-	int o=QInputDialog::getInteger ( this, "Editing Octave", "Octave:", editor->get_editing_octave(), 0, 8,1,&ok);
-	if (ok)
-		editor->set_editing_octave( o );
-	
-	octave_changed_slot();
-}
-
-void TopBarControls::octave_raise() {
-	
-	editor->set_editing_octave( editor->get_editing_octave() + 1 );
-	octave_changed_slot();
-}
-void TopBarControls::octave_lower() {
-	
-	editor->set_editing_octave( editor->get_editing_octave() - 1 );
-	octave_changed_slot();
-	
-}
-
-
-void TopBarControls::octave_changed_slot() {
-	
-	label_octave->set_text( QString::number( editor->get_editing_octave() ) );			
-}
 
 QMenu * TopBarControls::get_file_menu() {
 	
@@ -283,23 +256,7 @@ TopBarControls::TopBarControls(QWidget *p_parent,Editor *p_editor,PropertyEditUp
 	
 	new PixmapLabel(bpm_vb,GET_QPIXMAP(THEME_TOP__BPM_BOTTOM));
 	
-	new PixmapLabel(controls_hbox,GET_QPIXMAP(THEME_TOP__BPM_OCTAVE_SEPARATOR));
-	
-	CVBox *octave_vb = new CVBox(controls_hbox);
-	new PixmapLabel(octave_vb,GET_QPIXMAP(THEME_TOP__OCTAVE_TOP));
-	CHBox *octave_hb = new CHBox(octave_vb);
-	
-	label_octave = new PixmapLabel(octave_hb,GET_QPIXMAP(THEME_TOP__OCTAVE_DISPLAY));
-	QObject::connect(label_octave,SIGNAL(clicked_signal()),this,SLOT(octave_edit_popup()));
-	updown_octave = new PixmapUpDown(octave_hb,GET_QPIXMAP(THEME_TOP__OCTAVE_UPDOWN));
-	QObject::connect(updown_octave,SIGNAL(up_pressed_signal()),this,SLOT(octave_raise()));
-	QObject::connect(updown_octave,SIGNAL(down_pressed_signal()),this,SLOT(octave_lower()));
-	octave_changed_slot();
-	
-	new PixmapLabel(octave_vb,GET_QPIXMAP(THEME_TOP__OCTAVE_BOTTOM));
-
-	new PixmapLabel(controls_hbox,GET_QPIXMAP(THEME_TOP__OCTAVE_END));
-	
+	new PixmapLabel(controls_hbox,GET_QPIXMAP(THEME_TOP__BPM_END));
 	
 	
 	/** END OF CONTROLS */

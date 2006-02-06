@@ -33,7 +33,10 @@
 #ifndef MUTEX_LOCK_PTHREADS_H
 #define MUTEX_LOCK_PTHREADS_H
 
+#include "version.h"
+
 #ifdef POSIX_ENABLED
+
 
 #include "mutex_lock.h"
 #include <pthread.h>

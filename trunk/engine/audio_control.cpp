@@ -49,6 +49,11 @@ void AudioControl::mutex_unlock() {
 	
 }
 
+void AudioControl::reset() {
+	
+	SoundDriverList::get_singleton()->reset_driver();
+}
+
 void AudioControl::init() {
 	
 	audio_mutex=MutexLock::create_mutex();

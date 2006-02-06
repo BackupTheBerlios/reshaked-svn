@@ -120,6 +120,8 @@ Tick Cursor::get_snap() {
 
 void Cursor::set_window_offset(int p_offset) {
 
+	if (p_offset<0)
+		p_offset=0;
 	if (window_offset==p_offset)
 		return;
  	window_offset=p_offset;

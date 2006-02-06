@@ -321,6 +321,11 @@ SoundPluginRack::SoundPluginRack(QWidget *p_parent,PropertyEditUpdater *p_update
 	
 	setMinimumHeight(GET_CONSTANT(CONSTANT_RACK_MINIMUM_HEIGHT));
 
+	setBackgroundRole(QPalette::NoRole);
+	p=palette();
+	p.setColor(QPalette::Background,QColor(0,0,0));
+	setPalette(p);
+	
 }
 
 

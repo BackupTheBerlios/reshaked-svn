@@ -28,7 +28,7 @@ class CHBox : public QWidget {
 	QBoxLayout *l;
 	bool event ( QEvent * e );
 	
-	
+
 public:
 	QBoxLayout *layout() { return l; }
 	CHBox(QWidget *p_parent,bool p_vertical=false);

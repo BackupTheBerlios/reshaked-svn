@@ -323,6 +323,7 @@ void Editor::begin_meta_undo_block(String p_name) {
 void Editor::end_meta_undo_block() {
 	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 }
 
 void Editor::lock_undo_stream() {
@@ -334,16 +335,19 @@ void Editor::lock_undo_stream() {
 void Editor::unlock_undo_stream() {
 	
 	d->undo_stream.unlock();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 
 void Editor::undo() {
 	
+	d->ui_update_notify->notify_action( "UNDO: "+d->undo_stream.get_current_action_text() );
 	d->undo_stream.undo();
 }
 void Editor::redo() {
 	
 	d->undo_stream.redo();
+	d->ui_update_notify->notify_action( "REDO: "+d->undo_stream.get_current_action_text() );
 
 }
 
@@ -364,6 +368,37 @@ UI_UpdateNotify *Editor::get_ui_update_notify() {
 }
 
 
+void Editor::play_note_at_cursor() {
+	
+	int ti=get_current_track();
+	if (ti<0)
+		return;
+	
+	Track * track=d->song->get_track(ti);
+	if (!track)
+		return;
+	
+	Track_Pattern *pattern_track=dynamic_cast<Track_Pattern*>(track);
+	if (!pattern_track)
+		return;
+	
+	Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column ) );
+	if (note.is_empty())
+		return;
+					
+	EventMidi em;
+	em.channel=0;
+	em.midi_type=note.is_note_off()?EventMidi::MIDI_NOTE_OFF:EventMidi::MIDI_NOTE_ON;
+	em.data.note.note=note.note;
+	em.data.note.velocity=note.is_note_off()?0:note.volume;
+						
+	pattern_track->add_edit_event( em, d->pattern_edit.column );
+	pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
+	
+	
+	
+}
+
 void Editor::bar_length_set(int p_at_beat,int p_len) {
 	
 	if (p_len<2 || p_len>16)
@@ -376,6 +411,7 @@ void Editor::bar_length_set(int p_at_beat,int p_len) {
 	d->undo_stream.add_command(Command2(&commands,&EditorCommands::bar_length_add,p_at_beat,p_len));
 	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 void Editor::bar_length_remove(int p_at_beat) {
@@ -385,6 +421,7 @@ void Editor::bar_length_remove(int p_at_beat) {
 	d->undo_stream.add_command(Command1(&commands,&EditorCommands::bar_length_remove,p_at_beat));
 	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 }
 
@@ -421,7 +458,17 @@ Editor::Editor(Song *p_song,UI_UpdateNotify *p_ui_update_notify) {
 	d->selection.enabled=false;
 }
 
-
+void Editor::reset() {
+	
+	d->cursor.set_pos(0);
+	d->cursor.set_window_offset(0);
+	d->global_edit.current_blocklist=0;
+	d->pattern_edit.column=0;
+	d->pattern_edit.field=0;
+	d->selection.enabled=false;
+	d->selection.data.clear();
+	d->undo_stream.clear();
+}
 Editor::~Editor()
 {
 }

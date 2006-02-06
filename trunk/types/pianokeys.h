@@ -3,7 +3,7 @@
 
 
 enum PianoKey {
-	KEY_C_0,
+	KEY_C_0=0,
 	KEY_Cs0,
 	KEY_D_0,
 	KEY_Ds0,

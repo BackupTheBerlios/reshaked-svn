@@ -12,6 +12,8 @@
 #ifndef RESHAKEDMUTEX_LOCK_WIN32_H
 #define RESHAKEDMUTEX_LOCK_WIN32_H
 
+#include "version.h"
+
 #ifdef WIN32_ENABLED
 
 #include "mutex_lock.h"

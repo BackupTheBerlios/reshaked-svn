@@ -189,6 +189,7 @@ class UndoStream {
 	
 	struct UndoGroup {
 		
+		int collapses;
 		unsigned int timestamp; //time at which the command happened
 		String name;
 		std::list<UndoElement> command_list;
@@ -207,7 +208,14 @@ class UndoStream {
 	
 	int lock_count;
 	unsigned int collapse_max_time_window; //in msecs
+	
+	
 public:	
+	
+	String get_current_action_name();
+	String get_current_action_text();
+	int get_current_action_collapses();
+	
 	
 	void begin(String p_name,bool p_can_collapse_to_previous=true);
 	void add_command( CommandFunc *p_command );
@@ -220,7 +228,10 @@ public:
 	void undo();
 	void redo();
 	
+	void clear();
+	
 	UndoStream();
+	~UndoStream();
 	
 };
 

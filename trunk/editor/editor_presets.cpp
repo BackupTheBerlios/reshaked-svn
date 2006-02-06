@@ -53,6 +53,7 @@ TreeLoaderDisk::ErrorReading Editor::load_plugin_preset(SoundPlugin *p_plugin,St
 	
 	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	
 	p_plugin->set_current_file(p_filename);
 
@@ -131,6 +132,7 @@ TreeLoaderDisk::ErrorReading Editor::load_track_preset(Track *p_track,String p_f
 	}
 	
 	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	p_track->set_rack_file( p_filename );
 	return TreeLoaderDisk::ERROR_NONE;	
 }

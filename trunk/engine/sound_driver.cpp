@@ -173,8 +173,10 @@ void SoundDriver::set_audio_process_base(AudioProcessBase *p_base) {
 void SoundDriver::set_port_layout(const AudioPortLayout *p_layout) {
 	
 	ERR_FAIL_COND(get_status()!=STATUS_DISABLED);
+	port_layout=p_layout;
 	
 	input_node.driver=this;
+	
 	
 	for (int i=0;i<input_node.input_plugs.size();i++) {
 		
@@ -199,6 +201,8 @@ void SoundDriver::set_port_layout(const AudioPortLayout *p_layout) {
 		
 		output_node.output_plugs.push_back( new AudioPlug( p_layout->port_out_info[i], AudioPlug::TYPE_INPUT, &output_node ) );
 	}
+	
+	
 	
 }
 

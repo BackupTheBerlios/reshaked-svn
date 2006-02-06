@@ -12,6 +12,7 @@
 #ifndef RESHAKEDUI_UPDATENOTIFY_H
 #define RESHAKEDUI_UPDATENOTIFY_H
 #include <list>
+#include "typedefs.h"
 
 namespace ReShaked {
 
@@ -39,6 +40,8 @@ public:
 	virtual void track_names_changed()=0;
 	
 	virtual void volume_mask_changed()=0;
+	
+	virtual void notify_action(String p_action)=0;
 	
 	/* MVC Hacks */
 	virtual void current_track_add_column()=0;	

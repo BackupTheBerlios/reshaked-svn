@@ -84,13 +84,14 @@ void PixmapButton::mouseReleaseEvent(QMouseEvent *e) {
 			
 			mouse_press_event_override();
 			mouse_pressed_signal();
-			emit_qactions();
+			if (!ignore_actions)
+				emit_qactions();
 		} else if (type==TYPE_TOGGLE) {
 			
 			status.pressed=!status.pressed;
 			mouse_pressed_signal();
 			mouse_toggled_signal(status.pressed);
-			if (status.pressed)
+			if (status.pressed && !ignore_actions)
 				emit_qactions();
 			
 		}
@@ -139,6 +140,10 @@ void PixmapButton::set_pressed(bool p_pressed) {
 	
 }
 
+void PixmapButton::set_ignore_actions(bool p_ignore) {
+	
+	ignore_actions=p_ignore;	
+}
 
 PixmapButton::PixmapButton(QWidget *p_parent,const Skin& p_skin,Type p_type) : QWidget(p_parent) {
 	
@@ -149,7 +154,7 @@ PixmapButton::PixmapButton(QWidget *p_parent,const Skin& p_skin,Type p_type) : Q
 	status.press_attempt=false;
 	status.hovering=false;
 	status.pressing_inside=false;
-	
+	ignore_actions=false;	
 	
 }
 
