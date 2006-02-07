@@ -60,8 +60,22 @@
 #define __WINDOWS_ASIO__
 #endif
 
-#endif
 
+#endif //WIN32_ENABLED
+
+
+#ifdef POSIX_ENABLED
+
+//really linux only?
+#define __LINUX_OSS__ 
+
+#endif //POSIX_ENABLED
+
+#ifdef ALSA_ENABLED
+
+#define __LINUX_ALSA__
+
+#endif //ALSA_ENABLED
 
 #if defined(__WINDOWS_DS__) || defined(__WINDOWS_ASIO__)
   #include <windows.h>

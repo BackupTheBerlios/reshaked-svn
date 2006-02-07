@@ -182,6 +182,100 @@ LocalProperty::~LocalProperty() {
 	
 }
 
+/****************************************************************************/
+
+
+
+int OptionsProperty::get_current() {
+	
+	
+	return current;
+}
+double OptionsProperty::get() {
+	
+	return (double)current;
+}
+void OptionsProperty::set(double p_val) {
+	
+	int which=(int)p_val;
+	if (which<0)
+		which=0;
+	if (which>=options.size())
+		which=options.size()-1;
+	
+	current=which;
+	
+}
+double OptionsProperty::get_stepping() {
+	
+	return 1;
+	
+}
+double OptionsProperty::get_max() {
+	
+	options.size()-1;
+	
+}
+double OptionsProperty::get_min() {
+	
+	return 0;
+	
+}
+double OptionsProperty::get_default() {
+	
+	return 0;
+	
+}
+String OptionsProperty::get_name() {
+	
+	
+	return name;
+}
+String OptionsProperty::get_caption() {
+	
+	
+	return caption;
+}
+String OptionsProperty::get_postfix() {
+	
+	return postfix;
+	
+}
+
+
+String OptionsProperty::get_text_value(double p_for_value,bool p_no_postfix) {
+	
+	int which=(int)p_for_value;
+	if (which<0 || which>=options.size())
+		return "";
+	
+	return options[which] + " " + postfix;
+	
+}
+bool OptionsProperty::has_text_value() {
+	
+	
+	return true;
+}
+
+Property::DisplayMode OptionsProperty::get_display_mode() {
+	
+	
+	return DISPLAY_OPTIONS;
+}
+
+void OptionsProperty::set_all(String p_name,String p_caption,const std::vector<String>& p_options,int p_default,String p_postfix) {
+	
+	name=p_name;
+	caption=p_caption;
+	options=p_options;
+	postfix=p_postfix;
+	set(p_default);
+}
+
+OptionsProperty::OptionsProperty() {}
+
+/****************************************************************************/
 
 Property *PropertyEditor::get_property() {
 	

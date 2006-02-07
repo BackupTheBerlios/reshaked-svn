@@ -63,11 +63,9 @@ class SoundDriver_JACK : public SoundDriver {
 
 public:
 	
-	AudioNode *get_input_node();
-	AudioNode *get_output_node();
 	
 	int get_settings_count();
-	Property *get_setting();
+	Property *get_setting(int p_setting);
 	
 	bool uses_file();
 	String get_file();

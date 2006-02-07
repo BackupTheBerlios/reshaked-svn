@@ -96,6 +96,8 @@ void SoundDriver_JACK::write_to_inputs(int p_frames) {
 
 		}			
 	}
+	
+	
 }
 			    
 void SoundDriver_JACK::read_from_outputs(int p_frames) {
@@ -129,6 +131,8 @@ void SoundDriver_JACK::read_from_outputs(int p_frames) {
 			}
 		}			
 	}	
+	
+	process_offset+=p_frames;		
 }
 
 /* Regular Functions */
@@ -140,7 +144,7 @@ int SoundDriver_JACK::get_settings_count() {
 	return 0;
 }
 
-Property *SoundDriver_JACK::get_setting() {
+Property *SoundDriver_JACK::get_setting(int p_setting) {
 	
 	return NULL;
 }

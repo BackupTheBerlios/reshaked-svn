@@ -53,6 +53,53 @@ void AudioBuffer::clear(int p_frames) { ///< just clear the contents
 		 
 }
 
+
+
+void AudioBuffer::copy_to_interleaved(float *p_dst,int p_frames) {
+	
+	ERR_FAIL_COND(p_frames>size);///< check if frames are valid
+		
+	int skip=data.size();
+	
+	for (int i=0;i<skip;i++) {
+		
+		float *src=&data[i][0];
+		float *dst=&p_dst[0];
+	
+		int dst_idx=i;
+		for (int j=0;j<p_frames;j++) {
+			dst[dst_idx]=src[j];
+			dst_idx+=skip;
+			
+		}
+			
+	}
+	
+	
+}
+
+void AudioBuffer::copy_from_interleaved(float *p_src,int p_frames) {
+	
+	
+	ERR_FAIL_COND(p_frames>size);///< check if frames are valid
+		
+	int skip=data.size();
+	
+	for (int i=0;i<skip;i++) {
+		
+		float *dst=&data[i][0];
+		float *src=&p_src[i];
+	
+		
+		for (int j=0,k=0;j<p_frames;j++,k+=skip) {
+			dst[j]=src[k];
+			
+		}
+			
+	}
+	
+	
+}
 void AudioBuffer::copy_from(AudioBuffer *p_src,int p_frames) {
 
 

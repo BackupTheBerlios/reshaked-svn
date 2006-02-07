@@ -108,7 +108,7 @@ public:
 	
 	
 	virtual int get_settings_count()=0;
-	virtual Property *get_setting()=0;
+	virtual Property *get_setting(int p_setting)=0;
 	
 	virtual bool uses_file()=0;
 	virtual String get_file()=0;

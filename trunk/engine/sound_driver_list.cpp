@@ -41,6 +41,7 @@ bool SoundDriverList::init_driver(int p_index,bool p_internal_init) {
 	
 	AudioControl::mutex_lock();
 	
+	
 	if (driver_list[current]->get_status()!=SoundDriver::STATUS_DISABLED) {
 		
 		driver_list[current]->finish();

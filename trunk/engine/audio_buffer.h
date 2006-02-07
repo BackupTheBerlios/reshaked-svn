@@ -18,6 +18,8 @@ public:
 	void clear(int p_frames=-1); ///< just clear the contents, or specify how much
 	void add_from(AudioBuffer *p_src,int p_frames);
 	void copy_from(AudioBuffer *p_src,int p_frames);
+	void copy_from_interleaved(float *p_src,int p_frames);
+	void copy_to_interleaved(float *p_dst,int p_frames);
 	AudioBuffer(int p_channels,int p_size);
 	
 	/* helpers */

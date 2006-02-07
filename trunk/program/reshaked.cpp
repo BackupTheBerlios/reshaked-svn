@@ -35,7 +35,27 @@
 
 #endif
 
+#ifdef DRIVER_RTAUDIO_ENABLED
 
+#include "drivers/sound_driver_rtaudio.h"
+
+std::vector<ReShaked::SoundDriver_RtAudio*> rtaudios; //rtaudio instances :D
+
+static void create_rtaudios(RtAudio::RtAudioApi p_api) {
+	
+	
+	std::vector<ReShaked::String> devices=ReShaked::SoundDriver_RtAudio::get_devices_info(p_api);
+	
+	for (int i=0;i<devices.size();i++) {
+		
+		ReShaked::SoundDriver_RtAudio*driver = new ReShaked::SoundDriver_RtAudio(p_api,i);
+		rtaudios.push_back(driver);
+		ReShaked::SoundDriverList::get_singleton()->add_driver(driver);
+	}
+	
+}
+
+#endif
 
 /* WINDOWS CONFIG DIR SHOULD BE APPDATA */
 
@@ -76,34 +96,44 @@ static void test_config_dir() {
 	
 }
 
+
+
 int main(int argc, char *argv[]) {
 
 	
 	QApplication *q = new QApplication(argc,argv);
+	
+	ReShaked::SoundDriverList driver_list;
 	
 #ifdef POSIX_ENABLED
 	
 	MutexLock::create_mutex=MutexLock_Pthreads::create_mutex_pthreads;
 	ReShaked::GetTime_Posix get_time_posix;
 	
+#ifdef DRIVER_RTAUDIO_ENABLED
+	
+	create_rtaudios(RtAudio::LINUX_OSS);
+#endif
 #endif
 	
 #ifdef WIN32_ENABLED
 
         MutexLock::create_mutex=ReShaked::MutexLock_Win32::create_mutex_pthreads;
 	ReShaked::GetTime_Win32 get_time_win32;
+#ifdef DRIVER_RTAUDIO_ENABLED
+	
+	create_rtaudios(RtAudio::WINDOWS_DS);
+#endif
 
 #endif
 	
 	init_sound_plugin_list();
 	init_sound_plugin_UI_list();
 	
-	
-	
 	ReShaked::AudioControl::init();
 	
-	ReShaked::SoundDriverList driver_list;
 	
+
 	test_config_dir();
 	
 	ReShaked::PluginPresetManager plugin_preset_manager(ReShaked::DeQStrify(CONFIG_DIR_PATH+"/"+CONFIG_DIR+"/presets"));
@@ -117,12 +147,19 @@ int main(int argc, char *argv[]) {
 	
 	
 	ReShaked::MainWindow *w = new ReShaked::MainWindow;
-	driver_list.init_driver();
+	driver_list.init_driver(0);
 	
 	//q.setMainWidget(&w);
 	w->show();
 	
+	int res=q->exec();
 	
-	return q->exec();
+#ifdef DRIVER_RTAUDIO_ENABLED
+	
+	for (int i=0;i<rtaudios.size();i++)
+		delete rtaudios[i];
+#endif
+	
+	return res;
 
 }

@@ -31,7 +31,7 @@ public:
 		DISPLAY_KNOB,
 		DISPLAY_SLIDER,
 		DISPLAY_SPIN,
-		DISPLAY_COMBO,
+		DISPLAY_OPTIONS,
 		DISPLAY_CHECKBOX,
 		DISPLAY_VU,
 			
@@ -109,6 +109,36 @@ public:
 
 };
 
+
+class OptionsProperty : public Property {
+	
+	int current;
+	std::vector<String> options;
+	String name;
+	String caption;
+	String postfix;
+public:	
+	
+	int get_current();
+	double get();
+	void set(double p_val);
+	double get_stepping();
+	double get_max();
+	double get_min();
+	double get_default();
+	String get_name();
+	String get_caption();
+	String get_postfix();
+	
+	
+	String get_text_value(double p_for_value,bool p_no_postfix=false); //useful for precomputnig ranges
+	bool has_text_value();
+	
+	DisplayMode get_display_mode();
+	
+	void set_all(String p_name,String p_caption,const std::vector<String>& p_options,int p_default=0,String p_postfix="");
+	OptionsProperty();
+};
 
 class PropertyEditor {
 	
