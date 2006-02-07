@@ -18,17 +18,24 @@ os.environ["QTDIR"]=qtdir;
 
 env = Environment(tools=['default','qt'], ENV={'PATH' : os.environ['PATH']});
 
+env.use_asio=False;
+
 print env['TOOLS']
 
 if (os.name=='nt'): #WINDOWS
 
-	env.Append(LIBS=['QtGui4','QtCore4']);
+	env.Append(LIBS=['QtGui4','QtCore4','dsound']);
 	version.enables+=['WIN32_ENABLED'];
 
 else: #POSIX
 	env.Append(LIBS=['QtGui','QtCore']);
 	env.Append(LIBS=['pthread']);
 	version.enables+=['POSIX_ENABLED'];
+	detect.check_pkg_config();
+
+
+version.enables+=['DRIVER_RTAUDIO_ENABLED'];
+
 
 env.Append(CXXFLAGS=['-DQT_NO_KEYWORDS']);
 #env.Append(CPPPATH=['#types/','#engine/','#interface/','#ui_blocks/']);
@@ -39,7 +46,6 @@ env["QT_LIB"]="";
 env.build_dir = None
 
 env.__class__.find_source_files = detect.find_source_files
-detect.check_pkg_config();
 
 #detect.check_pkg(env,"qt-mt","3.2");
 #detect.check_pkg(env,"alsa","0.9");

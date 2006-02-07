@@ -7,3 +7,6 @@ env_drivers.target_list=[];
 env_drivers.find_source_files(env_drivers.target_list,"*.cpp");
 
 env.Library('drivers', env_drivers.target_list)
+
+if (env.use_asio==True):
+	SConscript("asio/SCsub");

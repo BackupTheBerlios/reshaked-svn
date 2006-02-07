@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <iostream>
 
+#include "version.h"
 
 #ifdef WIN32_ENABLED
 
