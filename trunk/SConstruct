@@ -16,7 +16,8 @@ QT_VERSION_MINOR_NEEDED = 0
 qtdir=detect.check_qtdir(QT_VERSION_MAJOR_NEEDED,QT_VERSION_MINOR_NEEDED);
 os.environ["QTDIR"]=qtdir;
 
-env = Environment(CCFLAGS=['-Wall','-g3','-I.','-Wno-sign-compare'], tools=['default','qt']);
+env = Environment(tools=['default','qt'], ENV={'PATH' : os.environ['PATH']});
+
 print env['TOOLS']
 
 if (os.name=='nt'): #WINDOWS
@@ -60,4 +61,3 @@ SConscript('drivers/SCsub');
 SConscript('plugins/SCsub');
 SConscript('plugin_UIs/SCsub');
 SConscript('program/SCsub');
-

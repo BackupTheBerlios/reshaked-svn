@@ -4,7 +4,19 @@
 #include <signal.h>
 #include <iostream>
 
+
+#ifdef WIN32_ENABLED
+
+#define RAISE_SIGNAL
+
+#endif
+
+#ifdef POSIX_ENABLED
+
 #define RAISE_SIGNAL if (getenv("ABORT_ON_ERROR")) abort();
+
+#endif
+
 
 #define ERR_FAIL_INDEX(m_index,m_size) \
 	 {if ((m_index)<0 || (m_index)>=(m_size)) { \
@@ -56,3 +68,4 @@
 
 
 #endif
+

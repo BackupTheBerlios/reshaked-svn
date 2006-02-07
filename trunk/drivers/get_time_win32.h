@@ -24,7 +24,7 @@ namespace ReShaked {
 /**
 	@author red <red@killy>
 */
-class GetTime_Win32{
+class GetTime_Win32 : public GetTime{
 	
 	LARGE_INTEGER time_begin;
 	LARGE_INTEGER freq_divisor;

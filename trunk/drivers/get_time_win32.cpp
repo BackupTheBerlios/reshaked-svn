@@ -20,11 +20,11 @@ void GetTime_Win32::get_time(unsigned int &sec,unsigned int &usec) {
 	
 	LARGE_INTEGER time;
 	QueryPerformanceCounter(&time);
-	time/=freq_divisor;
-	time-=time_begin;
+	time.QuadPart/=freq_divisor.QuadPart;
+	time.QuadPart-=time_begin.QuadPart;
 	
-	usec=(int)( (time%1000)*1000 );
-	sec=time/1000;	
+	usec=(int)( (time.QuadPart%1000)*1000 );
+	sec=time.QuadPart/1000;	
 }
 
 
@@ -32,9 +32,9 @@ GetTime_Win32::GetTime_Win32()
 {
 	QueryPerformanceCounter(&time_begin);
 	QueryPerformanceFrequency(&freq_divisor);
-	freq_divisor/=1000; // this way, further divisions will just return milliseconds
+	freq_divisor.QuadPart/=1000; // this way, further divisions will just return milliseconds
 	
-	time_begin/=freq_divisor; //move to msec
+	time_begin.QuadPart/=freq_divisor.QuadPart; //move to msec
 }
 
 

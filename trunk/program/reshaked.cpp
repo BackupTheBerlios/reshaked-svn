@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 	
 #ifdef WIN32_ENABLED
 
-	MutexLock::create_mutex=MutexLock_Win32::create_mutex_pthreads;
+        MutexLock::create_mutex=ReShaked::MutexLock_Win32::create_mutex_pthreads;
 	ReShaked::GetTime_Win32 get_time_win32;
 
 #endif

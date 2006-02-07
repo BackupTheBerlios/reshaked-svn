@@ -1,8 +1,8 @@
 
 #include "mutex_lock_pthreads.h"
 
-#ifdef POSIX_ENABLED
 
+#ifdef POSIX_ENABLED
 
 MutexLock *MutexLock_Pthreads::create_mutex_pthreads() {
 
