@@ -189,6 +189,14 @@ bool SoundDriver_PortAudio::init() {
 		return true;
 	}
 			
+	error=Pa_StartStream(stream);
+	
+	if (error<0) {
+		
+		last_error=Pa_GetErrorText(error);		
+		return true;
+	}
+	
 	printf("OPENING PORTAUDIO\n");
 	
 	active=true;
