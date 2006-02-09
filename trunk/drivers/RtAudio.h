@@ -71,7 +71,7 @@
 
 #endif //POSIX_ENABLED
 
-#ifdef ALSA_ENABLED
+#ifdef DRIVER_ALSA_ENABLED
 
 #define __LINUX_ALSA__
 

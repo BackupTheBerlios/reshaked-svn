@@ -141,21 +141,6 @@ public:
 
 };
 
-class PropertyEditSpinBox : public QDoubleSpinBox, public PropertyEditor {
-	
-Q_OBJECT	
-	virtual void config();
-	virtual void changed();
-	
-	
-private slots:
-			
-	void value_changed_slot(double p_val);
-public:	
-	
-	PropertyEditSpinBox(QWidget *p_widget);
-	
-};
 
 
 

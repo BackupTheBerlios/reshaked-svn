@@ -88,7 +88,8 @@ int SoundDriverList::get_output_latency() {
 
 void SoundDriverList::finish_driver() {
 	ERR_FAIL_COND(song==NULL);
-	ERR_FAIL_COND(is_current_driver_active());
+	if (!is_current_driver_active())
+		return;
 	
 	AudioControl::mutex_lock();
 	driver_list[current]->finish();
@@ -121,7 +122,12 @@ void SoundDriverList::set_song(Song *p_song) {
 	
 	song=p_song;	
 }
-
+SoundDriver *SoundDriverList::get_driver(int p_index) {
+	
+	ERR_FAIL_INDEX_V(p_index,driver_list.size(),NULL);
+	return driver_list[p_index];	
+	
+}
 SoundDriverList::SoundDriverList() {
 	
 	current=-1;

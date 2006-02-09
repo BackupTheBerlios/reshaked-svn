@@ -5,10 +5,10 @@
 *5-Save/Load Presets (rack)
 6-Settings Dialog
 *7-Volume Mask
-8-More Hints
+*sd-More Hints
 *PP9-Move Rack select to List UI-type 
 *10-Rewrite linked block system so shared works better
-11-Transpose stuff
+*11-Transpose stuff
 *-Bottom thing:
 	*12-Show/Hide rack
 	*13-Show Last Action
@@ -16,5 +16,5 @@
 15-Simpler, the simple sampler
 *16-Song title - info
 *17-Rack follows cursor
-18-Use mouse wheel
+*18-Use mouse wheel
 

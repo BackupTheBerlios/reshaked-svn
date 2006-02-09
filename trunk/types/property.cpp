@@ -213,7 +213,7 @@ double OptionsProperty::get_stepping() {
 }
 double OptionsProperty::get_max() {
 	
-	options.size()-1;
+	return options.size()-1;
 	
 }
 double OptionsProperty::get_min() {
@@ -294,14 +294,16 @@ void PropertyEditor::set(double p_val) {
 		return;
 	
 	
-	group->locked=true;
-	for (int i=0;i<group->other_editors.size();i++) {
-		if (group->other_editors[i]==this)
-			continue;
-		group->other_editors[i]->check_if_changed();
-	}
-	group->locked=false;
-	
+	if (group) {
+		
+		group->locked=true;
+		for (int i=0;i<group->other_editors.size();i++) {
+			if (group->other_editors[i]==this)
+				continue;
+			group->other_editors[i]->check_if_changed();
+		}
+		group->locked=false;
+	}	
 	if (changed_by_editor)
 		changed_by_editor(changed_by_editor_userdata,this,old_val);
 		

@@ -63,6 +63,7 @@ class SoundDriver_JACK : public SoundDriver {
 
 public:
 	
+	String get_last_error();
 	
 	int get_settings_count();
 	Property *get_setting(int p_setting);

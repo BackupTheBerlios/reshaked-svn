@@ -21,7 +21,7 @@ AudioNode *AudioGraph::get_node_at_visual_pos(int p_pos) {
 
 bool AudioGraph::recompute_process_order() {
 
-	if (nodes.size()==0)
+	if (nodes.size()<2)
 		return false;
 	
 	/* This is my own algorithm for non-recursive graph solving, I call it Squirrel-Graph-Sort  */
@@ -91,8 +91,14 @@ bool AudioGraph::recompute_process_order() {
 
 void AudioGraph::recompute_graph() {
 
-	
 	graph_process.clear();
+	
+	if (nodes.size()<2) { //no graph can work with less than 2 nodes
+		
+		graph_process.configure_connections();
+		return;
+	}
+	
 	for (int i=0;i<nodes.size();i++) {
 		//printf("%i: %lls\n",i, nodes[process_order[i]]->get_caption().c_str() );
 		graph_process.add_node(nodes[process_order[i]]);
@@ -112,7 +118,6 @@ void AudioGraph::recompute_graph() {
 	}
 	
 	
-	graph_process.configure_connections();
 	
 	
 }

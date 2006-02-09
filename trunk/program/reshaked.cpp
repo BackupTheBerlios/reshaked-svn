@@ -41,20 +41,6 @@
 
 std::vector<ReShaked::SoundDriver_RtAudio*> rtaudios; //rtaudio instances :D
 
-static void create_rtaudios(RtAudio::RtAudioApi p_api) {
-	
-	
-	std::vector<ReShaked::String> devices=ReShaked::SoundDriver_RtAudio::get_devices_info(p_api);
-	
-	for (int i=0;i<devices.size();i++) {
-		
-		ReShaked::SoundDriver_RtAudio*driver = new ReShaked::SoundDriver_RtAudio(p_api,i);
-		rtaudios.push_back(driver);
-		ReShaked::SoundDriverList::get_singleton()->add_driver(driver);
-	}
-	
-}
-
 #endif
 
 /* WINDOWS CONFIG DIR SHOULD BE APPDATA */
@@ -110,10 +96,18 @@ int main(int argc, char *argv[]) {
 	MutexLock::create_mutex=MutexLock_Pthreads::create_mutex_pthreads;
 	ReShaked::GetTime_Posix get_time_posix;
 	
-#ifdef DRIVER_RTAUDIO_ENABLED
+# ifdef DRIVER_RTAUDIO_ENABLED
 	
-	create_rtaudios(RtAudio::LINUX_OSS);
-#endif
+	ReShaked::SoundDriver_RtAudio rtaudio_oss(RtAudio::LINUX_OSS);
+	driver_list.add_driver(&rtaudio_oss);
+#  ifdef DRIVER_ALSA_ENABLED
+	// Works like crap, i'm not using it for now
+	//ReShaked::SoundDriver_RtAudio rtaudio_alsa(RtAudio::LINUX_ALSA);
+	//driver_list.add_driver(&rtaudio_alsa);
+	
+#  endif
+# endif	
+
 #endif
 	
 #ifdef WIN32_ENABLED
@@ -122,7 +116,8 @@ int main(int argc, char *argv[]) {
 	ReShaked::GetTime_Win32 get_time_win32;
 #ifdef DRIVER_RTAUDIO_ENABLED
 	
-	create_rtaudios(RtAudio::WINDOWS_DS);
+	ReShaked::SoundDriver_RtAudio rtaudio_ds(RtAudio::WINDOWS_DS);
+	driver_list.add_driver(&rtaudio_ds);
 #endif
 
 #endif
@@ -154,11 +149,6 @@ int main(int argc, char *argv[]) {
 	
 	int res=q->exec();
 	
-#ifdef DRIVER_RTAUDIO_ENABLED
-	
-	for (int i=0;i<rtaudios.size();i++)
-		delete rtaudios[i];
-#endif
 	
 	return res;
 

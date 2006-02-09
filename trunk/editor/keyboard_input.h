@@ -106,6 +106,7 @@ public:
 	int get_key_bind_by_name(String p_name);
 	int get_key_bind_key(int p_idx);
 	int get_key_bind_key_nocase(int p_idx);
+	int get_key_bind_index_from_key(int p_key);
 
 	bool is_number(int p_key);
 	int get_number(int p_key);

@@ -37,7 +37,7 @@ else: #POSIX
 version.enables+=['DRIVER_RTAUDIO_ENABLED'];
 
 
-env.Append(CXXFLAGS=['-DQT_NO_KEYWORDS']);
+#env.Append(CXXFLAGS=['-DQT_NO_KEYWORDS']);
 #env.Append(CPPPATH=['#types/','#engine/','#interface/','#ui_blocks/']);
 env.Append(CPPPATH=['#','#types/','#engine/','#interface/','#ui_blocks/','#pixmaps/','#editor/']);
 env["QT_LIB"]="";
@@ -52,6 +52,9 @@ env.__class__.find_source_files = detect.find_source_files
 
 if (detect.check_pkg(env,"jack","0.100.0")):
 	version.enables+=['DRIVER_JACK_ENABLED'];
+
+if (detect.check_pkg(env,"alsa","1.0.0")):
+	version.enables+=['DRIVER_ALSA_ENABLED'];
 
 Export('env');
 

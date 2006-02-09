@@ -166,7 +166,7 @@ void SoundDriver_JACK::set_file(String p_file) {
 
 String SoundDriver_JACK::get_name() {
 	
-	return "Jack";	
+	return "Jack Connection Kit";	
 }
 
 SoundDriver::Status SoundDriver_JACK::get_status() {
@@ -179,9 +179,14 @@ float SoundDriver_JACK::get_mix_rate() {
 	return mixing_frequency;
 }
 
+String SoundDriver_JACK::get_last_error() {
+	
+	return last_error;
+}
+
 bool SoundDriver_JACK::init() {
 	
-	printf("JACK ATTEMPT INIT\n");
+	last_error="";
 	if (active) {
 		last_error="Driver Already Active";
 		ERR_PRINT("Driver Already Active");

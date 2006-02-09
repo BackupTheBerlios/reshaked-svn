@@ -243,58 +243,6 @@ PropertyEditUpDown::~PropertyEditUpDown() {
 	
 }
 
-/*******************/
-
-void PropertyEditSpinBox::config() {
-	
-	/* calculate digits */
-	int digits=-1;
-	double interval=get_property()->get_stepping();
-	
-	if (interval!=0 || interval!=floorf(interval)) {
-		
-		digits=0;
-		double step_aux=interval;
-		do {
-			step_aux*=10;
-			//step_aux+=1e-10;
-			digits++;
-			if (step_aux-floor(step_aux) < 1e-6 )
-				break;
-			
-		
-		} while (true);
-	} 
-	
-	if (digits<0)
-		digits=4;
-	
-	setSuffix( QStrify(get_property()->get_postfix()) );
-	setDecimals(digits);
-	setMaximum( get_property()->get_max() );
-	setMinimum( get_property()->get_min() );
-	setSingleStep(get_property()->get_stepping() );
-
-}
-
-
-void PropertyEditSpinBox::value_changed_slot(double p_val) {
-	
-//	set( p_val );
-
-}
-
-void PropertyEditSpinBox::changed() {
-	
-	
-	setValue( get_property()->get() );
-}
-
-PropertyEditSpinBox::PropertyEditSpinBox(QWidget *p_widget) : QDoubleSpinBox(p_widget) {
-
-	QObject::connect(this,SIGNAL(valueChanged(double)),this,SLOT(value_changed_slot( double )));
-
-}
 
 
 }

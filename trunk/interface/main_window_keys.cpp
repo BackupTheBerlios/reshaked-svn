@@ -134,7 +134,7 @@ void MainWindow::create_keybindings() {
 	
 	data.keyboard_codes.add_key_bind("note_entry/play_note_at_cursor","Play Note Under Cursor",Qt::Key_4);
 
-	data.keyboard_codes.add_key_bind("note_entry/play_row_at_cursor","Play Note Under Cursor",Qt::Key_8);
+	data.keyboard_codes.add_key_bind("note_entry/play_row_at_cursor","Play Row Under Cursor",Qt::Key_8);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/undo",Qt::CTRL+Qt::Key_Z);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/redo",Qt::SHIFT+Qt::CTRL+Qt::Key_Z);
 

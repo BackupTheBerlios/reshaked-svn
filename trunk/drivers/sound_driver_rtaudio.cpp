@@ -50,9 +50,13 @@ void SoundDriver_RtAudio::set_file(String p_file) {
 	
 }
 
+String SoundDriver_RtAudio::get_last_error() {
+	
+	return last_error;
+}
 String SoundDriver_RtAudio::get_name() {
 	
-	return device_name;
+	return driver_name;
 }
 float SoundDriver_RtAudio::get_mix_rate() {
 	
@@ -71,7 +75,7 @@ int SoundDriver_RtAudio::static_callback(char *buffer, int bufferSize, void *p_i
 
 void SoundDriver_RtAudio::callback(char *p_buffer, int p_bufferSize) {
 	
-	
+
 	if (AudioControl::mutex_try_lock())
 		return;
 	
@@ -80,14 +84,7 @@ void SoundDriver_RtAudio::callback(char *p_buffer, int p_bufferSize) {
 	
 	process_graph(p_bufferSize);
 
-	/*	
-	signed short *buff16_ptr=(signed short *)(p_buffer);
 	
-	for (int i=0;i<(p_bufferSize*current_outputs);i++) {
-		
-		buff16_ptr[i]=lrintf(output_aux[i]*32767.0);
-	}
-	*/
 	float *buff_ptr=(float *)(p_buffer);
 	
 	for (int i=0;i<(p_bufferSize*current_outputs);i++) {
@@ -137,36 +134,18 @@ bool SoundDriver_RtAudio::is_output_enabled(int p_output) {
 
 bool SoundDriver_RtAudio::init() {
 	
-	last_error="Probably a bug... report it!";
+	last_error="";
 	
 	if (active)
 		return true;
 	
 	ERR_FAIL_COND_V(rtaudio!=NULL,true);
 	
-	ERR_FAIL_COND_V(get_input_count()==0,true);
-	ERR_FAIL_COND_V(get_output_count()==0,true);
+	current_inputs = get_input_count()?get_input_plug(0)->get_channels():0;
+	current_outputs = get_output_count()?get_output_plug(0)->get_channels():0;
 	
-	if (get_input_count()==0) {
-		current_inputs = 0;
-		
-	} else {
-		
-		current_inputs = get_input_plug(0)->get_channels();
-		if (current_inputs>max_inputs)
-			current_inputs=max_inputs;
-	}
-	
-	if (get_output_count()==0) {
-		current_outputs = 0;
-		
-	} else {
-		
-		current_outputs = get_output_plug(0)->get_channels();
-		if (current_outputs>max_outputs)
-			current_outputs=max_outputs;
-	}
-	
+	int in_device=input_device_index[ input_devices.get_current() ]+1; //rtaudio uses 1..devices
+	int out_device=output_device_index[ output_devices.get_current() ]+1;
 	
 	if (current_inputs==0 && current_outputs==0) {
 		last_error="No Inputs/Outputs!";
@@ -185,9 +164,9 @@ bool SoundDriver_RtAudio::init() {
 	
 	try {
 	
-		rtaudio = new RtAudio::RtAudio( device+1,
+		rtaudio = new RtAudio::RtAudio( in_device,
 						current_outputs,
-						device+1,
+						out_device,
 						current_inputs,
 						RTAUDIO_FLOAT32,
 						(int)mixing_frequency,
@@ -226,7 +205,6 @@ void SoundDriver_RtAudio::finish() {
 	if (!active)
 		return;
 	ERR_FAIL_COND(rtaudio==NULL);
-	
 	rtaudio->stopStream();
 	rtaudio->closeStream();
 	delete rtaudio;
@@ -251,12 +229,11 @@ SoundDriver::Status SoundDriver_RtAudio::get_status() {
 }
 
 
-SoundDriver_RtAudio::SoundDriver_RtAudio(RtAudio::RtAudioApi p_api,int p_device) {
+SoundDriver_RtAudio::SoundDriver_RtAudio(RtAudio::RtAudioApi p_api) {
 	
 	mixing_frequency=1;
 	
 	api=p_api;
-	device=p_device;
 	active=false;
 
 	rtaudio=NULL;
@@ -270,11 +247,65 @@ SoundDriver_RtAudio::SoundDriver_RtAudio(RtAudio::RtAudioApi p_api,int p_device)
 		return;
 	}
 	
-	RtAudioDeviceInfo info=rtaudio->getDeviceInfo(device+1);
+	switch (p_api) {
+		case RtAudio::LINUX_ALSA: driver_name="Alsa"; break;
+		case RtAudio::LINUX_OSS: driver_name="Open Sound System (OSS)"; break;
+		case RtAudio::LINUX_JACK: driver_name="Jack"; break;
+		case RtAudio::MACOSX_CORE: driver_name="Core Audio"; break;
+		case RtAudio::WINDOWS_ASIO: driver_name="ASIO"; break;
+		case RtAudio::WINDOWS_DS: driver_name="DirectSound"; break;
+		default: driver_name="RtAudio Unknown"; break;
+	}
 	
-	device_name=info.name.c_str();
-	max_outputs=info.outputChannels;
-	max_inputs=info.inputChannels;
+	int devices=0;
+	try {
+		devices=rtaudio->getDeviceCount();
+	}
+	catch (RtError &error) {
+		
+		last_error=String("CANT GET DEVICES:")+error.getMessage().c_str();
+		return;
+		
+	}
+		
+	int current_input=0;
+	int current_output=0;
+	
+	std::vector<String> output_names;
+	std::vector<String> input_names;
+	
+	for (int i=0;i<devices;i++) {
+		
+		RtAudioDeviceInfo dinfo;
+		try {
+			dinfo=rtaudio->getDeviceInfo(i+1);
+		}
+		catch (RtError &error) {
+			
+			last_error=String("CANT GET DEVICE INFO: ")+error.getMessage().c_str();
+		}
+		
+		if (dinfo.outputChannels) {
+			
+			if (output_device_index.empty())
+				current_output=i;
+			output_device_index.push_back(i);
+			output_names.push_back(String(dinfo.name.c_str()));
+		}
+		if (dinfo.inputChannels) {
+			
+			if (input_device_index.empty())
+				current_input=i;
+			input_device_index.push_back(i);
+			input_names.push_back(String(dinfo.name.c_str()));
+		}
+
+	}	
+	
+	input_devices.set_all("input_devices","Input Devices",input_names,current_input);
+	output_devices.set_all("output_devices","Output Devices",output_names,current_output);
+	
+
 	
 	std::vector<String> buffer_sizes_text;
 	for (int i=0;i<MAX_BUFFER_SIZES;i++) {
@@ -284,7 +315,22 @@ SoundDriver_RtAudio::SoundDriver_RtAudio(RtAudio::RtAudioApi p_api,int p_device)
 	
 	buffer_size.set_all("buffer_size","Buffer Size",buffer_sizes_text,6,"frames");
 	
-	sampling_rate_values=info.sampleRates;
+	
+	sampling_rate_values.push_back(4000);
+	sampling_rate_values.push_back(5512);
+	sampling_rate_values.push_back(8000);
+	sampling_rate_values.push_back(9600);
+	sampling_rate_values.push_back(11025);
+	sampling_rate_values.push_back(16000);
+	sampling_rate_values.push_back(22050);
+	sampling_rate_values.push_back(22050);
+	sampling_rate_values.push_back(32000);
+	sampling_rate_values.push_back(44100);
+	sampling_rate_values.push_back(48000);
+	sampling_rate_values.push_back(88200);
+	sampling_rate_values.push_back(96000);
+	sampling_rate_values.push_back(192000);
+	
 	std::vector<String> sampling_rates_text;
 	for (int i=0;i<sampling_rate_values.size();i++) {
 		
@@ -299,12 +345,16 @@ SoundDriver_RtAudio::SoundDriver_RtAudio(RtAudio::RtAudioApi p_api,int p_device)
 		
 		
 	}
-		
 	
-	mix_rate.set_all("sampling_rate","Sampling Rate",sampling_rates_text,default_sampling_rate,"frames");
+	mix_rate.set_all("sampling_rate","Sampling Rate",sampling_rates_text,default_sampling_rate,"hz");
 
 	fragments.set_all(4,2,16,4,1,Property::DISPLAY_SPIN,"fragments","Fragments");
 	
+	settings.push_back(&input_devices);
+	settings.push_back(&output_devices);
+	settings.push_back(&buffer_size);
+	settings.push_back(&fragments);
+	settings.push_back(&mix_rate);
 	delete rtaudio;
 	rtaudio=NULL;
 	
@@ -319,50 +369,5 @@ SoundDriver_RtAudio::~SoundDriver_RtAudio()
 }
 
 
-std::vector<String> SoundDriver_RtAudio::get_devices_info(RtAudio::RtAudioApi p_api) {
-	
-	std::vector<String> info;
-	
-	RtAudio *rtaudio;
-	
-	try {
-		rtaudio = new RtAudio(p_api);
-	}
-	catch (RtError &error) {
-		
-		return info;
-	}
-	
-	int devices=0;
-	try {
-		devices=rtaudio->getDeviceCount();
-	}
-	catch (RtError &error) {
-		
-		printf("CANT GET DEVICES: %s\n",error.getMessage().c_str());
-		
-	}
-		
-	for (int i=0;i<devices;i++) {
-		
-		RtAudioDeviceInfo dinfo;
-		try {
-			dinfo=rtaudio->getDeviceInfo(i+1);
-		}
-		catch (RtError &error) {
-			
-			printf("CANT GET DEVICE INFO: %s\n",error.getMessage().c_str());
-		}
-		
-		info.push_back(dinfo.name.c_str());
-	}	
-	
-	delete rtaudio;
-	
-	return info;
 }
-
-}
-
-
 #endif

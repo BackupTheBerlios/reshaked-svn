@@ -106,6 +106,8 @@ public:
 		STATUS_ACTIVE
 	};
 	
+	virtual String get_last_error()=0;
+	
 	
 	virtual int get_settings_count()=0;
 	virtual Property *get_setting(int p_setting)=0;

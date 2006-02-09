@@ -35,7 +35,7 @@
 #include "ui_blocks/qaction_keybind.h"
 #include "interface/top_bar_controls.h"
 #include "interface/bottom_bar_controls.h"
-
+#include "interface/settings_dialog.h"
 
 namespace ReShaked {
 
@@ -133,6 +133,8 @@ class MainWindow : public QMainWindow {
 	//TrackSettings *track_settings;
 	RackUI *rack;
 	CVBox *rack_vbox;
+	
+	SettingsDialog *settings;
 
 	void set_top_screen(TopScreenList p_list);
 	//void set_track_settings_page(TrackSettings::TrackSettingsPage p_page);

@@ -167,6 +167,18 @@ int Keyboard_Input::get_number(int p_key) {
 	return -1;
 }
 
+
+int Keyboard_Input::get_key_bind_index_from_key(int p_key) {
+	
+	for (int i=0;i<get_key_bind_count();i++)
+		if (bind_list[i].key==p_key)
+			return i;
+	
+	return NO_KEY;
+	
+	
+}
+
 void Keyboard_Input::set_number(int p_number,int p_key) {
 
 	if (p_number<0 || p_number>=10)

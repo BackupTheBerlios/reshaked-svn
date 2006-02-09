@@ -241,6 +241,7 @@ void MainWindow::menu_action_callback(int p_action) {
 			if (main_stack->currentWidget()==global_view_frame)
 				global_view_frame->delete_blocks_slot();
 		} break;	
+		
 		/*		
 		case TRACK_SYNTH: {
 			settings_dock->setVisible( get_action( item )->isChecked() );
@@ -321,6 +322,10 @@ void MainWindow::menu_action_callback(int p_action) {
 		
 		} break;
 		
+		case SETTINGS_CONFIG: {
+			
+			settings->exec();
+		} break;
 		case HELP_ABOUT: {
 			
 			QMessageBox::about ( this, "About Reshaked","Reshaked v"+QString(VERSION_STRING)+"\n(c) 2006 Juan Linietsky\nEmail: reshaked@gmail.com" );
@@ -611,6 +616,8 @@ MainWindow::MainWindow() {
 	setPalette(p);
 	rack_vbox->hide();
 
+	settings = new SettingsDialog(this);
+	
 	update_titlebar();
 }
 

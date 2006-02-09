@@ -33,7 +33,7 @@ class SoundDriver_RtAudio : public SoundDriver {
 	RtAudio *rtaudio;
 	RtAudio::RtAudioApi api;
 	int device;
-	String device_name;
+	String driver_name;
 	
 	String last_error;
 	
@@ -51,10 +51,17 @@ class SoundDriver_RtAudio : public SoundDriver {
 	
 	
 	std::vector<int> sampling_rate_values;
+	
+	//map visible devices to real devices
+	std::vector<int> input_device_index;
+	std::vector<int> output_device_index;
+	
+	
+	OptionsProperty input_devices;
+	OptionsProperty output_devices;
+	
 	OptionsProperty buffer_size;
 	OptionsProperty mix_rate;
-	int max_inputs;
-	int max_outputs;
 	LocalProperty fragments;
 	
 	static int static_callback(char *buffer, int bufferSize, void *p_instance);
@@ -69,7 +76,7 @@ class SoundDriver_RtAudio : public SoundDriver {
 	std::vector<float> output_aux;
 public:
 	
-	
+	String get_last_error();
 		
 	AudioNode *get_input_node();
 	AudioNode *get_output_node();
@@ -92,10 +99,8 @@ public:
 	
 	Status get_status();
 	
-	SoundDriver_RtAudio(RtAudio::RtAudioApi p_api,int p_device);
-	
-	static std::vector<String> get_devices_info(RtAudio::RtAudioApi p_api);
-	
+	SoundDriver_RtAudio(RtAudio::RtAudioApi p_api);
+
 	
 	~SoundDriver_RtAudio();
 
