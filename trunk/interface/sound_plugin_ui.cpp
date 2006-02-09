@@ -1,3 +1,4 @@
+
 //
 // C++ Implementation: sound_plugin_ui
 //

@@ -118,6 +118,7 @@ void AudioGraph::recompute_graph() {
 	}
 	
 	
+	graph_process.configure_connections();
 	
 	
 }

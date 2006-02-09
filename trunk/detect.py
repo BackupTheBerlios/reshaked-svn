@@ -153,6 +153,7 @@ def make_targets(self, object_list, source_list=[], debug=0):
 			dir = self.Dir('#').abspath + dir
 			
 			stmp = glob.glob(dir + "/*.cpp")
+			stmp += glob.glob(dir + "/*.c")
 
 ## add build_dir to cwd for Object
 			sources = []
@@ -162,6 +163,7 @@ def make_targets(self, object_list, source_list=[], debug=0):
 				sources.append(file)
 		else:
 			sources = glob.glob(dir + "/*.cpp")
+			sources += glob.glob(dir + "/*.c")
 		
 	else:
 		sources = []

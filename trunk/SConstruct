@@ -35,6 +35,7 @@ else: #POSIX
 
 
 version.enables+=['DRIVER_RTAUDIO_ENABLED'];
+version.enables+=['DRIVER_PORTAUDIO_ENABLED'];
 
 
 #env.Append(CXXFLAGS=['-DQT_NO_KEYWORDS']);

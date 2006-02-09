@@ -1,0 +1,13 @@
+Import('env');
+
+env_portaudio = env.Copy();
+env_portaudio.target_list=[];
+
+
+env_portaudio.find_source_files(env_portaudio.target_list,"*.cpp");
+env_portaudio.find_source_files(env_portaudio.target_list,"*.c");
+
+env.Library('portaudio', env_portaudio.target_list)
+
+if (env.use_asio==True):
+	SConscript("asio/SCsub");

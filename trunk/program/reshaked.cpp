@@ -12,6 +12,8 @@
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 #include "drivers/get_time_posix.h"
 
+#include "drivers/sound_driver_portaudio.h"
+
 #include "drivers/get_time_win32.h"
 
 
@@ -91,6 +93,8 @@ int main(int argc, char *argv[]) {
 	
 	ReShaked::SoundDriverList driver_list;
 	
+	
+	
 #ifdef POSIX_ENABLED
 	
 	MutexLock::create_mutex=MutexLock_Pthreads::create_mutex_pthreads;
@@ -98,8 +102,8 @@ int main(int argc, char *argv[]) {
 	
 # ifdef DRIVER_RTAUDIO_ENABLED
 	
-	ReShaked::SoundDriver_RtAudio rtaudio_oss(RtAudio::LINUX_OSS);
-	driver_list.add_driver(&rtaudio_oss);
+//	ReShaked::SoundDriver_RtAudio rtaudio_oss(RtAudio::LINUX_OSS);
+//	driver_list.add_driver(&rtaudio_oss);
 #  ifdef DRIVER_ALSA_ENABLED
 	// Works like crap, i'm not using it for now
 	//ReShaked::SoundDriver_RtAudio rtaudio_alsa(RtAudio::LINUX_ALSA);
@@ -116,10 +120,18 @@ int main(int argc, char *argv[]) {
 	ReShaked::GetTime_Win32 get_time_win32;
 #ifdef DRIVER_RTAUDIO_ENABLED
 	
-	ReShaked::SoundDriver_RtAudio rtaudio_ds(RtAudio::WINDOWS_DS);
-	driver_list.add_driver(&rtaudio_ds);
+//	ReShaked::SoundDriver_RtAudio rtaudio_ds(RtAudio::WINDOWS_DS);
+//	driver_list.add_driver(&rtaudio_ds);
 #endif
 
+#endif
+	
+#ifdef DRIVER_PORTAUDIO_ENABLED
+	
+	ReShaked::SoundDriver_PortAudio::initialize_portaudio();
+	ReShaked::SoundDriver_PortAudio *driver_portaudio = new ReShaked::SoundDriver_PortAudio;
+	driver_list.add_driver(driver_portaudio);
+	
 #endif
 	
 	init_sound_plugin_list();
@@ -149,6 +161,11 @@ int main(int argc, char *argv[]) {
 	
 	int res=q->exec();
 	
+#ifdef DRIVER_PORTAUDIO_ENABLED
+	
+	ReShaked::SoundDriver_PortAudio::finalize_portaudio();
+	
+#endif
 	
 	return res;
 
