@@ -109,7 +109,7 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 		
 		case PluginTop::ACTION_INFO: {
 			
-			QMessageBox *message = new QMessageBox(this);
+			QMessageBox *message = new QMessageBox(topLevelOf(this));
 			message->setWindowTitle(QStrify( plugin->get_info()->caption ));
 			message->setText(QStrify( plugin->get_info()->long_description));
 			
@@ -147,7 +147,7 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 		
 		case PluginTop::ACTION_FILE: {
 			
-			PluginPresetBrowser *ppb = new PluginPresetBrowser(this,plugin);
+			PluginPresetBrowser *ppb = new PluginPresetBrowser(topLevelOf(this),plugin);
 			ppb->exec();
 			
 			switch (ppb->get_action()) {

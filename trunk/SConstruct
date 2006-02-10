@@ -24,7 +24,7 @@ print env['TOOLS']
 
 if (os.name=='nt'): #WINDOWS
 
-	env.Append(LIBS=['QtGui4','QtCore4','dsound']);
+	env.Append(LIBS=['QtGui4','QtCore4','dsound','winmm','ole32']);
 	version.enables+=['WIN32_ENABLED'];
 
 else: #POSIX
@@ -34,7 +34,7 @@ else: #POSIX
 	detect.check_pkg_config();
 
 
-version.enables+=['DRIVER_RTAUDIO_ENABLED'];
+#version.enables+=['DRIVER_RTAUDIO_ENABLED'];
 version.enables+=['DRIVER_PORTAUDIO_ENABLED'];
 
 

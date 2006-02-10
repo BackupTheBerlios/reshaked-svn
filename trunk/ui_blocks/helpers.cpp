@@ -74,6 +74,15 @@ String DeQStrify(const QString& p_str) {
 }
 
 
+QWidget *topLevelOf(QWidget* p_widget) {
+
+    while (p_widget->parentWidget()!=NULL)
+        p_widget=p_widget->parentWidget();
+
+    return p_widget;
+
+}
+
 void BindIntSignal::emitter_slot() {
 	
 	activated_signal(val);

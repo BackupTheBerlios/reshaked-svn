@@ -29,7 +29,7 @@ void RackUI::add_plugin_slot() {
 	track=editor->get_song()->get_track( selected_rack-1 );
 	ERR_FAIL_COND(track==NULL);
 	
-	SoundPluginChooser *plugin_chooser = new SoundPluginChooser(this,track->can_use_synths());
+	SoundPluginChooser *plugin_chooser = new SoundPluginChooser(topLevelOf(this),track->can_use_synths());
 	plugin_chooser->exec();
 	int plugin_idx=plugin_chooser->get_selected_plugin_idx();
 	delete plugin_chooser;
@@ -40,7 +40,7 @@ void RackUI::add_plugin_slot() {
 		int default_channels=track->get_channels();
 	
 		bool ok;
-		int channels=QInputDialog::getInteger ( this, "Channels Instanced", "Channels to Instance?", default_channels, 1, 8, 1, &ok);
+		int channels=QInputDialog::getInteger ( topLevelOf(this), "Channels Instanced", "Channels to Instance?", default_channels, 1, 8, 1, &ok);
 		if (!ok)
 			return;
 		
@@ -193,7 +193,7 @@ void RackUI::rack_presets() {
 	if (!track)
 		return;
 	
-	PluginPresetBrowser *ppb = new PluginPresetBrowser(this,"");
+	PluginPresetBrowser *ppb = new PluginPresetBrowser(topLevelOf(this),"");
 	ppb->exec();
 			
 	switch (ppb->get_action()) {

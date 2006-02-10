@@ -206,7 +206,7 @@ SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths) : Q
 	setWindowTitle("Choose Sound Plugin");
 	selected_idx=-1;
 	
-	setMinimumSize(410,400);
+	setFixedSize(410,400);
 
 }
 

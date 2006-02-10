@@ -142,7 +142,8 @@ bool SoundDriver_RtAudio::init() {
 	ERR_FAIL_COND_V(rtaudio!=NULL,true);
 	
 	current_inputs = get_input_count()?get_input_plug(0)->get_channels():0;
-	current_outputs = get_output_count()?get_output_plug(0)->get_channels():0;
+        current_outputs = get_output_count()?get_output_plug(0)->get_channels():0;
+        current_inputs=0;
 	
 	int in_device=input_device_index[ input_devices.get_current() ]+1; //rtaudio uses 1..devices
 	int out_device=output_device_index[ output_devices.get_current() ]+1;
@@ -164,9 +165,9 @@ bool SoundDriver_RtAudio::init() {
 	
 	try {
 	
-		rtaudio = new RtAudio::RtAudio( in_device,
+		rtaudio = new RtAudio::RtAudio( out_device,
 						current_outputs,
-						out_device,
+						in_device,
 						current_inputs,
 						RTAUDIO_FLOAT32,
 						(int)mixing_frequency,
@@ -253,7 +254,7 @@ SoundDriver_RtAudio::SoundDriver_RtAudio(RtAudio::RtAudioApi p_api) {
 		case RtAudio::LINUX_JACK: driver_name="Jack"; break;
 		case RtAudio::MACOSX_CORE: driver_name="Core Audio"; break;
 		case RtAudio::WINDOWS_ASIO: driver_name="ASIO"; break;
-		case RtAudio::WINDOWS_DS: driver_name="DirectSound"; break;
+		case RtAudio::WINDOWS_DS: driver_name="Microsoft DirectSound"; break;
 		default: driver_name="RtAudio Unknown"; break;
 	}
 	

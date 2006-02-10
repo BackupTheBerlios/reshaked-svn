@@ -1,7 +1,7 @@
 
 #include "version.h"
 #ifdef DRIVER_PORTAUDIO_ENABLED
-#ifdef DRIVER_WIN32_ENABLED
+#ifdef WIN32_ENABLED
 
 #ifndef __DSOUND_WRAPPER_H
 #define __DSOUND_WRAPPER_H
