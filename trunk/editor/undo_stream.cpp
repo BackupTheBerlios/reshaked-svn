@@ -49,6 +49,7 @@ void UndoStream::delete_redo_history() {
 
 void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 
+        printf("Undo Begin!\n");
 	inside_count++;
 	if (inside_count>1) //already into group, merge
 		return;
@@ -79,6 +80,7 @@ void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 
 void UndoStream::add_command( CommandFunc *p_command ) {
 
+        printf("Command Begin\n");
 	ERR_FAIL_COND(inside_count==0);
 	ERR_FAIL_COND(undo_stream.empty());
 	

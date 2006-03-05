@@ -41,7 +41,6 @@
 
 #include "drivers/sound_driver_rtaudio.h"
 
-std::vector<ReShaked::SoundDriver_RtAudio*> rtaudios; //rtaudio instances :D
 
 #endif
 

@@ -56,7 +56,8 @@ int Editor::get_pattern_edit_field() {
 }
 
 bool Editor::pattern_edit_key_press(int p_event) {
-	
+
+        printf("Pattern Keybind\n");
 	Track_Pattern *pattern_track=dynamic_cast<Track_Pattern*>(get_blocklist( get_current_blocklist() ) );
 	ERR_FAIL_COND_V(pattern_track==NULL,false);
 

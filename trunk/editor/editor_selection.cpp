@@ -314,7 +314,7 @@ void Editor::selection_transpose(bool p_up) {
 	
 	if (!d->selection.enabled)
 		return;
-	
+        printf("Transpose Begin\n");
 	
 	Tick tick_from=d->selection.begin.tick;
 	Tick tick_to=d->selection.end.tick+TICKS_PER_BEAT/d->cursor.get_snap();
@@ -376,7 +376,9 @@ void Editor::selection_transpose(bool p_up) {
 	}
 	
 	d->undo_stream.end();
-	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+        d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+        printf("Transpose End\n");
+
 }
 
 
