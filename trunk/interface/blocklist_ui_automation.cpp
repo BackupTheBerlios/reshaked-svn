@@ -893,6 +893,9 @@ void BlockListUI_Automation::show_popup() {
 	screen_to_tick_and_val(e.x(),e.y(),&tick,&val);		
 		
 	int block_idx=automation->get_block_idx_at_pos(tick); //determine block IDX
+	Automation::AutomationData *ad;
+	if (block_idx>=0)
+		ad=automation->get_block( block_idx )->get_data();
 	
 	QList<QAction*> action_list;
 	
@@ -927,9 +930,37 @@ void BlockListUI_Automation::show_popup() {
 	sep->setSeparator(topLevelOf(this));
 	action_list.push_back(sep);
 	
+	/* Only if a block is under cursor */
+	QAction* ac_noint=NULL;
+	QAction* ac_linint=NULL;
+	QAction* ac_splint=NULL;
+	
 	QAction* ac_lfo=NULL;
 	 
 	if (block_idx>=0) {
+		
+		ac_noint = new QAction("No Interpolation",topLevelOf(this));
+		ac_noint->setCheckable(true);
+		if (ad->get_interpolation()==Automation::INTERP_NONE)
+			ac_noint->setChecked(true);
+		action_list.push_back(ac_noint);
+
+		ac_linint = new QAction("Linear Interpolation",topLevelOf(this));
+		ac_linint->setCheckable(true);
+		if (ad->get_interpolation()==Automation::INTERP_LINEAR)
+			ac_linint->setChecked(true);
+		action_list.push_back(ac_linint);
+		
+		ac_splint = new QAction("Spline Interpolation",topLevelOf(this));
+		ac_splint->setCheckable(true);
+		if (ad->get_interpolation()==Automation::INTERP_SPLINE)
+			ac_splint->setChecked(true);
+		action_list.push_back(ac_splint);
+		
+		sep = new QAction("",topLevelOf(this));
+		sep->setSeparator(topLevelOf(this));
+		action_list.push_back(sep);
+		
 		ac_lfo = new QAction("LFO Settings (Block)..",topLevelOf(this));
 		action_list.push_back( ac_lfo );
 		
@@ -946,7 +977,7 @@ void BlockListUI_Automation::show_popup() {
 	
 	
 	QAction *res = QMenu::exec(action_list, QCursor::pos() );	
-	
+
 	if (res==ac_left) {
 		
 		
@@ -968,6 +999,26 @@ void BlockListUI_Automation::show_popup() {
 		
 		automation->set_display_size( Automation::DISPLAY_SIZE_BIG );
 		editor->get_ui_update_notify()->track_list_changed();
+	} else if (res==ac_noint && ac_noint) {
+		
+
+		editor->automation_set_interpolation(automation,block_idx,Automation::INTERP_NONE);
+		
+		update();
+		
+	} else if (res==ac_linint && ac_linint) {
+		
+
+		editor->automation_set_interpolation(automation,block_idx,Automation::INTERP_LINEAR);
+		
+		update();
+		
+	} else if (res==ac_splint && ac_splint) {
+		
+		
+		editor->automation_set_interpolation(automation,block_idx,Automation::INTERP_SPLINE);
+		update();
+		
 	} else if (res==ac_lfo && ac_lfo) { //may be null afterall!
 
 		Automation::AutomationData *ad=automation->get_block( block_idx )->get_data();
@@ -976,8 +1027,20 @@ void BlockListUI_Automation::show_popup() {
 		AutomationSettingsLFO *lfo_settings = new AutomationSettingsLFO(topLevelOf(this),ad);
 		QObject::connect(lfo_settings,SIGNAL(lfo_changed_signal()),this,SLOT(update()));
 		
-		lfo_settings->exec();
+		if (lfo_settings->exec()==QDialog::Accepted && lfo_settings->is_lfo_changed()) {
+			
+			LFO new_lfo=ad->get_lfo();
+			ad->get_lfo()=current_lfo;
+			editor->automation_set_lfo(automation,block_idx,new_lfo);
+			
+			
+		} else {
+			
+			ad->get_lfo()=current_lfo;
+			
+		}
 		
+		update();
 		delete lfo_settings;
 		
 	} else if (res==ac_hide) {

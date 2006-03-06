@@ -78,6 +78,8 @@ void Editor::add_automation_point(Automation *p_automation,Tick p_tick, float p_
 }
 void Editor::move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val,float p_to_lfo) {
 	
+	ERR_FAIL_INDEX(p_block,p_automation->get_block_count());
+	
 	d->undo_stream.begin("Move Point");
 	d->undo_stream.add_command( Command5(&commands,&EditorCommands::move_automation_point,p_automation,p_block,p_point,p_to_tick,Automation::AutomationValue(p_to_val,p_to_lfo)) );
 	d->undo_stream.end();
@@ -85,6 +87,8 @@ void Editor::move_automation_point(Automation *p_automation,int p_block, int p_p
 	
 }
 void Editor::remove_automation_point(Automation *p_automation,int p_block,int p_point) {
+	
+	ERR_FAIL_INDEX(p_block,p_automation->get_block_count());
 	
 	d->undo_stream.begin("Remove Point");
 	d->undo_stream.add_command( Command3(&commands,&EditorCommands::remove_automation_point,p_automation,p_block,p_point) );
@@ -94,6 +98,30 @@ void Editor::remove_automation_point(Automation *p_automation,int p_block,int p_
 	
 }
 
+void Editor::automation_set_lfo(Automation *p_automation,int p_block,LFO p_lfo) {
+	
+	ERR_FAIL_INDEX(p_block,p_automation->get_block_count());
+	
+	d->undo_stream.begin("Automation Set LFO");
+	d->undo_stream.add_command( Command3(&commands,&EditorCommands::automation_set_lfo,p_automation,p_block,p_lfo) );
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
+}
+void Editor::automation_set_interpolation(Automation *p_automation,int p_block,Automation::BlockInterpolationMethod p_int) {
+	
+	ERR_FAIL_INDEX(p_block,p_automation->get_block_count());
+	
+	/* dont change what is already there */
+	if (p_automation->get_block(p_block)->get_data()->get_interpolation()==p_int)
+			return;
+	
+	d->undo_stream.begin("Change Interpolation");
+	d->undo_stream.add_command( Command3(&commands,&EditorCommands::automation_set_interpolation,p_automation,p_block,p_int) );
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
+}
 
 
 bool Editor::automation_edit_key_press(int p_key_value) {

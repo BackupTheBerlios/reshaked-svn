@@ -278,6 +278,42 @@ CommandFunc* EditorCommands::remove_automation_point(bool p_no_undo,Automation *
 	
 }
 
+CommandFunc* EditorCommands::automation_set_lfo(bool p_no_undo,Automation *p_automation,int p_block,LFO p_lfo) {
+	
+	ERR_FAIL_INDEX_V(p_block,p_automation->get_block_count(),NULL);
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) { //must undo, retrieve previous note
+		LFO old_lfo=p_automation->get_block(p_block)->get_data()->get_lfo();
+		ret=Command3(this,&EditorCommands::automation_set_lfo,p_automation,p_block,old_lfo);
+	}
+	
+	p_automation->get_block(p_block)->get_data()->get_lfo()=p_lfo;
+	
+	editor->update_blocklists_sharing_block( p_automation->get_block(p_block) );
+	
+	return ret;
+	
+}
+CommandFunc* EditorCommands::automation_set_interpolation(bool p_no_undo,Automation *p_automation,int p_block,Automation::BlockInterpolationMethod p_int) {
+	
+	ERR_FAIL_INDEX_V(p_block,p_automation->get_block_count(),NULL);
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) { //must undo, retrieve previous note
+		Automation::BlockInterpolationMethod old_int=p_automation->get_block(p_block)->get_data()->get_interpolation();
+		ret=Command3(this,&EditorCommands::automation_set_interpolation,p_automation,p_block,old_int);
+	}
+	
+	p_automation->get_block(p_block)->get_data()->set_interpolation( p_int );
+	
+	editor->update_blocklists_sharing_block( p_automation->get_block(p_block) );
+	
+	return ret;
+	
+}
 
 CommandFunc* EditorCommands::blocklist_insert_block(bool p_no_undo,BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos) {
 	

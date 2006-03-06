@@ -35,17 +35,44 @@ float Automation::AutomationData::get_tick_val(Tick p_tick) {
 		lfo_val=get_index_value(prev).lfo_depth;
 	} else {
 	
-		Tick prev_tick=get_index_pos( prev);
-		float prev_val=get_index_value( prev).value;
-		float prev_lfo_depth_val=get_index_value( prev ).lfo_depth;
-		
-		Tick next_tick=get_index_pos( next);
-		float next_val=get_index_value( next).value;
-		float next_lfo_depth_val=get_index_value( next ).lfo_depth;
-		
-		val=prev_val+((double)(p_tick-prev_tick)*(next_val-prev_val))/(double)(next_tick-prev_tick); //linear interpolation
-		lfo_val=prev_lfo_depth_val+((double)(p_tick-prev_tick)*(next_lfo_depth_val-prev_lfo_depth_val))/(double)(next_tick-prev_tick); //linear interpolation
-		
+		switch (interpolation) {
+			
+			case Automation::INTERP_NONE: {
+				
+				val=get_index_value(prev).value;
+				lfo_val=get_index_value(prev).lfo_depth;
+				
+			} break;
+			case Automation::INTERP_LINEAR: {
+				
+				Tick prev_tick=get_index_pos( prev);
+				float prev_val=get_index_value( prev).value;
+				float prev_lfo_depth_val=get_index_value( prev ).lfo_depth;
+				
+				Tick next_tick=get_index_pos( next);
+				float next_val=get_index_value( next).value;
+				float next_lfo_depth_val=get_index_value( next ).lfo_depth;
+				
+				val=prev_val+((double)(p_tick-prev_tick)*(next_val-prev_val))/(double)(next_tick-prev_tick); //linear interpolation
+				lfo_val=prev_lfo_depth_val+((double)(p_tick-prev_tick)*(next_lfo_depth_val-prev_lfo_depth_val))/(double)(next_tick-prev_tick); //linear interpolation
+			} break;
+			case Automation::INTERP_SPLINE: {
+				
+				
+				Tick prev_tick=get_index_pos( prev);
+				float prev_val=get_index_value( prev).value;
+				float prev_lfo_depth_val=get_index_value( prev ).lfo_depth;
+				
+				Tick next_tick=get_index_pos( next);
+				float next_val=get_index_value( next).value;
+				float next_lfo_depth_val=get_index_value( next ).lfo_depth;
+				
+				val=prev_val+((double)(p_tick-prev_tick)*(next_val-prev_val))/(double)(next_tick-prev_tick); //linear interpolation
+				lfo_val=prev_lfo_depth_val+((double)(p_tick-prev_tick)*(next_lfo_depth_val-prev_lfo_depth_val))/(double)(next_tick-prev_tick); //linear interpolation
+				
+				
+			} break;
+		}
 	
 	}
 	
@@ -130,6 +157,17 @@ BlockList::Block *Automation::create_link_block(Block *p_block) {
 
 }
 
+Automation::BlockInterpolationMethod Automation::AutomationData::get_interpolation() {
+	
+	
+	return interpolation;
+}
+void Automation::AutomationData::set_interpolation(BlockInterpolationMethod p_int) {
+	
+	interpolation=p_int;
+}
+
+
 LFO& Automation::AutomationData::get_lfo() {
 	
 	return lfo;
@@ -148,6 +186,8 @@ Automation::AutomationData *Automation::AutomationBlock::get_data() {
 
 Automation::AutomationData::AutomationData() {
 
+	interpolation=INTERP_LINEAR;
+	
 	lfo.set_rate_unit_size( TICKS_PER_BEAT ); //a beat is rate :)
 	lfo.set_depth(0.5); //maximum depth for having a range of 1
 	lfo.set_rate(1); //1 cycle per track

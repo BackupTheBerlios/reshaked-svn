@@ -44,6 +44,10 @@ friend class Editor;
 	CommandFunc* move_automation_point(bool p_no_undo,Automation *p_automation,int p_block, int p_point, Tick p_to_tick, Automation::AutomationValue p_to_val);
 	CommandFunc* remove_automation_point(bool p_no_undo,Automation *p_automation,int p_block,int p_point);
 	
+	CommandFunc* automation_set_lfo(bool p_no_undo,Automation *p_automation,int p_block,LFO p_lfo);
+	CommandFunc* automation_set_interpolation(bool p_no_undo,Automation *p_automation,int p_block,Automation::BlockInterpolationMethod p_int);
+	
+	
 	CommandFunc* blocklist_insert_block(bool p_no_undo,BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos);
 	CommandFunc* blocklist_remove_block(bool p_no_undo,BlockList *p_blocklist,int p_which);
 	

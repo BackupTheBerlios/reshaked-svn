@@ -26,12 +26,12 @@ public:
 	
 	enum BlockInterpolationMethod {
 
-		INTERPOLATION_NONE,
-		INTERPOLATION_LINEAR,
-		INTERPOLATION_SPLINE,
+		INTERP_NONE,
+		INTERP_LINEAR,
+		INTERP_SPLINE,
 	};
 	
-		
+
 	struct AutomationValue {
 		
 		float value;
@@ -49,6 +49,9 @@ public:
 		BlockInterpolationMethod interpolation;
 		LFO lfo;
 	public:
+
+		BlockInterpolationMethod get_interpolation();
+		void set_interpolation(BlockInterpolationMethod p_int);
 
 		LFO& get_lfo();
 		float get_tick_val(Tick p_tick);

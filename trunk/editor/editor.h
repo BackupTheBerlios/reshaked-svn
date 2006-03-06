@@ -82,6 +82,10 @@ public:
 	
 			 
 	bool automation_edit_key_press(int p_key_value); ///< return true if it must repaint / grab event
+	
+	void automation_set_lfo(Automation *p_automation,int p_block,LFO p_lfo);
+	void automation_set_interpolation(Automation *p_automation,int p_block,Automation::BlockInterpolationMethod p_int);
+	
 		
 	
 	/** BLOCK LIST ACCESS ABSTRACTION (editor_blocklist.cpp) */
