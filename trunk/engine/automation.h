@@ -28,7 +28,7 @@ public:
 
 		INTERP_NONE,
 		INTERP_LINEAR,
-		INTERP_SPLINE,
+		INTERP_CUBIC,
 	};
 	
 

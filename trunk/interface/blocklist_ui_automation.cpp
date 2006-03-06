@@ -586,6 +586,8 @@ void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 			new_tick=d->get_index_pos( moving_point.point +1 )-1;
 	
 	
+		
+		
 		/* Adjust Value */
 		
 		if (new_val<0)
@@ -743,8 +745,8 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 		moving_point.point=d->get_exact_index( new_tick );
 		ERR_FAIL_COND( moving_point.point<0 ); //WTF?! just checking, should never happen though
 		
-		moving_point.original_tick=new_tick;		
-		moving_point.original_value=new_val;
+		moving_point.original_tick=moving_point.new_tick=new_tick;		
+		moving_point.original_value=moving_point.new_value=new_val;
 		moving_point.original_lfo=d->get_index_value( moving_point.point ).lfo_depth;
 		moving_point.new_lfo=moving_point.original_lfo;
 		moving_point.moving=true;		
@@ -933,7 +935,7 @@ void BlockListUI_Automation::show_popup() {
 	/* Only if a block is under cursor */
 	QAction* ac_noint=NULL;
 	QAction* ac_linint=NULL;
-	QAction* ac_splint=NULL;
+	QAction* ac_cubint=NULL;
 	
 	QAction* ac_lfo=NULL;
 	 
@@ -951,17 +953,17 @@ void BlockListUI_Automation::show_popup() {
 			ac_linint->setChecked(true);
 		action_list.push_back(ac_linint);
 		
-		ac_splint = new QAction("Spline Interpolation",topLevelOf(this));
-		ac_splint->setCheckable(true);
-		if (ad->get_interpolation()==Automation::INTERP_SPLINE)
-			ac_splint->setChecked(true);
-		action_list.push_back(ac_splint);
+		ac_cubint = new QAction("Cubic Interpolation",topLevelOf(this));
+		ac_cubint->setCheckable(true);
+		if (ad->get_interpolation()==Automation::INTERP_CUBIC)
+			ac_cubint->setChecked(true);
+		action_list.push_back(ac_cubint);
 		
 		sep = new QAction("",topLevelOf(this));
 		sep->setSeparator(topLevelOf(this));
 		action_list.push_back(sep);
 		
-		ac_lfo = new QAction("LFO Settings (Block)..",topLevelOf(this));
+		ac_lfo = new QAction(GET_QPIXMAP(ICON_AUTOMATION_LFO),"LFO Settings (Block)..",topLevelOf(this));
 		action_list.push_back( ac_lfo );
 		
 		sep = new QAction("",topLevelOf(this));
@@ -1013,10 +1015,10 @@ void BlockListUI_Automation::show_popup() {
 		
 		update();
 		
-	} else if (res==ac_splint && ac_splint) {
+	} else if (res==ac_cubint && ac_cubint) {
 		
 		
-		editor->automation_set_interpolation(automation,block_idx,Automation::INTERP_SPLINE);
+		editor->automation_set_interpolation(automation,block_idx,Automation::INTERP_CUBIC);
 		update();
 		
 	} else if (res==ac_lfo && ac_lfo) { //may be null afterall!

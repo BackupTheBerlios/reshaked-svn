@@ -453,7 +453,7 @@ void MainWindow::screen_changed_slot(TopBarControls::ScreenList p_screen) {
 
 void MainWindow::closeEvent ( QCloseEvent * e ) {
 	
-	if (QMessageBox::question ( topLevelOf(this), "Exit?", "Are you sure you want to Quit?", QMessageBox::Yes, QMessageBox::No)==QMessageBox::Yes)
+	if (QMessageBox::question ( topLevelOf(this), "Exit?", "Are you sure?", QMessageBox::Yes, QMessageBox::No)==QMessageBox::Yes)
 		e->accept();
 	else
 		e->ignore();

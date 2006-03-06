@@ -1,5 +1,5 @@
 #include "automation.h"
-
+#include "dsp/formulas.h"
 
 
 
@@ -56,20 +56,31 @@ float Automation::AutomationData::get_tick_val(Tick p_tick) {
 				val=prev_val+((double)(p_tick-prev_tick)*(next_val-prev_val))/(double)(next_tick-prev_tick); //linear interpolation
 				lfo_val=prev_lfo_depth_val+((double)(p_tick-prev_tick)*(next_lfo_depth_val-prev_lfo_depth_val))/(double)(next_tick-prev_tick); //linear interpolation
 			} break;
-			case Automation::INTERP_SPLINE: {
+			case Automation::INTERP_CUBIC: {
+				
 				
 				
 				Tick prev_tick=get_index_pos( prev);
 				float prev_val=get_index_value( prev).value;
-				float prev_lfo_depth_val=get_index_value( prev ).lfo_depth;
+				float prev_lfo=get_index_value( prev ).lfo_depth;
+				
+				float pre_prev_val=(prev>0)?get_index_value( prev-1).value:prev_val;
+				float pre_prev_lfo=(prev>0)?get_index_value( prev-1).lfo_depth:prev_lfo;
 				
 				Tick next_tick=get_index_pos( next);
 				float next_val=get_index_value( next).value;
-				float next_lfo_depth_val=get_index_value( next ).lfo_depth;
+				float next_lfo=get_index_value( next ).lfo_depth;
 				
-				val=prev_val+((double)(p_tick-prev_tick)*(next_val-prev_val))/(double)(next_tick-prev_tick); //linear interpolation
-				lfo_val=prev_lfo_depth_val+((double)(p_tick-prev_tick)*(next_lfo_depth_val-prev_lfo_depth_val))/(double)(next_tick-prev_tick); //linear interpolation
+				float post_next_val=((next+1)<get_stream_size())?get_index_value( next+1).value:next_val;
+				float post_next_lfo=((next+1)<get_stream_size())?get_index_value( next+1).lfo_depth:next_lfo;
 				
+				
+				float coeff=(double)(p_tick-prev_tick)/(double)(next_tick-prev_tick);
+				
+				val = cubic_interpolate_points(pre_prev_val,prev_val,next_val,post_next_val,coeff);
+				lfo_val = cubic_interpolate_points(pre_prev_lfo,prev_lfo,next_lfo,post_next_lfo,coeff);
+				
+
 				
 			} break;
 		}

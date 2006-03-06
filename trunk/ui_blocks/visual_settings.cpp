@@ -46,6 +46,7 @@
 #include "pixmaps/track_edit.xpm"
 #include "pixmaps/track_move_automation_left.xpm"
 #include "pixmaps/track_move_automation_right.xpm"
+#include "pixmaps/track_automation_lfo.xpm"
 #include "pixmaps/track_column_add.xpm"
 #include "pixmaps/track_column_rem.xpm"
 #include "pixmaps/zoom.xpm"
@@ -507,6 +508,7 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_TRACK_EDIT]=QPixmap((const char**)track_edit_xpm);
 	pixmap_map[ICON_AUTOMATION_MOVE_LEFT]=QPixmap((const char**)track_move_automation_left_xpm);
 	pixmap_map[ICON_AUTOMATION_MOVE_RIGHT]=QPixmap((const char**)track_move_automation_right_xpm);
+	pixmap_map[ICON_AUTOMATION_LFO]=QPixmap((const char**)track_automation_lfo_xpm);
 	pixmap_map[ICON_COLUMN_ADD]=QPixmap((const char**)track_column_add_xpm);
 	pixmap_map[ICON_COLUMN_REMOVE]=QPixmap((const char**)track_column_rem_xpm);
 	pixmap_map[ICON_ZOOM_SMALL]=QPixmap((const char**)zoom_xpm);
