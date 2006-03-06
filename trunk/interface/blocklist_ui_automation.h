@@ -23,6 +23,7 @@ namespace ReShaked {
 */
 class BlockListUI_Automation : public BlockListUI_Base {
 			    
+	Q_OBJECT
 			    
 	enum {
 		
@@ -30,7 +31,16 @@ class BlockListUI_Automation : public BlockListUI_Base {
 		FONT_PIXEL_SIZE=12
 	};
 				    			    
-				    
+	enum AutomationOptionsItems {
+	
+		AUTOMATION_OP_HIDE,
+		AUTOMATION_OP_MOVE_LEFT,
+		AUTOMATION_OP_MOVE_RIGHT,
+		AUTOMATION_OP_SIZE_SMALL,	
+		AUTOMATION_OP_SIZE_MEDIUM,	
+		AUTOMATION_OP_SIZE_LARGE,	
+		AUTOMATION_OP_LFO_SETTINGS
+	};
 			    
 	Editor *editor;
 	Automation *automation;
@@ -60,12 +70,15 @@ class BlockListUI_Automation : public BlockListUI_Base {
 		int block;
 		int point;
 		bool moving;
+		bool lfo_depthing;
 		bool adding;
 		
 		Tick original_tick;
 		float original_value;
+		float original_lfo;
 		Tick new_tick;
 		float new_value;
+		float new_lfo;
 		
 		
 	} moving_point;
@@ -92,6 +105,10 @@ class BlockListUI_Automation : public BlockListUI_Base {
 	void get_pos_at_pointer(QPoint p_pointer, int *p_blocklist,int *p_column, int *p_row);
 	
 public:
+	
+	void show_popup();
+	
+	
 	BlockListUI_Automation(QWidget *p_parent, Editor *p_editor, Automation *p_automation);
 	~BlockListUI_Automation();
 

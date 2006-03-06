@@ -15,6 +15,9 @@
 #include <Qt/qevent.h>
 #include <math.h>
 #include "ui_blocks/helpers.h"
+#include <Qt/qaction.h>
+#include <Qt/qmenu.h>
+#include "interface/automation_dialog.h"
 namespace ReShaked {
 
 int BlockListUI_Automation::get_row_size() {
@@ -491,10 +494,11 @@ bool BlockListUI_Automation::find_closest_point(int p_x,int p_y,int p_radius, in
 
 bool BlockListUI_Automation::screen_to_tick_and_val(int p_x,int p_y,Tick *p_tick, float *p_val) {
 	
+	
 	if (p_y<0)
 		p_y=0;
-	if (p_x<0)
-		p_x=0;
+	/*if (p_x<0)
+	p_x=0; */
 	
 	/* Find Tick */
 	
@@ -550,6 +554,7 @@ void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 	
 	Tick new_tick;
 	float new_val;
+	float new_lfo;
 	if (screen_to_tick_and_val(e->x(),e->y(),&new_tick,&new_val))
 		return;
 	
@@ -563,36 +568,53 @@ void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 	
 	/* Adjust Tick Motion */
 	
-	if (new_tick<0)
-		new_tick=0;
+	if (!moving_point.lfo_depthing) {
 	
+		if (new_tick<0)
+			new_tick=0;
 		
-	if (new_tick>=automation->get_block(moving_point.block)->get_length())
-		new_tick=automation->get_block(moving_point.block)->get_length()-1;
+			
+		if (new_tick>=automation->get_block(moving_point.block)->get_length())
+			new_tick=automation->get_block(moving_point.block)->get_length()-1;
+		
+		
+		if (moving_point.point>0 && d->get_index_pos( moving_point.point -1 ) >= new_tick )
+			new_tick=d->get_index_pos( moving_point.point -1 )+1;
+		
+	
+		if (moving_point.point<(d->get_stream_size()-1) && d->get_index_pos( moving_point.point +1 ) <= new_tick )
+			new_tick=d->get_index_pos( moving_point.point +1 )-1;
 	
 	
-	if (moving_point.point>0 && d->get_index_pos( moving_point.point -1 ) >= new_tick )
-		new_tick=d->get_index_pos( moving_point.point -1 )+1;
+		/* Adjust Value */
+		
+		if (new_val<0)
+			new_val=0;
+		if (new_val>1)
+			new_val=1;
 	
-
-	if (moving_point.point<(d->get_stream_size()-1) && d->get_index_pos( moving_point.point +1 ) <= new_tick )
-		new_tick=d->get_index_pos( moving_point.point +1 )-1;
-
-
-	/* Adjust Value */
+		new_lfo=moving_point.original_lfo;
+	} else {
+		
+		
+		new_lfo=moving_point.original_lfo+(new_val-moving_point.original_value);
+		if (new_lfo>1)
+			new_lfo=1;
+		if (new_lfo<0)
+			new_lfo=0;
+		
+		new_val=moving_point.original_value;
+		new_tick=moving_point.original_tick;
+		
+		
+	}
 	
-	if (new_val<0)
-		new_val=0;
-	if (new_val>1)
-		new_val=1;
-	
-	
-	float lfo_depth=d->get_index_value( moving_point.point ).lfo_depth;
 	d->erase_index( moving_point.point );
-	d->insert( new_tick, Automation::AutomationValue( new_val, lfo_depth ) );
+	d->insert( new_tick, Automation::AutomationValue( new_val, new_lfo ) );
 
 	moving_point.new_tick=new_tick;
 	moving_point.new_value=new_val;
+	moving_point.new_lfo=new_lfo;
 	//dont conflict whenmoving point
 	point_over.block=moving_point.block;
 	point_over.point=moving_point.point;
@@ -604,7 +626,7 @@ void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 void BlockListUI_Automation::cancel_motion() {
 	
 	Automation::AutomationData *d=automation->get_block(moving_point.block)->get_data();
-	float lfo_depth=d->get_index_value( moving_point.point ).lfo_depth;
+	float lfo_depth=moving_point.original_lfo;
 	d->erase_index( moving_point.point );
 	if (!moving_point.adding) //if it was adding a point, simply remove it
 		d->insert( moving_point.original_tick , Automation::AutomationValue( moving_point.original_value, lfo_depth ) );
@@ -623,6 +645,7 @@ void BlockListUI_Automation::get_pos_at_pointer(QPoint p_pointer, int *p_blockli
 }
 
 void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
+	
 	
 	if (e->button()==Qt::LeftButton)
 		editor->lock_undo_stream();
@@ -659,13 +682,20 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 		/* Cancel motion */
 		cancel_motion();
 		return;
-	} else if ( !moving_point.moving && ((e->button()==Qt::LeftButton && e->modifiers()&Qt::ControlModifier) || e->button()==Qt::RightButton )) {
+	} else if ( !moving_point.moving && ((e->button()==Qt::LeftButton && e->modifiers()&Qt::ControlModifier) || e->button()==Qt::RightButton)) {
 		/* delete point */
 		
 		int closest_block,closest_point;
 	
-		if (find_closest_point(e->x(),e->y(),CLOSEST_POINT_RADIUS, &closest_block, &closest_point))
+		if (find_closest_point(e->x(),e->y(),CLOSEST_POINT_RADIUS, &closest_block, &closest_point)) {
+			
+			if (e->button()==Qt::RightButton) {
+		
+				editor->get_ui_update_notify()->automation_options(editor->find_blocklist(automation) );
+			}
 			return;
+			
+		}
 		
 		editor->remove_automation_point( automation, closest_block, closest_point );
 		
@@ -715,8 +745,12 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 		
 		moving_point.original_tick=new_tick;		
 		moving_point.original_value=new_val;
+		moving_point.original_lfo=d->get_index_value( moving_point.point ).lfo_depth;
+		moving_point.new_lfo=moving_point.original_lfo;
 		moving_point.moving=true;		
 		moving_point.adding=true;		
+		moving_point.lfo_depthing=false;
+		
 		update();
 		
 	} else {
@@ -725,16 +759,25 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 		
 		moving_point.block=closest_block;
 		moving_point.point=closest_point ;
+		
 		moving_point.original_tick=automation->get_block(moving_point.block)->get_data()->get_index_pos( moving_point.point );
 		moving_point.original_value=automation->get_block(moving_point.block)->get_data()->get_index_value( moving_point.point ).value;
+		moving_point.original_lfo=automation->get_block(moving_point.block)->get_data()->get_index_value( moving_point.point ).lfo_depth;
+		moving_point.new_lfo=moving_point.original_lfo;
+		
 		
 		moving_point.moving=true;
 		moving_point.adding=false;
+		
+		moving_point.lfo_depthing=(e->modifiers()&Qt::ShiftModifier);
+
 				
 	}
 
 }
 void BlockListUI_Automation::mouseReleaseEvent ( QMouseEvent * e ) {
+	if (e->button()!=Qt::LeftButton)
+		return;
 	
 	if (e->button()==Qt::LeftButton)
 		editor->unlock_undo_stream();
@@ -748,17 +791,18 @@ void BlockListUI_Automation::mouseReleaseEvent ( QMouseEvent * e ) {
 		if (moving_point.adding) { //add point
 			
 			Tick tick_global=automation->get_block_pos(moving_point.block)+moving_point.new_tick;
-			editor->add_automation_point( automation, tick_global, moving_point.new_value );
+			editor->add_automation_point( automation, tick_global, moving_point.new_value,moving_point.new_lfo );
 		} else { //move point
 			
 			Tick tick_global=automation->get_block_pos(moving_point.block)+moving_point.new_tick;
-			editor->move_automation_point( automation, moving_point.block, moving_point.point, moving_point.new_tick, moving_point.new_value); 
+			editor->move_automation_point( automation, moving_point.block, moving_point.point, moving_point.new_tick, moving_point.new_value,moving_point.new_lfo); 
 		}
 		
 	}
 	compute_point_over(e->x(),e->y());
 	
 	moving_point.moving=false;
+	moving_point.lfo_depthing=false;
 	update();	
 	
 }
@@ -836,6 +880,124 @@ BlockListUI_Automation::BlockListUI_Automation(QWidget *p_parent, Editor *p_edit
 	paint_name_enabled=true;
 	
 	
+}
+
+void BlockListUI_Automation::show_popup() {
+	
+	
+		
+	Tick tick;
+	float val;
+	QPoint e=mapFromGlobal(QCursor::pos());
+		
+	screen_to_tick_and_val(e.x(),e.y(),&tick,&val);		
+		
+	int block_idx=automation->get_block_idx_at_pos(tick); //determine block IDX
+	
+	QList<QAction*> action_list;
+	
+	QAction* ac_left = new QAction(GET_QPIXMAP(ICON_AUTOMATION_MOVE_LEFT),"Move Left",topLevelOf(this));
+	action_list.push_back( ac_left );
+	
+	QAction* ac_right = new QAction(GET_QPIXMAP(ICON_AUTOMATION_MOVE_RIGHT),"Move Right",topLevelOf(this));
+	action_list.push_back( ac_right );
+	
+	QAction *sep = new QAction("",topLevelOf(this));
+	sep->setSeparator(topLevelOf(this));
+	action_list.push_back(sep);
+	
+	QAction* ac_small  = new QAction("Display Small",topLevelOf(this));
+	ac_small->setCheckable(true);
+	if (automation->get_display_size()==Automation::DISPLAY_SIZE_SMALL)
+		ac_small->setChecked(true);
+	action_list.push_back(ac_small);
+	QAction* ac_med  = new QAction("Display Medium",topLevelOf(this));
+	ac_med->setCheckable(true);
+	if (automation->get_display_size()==Automation::DISPLAY_SIZE_MEDIUM)
+		ac_med->setChecked(true);
+	action_list.push_back(ac_med);
+	
+	QAction* ac_big  = new QAction("Display Large",topLevelOf(this));
+	ac_big->setCheckable(true);
+	if (automation->get_display_size()==Automation::DISPLAY_SIZE_BIG)
+		ac_big->setChecked(true);
+	action_list.push_back(ac_big);
+	
+	sep = new QAction("",topLevelOf(this));
+	sep->setSeparator(topLevelOf(this));
+	action_list.push_back(sep);
+	
+	QAction* ac_lfo=NULL;
+	 
+	if (block_idx>=0) {
+		ac_lfo = new QAction("LFO Settings (Block)..",topLevelOf(this));
+		action_list.push_back( ac_lfo );
+		
+		sep = new QAction("",topLevelOf(this));
+		sep->setSeparator(topLevelOf(this));
+		action_list.push_back(sep);
+		
+	}
+	
+	
+	QAction* ac_hide = new QAction("Hide",topLevelOf(this));
+	action_list.push_back( ac_hide );
+	
+	
+	
+	QAction *res = QMenu::exec(action_list, QCursor::pos() );	
+	
+	if (res==ac_left) {
+		
+		
+		
+	} else if (res==ac_right) {
+		
+		
+		
+		
+	} else if (res==ac_small) {
+		
+		automation->set_display_size( Automation::DISPLAY_SIZE_SMALL );
+		editor->get_ui_update_notify()->track_list_changed();
+	} else if (res==ac_med) {
+		
+		automation->set_display_size( Automation::DISPLAY_SIZE_MEDIUM );
+		editor->get_ui_update_notify()->track_list_changed();
+	} else if (res==ac_big) {
+		
+		automation->set_display_size( Automation::DISPLAY_SIZE_BIG );
+		editor->get_ui_update_notify()->track_list_changed();
+	} else if (res==ac_lfo && ac_lfo) { //may be null afterall!
+
+		Automation::AutomationData *ad=automation->get_block( block_idx )->get_data();
+		LFO current_lfo=ad->get_lfo();
+		
+		AutomationSettingsLFO *lfo_settings = new AutomationSettingsLFO(topLevelOf(this),ad);
+		QObject::connect(lfo_settings,SIGNAL(lfo_changed_signal()),this,SLOT(update()));
+		
+		lfo_settings->exec();
+		
+		delete lfo_settings;
+		
+	} else if (res==ac_hide) {
+		
+		int track_idx=editor->get_blocklist_track( editor->find_blocklist( automation) );
+		Track *tr = (track_idx>=0)?editor->get_song()->get_track(track_idx):&editor->get_song()->get_global_track();
+		
+		for (int i=0;i<tr->get_property_count();i++) {
+			if (tr->get_property_automation(i)==automation) {
+				
+				editor->hide_automation( i, tr );
+			}
+		}
+	}
+	
+	
+	foreach(I,action_list) {
+		
+		delete *I;
+	}
 }
 
 

@@ -64,7 +64,7 @@ public:
 	BindIntSignal(QObject *p_parent,int p_int);	
 };
 
-
+/* Useful for some stuff but for now mainly used for workarounding a bug in Qt4 */
 QWidget *topLevelOf(QWidget* p_widget);
 
 #define connect_bind_int(m_from_obj,m_from_sig,m_to,m_to_sigslot,m_int) 		\

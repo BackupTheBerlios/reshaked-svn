@@ -48,7 +48,7 @@ signals:
 	void current_track_add_column();	
 	void current_track_remove_column();
 	void automation_editor_popup(int p_track);	
-	
+	void automation_options(int p_blocklist);	
 public:
 	
 	

@@ -77,7 +77,7 @@ public:
 	void hide_automation(int p_property,Track *p_track=NULL);
 	
 	void add_automation_point(Automation *p_automation,Tick p_tick, float p_val,float p_lfo_depth=0,bool p_collapsable=false);
-	void move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val);
+	void move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val,float p_to_lfo);
 	void remove_automation_point(Automation *p_automation,int p_block,int p_point);
 	
 			 

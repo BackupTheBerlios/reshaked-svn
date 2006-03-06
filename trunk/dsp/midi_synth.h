@@ -29,16 +29,17 @@ public:
 	class Voice {
 	friend class MidiSynth;		
 	
-		float mix_rate;
-		float amplitude;
-		char original_note; ///< used to keep track after transpose
-		int note; ///< mapped to midi 0 .. 127 , but could be greater/lesser given transpose
-		int velocity; ///< 0 .. 127 always
-		float note_fine;
-		std::vector<float*> *buffers;
-		bool active;
-		bool off; //note off happened
-		
+		struct Internal {
+			float mix_rate;
+			float amplitude;
+			char original_note; ///< used to keep track after transpose
+			int note; ///< mapped to midi 0 .. 127 , but could be greater/lesser given transpose
+			int velocity; ///< 0 .. 127 always
+			float note_fine;
+			std::vector<float*> *buffers;
+			bool active;
+			bool off; //note off happened
+		} internal;		
 		void reset_internal();
 	protected:		
 		
@@ -49,7 +50,7 @@ public:
 		float get_current_note();
 		int get_velocity();
 		int get_buffer_count();
-		inline float *get_buffer(int p_buff) { return (*buffers)[p_buff]; }
+		inline float *get_buffer(int p_buff) { return (*internal.buffers)[p_buff]; }
 	
 	public:	
 		

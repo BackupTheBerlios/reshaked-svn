@@ -39,6 +39,8 @@
 
 #include "interface/info_editor.h"
 
+#include "interface/blocklist_ui_automation.h"
+
 namespace ReShaked {
 
 
@@ -451,7 +453,7 @@ void MainWindow::screen_changed_slot(TopBarControls::ScreenList p_screen) {
 
 void MainWindow::closeEvent ( QCloseEvent * e ) {
 	
-	if (QMessageBox::question ( this, "Exit?", "Are you sure you want to Quit?", QMessageBox::Yes, QMessageBox::No)==QMessageBox::Yes)
+	if (QMessageBox::question ( topLevelOf(this), "Exit?", "Are you sure you want to Quit?", QMessageBox::Yes, QMessageBox::No)==QMessageBox::Yes)
 		e->accept();
 	else
 		e->ignore();
@@ -494,6 +496,15 @@ void MainWindow::automation_editor_popup_slot(int p_track) {
 	AutomationTreeeDialog *atd = new AutomationTreeeDialog(this,t,data.editor);
 	atd->exec();
 	delete atd;
+	
+}
+
+void MainWindow::automation_options(int p_blocklist) {
+	
+	BlockListUI_Automation *auto_ui=dynamic_cast<BlockListUI_Automation*>(blui_list->get_blocklist_ui( p_blocklist ));
+	ERR_FAIL_COND(auto_ui==NULL);
+	
+	auto_ui->show_popup();
 	
 }
 
@@ -596,6 +607,7 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(current_track_add_column()),this,SLOT(current_track_add_column_slot()),Qt::QueuedConnection);
 	QObject::connect(update_notify,SIGNAL(current_track_remove_column()),this,SLOT(current_track_remove_column_slot()),Qt::QueuedConnection);
 	QObject::connect(update_notify,SIGNAL(automation_editor_popup( int )),this,SLOT(automation_editor_popup_slot( int )),Qt::QueuedConnection);
+	QObject::connect(update_notify,SIGNAL(automation_options( int )),this,SLOT(automation_options( int )),Qt::QueuedConnection);
 	
 	QObject::connect(update_notify,SIGNAL(volume_mask_changed()),blui_list,SLOT(update_mask()));
 	

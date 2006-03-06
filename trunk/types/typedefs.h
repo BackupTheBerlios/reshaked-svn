@@ -67,22 +67,26 @@ inline void SWAP(T&a, T&b) {
 	a=c;
 }
 
+static inline int rand_from_seed(unsigned int *seed) {
+	long k;
+	long s = (long)(*seed);
+	if (s == 0)
+		s = 0x12345987;
+	k = s / 127773;
+	s = 16807 * (s - k * 127773) - 2836 * k;
+	if (s < 0)
+		s += 2147483647;
+	(*seed) = (unsigned int)s;
+	return (int)(s & RAND_MAX);
+}
+
+
 
 #ifdef WIN32_ENABLED
 
+#define rand_r rand_from_seed
 
-static inline int rand_r(unsigned int *seed) {
-    long k;
-    long s = (long)(*seed);
-    if (s == 0)
-        s = 0x12345987;
-    k = s / 127773;
-    s = 16807 * (s - k * 127773) - 2836 * k;
-    if (s < 0)
-        s += 2147483647;
-    (*seed) = (unsigned int)s;
-    return (int)(s & RAND_MAX);
-}
+
 #endif
 
 #endif

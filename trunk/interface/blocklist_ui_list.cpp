@@ -546,6 +546,12 @@ void BlockListUIList::update_play_position() {
 	play_position->check_pos_changed();
 }
 
+BlockListUI_Base *BlockListUIList::get_blocklist_ui(int p_idx) {
+	
+	ERR_FAIL_INDEX_V(p_idx,block_list_ui_list.size(),NULL);
+	return block_list_ui_list[p_idx];
+}
+
 BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_property_ui_updater) : QFrame (p_parent)
 {
 

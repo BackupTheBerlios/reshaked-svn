@@ -7,6 +7,7 @@
 #include "engine/block_list.h"
 #include "engine/data_pool.h"
 #include "property.h"
+#include "dsp/lfo.h"
 
 
 namespace ReShaked {
@@ -36,7 +37,7 @@ public:
 		float value;
 		float lfo_depth;
 		
-		AutomationValue(float p_value=0.0,float p_lfo_depth=0.0) { value=p_value; lfo_depth=p_lfo_depth; }
+		AutomationValue(float p_value=0.0,float p_lfo_depth=1.0) { value=p_value; lfo_depth=p_lfo_depth; }
 	};
 
 
@@ -46,8 +47,10 @@ public:
 		int length; //in beats
 		
 		BlockInterpolationMethod interpolation;
+		LFO lfo;
 	public:
 
+		LFO& get_lfo();
 		float get_tick_val(Tick p_tick);
 		void set_default_value(float p_default);
 		float get_default_value(); /* defalult value for the automation */
@@ -105,6 +108,7 @@ public:
 	void clear();
 	
 	DisplaySize get_display_size();
+	void set_display_size(DisplaySize p_size);
 
 	Automation(Property *property);
 };

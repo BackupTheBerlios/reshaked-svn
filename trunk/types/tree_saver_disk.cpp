@@ -50,6 +50,7 @@ void TreeSaverDisk::write_string(String p_string) {
 }
 void TreeSaverDisk::write_float(float p_float) {
 	
+	ERR_FAIL_COND( sizeof(float)!=sizeof(unsigned int) );
 	unsigned int *unsint=(unsigned int*)&p_float;
 	write_int(*unsint);
 }

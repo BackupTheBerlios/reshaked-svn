@@ -134,6 +134,8 @@ public slots:
 	void volume_mask_togled(bool);
 public:
 
+	BlockListUI_Base *get_blocklist_ui(int p_idx);
+	
 	BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_property_ui_updater);
 	~BlockListUIList();
 

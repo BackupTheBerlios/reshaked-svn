@@ -155,6 +155,7 @@ public slots:
 	void current_track_add_column_slot();	
 	void current_track_remove_column_slot();
 	void automation_editor_popup_slot(int p_track);
+	void automation_options(int p_blocklist);
 	
 	void toggle_rack_visibility_slot(bool p_visible);
 public:

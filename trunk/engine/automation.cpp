@@ -19,26 +19,42 @@ float Automation::AutomationData::get_tick_val(Tick p_tick) {
 	int next = get_next_index( p_tick );
 	
 	
-		
+	
 	
 	if (prev==-1) 
 		return -1;
 	
-	if (next==stream_size)
-		return get_index_value( stream_size -1 ).value; //just send the last one, nothing else can be done
+	float val=0;
+	float lfo_val=0;
 	
-	if (prev==next) //we got an exact index, just return it, no interp. needed
-		return get_index_value(prev).value;
+	if (next==stream_size) {
+		val=get_index_value( stream_size -1 ).value; //just send the last one, nothing else can be done
+		lfo_val=get_index_value( stream_size -1 ).lfo_depth;
+	} else if (prev==next) { //we got an exact index, just return it, no interp. needed
+		val=get_index_value(prev).value;
+		lfo_val=get_index_value(prev).lfo_depth;
+	} else {
 	
-	Tick prev_tick=get_index_pos( prev);
-	float prev_val=get_index_value( prev).value;
+		Tick prev_tick=get_index_pos( prev);
+		float prev_val=get_index_value( prev).value;
+		float prev_lfo_depth_val=get_index_value( prev ).lfo_depth;
+		
+		Tick next_tick=get_index_pos( next);
+		float next_val=get_index_value( next).value;
+		float next_lfo_depth_val=get_index_value( next ).lfo_depth;
+		
+		val=prev_val+((double)(p_tick-prev_tick)*(next_val-prev_val))/(double)(next_tick-prev_tick); //linear interpolation
+		lfo_val=prev_lfo_depth_val+((double)(p_tick-prev_tick)*(next_lfo_depth_val-prev_lfo_depth_val))/(double)(next_tick-prev_tick); //linear interpolation
+		
 	
-	Tick next_tick=get_index_pos( next);
-	float next_val=get_index_value( next).value;
+	}
 	
-	float val=prev_val+((double)(p_tick-prev_tick)*(next_val-prev_val))/(double)(next_tick-prev_tick); //linear interpolation
+	val+=lfo_val*lfo.get_value( p_tick );
 	
-	
+	if (val<0)
+		val=0;
+	if (val>1)
+		val=1;
 	return val;
 	
 }
@@ -114,6 +130,11 @@ BlockList::Block *Automation::create_link_block(Block *p_block) {
 
 }
 
+LFO& Automation::AutomationData::get_lfo() {
+	
+	return lfo;
+}
+
 bool Automation::accepts_block(Block *p_block) {
 	
 	return dynamic_cast<AutomationBlock*>(p_block)!=NULL;	
@@ -127,6 +148,13 @@ Automation::AutomationData *Automation::AutomationBlock::get_data() {
 
 Automation::AutomationData::AutomationData() {
 
+	lfo.set_rate_unit_size( TICKS_PER_BEAT ); //a beat is rate :)
+	lfo.set_depth(0.5); //maximum depth for having a range of 1
+	lfo.set_rate(1); //1 cycle per track
+	lfo.set_phase( 0 ); //phase 0 is default
+	lfo.set_random_depth(0); //no randomness
+	lfo.set_mode( LFO::MODE_SINE ); //sinewave is the most common
+	lfo.set_delay( 0 );
 	length=5;
 }
 
@@ -168,6 +196,10 @@ Automation::DisplaySize Automation::get_display_size() {
 	return display_size;	
 }
 
+void Automation::set_display_size(DisplaySize p_size) {
+	
+	display_size=p_size;
+}
 Property *Automation::get_property() {
 	
 	return property;	

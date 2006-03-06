@@ -45,6 +45,8 @@ int TreeLoaderDisk::read_sint() {
 
 float TreeLoaderDisk::read_float() {
 	
+	ERR_FAIL_COND_V( sizeof(float)!=sizeof(unsigned int), 0 );
+	
 	unsigned int i=read_int();
 	float *fp=(float*)&i;
 	return *fp;

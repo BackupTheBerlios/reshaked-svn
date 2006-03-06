@@ -1,3 +1,4 @@
+
 //
 // C++ Implementation: midi_synth
 //
@@ -20,46 +21,46 @@ namespace ReShaked {
 void MidiSynth::Voice::reset_internal() {
 	
 	
-	off=false;
-	active=false;
-	note_fine=0;
-	velocity=0;
-	note=0;
-	original_note=0;
-	amplitude=0;
+	internal.off=false;
+	internal.active=false;
+	internal.note_fine=0;
+	internal.velocity=0;
+	internal.note=0;
+	internal.original_note=0;
+	internal.amplitude=0;
 		
 }
 
 bool MidiSynth::Voice::is_off() {
 	
-	return off;
+	return internal.off;
 }
 
 float MidiSynth::Voice::get_mix_rate() {
 	
-	return mix_rate;
+	return internal.mix_rate;
 }
 
 float MidiSynth::Voice::get_current_note() {
 	
-	return note;
+	return internal.note;
 }
 float MidiSynth::Voice::get_amplitude() {
 	
-	return amplitude;
+	return internal.amplitude;
 }
 int MidiSynth::Voice::get_note() {
 	
-	return note;	
+	return internal.note;	
 }
 int MidiSynth::Voice::get_velocity() {
 	
 	
-	return velocity;	
+	return internal.velocity;	
 }
 int MidiSynth::Voice::get_buffer_count() {
 	
-	return buffers->size();
+	return internal.buffers->size();
 	
 }
 /*
@@ -76,6 +77,8 @@ float *MidiSynth::Voice::get_buffer(int p_buff) {
 /************************************************/
 
 void MidiSynth::process_voice_internal(int p_voice,int p_frames) {
+	Voice &v=*voice_pool[p_voice];
+	v.internal.amplitude=main_volume.get()*expression.get();
 	
 	
 }
@@ -83,7 +86,7 @@ void MidiSynth::process_voice_internal(int p_voice,int p_frames) {
 void MidiSynth::terminate_voice(ActiveVoiceList::iterator p_it) {
 	
 	voice_pool[*p_it]->event(Voice::TERMINATE);	
-	voice_pool[*p_it]->active=false;
+	voice_pool[*p_it]->internal.active=false;
 	active_voices.erase(p_it);	
 }
 
@@ -107,7 +110,7 @@ void MidiSynth::control_note_on(char p_note,char p_velocity,signed char p_note_f
 	if (duplicate_check.get()>0.5) { // duplicate check, 0 means, let two of the many note happen 1 means, silence duplicate
 		foreach(I,active_voices) {
 				
-			if (voice_pool[*I]->original_note==p_note) {
+			if (voice_pool[*I]->internal.original_note==p_note) {
 				voice_idx=*I; //reuse the same voice, gain some speed
 				terminate_voice(I);
 				break;			
@@ -118,7 +121,7 @@ void MidiSynth::control_note_on(char p_note,char p_velocity,signed char p_note_f
 	if (voice_idx==-1) {	
 		for (int i=0;i<voice_pool.size();i++) {
 			
-			if (voice_pool[i]->active)
+			if (voice_pool[i]->internal.active)
 				continue;
 			
 			voice_idx=i;
@@ -152,11 +155,11 @@ void MidiSynth::control_note_on(char p_note,char p_velocity,signed char p_note_f
 
 	printf("decided on voice %i for %i:%i\n",voice_idx,p_note,p_velocity);
 	voice_pool[voice_idx]->reset_internal();
-	voice_pool[voice_idx]->original_note=p_note;
-	voice_pool[voice_idx]->note=(int)p_note+(int)transpose.get();
-	voice_pool[voice_idx]->velocity=int( ((float)p_velocity)*expression.get() );
-	voice_pool[voice_idx]->mix_rate=mix_rate;
-	voice_pool[voice_idx]->active=true;
+	voice_pool[voice_idx]->internal.original_note=p_note;
+	voice_pool[voice_idx]->internal.note=(int)p_note+(int)transpose.get();
+	voice_pool[voice_idx]->internal.velocity=int( ((float)p_velocity)*expression.get() );
+	voice_pool[voice_idx]->internal.mix_rate=mix_rate;
+	voice_pool[voice_idx]->internal.active=true;
 	voice_pool[voice_idx]->event(Voice::NOTE_ON);
 	
 	active_voices.push_back(voice_idx);
@@ -167,9 +170,9 @@ void MidiSynth::control_note_off(char p_note) {
 	
 	foreach(I,active_voices) {
 				
-		if (voice_pool[*I]->original_note==p_note && !voice_pool[*I]->off) {
+		if (voice_pool[*I]->internal.original_note==p_note && !voice_pool[*I]->internal.off) {
 			voice_pool[*I]->event(Voice::NOTE_OFF);
-			voice_pool[*I]->off=true;
+			voice_pool[*I]->internal.off=true;
 		}
 	}
 		
@@ -181,7 +184,7 @@ void MidiSynth::reset() {
 	for (int i=0;i<voice_pool.size();i++) {
 		
 		
-		voice_pool[i]->active=false;
+		voice_pool[i]->internal.active=false;
 	}
 	active_voices.clear();
 }
@@ -261,7 +264,7 @@ MidiSynth::MidiSynth(int p_channels,std::vector<Voice*> p_voice_pool) /*: active
 	buffers.resize(p_channels);
 	voice_pool=p_voice_pool;
 	for (int i=0;i<voice_pool.size();i++) 
-		voice_pool[i]->buffers=&buffers;
+		voice_pool[i]->internal.buffers=&buffers;
 	
 	
 	expression.set_all(1,0,1,1,0.01,Property::DISPLAY_KNOB,"expression","Control/Expression","","Silence","Max");

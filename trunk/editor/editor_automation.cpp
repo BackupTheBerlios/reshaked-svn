@@ -76,10 +76,10 @@ void Editor::add_automation_point(Automation *p_automation,Tick p_tick, float p_
 	
 	
 }
-void Editor::move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val) {
+void Editor::move_automation_point(Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val,float p_to_lfo) {
 	
 	d->undo_stream.begin("Move Point");
-	d->undo_stream.add_command( Command5(&commands,&EditorCommands::move_automation_point,p_automation,p_block,p_point,p_to_tick,p_to_val) );
+	d->undo_stream.add_command( Command5(&commands,&EditorCommands::move_automation_point,p_automation,p_block,p_point,p_to_tick,Automation::AutomationValue(p_to_val,p_to_lfo)) );
 	d->undo_stream.end();
 	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	

@@ -41,7 +41,7 @@ friend class Editor;
 	CommandFunc* automation_hide(bool p_no_undo,Track *p_track,int p_property);
 	
 	CommandFunc* add_automation_point(bool p_no_undo,Automation *p_automation,Tick p_tick, float p_val, float p_lfo_depth);
-	CommandFunc* move_automation_point(bool p_no_undo,Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val);
+	CommandFunc* move_automation_point(bool p_no_undo,Automation *p_automation,int p_block, int p_point, Tick p_to_tick, Automation::AutomationValue p_to_val);
 	CommandFunc* remove_automation_point(bool p_no_undo,Automation *p_automation,int p_block,int p_point);
 	
 	CommandFunc* blocklist_insert_block(bool p_no_undo,BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos);

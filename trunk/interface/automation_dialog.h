@@ -15,6 +15,9 @@
 
 #include "engine/track.h"
 #include <Qt/qmenu.h>
+#include <Qt/qcombobox.h>
+#include <Qt/qslider.h>
+#include <Qt/qdialog.h>
 
 namespace ReShaked {
 
@@ -47,6 +50,33 @@ public:
 	AutomationPopup(QWidget *p_parent,Track *p_track);
 	~AutomationPopup();
 
+};
+
+
+class AutomationSettingsLFO : public QDialog {
+
+	Q_OBJECT
+	QComboBox *wave;
+	QSlider *phase;
+	QSlider *rate;
+	QSlider *depth;
+	QSlider *random;
+	bool lfo_changed;
+	Automation::AutomationData *blockdata;
+	
+	void set_lfo();
+	
+private slots:
+	
+	
+	void wave_changed(int);
+	void slider_changed(int);
+signals:	
+	void lfo_changed_signal();
+public:	
+	bool is_lfo_changed();
+	AutomationSettingsLFO(QWidget *p_parent,Automation::AutomationData *p_blockdata);
+	
 };
 
 }

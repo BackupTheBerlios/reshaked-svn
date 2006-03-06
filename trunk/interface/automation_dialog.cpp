@@ -12,6 +12,9 @@
 #include "automation_dialog.h"
 #include <Qt/qhash.h>
 #include "ui_blocks/helpers.h"
+#include <math.h>
+#include <Qt/qlabel.h>
+#include <Qt/qpushbutton.h>
 
 namespace ReShaked {
 
@@ -174,6 +177,125 @@ AutomationPopup::AutomationPopup(QWidget *p_parent,Track *p_track) : QMenu(p_par
 
 AutomationPopup::~AutomationPopup()
 {
+}
+
+/*************************************/
+
+
+#define LABELS_BEGIN\
+	CHBox *hb;\
+	QLabel *label;\
+	QFont font;\
+	
+	
+#define LABEL(m_title) \
+	label = new QLabel(m_title,this); \
+	layout()->addWidget(label); \
+	font=label->font(); \
+	font.setBold(true); \
+	label->setFont(font); \
+	hb = new CHBox(this); \
+	(new QFrame(hb))->setFixedWidth(20); \
+	layout()->addWidget(hb); 
+
+
+
+
+void AutomationSettingsLFO::set_lfo() {
+	
+	LFO lfo_local=blockdata->get_lfo();
+	switch (wave->currentIndex()) {
+		case 0: lfo_local.set_mode( LFO::MODE_SINE ); break;
+		case 1: lfo_local.set_mode( LFO::MODE_SAW_UP ); break;
+		case 2: lfo_local.set_mode( LFO::MODE_SAW_DOWN); break;
+		case 3: lfo_local.set_mode( LFO::MODE_SQUARE); break;
+	}
+	
+	lfo_local.set_rate( powf((float)rate->value()/512.0,2) );
+	lfo_local.set_depth( (float)depth->value()/1024.0 );
+	lfo_local.set_phase( ((float)phase->value()/1024.0) );
+	lfo_local.set_random_depth( (float)random->value()/1024.0 );
+	
+	blockdata->get_lfo()=lfo_local;
+	lfo_changed=true;
+	lfo_changed_signal();
+}
+
+void AutomationSettingsLFO::wave_changed(int) {
+	
+	set_lfo();
+}
+
+void AutomationSettingsLFO::slider_changed(int) {
+	
+	set_lfo();
+}
+
+
+bool AutomationSettingsLFO::is_lfo_changed() {
+	
+	return lfo_changed;
+}
+AutomationSettingsLFO::AutomationSettingsLFO(QWidget *p_parent,Automation::AutomationData *p_blockdata) : QDialog(p_parent) {
+	
+	setLayout(new QVBoxLayout(this));
+	
+	
+	blockdata=p_blockdata;
+	
+	LABELS_BEGIN
+			
+	LABEL("Wave");
+	
+	wave = new QComboBox(hb);
+	wave->addItem("Sine");
+	wave->addItem("Saw Up");
+	wave->addItem("Saw Down");
+	wave->addItem("Square");
+	QObject::connect(wave,SIGNAL(activated(int)),this,SLOT(wave_changed( int )));
+	wave->setCurrentIndex( p_blockdata->get_lfo().get_mode() );
+	
+	LABEL("Rate");
+	
+	rate = new QSlider(Qt::Horizontal,hb);
+	rate->setRange(1,1024);
+	rate->setValue( (sqrt(p_blockdata->get_lfo().get_rate()))*512.0 );
+	QObject::connect(rate,SIGNAL(valueChanged(int)),this,SLOT(slider_changed( int )));
+	
+	LABEL("Base Depth");
+	
+	depth = new QSlider(Qt::Horizontal,hb);
+	depth->setRange(0,1024);
+	depth->setValue(p_blockdata->get_lfo().get_depth()*1024);
+	QObject::connect(depth,SIGNAL(valueChanged(int)),this,SLOT(slider_changed( int )));
+	
+	LABEL("Phase");
+	
+	phase = new QSlider(Qt::Horizontal,hb);
+	phase->setRange(0,1024);
+	phase->setValue(p_blockdata->get_lfo().get_phase()*1024);
+	QObject::connect(phase,SIGNAL(valueChanged(int)),this,SLOT(slider_changed( int )));
+
+	
+	LABEL("Random");
+	
+	random = new QSlider(Qt::Horizontal,hb);
+	random->setRange(0,1024);
+	random->setValue(p_blockdata->get_lfo().get_random_depth()*1024);
+	QObject::connect(random,SIGNAL(valueChanged(int)),this,SLOT(slider_changed( int )));
+	layout()->setMargin(10);
+	layout()->setSpacing(2);
+	
+	lfo_changed=false;
+	setWindowTitle("LFO Settings");
+	
+	QPushButton *acceptb = new QPushButton("Accept",this);
+	acceptb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	layout()->addWidget(acceptb);
+	layout()->setAlignment(acceptb,Qt::AlignHCenter);
+	
+	QObject::connect(acceptb,SIGNAL(clicked()),this,SLOT(accept()));
+	
 }
 
 

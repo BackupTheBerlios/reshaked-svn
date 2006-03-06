@@ -209,7 +209,7 @@ CommandFunc* EditorCommands::add_automation_point(bool p_no_undo,Automation *p_a
 	
 	
 }
-CommandFunc* EditorCommands::move_automation_point(bool p_no_undo,Automation *p_automation,int p_block, int p_point, Tick p_to_tick, float p_to_val) {
+CommandFunc* EditorCommands::move_automation_point(bool p_no_undo,Automation *p_automation,int p_block, int p_point, Tick p_to_tick, Automation::AutomationValue p_to_val) {
 	
 	ERR_FAIL_COND_V( p_automation->get_block(p_block)==NULL , NULL); //block doesnt exist
 	
@@ -222,22 +222,21 @@ CommandFunc* EditorCommands::move_automation_point(bool p_no_undo,Automation *p_
 	ERR_FAIL_COND_V(p_to_tick>=p_automation->get_block(p_block)->get_length(),NULL); //point tick greater than blocksize
 	ERR_FAIL_COND_V( (p_point>0) && (p_to_tick<=ad->get_index_pos(p_point-1)), NULL); // new pos is less than previous point
 	ERR_FAIL_COND_V( (p_point<(ad->get_stream_size()-1)) && (p_to_tick>=ad->get_index_pos(p_point+1)), NULL); //new pos suprpasses next point
-	ERR_FAIL_COND_V( p_to_val<0 , NULL); //value invalid
-	ERR_FAIL_COND_V( p_to_val>1 , NULL); //value invalid
+	ERR_FAIL_COND_V( p_to_val.value<0 , NULL); //value invalid
+	ERR_FAIL_COND_V( p_to_val.value>1 , NULL); //value invalid
 	
-	float lfo_depth=ad->get_index_value( p_point ).lfo_depth;
 	
 	CommandFunc *ret=NULL; //undo data
 	if (!p_no_undo) {
 		
 		Tick prev_pos=ad->get_index_pos(p_point);
-		float prev_val=ad->get_index_value(p_point).value;
+		Automation::AutomationValue prev_val=ad->get_index_value(p_point);
 		ret=Command5(this,&EditorCommands::move_automation_point,p_automation,p_block,p_point,prev_pos, prev_val);
 	}
 	
 	
 	ad->erase_index( p_point );
-	ad->insert( p_to_tick, Automation::AutomationValue(p_to_val, lfo_depth) );
+	ad->insert( p_to_tick, p_to_val );
 	
 	/* Handle Visual Updating */
 	if (!d->global_edit.automation_point_dont_update) 

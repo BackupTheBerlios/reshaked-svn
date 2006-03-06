@@ -131,3 +131,4 @@ as shared because of the one at the undo buffer!
 -erase empty undo groups when finished
 -resize block doesnt erase automation poitns!
 -REWRITE THE DAMN GLOBAL VIEW!!
+-mover eventos en la seleccion asi como en una curva, y editar la curva
