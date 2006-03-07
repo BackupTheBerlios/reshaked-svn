@@ -126,6 +126,14 @@ void SoundPlugin::set_current_file(String p_current_file) {
 	_current_file=p_current_file;	
 }
 
+void SoundPlugin::set_metadata(SoundPlugin_MetaData *p_metadata) {
+	
+	_metadata=p_metadata;
+}
+SoundPlugin_MetaData *SoundPlugin::get_metadata() {
+	
+	return _metadata;
+}
 
 SoundPlugin::SoundPlugin(const SoundPluginInfo *p_info,int p_channels) {
 	
@@ -133,11 +141,14 @@ SoundPlugin::SoundPlugin(const SoundPluginInfo *p_info,int p_channels) {
 	_channels_created=p_channels;
 	_skip_processing=false;
 	_duplicate=0;
+	_metadata=NULL;
 }
 
 
-SoundPlugin::~SoundPlugin()
-{
+SoundPlugin::~SoundPlugin() {
+	
+	if (_metadata)
+		delete _metadata;
 }
 
 

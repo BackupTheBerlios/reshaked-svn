@@ -47,6 +47,12 @@ struct SoundPluginInfo {
 
 };
 
+class SoundPlugin_MetaData {
+	
+public:	
+	
+	virtual ~SoundPlugin_MetaData() {}
+};
 
 class SoundPlugin : public AudioNode {
 	
@@ -55,6 +61,7 @@ class SoundPlugin : public AudioNode {
 	bool _skip_processing;
 	int _duplicate;
 	String _current_file;
+	SoundPlugin_MetaData *_metadata;
 	
 	const EventBuffer *_event_buffer;
 
@@ -100,6 +107,10 @@ public:
 	void set_current_file(String p_current_file);
 	virtual void save(TreeSaver *p_saver);	
 	virtual void load(TreeLoader *p_saver);	
+	
+	/* Used to store some custom data from whoever is controlling it, most like some UI Setting */
+	void set_metadata(SoundPlugin_MetaData *p_metadata);
+	SoundPlugin_MetaData *get_metadata();
 	
 	/**
 	 * Sound Plugin Constructor

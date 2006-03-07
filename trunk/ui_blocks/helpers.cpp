@@ -12,11 +12,29 @@
 #include "helpers.h"
 #include <Qt/qboxlayout.h>
 #include <Qt/qevent.h>
+#include <Qt/qpainter.h>
 
 
 namespace ReShaked {
 
 
+void CHBox::paintEvent(QPaintEvent *e) {
+	
+	if (!bg.isNull()) {
+		
+		
+		QPainter p(this);
+		p.drawTiledPixmap(0,0,width(),height(),bg);
+		printf("painty\n");	
+	}
+	
+	
+}
+
+void CHBox::set_bg(QPixmap p_px) {
+	
+	bg=p_px;
+}
 bool CHBox::event( QEvent * e ) {
 
 	

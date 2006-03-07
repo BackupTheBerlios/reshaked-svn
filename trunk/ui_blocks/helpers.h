@@ -14,6 +14,7 @@
 
 #include <Qt/qwidget.h>
 #include <Qt/qlayout.h>
+#include <Qt/qpixmap.h>
 #include "typedefs.h"
 
 namespace ReShaked {
@@ -28,8 +29,12 @@ class CHBox : public QWidget {
 	QBoxLayout *l;
 	bool event ( QEvent * e );
 	
+	void paintEvent(QPaintEvent *e);
+	QPixmap bg;
 
 public:
+	void set_bg(QPixmap p_px);
+	
 	QBoxLayout *layout() { return l; }
 	CHBox(QWidget *p_parent,bool p_vertical=false);
 
@@ -63,6 +68,10 @@ public:
 					
 	BindIntSignal(QObject *p_parent,int p_int);	
 };
+
+
+
+
 
 /* Useful for some stuff but for now mainly used for workarounding a bug in Qt4 */
 QWidget *topLevelOf(QWidget* p_widget);
