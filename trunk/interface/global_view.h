@@ -132,7 +132,7 @@ private:
 	
 	void resizeEvent ( QResizeEvent * event );
 	void resize_check_consistency();	
-	void mouseMoveEvent ( QMouseEvent * e );
+	void mouseMoveEvent( QMouseEvent * e );
 	void mousePressEvent ( QMouseEvent * e );
 	void mouseReleaseEvent ( QMouseEvent * e );
 	MouseData::BlockPositionAction get_block_position_action(int p_blocklist,Tick p_pos);

@@ -27,7 +27,8 @@ class ChionicParams {
 public:
 	enum {
 		
-		MAX_LAYERS=6
+		MAX_LAYERS=6,
+		MAX_VARIATORS=4
 	};
 	
 	struct Source {
@@ -70,7 +71,7 @@ public:
 	
 		} pitch;
 		
-	};
+	} global;
 	
 	struct Layer {
 		
@@ -104,8 +105,9 @@ public:
 				LocalProperty velocity_range_begin;
 				LocalProperty velocity_range_end;
 				
-				LocalProperty velocity_range_fade;
-				
+				LocalProperty velocity_range_begin_level;
+				LocalProperty velocity_range_end_level;
+							
 				LocalProperty pitch_scale;
 				
 				LocalProperty random;
@@ -116,13 +118,13 @@ public:
 			
 			struct Filter {
 				
-				LocalProperty type;
+				OptionsProperty type;
 				
 				LocalProperty cutoff;
 				LocalProperty resonance;
 
-				LocalProperty cutoff_sens;
-				LocalProperty resonance_sens;
+				LocalProperty cutoff_velsens;
+				LocalProperty resonance_velsens;
 				
 				LocalProperty freq_tracking;
 				
@@ -137,6 +139,7 @@ public:
 				
 				
 				LocalProperty pos;
+				LocalProperty depth; //if working in 4 chans, only
 				
 				LocalProperty random;
 				
@@ -174,6 +177,7 @@ public:
 		
 		Mode mode;
 		std::vector<char> modulation; //list of voices to where this one writes! MAX_LAYERS means it writes to output
+		
 		
 		
 	} layer[MAX_LAYERS];

@@ -15,6 +15,7 @@
 #include <Qt/qevent.h>
 #include "typedefs.h"
 #include <Qt/qaction.h>
+#include "ui_blocks/helpers.h"
 namespace ReShaked {
 
 
@@ -163,5 +164,40 @@ PixmapButton::~PixmapButton()
 {
 }
 
+/********************************/
+
+
+void PixmapButtonGroup::button_pressed(int p_index) {
+	
+	set_seleted_index( p_index );
+	
+}
+
+void PixmapButtonGroup::add_button(PixmapButton *p_button) {
+	
+	group.push_back(p_button);	
+	connect_bind_int(p_button,SIGNAL(mouse_pressed_signal()),this,SLOT(button_pressed( int )),group.size()-1);
+	
+}
+
+void PixmapButtonGroup::set_seleted_index(int p_index) {
+	
+	ERR_FAIL_INDEX(p_index,group.size());
+	//if (group[p_index]->is_pressed())
+	//	return;
+	
+	for (int i=0;i<group.size();i++) {
+		
+		group[i]->set_pressed( p_index==i );
+	}
+	
+	button_selected_signal(p_index);
+		
+}
+
+PixmapButtonGroup::PixmapButtonGroup(QObject *p_parent) : QObject(p_parent) {
+
+
+}
 
 }

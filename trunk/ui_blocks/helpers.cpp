@@ -25,7 +25,6 @@ void CHBox::paintEvent(QPaintEvent *e) {
 		
 		QPainter p(this);
 		p.drawTiledPixmap(0,0,width(),height(),bg);
-		printf("painty\n");	
 	}
 	
 	

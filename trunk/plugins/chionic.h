@@ -26,6 +26,7 @@ class Chionic : public SoundPlugin {
 	AudioPlug *input_plug;
 	AudioPlug *output_plug;
 	
+	ChionicParams params;
 	
 //	MidiSynth *midi_synth;
 	
@@ -56,6 +57,8 @@ public:
 	void process(int p_frames);
 
 
+	ChionicParams* get_params();
+	
 	Chionic(const SoundPluginInfo *p_info,int p_channels);
 	~Chionic();
 	

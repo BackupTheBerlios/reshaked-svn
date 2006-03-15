@@ -81,6 +81,26 @@ public:
 
 };
 
+
+class PixmapButtonGroup : public QObject {
+	
+	Q_OBJECT
+	
+	std::vector<PixmapButton*> group;
+private slots:	
+	
+	void button_pressed(int p_index);
+signals:	
+	void button_selected_signal(int p_index);
+public:	
+	
+	void add_button(PixmapButton *p_button);
+	void set_seleted_index(int p_index);
+	
+	PixmapButtonGroup(QObject *p_parent);
+	
+};
+
 }
 
 #endif

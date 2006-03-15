@@ -40,6 +40,8 @@ void PixmapLabel::paintEvent(QPaintEvent *e) {
 			case EXPAND_NONE: p.drawPixmap(0,0,pixmap); break;
 			case EXPAND_TILE_V:
 			case EXPAND_TILE_H: p.drawTiledPixmap(0,0,width(),height(),pixmap); break;
+			case EXPAND_STRETCH_H:
+			case EXPAND_STRETCH_V: p.drawPixmap(0,0,width(),height(),pixmap); break;
 		};
 	}
 	
@@ -118,9 +120,9 @@ PixmapLabel::PixmapLabel(QWidget *p_parent,QPixmap p_pixmap,PixmapExpandType p_t
 	owned=false;
 	if (p_type==EXPAND_NONE)
 		setFixedSize(pixmap.size()); 
-	else if (p_type==EXPAND_TILE_H)
+	else if (p_type==EXPAND_TILE_H || p_type==EXPAND_STRETCH_H)
 		setFixedHeight(pixmap.height()); 
-	else if (p_type==EXPAND_TILE_V)
+	else if (p_type==EXPAND_TILE_V || p_type==EXPAND_STRETCH_V)
 		setFixedWidth(pixmap.width()); 
 	
 	

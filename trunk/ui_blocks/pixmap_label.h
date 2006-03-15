@@ -26,7 +26,9 @@ public:
 	enum PixmapExpandType {
 		EXPAND_NONE,
 		EXPAND_TILE_H,
-		EXPAND_TILE_V
+		EXPAND_TILE_V,
+		EXPAND_STRETCH_H,
+		EXPAND_STRETCH_V,
 		
 	};
 private:

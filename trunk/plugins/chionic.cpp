@@ -108,7 +108,10 @@ void Chionic::process(int p_frames)  {
 	
 }
 
-
+ChionicParams* Chionic::get_params() {
+	
+	return &params;
+}
 Chionic::Chionic(const SoundPluginInfo *p_info,int p_channels) : SoundPlugin(p_info,p_channels) {
 	
 	input_plug = new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
