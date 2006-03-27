@@ -75,6 +75,28 @@
 #include "plugin_UIs/chionic_pixmaps/controls__spinbox_label.xpm"
 #include "plugin_UIs/chionic_pixmaps/controls__spinbox_spin.xpm"
 
+#include "plugin_UIs/chionic_pixmaps/envelope__cubic_active.xpm"
+#include "plugin_UIs/chionic_pixmaps/envelope__cubic.xpm"
+#include "plugin_UIs/chionic_pixmaps/envelope__enabled_active.xpm"
+#include "plugin_UIs/chionic_pixmaps/envelope__enabled.xpm"
+#include "plugin_UIs/chionic_pixmaps/envelope__loop_active.xpm"
+#include "plugin_UIs/chionic_pixmaps/envelope__loop.xpm"
+#include "plugin_UIs/chionic_pixmaps/envelope__spin_label.xpm"
+#include "plugin_UIs/chionic_pixmaps/envelope__susloop_active.xpm"
+#include "plugin_UIs/chionic_pixmaps/envelope__susloop.xpm"
+
+#include "plugin_UIs/chionic_pixmaps/envelope__display.xpm"
+
+#include "plugin_UIs/chionic_pixmaps/lfo__sawdown_active.xpm"
+#include "plugin_UIs/chionic_pixmaps/lfo__sawdown.xpm"
+#include "plugin_UIs/chionic_pixmaps/lfo__sawup_active.xpm"
+#include "plugin_UIs/chionic_pixmaps/lfo__sawup.xpm"
+#include "plugin_UIs/chionic_pixmaps/lfo__sine_active.xpm"
+#include "plugin_UIs/chionic_pixmaps/lfo__sine.xpm"
+#include "plugin_UIs/chionic_pixmaps/lfo__square_active.xpm"
+#include "plugin_UIs/chionic_pixmaps/lfo__square.xpm"
+
+
 namespace ReShaked {
 
 
@@ -112,11 +134,83 @@ void ChionicWindow::filter_mode_select(int p_mode) {
 	ERR_FAIL_INDEX(layers.selected,ChionicParams::MAX_LAYERS);
 	
 	ChionicParams::Layer::Parameters &p=chionic->get_params()->layer[layers.selected].params;
-	printf("mode for %i\n",p_mode);
 	p.filter.type.set(p_mode);
 	params.filter_editor->update();
 	
 }
+
+void ChionicWindow::init_envlfo_page() {
+	
+	ChionicParams::Layer::Parameters &p=chionic->get_params()->layer[0].params;
+		
+	envlfo.main_vbox = new CVBox(main_stack);
+	main_stack->addWidget( envlfo.main_vbox );
+	envlfo.main_vbox->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	
+	add_main_label("Envelope",envlfo.main_vbox);
+	
+	begin_control_frame(envlfo.main_vbox);	
+	
+	CVBox *controls_vb = new CVBox(control_frame_current());
+	
+	EnvelopeEditor::Skin editor_skin;
+	
+	editor_skin.bg=QPixmap( (const char**) envelope__display_xpm );
+	editor_skin.line_color=QColor(160,170,190);
+	editor_skin.point_color=QColor(215,215,255);
+	editor_skin.zero_color=QColor(150,150,150);
+	editor_skin.border_size=1;
+	
+	
+	envlfo.envelope_editor = new EnvelopeEditor(controls_vb,editor_skin);
+	envlfo.envelope_editor->set_envelope( &p.volume.envelope );
+	
+	EnvelopeParamsEditor::Skin skin;
+	skin.enabled_button = PixmapButton::Skin(QPixmap((const char**)envelope__enabled_xpm),QPixmap((const char**)envelope__enabled_active_xpm));
+	skin.cubic_button = PixmapButton::Skin(QPixmap((const char**)envelope__cubic_xpm),QPixmap((const char**)envelope__cubic_active_xpm));
+	skin.loop_button = PixmapButton::Skin(QPixmap((const char**)envelope__loop_xpm),QPixmap((const char**)envelope__loop_active_xpm));
+	skin.susloop_button = PixmapButton::Skin(QPixmap((const char**)envelope__susloop_xpm),QPixmap((const char**)envelope__susloop_active_xpm));
+	
+	skin.spin_label=QPixmap((const char**)envelope__spin_label_xpm);
+	skin.spin_updown=QPixmap((const char**)controls__spinbox_spin_xpm);
+	
+	skin.label_col=QColor(255,255,255);
+	
+	envlfo.envelope_params = new EnvelopeParamsEditor(controls_vb,skin);
+	envlfo.envelope_params->set_envelope( &p.volume.envelope );
+	
+	QObject::connect(envlfo.envelope_editor,SIGNAL(envelopeChanged()),envlfo.envelope_params,SLOT(update_controls()));
+	QObject::connect(envlfo.envelope_params,SIGNAL(envelope_changed_signal()),envlfo.envelope_editor,SLOT(update()));
+	
+	end_control_frame();
+	
+	add_main_label("LFO",envlfo.main_vbox);
+	
+	LFO_ParamsEditor::Skin lfo_skin;
+	lfo_skin.display=settings.controls_display;
+	lfo_skin.label=QColor(255,255,255);
+	lfo_skin.slider=settings.controls_slider_skin;
+	lfo_skin.button_sine=PixmapButton::Skin( QPixmap( (const char**) lfo__sine_xpm ), QPixmap( (const char**) lfo__sine_active_xpm ) );
+	lfo_skin.button_sawup=PixmapButton::Skin( QPixmap( (const char**) lfo__sawup_xpm ), QPixmap( (const char**) lfo__sawup_active_xpm ) );
+	lfo_skin.button_sawdown=PixmapButton::Skin( QPixmap( (const char**) lfo__sawdown_xpm ), QPixmap( (const char**) lfo__sawdown_active_xpm ) );
+	lfo_skin.button_square=PixmapButton::Skin( QPixmap( (const char**) lfo__square_xpm ), QPixmap( (const char**) lfo__square_active_xpm ) );
+	
+	
+	begin_control_frame(envlfo.main_vbox);	
+	
+	envlfo.lfo_params = new LFO_ParamsEditor(control_frame_current(),lfo_skin);
+	envlfo.lfo_params->set_lfo( &p.volume.lfo );
+	
+	QObject::connect( envlfo.lfo_params, SIGNAL(lfo_changed_signal()), envlfo.envelope_editor, SLOT(update()) );
+	
+	envlfo.envelope_editor->set_lfo( &p.volume.lfo );
+	
+	
+	end_control_frame();
+	
+}
+
+
 void ChionicWindow::init_params_page() {
 	
 	ChionicParams::Layer::Parameters &p=chionic->get_params()->layer[0].params;
@@ -125,7 +219,6 @@ void ChionicWindow::init_params_page() {
 	params.main_vbox = new CVBox(main_stack);
 	main_stack->addWidget( params.main_vbox );
 	params.main_vbox->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-	
 	
 	params.main_hbox = new CHBox(params.main_vbox);
 	
@@ -248,7 +341,6 @@ void ChionicWindow::init_params_page() {
 	params.tune_coarse=add_spin_edit_control(controls_hb,&p.pitch.tune_coarse,&params.tune_coarse_updown);
 	
 	end_control_frame();
-	
 	
 }
 
@@ -440,6 +532,8 @@ ChionicWindow::ChionicWindow(QWidget *p_parent,Chionic *p_chionic) : QDialog(p_p
 	/* INIT PAGES */
 	
 	init_params_page();
+	init_envlfo_page();
+	main_stack->setCurrentWidget(envlfo.main_vbox);
 	
 	hide();
 	

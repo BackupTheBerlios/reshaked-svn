@@ -15,6 +15,7 @@
 #include "typedefs.h"
 #include <vector>
 
+#include <math.h>
 
 namespace ReShaked {
 
@@ -41,8 +42,8 @@ public:
 	virtual double get()=0;
 	virtual void set(double p_val)=0;
 	virtual double get_stepping()=0;
-	virtual double get_max()=0;
 	virtual double get_min()=0;
+	virtual double get_max()=0;
 	virtual double get_default()=0;
 	virtual String get_name()=0;
 	virtual String get_caption()=0;
@@ -68,8 +69,8 @@ public:
 class LocalProperty : public Property {
 			    
 	
-	double min;
 	double max;
+	double min;
 	double val;
 	double default_v;
 	double interval;
@@ -90,8 +91,8 @@ public:
 	double get();
 	void set(double p_val);
 	double get_stepping();
-	double get_max();
 	double get_min();
+	double get_max();
 	double get_default();
 	
 	
@@ -123,8 +124,8 @@ public:
 	double get();
 	void set(double p_val);
 	double get_stepping();
-	double get_max();
 	double get_min();
+	double get_max();
 	double get_default();
 	String get_name();
 	String get_caption();
@@ -138,6 +139,85 @@ public:
 	
 	void set_all(String p_name,String p_caption,const std::vector<String>& p_options,int p_default=0,String p_postfix="");
 	OptionsProperty();
+};
+
+template<class T,class Type>
+class PropertyClassFunc	: public Property { 
+
+	typedef Type (T::*GetValFunc)()const;
+	typedef void (T::*SetValFunc)(Type);
+	typedef Type (T::*GetMaxFunc)()const;
+	typedef Type (T::*GetMinFunc)()const;
+	
+	T* instance;
+	GetValFunc get_val_func;
+	SetValFunc set_val_func;
+	GetMaxFunc get_min_func;
+	GetMinFunc get_max_func;
+	
+	double stepping;
+	double default_v;
+	
+	//alternates if funcs are not present
+	Type min;
+	Type max; 
+	
+	String name;
+	String caption;
+	String postfix;
+	
+	DisplayMode dispmode;
+public:	
+	
+	double get() { return (instance->*get_val_func)(); }
+	virtual void set(double p_val) { if (p_val>get_max()) p_val=get_max(); if (p_val<get_min()) p_val=get_min(); (instance->*set_val_func)((Type)p_val); }
+	virtual double get_stepping() { return stepping; }
+	virtual double get_min() { return (get_min_func)?(instance->*get_min_func)():min; }
+	virtual double get_max() { return (get_max_func)?(instance->*get_max_func)():max; }
+	virtual double get_default() { return default_v; }
+	virtual String get_name() { return name; }
+	virtual String get_caption() { return caption; }
+	virtual String get_postfix() { return postfix; }
+	
+	virtual String get_text_value(double p_for_value,bool p_no_postfix=false) { 
+		
+		int digits=-1;
+	
+		if (stepping!=0 && stepping!=floorf(stepping)) {
+		
+			digits=0;
+			double step_aux=stepping;
+			do {
+				step_aux*=10;
+			//step_aux+=1e-10;
+				digits++;
+				if (step_aux-floor(step_aux) < 1e-6 )
+					break;
+			
+		
+			} while (true);
+		} 
+		String res=String::num(p_for_value,digits);
+		if (!p_no_postfix)
+			res+=postfix;
+		return res;
+	}
+	
+	virtual bool has_text_value() { return true; }
+	
+	virtual DisplayMode get_display_mode() { return dispmode; }
+		
+	void set_instance(T *p_instance) { instance=p_instance; }
+	void set_set_func(SetValFunc p_func) { set_val_func=p_func; }
+	void set_get_func(GetValFunc p_func) { get_val_func=p_func; }
+	void set_max_func(GetMaxFunc p_func) { get_max_func=p_func; }
+	void set_min_func(GetMinFunc p_func) { get_min_func=p_func; }
+	void set_min(Type p_min) { min=p_min; get_min_func=NULL; }
+	void set_max(Type p_max) { max=p_max; get_max_func=NULL; }
+	void config(String p_name,String p_caption,double p_stepping, double p_default,String p_postfix="") { name=p_name; caption=p_caption; stepping=p_stepping; default_v=p_default; postfix=p_postfix; };
+	
+	PropertyClassFunc() { instance=NULL; stepping=0; default_v=0; get_val_func=NULL; set_val_func=NULL; get_max_func=NULL; get_min_func=NULL; dispmode=DISPLAY_SLIDER; }
+
 };
 
 

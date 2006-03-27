@@ -16,6 +16,7 @@
 	@author red <red@killy>
 */
 
+#include "typedefs.h"
 #include <vector>
 
 namespace ReShaked {
@@ -67,7 +68,9 @@ private:
 	int max_nodes; //-1 for infinite
 	int min_nodes;
 
-	///////// METHODS /////////////
+	String prefix;	
+	int digits;
+	
 	
 public:
 
@@ -77,21 +80,21 @@ public:
 	void set_max_value(float p_max) { max_value=p_max; }
 	void set_min_value(float p_min) { min_value=p_min; }
 
-	float get_max_value() { return max_value; }
-	float get_min_value() { return min_value; }
-	float get_max_nodes() { return max_nodes; }
-	float get_min_nodes() { return min_nodes; }
+	float get_max_value() const { return max_value; }
+	float get_min_value() const{ return min_value; }
+	float get_max_nodes() const{ return max_nodes; }
+	float get_min_nodes() const{ return min_nodes; }
 
 //node management
-	int get_node_count();
+	int get_node_count() const;
 	void set_node(int p_node,int p_ofs,float p_value);
 	int add_node_at_offset(int p_offset,float p_value);
 	void delete_node(int p_node);
-	float get_node_value(int p_node);
-	int get_node_offset(int p_node);
+	float get_node_value(int p_node) const;
+	int get_node_offset(int p_node) const;
 
 //get envelope val at pos
-	float get_value_at_pos(float p_pos); //interpolated 
+	float get_value_at_pos(float p_pos) const; //interpolated 
 
 
 //loop point management
@@ -101,26 +104,30 @@ public:
 	void set_sustain_loop_begin(int p_node);
 	void set_sustain_loop_end(int p_node);
 
-	int get_loop_begin();
-	int get_sustain_loop_begin();
+	int get_loop_begin() const;
+	int get_sustain_loop_begin() const;
 
-	int get_loop_end();
-	int get_sustain_loop_end();
+	int get_loop_end() const;
+	int get_sustain_loop_end() const;
 
 	void set_loop_enabled (bool p_enabled);
-	bool is_loop_enabled();
+	bool is_loop_enabled() const;
 	void set_sustain_loop_enabled (bool p_enabled);
-	bool is_sustain_loop_enabled();
+	bool is_sustain_loop_enabled() const;
 	void set_enabled (bool p_enabled);
-	bool is_enabled();
+	bool is_enabled() const;
 
 	void set_max_nodes(int p_max); // -1 infinite nodes
 	void set_min_nodes(int p_min);
 
 	void set_release_time(int p_time);
-	int get_release_time();
+	int get_release_time() const;
 	
-	void reset();
+	void set_prefix(String p_prefix,int p_digits=0);
+	String get_prefix() const;
+	int get_digits() const;
+	
+	void reset(bool p_add_default_nodes=true);
 
 	Envelope();
 

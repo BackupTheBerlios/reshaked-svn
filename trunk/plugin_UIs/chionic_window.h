@@ -24,6 +24,9 @@
 #include "ui_blocks/range_level_editor.h"
 #include "ui_blocks/panner_editor.h"
 #include "ui_blocks/filter_editor.h"
+#include "ui_blocks/envelope_editor.h"
+#include "ui_blocks/envelope_params_editor.h"
+#include "ui_blocks/lfo_params_editor.h"
 
 namespace ReShaked {
 
@@ -49,6 +52,15 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 	Chionic *chionic;
 	CVBox *main_vbox;
 	QStackedWidget *main_stack;
+	
+	struct EnvLFO {
+		
+		CHBox *main_vbox;
+		EnvelopeEditor *envelope_editor;
+		EnvelopeParamsEditor *envelope_params;
+		LFO_ParamsEditor *lfo_params;
+		
+	} envlfo;
 	
 	struct ParamsPage {
 		
@@ -124,6 +136,7 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 	} layers;
 	
 	void init_params_page();
+	void init_envlfo_page();
 	
 	/* helpers */
 	

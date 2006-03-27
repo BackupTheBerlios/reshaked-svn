@@ -113,7 +113,7 @@ void SoundDriver_PortAudio::read_from_outputs(int p_frames) {
 
 	get_output_plug(0)->get_buffer()->copy_to_interleaved(&current_output[process_offset*current_outputs],p_frames);
 	
-	process_offset+p_frames;
+	process_offset+=p_frames;
 	
 	
 }

@@ -33,10 +33,13 @@ private:
 	double depth; ///< whoever-uses-this-dependent
 	double phase; ///< 0 .. 1
 	double random_depth; ///< 0 .. 1	
+	double random_seed; ///< 0 .. 1	
 
+	
 	Mode mode;
 	
 	unsigned long rate_unit_size;
+	double max_depth;
 	
 public:
 	
@@ -47,6 +50,7 @@ public:
 	void set_depth(double p_depth);
 	void set_phase(double p_phase);
 	void set_random_depth(double p_amount);
+	void set_random_seed(double p_amount);
 	void set_mode(Mode p_mode);
 	
 	unsigned long get_delay() const;
@@ -54,7 +58,11 @@ public:
 	double get_depth() const;
 	double get_phase() const;
 	double get_random_depth() const;
+	double get_random_seed() const;
 	Mode get_mode() const ;
+	
+	double get_max_depth() const;
+	void set_max_depth(double p_max);
 	
 	double get_value(unsigned long p_for_time) const; //get value since time happened
 	

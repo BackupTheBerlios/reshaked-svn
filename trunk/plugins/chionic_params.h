@@ -130,8 +130,10 @@ public:
 				
 				LocalProperty random;
 				
-				Envelope envelope;
-				LFO lfo;
+				Envelope envelope_cutoff;
+				Envelope envelope_resonance;
+				LFO lfo_cutoff;
+				LFO lfo_resonance;
 				
 			} filter;
 			

@@ -21,10 +21,12 @@ Envelope::Envelope() {
 	min_value=-1;
 	max_nodes=INFINITE_NODES;
 	min_nodes=2;
+	digits=0;
+	prefix="";
 	reset();
 }
 
-void Envelope::reset() {
+void Envelope::reset(bool p_add_default_nodes) {
 
 
 	on=false;
@@ -41,8 +43,10 @@ void Envelope::reset() {
 	sustain_loop_begin_node=0;
 	sustain_loop_end_node=0;
 	
-	for (int i=0;i<min_nodes;i++)
-		add_node_at_offset(i*200,0);
+	if (p_add_default_nodes) {
+		for (int i=0;i<min_nodes;i++)
+			add_node_at_offset(i*200,0);
+	}
 	
 	/* just for comfort, this goes back to zero after node addition */
 	loop_begin_node=0;
@@ -52,7 +56,7 @@ void Envelope::reset() {
 	
 }
 
-float Envelope::get_value_at_pos(float p_pos) {
+float Envelope::get_value_at_pos(float p_pos) const {
 
 	if (node.size()<2) return 0;
 	if (p_pos>node[node.size()-1].offset)
@@ -204,12 +208,12 @@ void Envelope::delete_node(int p_node) {
 
 }
 
-int Envelope::get_node_count() {
+int Envelope::get_node_count() const {
 
 	return node.size();
 }
 
-float Envelope::get_node_value(int p_node) {
+float Envelope::get_node_value(int p_node) const {
 
 	ERR_FAIL_COND_V( (p_node<0) || (p_node>=node.size()) ,0);
 
@@ -217,7 +221,7 @@ float Envelope::get_node_value(int p_node) {
 	return node[p_node].value;
 
 }
-int Envelope::get_node_offset(int p_node) {
+int Envelope::get_node_offset(int p_node) const {
 
 	ERR_FAIL_COND_V( (p_node<0) || (p_node>=node.size()) ,-1);
 	
@@ -225,39 +229,39 @@ int Envelope::get_node_offset(int p_node) {
 	
 }
 
-int Envelope::get_loop_begin() {
+int Envelope::get_loop_begin() const {
 
 	return loop_begin_node;	
 }
-int Envelope::get_sustain_loop_begin() {
+int Envelope::get_sustain_loop_begin() const {
 
 	return sustain_loop_begin_node;
 
 }
 
-int Envelope::get_loop_end() {
+int Envelope::get_loop_end() const {
 
 	return loop_end_node;
 
 }
-int Envelope::get_sustain_loop_end() {
+int Envelope::get_sustain_loop_end() const {
 
 	return sustain_loop_end_node;
 
 }
 
-bool Envelope::is_loop_enabled() {
+bool Envelope::is_loop_enabled() const {
 
 
 	return loop_on;
 }
-bool Envelope::is_sustain_loop_enabled() {
+bool Envelope::is_sustain_loop_enabled() const {
 
 	return sustain_loop_on;
 
 }
 
-bool Envelope::is_enabled() {
+bool Envelope::is_enabled() const {
 
 	return on;
 }
@@ -273,6 +277,7 @@ void Envelope::set_loop_enabled (bool p_enabled) {
 
 
 	loop_on=p_enabled;
+	printf("loop is %i\n",p_enabled);
 }
 
 void Envelope::set_sustain_loop_enabled (bool p_enabled) {
@@ -302,7 +307,23 @@ void Envelope::set_release_time(int p_time) {
 	release_time=p_time;
 }
 
-int Envelope::get_release_time() {
+void Envelope::set_prefix(String p_prefix,int p_digits) {
+	
+	prefix=p_prefix;
+	digits=p_digits;
+}
+String Envelope::get_prefix() const {
+	
+	return prefix;	
+}
+
+int Envelope::get_digits() const {
+	
+	return digits;
+}
+
+
+int Envelope::get_release_time() const {
 
 	return release_time;
 }

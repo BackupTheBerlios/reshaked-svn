@@ -10,7 +10,6 @@
 //
 //
 #include "property.h"
-#include <math.h>
 #include <stdio.h>
 
 namespace ReShaked {

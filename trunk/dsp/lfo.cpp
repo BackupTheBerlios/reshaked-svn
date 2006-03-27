@@ -39,6 +39,13 @@ void LFO::set_random_depth(double p_amount) {
 	random_depth=p_amount;
 	
 }
+
+void LFO::set_random_seed(double p_amount) {
+	
+	random_seed=p_amount;
+	
+}
+
 void LFO::set_mode(Mode p_mode) {
 	
 	mode=p_mode;
@@ -64,6 +71,12 @@ double LFO::get_random_depth() const {
 	
 	return random_depth;
 }
+
+double LFO::get_random_seed() const {
+	
+	return random_seed;
+}
+
 
 LFO::Mode LFO::get_mode() const {
 	
@@ -125,7 +138,8 @@ double LFO::get_value(unsigned long p_for_time)  const {
 		
 		
 		unsigned int cycle_count=p_for_time/cycle_size;
-		double rnd_val=wave_val*random_table[(cycle_count+lrintf(random_depth*1024))&0xFF];
+		int rnd_ofs=lrintf(random_seed*256.0);
+		double rnd_val=wave_val*random_table[(cycle_count+rnd_ofs)&0xFF];
 		wave_val=random_depth*rnd_val+(1.0-random_depth)*wave_val;
 		
 	}
@@ -134,6 +148,15 @@ double LFO::get_value(unsigned long p_for_time)  const {
 	
 	return wave_val;
 		
+}
+
+double LFO::get_max_depth() const {
+	
+	return max_depth;
+}
+void LFO::set_max_depth(double p_max) {
+	
+	max_depth=p_max;
 }
 
 
@@ -145,6 +168,9 @@ LFO::LFO() {
 	phase=0;
 	random_depth=0;
 	rate_unit_size=1;
+	random_seed=0;
+	max_depth=1;
+	mode=MODE_SINE;
 }
 
 
