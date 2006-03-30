@@ -80,7 +80,7 @@ enum ColorList {
 
 };
 
-enum PixmapList {
+enum PixmapsList {
 	
 	/* Pixmaps */
 	
@@ -370,7 +370,7 @@ class VisualSettings{
 
 	typedef std::map<SkinBoxList,SkinBox*> SkinBoxMap;
 	typedef std::map<ColorList,QColor> ColorMap;
-	typedef std::map<PixmapList,QPixmap> PixmapMap;
+	typedef std::map<PixmapsList,QPixmap> PixmapMap;
 	typedef std::map<ConstantList,int> ConstantMap;
 
 	SkinBoxMap skin_box_map;
@@ -405,7 +405,7 @@ public:
 
 	SkinBox * get_skin_box(SkinBoxList p_which);
 	QColor get_color(ColorList p_color);
-	QPixmap get_pixmap(PixmapList p_pixmap);
+	QPixmap get_pixmap(PixmapsList p_pixmap);
 	int get_constant(ConstantList p_constant);
 
 	int get_selection_h_margin();

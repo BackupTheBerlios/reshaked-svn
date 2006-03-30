@@ -382,7 +382,7 @@ QColor VisualSettings::get_color(ColorList p_color) {
 
 }
 
-QPixmap VisualSettings::get_pixmap(PixmapList p_pixmap) {
+QPixmap VisualSettings::get_pixmap(PixmapsList p_pixmap) {
 	
 	PixmapMap::iterator I=pixmap_map.find(p_pixmap);
 

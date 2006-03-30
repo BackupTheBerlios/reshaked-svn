@@ -13,6 +13,8 @@
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 #include "plugin_UIs/chionic_interface.h"
 #include "drivers/get_time_posix.h"
+#include "dsp/sample_file.h"
+
 
 #include "drivers/sound_driver_portaudio.h"
 
@@ -43,6 +45,12 @@
 
 #include "drivers/sound_driver_rtaudio.h"
 
+
+#endif
+
+#ifdef SNDFILE_ENABLED
+
+#include "drivers/sample_loader_sndfile.h"
 
 #endif
 
@@ -95,7 +103,15 @@ int main(int argc, char *argv[]) {
 	QApplication *q = new QApplication(argc,argv);
 	
 	ReShaked::SoundDriverList driver_list;
+	ReShaked::SampleFile sample_file;
+		
+#ifdef SNDFILE_ENABLED
 	
+	ReShaked::SampleLoader_SNDFile loader_sndfile;
+	sample_file.add_loader( &loader_sndfile );
+	
+	
+#endif
 	
 	
 #ifdef POSIX_ENABLED

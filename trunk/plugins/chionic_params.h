@@ -42,6 +42,8 @@ public:
 		
 		Sample *sample; ///<sample, NULL if source is not sample
 //		Ocillator *osc;///<oscillator, NULL if source is not oscillator
+		
+		String name; //must have a name!
 	};
 	
 	struct Global {

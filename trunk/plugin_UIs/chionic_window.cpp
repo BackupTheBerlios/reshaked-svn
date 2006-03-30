@@ -15,8 +15,11 @@
 #include <Qt/qpainter.h>
 #include <Qt/qpushbutton.h>
 #include <Qt/qlabel.h>
+#include <Qt/qfiledialog.h>
 #include "ui_blocks/pixmap_label.h"
-
+#include "ui_blocks/sample_editor.h"
+#include "engine/audio_control.h"
+#include "dsp/sample_file.h"
 
 #include "plugin_UIs/chionic_pixmaps/frame__bottom_left.xpm"
 #include "plugin_UIs/chionic_pixmaps/frame__bottom_right.xpm"
@@ -96,6 +99,33 @@
 #include "plugin_UIs/chionic_pixmaps/lfo__square_active.xpm"
 #include "plugin_UIs/chionic_pixmaps/lfo__square.xpm"
 
+#include "plugin_UIs/chionic_pixmaps/source__clone_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__clone.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__copy_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__copy.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__edit_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__edit.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__load_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__load.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__movedown_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__movedown.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__moveup_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__moveup.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__new_osc_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__new_osc.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__new_samp_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__new_samp.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__paste_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__paste.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__remove_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__remove.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__replace_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__replace.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__save_pushed.xpm"
+#include "plugin_UIs/chionic_pixmaps/source__save.xpm"
+
+#include "plugin_UIs/chionic_pixmaps/source__list_bg.xpm"
+
 
 namespace ReShaked {
 
@@ -111,6 +141,7 @@ void ChionicWindow::main_page_select(int p_page) {
 		} break;
 		case SECTION_GLOBAL: {
 			
+			main_stack->setCurrentWidget(sources.main_vbox);			
 			
 		} break;
 		case SECTION_REGIONS: {
@@ -119,10 +150,11 @@ void ChionicWindow::main_page_select(int p_page) {
 		} break;
 		case SECTION_PARAMS: {
 			
-			main_stack->setCurrentWidget(params.main_hbox);
+			main_stack->setCurrentWidget(params.main_vbox);
 		} break;
 		case SECTION_ENVLFO: {
 			
+			main_stack->setCurrentWidget(envlfo.main_vbox);
 			
 		} break;
 		
@@ -136,6 +168,204 @@ void ChionicWindow::filter_mode_select(int p_mode) {
 	ChionicParams::Layer::Parameters &p=chionic->get_params()->layer[layers.selected].params;
 	p.filter.type.set(p_mode);
 	params.filter_editor->update();
+	
+}
+
+
+void ChionicWindow::init_sources_page() {
+	
+	sources.main_vbox = new CVBox(main_stack);
+	main_stack->addWidget( sources.main_vbox );
+	
+	CVBox *buttons_vb = new CVBox(sources.main_vbox);
+	buttons_vb->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed );
+	CHBox *hb = new CHBox( buttons_vb );
+
+	
+	add_sources_button(hb,SourcesPage::ACTION_LOAD,source__load_xpm,source__load_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_REPLACE,source__replace_xpm,source__replace_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_NEW_SAMP,source__new_samp_xpm,source__new_samp_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_COPY,source__copy_xpm,source__copy_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_CLONE,source__clone_xpm,source__clone_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_MOVEUP,source__moveup_xpm,source__moveup_pushed_xpm);
+
+	
+	hb = new CHBox( buttons_vb );
+	
+	add_sources_button(hb,SourcesPage::ACTION_SAVE,source__save_xpm,source__save_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_EDIT,source__edit_xpm,source__edit_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_NEW_OSC,source__new_osc_xpm,source__new_osc_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_PASTE,source__paste_xpm,source__paste_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_REMOVE,source__remove_xpm,source__remove_pushed_xpm);
+	add_sources_button(hb,SourcesPage::ACTION_MOVEDOWN,source__movedown_xpm,source__movedown_pushed_xpm);
+	
+	buttons_vb->layout()->setSpacing(5);
+	
+	(new QWidget(sources.main_vbox))->setFixedHeight(40);
+	
+	add_main_label("List of Sources",sources.main_vbox);
+	begin_control_frame( sources.main_vbox );
+	PixmapList::Skin skin;
+	
+	skin.skin_bg=&settings.list_bg;
+	skin.font_height=16;
+	skin.separator=4;
+	skin.row_margin=5;
+	skin.selected_bg_color=QColor(180,180,180);
+	skin.font_color=QColor(230,240,250);
+	skin.selected_font_color=QColor(0,0,0);
+	skin.separator_color=QColor(180,180,180);
+	
+	sources.source_list = new PixmapList(control_frame_current(),skin);
+	QObject::connect(sources.source_list,SIGNAL(item_selected_signal( int )),this,SLOT(source_selected( int )));
+	
+	end_control_frame();
+	settings.current_frame_vb->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	settings.current_frame_hb->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	
+	add_main_label("Preview",sources.main_vbox);
+	begin_control_frame( sources.main_vbox );
+	
+	sources.sample_viewer = new SampleViewer(control_frame_current());
+	sources.sample_viewer->setMinimumHeight(80);
+	
+	end_control_frame();
+	
+}
+
+void ChionicWindow::add_sources_button(QWidget *p_parent, SourcesPage::Action p_action,  char *p_pix[],  char *p_pix_pushed[]) {
+	
+	PixmapButton *pb = new PixmapButton(p_parent,PixmapButton::Skin( QPixmap( (const char**)p_pix ), QPixmap( (const char**)p_pix_pushed) ) );
+	connect_bind_int(pb,SIGNAL(mouse_pressed_signal()),this,SLOT(sources_action( int )),p_action);
+}
+
+void ChionicWindow::source_selected(int p_which) {
+	
+	ERR_FAIL_INDEX(p_which,chionic->get_params()->global.sources.size());
+	
+	if ( chionic->get_params()->global.sources[p_which].type==ChionicParams::Source::TYPE_SAMPLE ) {
+		
+		sources.sample_viewer->set_sample_data( chionic->get_params()->global.sources[p_which].sample );
+	}
+}
+
+void ChionicWindow::sources_action(int p_action) {
+	
+	switch (p_action) {
+		case SourcesPage::ACTION_LOAD: {
+			
+			QString file=QFileDialog::getOpenFileName ( this, "Open Sample/OSC",".", "Waveforms (*.wav *.au *.aif *.WAV);;Oscs (*.osc);;All Files (*)");
+			
+			if (file=="")
+				break;
+			
+			/* try with sample */
+			Sample *s=SampleFile::get_singleton()->load_sample( DeQStrify(file) );
+			
+			QString fname=file;
+			
+			if (fname.lastIndexOf("/")!=-1) {
+		
+				fname.remove(0,fname.lastIndexOf("/")+1);
+			}
+
+			
+			if (!s)
+				break; //some messagebox?
+			
+			AudioControl::mutex_lock();
+			
+			ChionicParams::Source src;
+			
+			src.type=ChionicParams::Source::TYPE_SAMPLE;
+			src.sample=s;
+			src.name=DeQStrify(fname);
+			
+			chionic->get_params()->global.sources.push_back(src);
+			
+			AudioControl::mutex_unlock();
+			
+			update_sources_list();
+			
+			sources.source_list->select_item( sources.source_list->get_item_count() -1 );
+			source_selected( sources.source_list->get_item_count() -1 );
+			
+					
+			
+		} break;
+		
+		case SourcesPage::ACTION_SAVE: {
+			
+			
+		} break;
+		case SourcesPage::ACTION_REPLACE: {
+			
+			
+		} break;
+		case SourcesPage::ACTION_EDIT: {
+			
+			
+			int source=sources.source_list->get_selected();
+			if (source<0 ||	source >=chionic->get_params()->global.sources.size() )
+				break;
+			
+			ChionicParams::Source &src=chionic->get_params()->global.sources[source];
+			
+			if (src.type==ChionicParams::Source::TYPE_SAMPLE) {
+				
+				SampleEditorDialog *sed = new SampleEditorDialog(this,src.sample);
+				sed->exec();
+				delete sed;
+			}
+			
+			
+		} break;
+				
+		case SourcesPage::ACTION_NEW_SAMP: {
+			
+			
+		} break;
+		case SourcesPage::ACTION_NEW_OSC: {
+			
+			
+		} break;
+		case SourcesPage::ACTION_COPY: {
+			
+			
+		} break;
+		case SourcesPage::ACTION_PASTE: {
+			
+			
+		} break;
+		case SourcesPage::ACTION_CLONE: {
+			
+			
+		} break;
+		case SourcesPage::ACTION_REMOVE: {
+			
+			
+		} break;
+				
+		case SourcesPage::ACTION_MOVEUP: {
+			
+			
+		} break;
+		case SourcesPage::ACTION_MOVEDOWN: {
+			
+			
+		} break;
+	}
+	
+}
+
+void ChionicWindow::update_sources_list() {
+	
+	sources.source_list->clear();
+	for (int i=0;i<chionic->get_params()->global.sources.size();i++) {
+		
+		sources.source_list->add_item( QStrify( chionic->get_params()->global.sources[i].name ) );
+	}
+
 	
 }
 
@@ -475,6 +705,11 @@ ChionicWindow::ChionicWindow(QWidget *p_parent,Chionic *p_chionic) : QDialog(p_p
 	settings.filter_editor_skin = FilterEditor::Skin( QPixmap( (const char**) controls__filter_display_xpm ), QPixmap( (const char**) controls__filter_display_xpm ),QColor(235,245,255,200),1);
 	settings.updown_skin=PixmapUpDown::Skin( QPixmap ( (const char**)controls__spinbox_spin_xpm ),QPixmap ( (const char**)controls__spinbox_spin_xpm ),QPixmap ( (const char**)controls__spinbox_spin_xpm ) );
 	settings.spin_bg=QPixmap ( (const char**)controls__spinbox_label_xpm );
+	settings.list_bg.load_from_xpm( (const char**)source__list_bg_xpm, 2,2,2,2);
+	settings.list_bg.set_center_color( QColor(0,0,0) );
+	
+	
+	
 	
 	QPalette p=palette();
 	p.setColor(QPalette::Background,settings.bg_color);
@@ -501,6 +736,8 @@ ChionicWindow::ChionicWindow(QWidget *p_parent,Chionic *p_chionic) : QDialog(p_p
 	button_group->add_button( new PixmapButton(hb_top,PixmapButton::Skin(QPixmap((const char**)frame__section_params_xpm),QPixmap((const char**)frame__section_params_active_xpm)),PixmapButton::TYPE_TOGGLE ) );
 	
 	button_group->add_button( new PixmapButton(hb_top,PixmapButton::Skin(QPixmap((const char**)frame__section_envlfo_xpm),QPixmap((const char**)frame__section_envlfo_active_xpm)),PixmapButton::TYPE_TOGGLE ) );
+	
+	QObject::connect(button_group,SIGNAL(button_selected_signal( int ) ), this, SLOT(main_page_select( int ) )  );
 	
 	new PixmapLabel(hb_top,frame__section_end_xpm);
 	new PixmapLabel(hb_top,frame__top_right_xpm);
@@ -533,7 +770,9 @@ ChionicWindow::ChionicWindow(QWidget *p_parent,Chionic *p_chionic) : QDialog(p_p
 	
 	init_params_page();
 	init_envlfo_page();
-	main_stack->setCurrentWidget(envlfo.main_vbox);
+	init_sources_page();
+		
+	main_stack->setCurrentWidget(sources.main_vbox);
 	
 	hide();
 	

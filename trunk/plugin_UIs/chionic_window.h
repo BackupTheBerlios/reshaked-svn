@@ -27,6 +27,8 @@
 #include "ui_blocks/envelope_editor.h"
 #include "ui_blocks/envelope_params_editor.h"
 #include "ui_blocks/lfo_params_editor.h"
+#include "ui_blocks/pixmap_list.h"
+#include "ui_blocks/sample_viewer.h"
 
 namespace ReShaked {
 
@@ -53,6 +55,33 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 	CVBox *main_vbox;
 	QStackedWidget *main_stack;
 	
+	struct SourcesPage {
+		
+		enum Action {
+			
+			ACTION_LOAD,
+			ACTION_SAVE,
+			ACTION_REPLACE,
+			ACTION_EDIT,
+			
+			ACTION_NEW_SAMP,
+			ACTION_NEW_OSC,
+			ACTION_COPY,
+			ACTION_PASTE,
+			ACTION_CLONE,
+			ACTION_REMOVE,					
+			
+			ACTION_MOVEUP,
+			ACTION_MOVEDOWN,
+			
+		};
+		
+		CHBox *main_vbox;
+		PixmapList *source_list;
+		SampleViewer *sample_viewer;
+		
+	} sources;
+	
 	struct EnvLFO {
 		
 		CHBox *main_vbox;
@@ -61,6 +90,7 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 		LFO_ParamsEditor *lfo_params;
 		
 	} envlfo;
+	
 	
 	struct ParamsPage {
 		
@@ -124,6 +154,7 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 		FilterEditor::Skin filter_editor_skin;
 		QPixmap spin_bg;
 		PixmapUpDown::Skin updown_skin;
+		SkinBox list_bg;
 		
 		CVBox *current_frame_vb;
 		CHBox *current_frame_hb;
@@ -135,6 +166,7 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 		
 	} layers;
 	
+	void init_sources_page();
 	void init_params_page();
 	void init_envlfo_page();
 	
@@ -150,7 +182,14 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 	PropertyEditor* add_slider_edit_control(QWidget *p_base,Property *p_prop,PropertyEditor** p_with_editbox=NULL);
 	PropertyEditor* add_spin_edit_control(QWidget *p_base,Property *p_prop,PropertyEditor** p_updown);
 	
+	void add_sources_button(QWidget *p_parent, SourcesPage::Action p_action,  char *p_pix[],  char *p_pix_pushed[]);
+	
 private slots:	
+	
+	void update_sources_list();
+	
+	void source_selected(int p_which);
+	void sources_action(int p_action);
 	
 	void filter_mode_select(int p_mode);
 	void main_page_select(int p_page);

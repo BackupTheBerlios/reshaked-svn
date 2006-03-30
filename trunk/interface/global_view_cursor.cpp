@@ -13,7 +13,7 @@
 #include <Qt/qframe.h>
 namespace ReShaked {
 
-void GlobalViewCursor::add_button(GlobalView::EditMode p_mode,PixmapList p_pixmap_fg,PixmapList p_pixmap_bg,QString p_hint) {
+void GlobalViewCursor::add_button(GlobalView::EditMode p_mode,PixmapsList p_pixmap_fg,PixmapsList p_pixmap_bg,QString p_hint) {
 
 	PixmapButton::Skin skin(GET_QPIXMAP(p_pixmap_fg),GET_QPIXMAP(p_pixmap_bg));
 	mode_button[p_mode]= new PixmapButton(this,skin,PixmapButton::TYPE_TOGGLE);

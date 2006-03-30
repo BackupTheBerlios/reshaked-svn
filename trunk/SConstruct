@@ -49,7 +49,8 @@ env.build_dir = None
 env.__class__.find_source_files = detect.find_source_files
 
 #detect.check_pkg(env,"qt-mt","3.2");
-#detect.check_pkg(env,"alsa","0.9");
+if (detect.check_pkg(env,"sndfile","1.0.10")):
+	version.enables+=['SNDFILE_ENABLED'];
 
 if (detect.check_pkg(env,"jack","0.100.0")):
 	version.enables+=['DRIVER_JACK_ENABLED'];
