@@ -108,6 +108,12 @@ public:
 	
 		} pitch;
 		
+		//the extra "layer" added is the input/output
+		struct ModulationSources {
+			
+			std::vector<int> read_from; //read from 0 to MAX_LAYERS-1 , a layer, read from MAX_LAYERS means reading from input
+		} modulation_source[MAX_LAYERS+1]; // source MAX_LAYERS is the output
+		
 	} global;
 	
 	struct Layer {
@@ -203,16 +209,15 @@ public:
 			
 		} params;
 		
-		enum Mode {
+		enum ModulationMode {
 			MODE_OFF,
 			MODE_ON_ADD,
 			MODE_RING,
-			MODE_PM
+			MODE_FM
 		};
 		
-		Mode mode;
-		std::vector<char> modulation; //list of voices to where this one writes! MAX_LAYERS means it writes to output
-		
+		ModulationMode modulation_mode;
+	
 		void copy_from(Layer *p_from);
 		
 		

@@ -164,6 +164,15 @@ bool RouteEditor::are_connected(int p_node,int p_with_node) {
 	return connections[ofs];
 }
 
+void RouteEditor::clear_connections() {
+	
+	for (int i=0;i<connections.size();i++)
+		connections[i]=false;
+	
+	update();
+	
+}
+
 RouteEditor::RouteEditor(QWidget *p_parent,int p_nodes,const Skin& p_skin) : QWidget(p_parent) {
 	
 	setMinimumSize(p_skin.bg.size());

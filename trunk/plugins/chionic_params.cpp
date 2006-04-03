@@ -34,6 +34,7 @@ ChionicParams::ChionicParams() {
 		String c="Layer "+String::num(i+1)+"/";
 		String n="layer_"+String::num(i+1)+"_";
 		
+		layer[i].modulation_mode=Layer::MODE_OFF;
 		layer[i].regions.blending.enabled=false;
 		layer[i].regions.blending.curve.set_all(0.0,-1.0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,n+"region_blend","Region Blend");
 		
@@ -118,8 +119,12 @@ void ChionicParams::Layer::copy_from(Layer *p_from) {
 	
 }
 
-ChionicParams::~ChionicParams()
-{
+ChionicParams::~ChionicParams() {
+	
+	for (int i=0;i<global.sources.size();i++) {
+		
+		global.sources[i].clear();
+	}
 }
 
 

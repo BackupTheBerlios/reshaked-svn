@@ -110,7 +110,7 @@ void EnvelopeParamsEditor::add_label(QString p_text,QColor p_color,QWidget *p_pa
 	QLabel *l = new QLabel(p_text,p_parent);
 	QPalette p = l->palette();
 	p.setColor(QPalette::Text,p_color);
-	p.setColor(QPalette::WindowText,p_color);
+//	p.setColor(QPalette::WindowText,p_color);
 	l->setPalette(p);
 	QFont f;
 	f.setPixelSize(13);

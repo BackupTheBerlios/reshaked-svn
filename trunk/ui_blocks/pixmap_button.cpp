@@ -169,7 +169,7 @@ PixmapButton::~PixmapButton()
 
 void PixmapButtonGroup::button_pressed(int p_index) {
 	
-	set_seleted_index( p_index );
+	set_selected_index( p_index );
 	
 }
 
@@ -180,7 +180,7 @@ void PixmapButtonGroup::add_button(PixmapButton *p_button) {
 	
 }
 
-void PixmapButtonGroup::set_seleted_index(int p_index) {
+void PixmapButtonGroup::set_selected_index(int p_index) {
 	
 	ERR_FAIL_INDEX(p_index,group.size());
 	//if (group[p_index]->is_pressed())

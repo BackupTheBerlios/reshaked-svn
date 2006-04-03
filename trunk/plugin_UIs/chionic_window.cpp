@@ -741,12 +741,12 @@ void ChionicWindow::init_global_page() {
 	RouteEditor::Skin matrix_skin;
 	matrix_skin.bg=QPixmap( (const char**) global__matrix_xpm);
 	matrix_skin.cursor_over=QPixmap( (const char**) global__matrix_node_select_xpm);
-	matrix_skin.line_bg=QColor(110,120,125);
+	matrix_skin.line_bg=QColor(60,70,75);
 	matrix_skin.line_connected=QColor(250,240,235);
 	matrix_skin.node_size=QSize(20,20);
 	
 	global.route_edit = new RouteEditor(mod_hb,8,matrix_skin);
-	
+	QObject::connect(global.route_edit,SIGNAL(matrix_changed_signal()),this,SLOT(global_matrix_changed_slot()));
 	CVBox *mod_vb = new CVBox(mod_hb);
 	
 	new PixmapLabel(mod_vb,QPixmap( (const char**)global__modulation_label_xpm) );
@@ -766,15 +766,101 @@ void ChionicWindow::init_global_page() {
 
 		button_group->add_button( new PixmapButton(layer_hb, PixmapButton::Skin( QPixmap( (const char**)global__modulation_fm_xpm), QPixmap( (const char**)global__modulation_fm_active_xpm) ),  PixmapButton::TYPE_TOGGLE ) );
 		
-		button_group->set_seleted_index( 0 );
+		button_group->set_selected_index( 0 );
+		
 		
 	}
+	
+	/* Fuck Qt, needs signal parameter binding, like gtkmm :( */
+	QObject::connect(global.modulation_modes[0], SIGNAL(button_selected_signal(int) ),this,SLOT(global_layer_1_mode_selected( int ) ) );
+	QObject::connect(global.modulation_modes[1], SIGNAL(button_selected_signal(int) ),this,SLOT(global_layer_2_mode_selected( int ) ) );
+	QObject::connect(global.modulation_modes[2], SIGNAL(button_selected_signal(int) ),this,SLOT(global_layer_3_mode_selected( int ) ) );
+	QObject::connect(global.modulation_modes[3], SIGNAL(button_selected_signal(int) ),this,SLOT(global_layer_4_mode_selected( int ) ) );
+	QObject::connect(global.modulation_modes[4], SIGNAL(button_selected_signal(int) ),this,SLOT(global_layer_5_mode_selected( int ) ) );
+	QObject::connect(global.modulation_modes[5], SIGNAL(button_selected_signal(int) ),this,SLOT(global_layer_6_mode_selected( int ) ) );
 	
 	new PixmapLabel(mod_vb,QPixmap( (const char**)global__modulation_bottom_xpm) );
 	
 	end_control_frame();
 }
 
+void ChionicWindow::global_update_matrix() {
+	
+	global.route_edit->clear_connections();
+	
+	for (int i=0;i<(ChionicParams::MAX_LAYERS+1);i++) {
+		
+		for (int j=0;j<chionic->get_params()->global.modulation_source[i].read_from.size();j++) {
+			
+			int dest=i+1;
+			int read_from=chionic->get_params()->global.modulation_source[i].read_from[j];
+			int source=(read_from<ChionicParams::MAX_LAYERS)?(read_from+1):0;
+			
+			global.route_edit->connect_nodes( source, dest );
+			
+		}
+	}
+	
+	for (int i=0;i<ChionicParams::MAX_LAYERS;i++) {
+		
+		global.modulation_modes[i]->set_selected_index( chionic->get_params()->layer[i].modulation_mode );
+	}
+}
+
+void ChionicWindow::global_layer_mode_selected(int p_layer,int p_mode) {
+	
+	ChionicParams::Layer::ModulationMode mode=ChionicParams::Layer::MODE_OFF;
+	
+	switch( p_mode ) {
+		case 0: mode=ChionicParams::Layer::MODE_OFF; break;
+		case 1: mode=ChionicParams::Layer::MODE_ON_ADD; break;
+		case 2: mode=ChionicParams::Layer::MODE_RING; break;
+		case 3: mode=ChionicParams::Layer::MODE_FM; break;
+	}
+	
+	ERR_FAIL_INDEX(p_layer,ChionicParams::MAX_LAYERS);
+	
+	chionic->get_params()->layer[p_layer].modulation_mode=mode;
+	
+}
+
+/* wish Qt had parameter binding to the signals.. */
+void ChionicWindow::global_layer_1_mode_selected(int p_mode) { global_layer_mode_selected(0,p_mode); }
+void ChionicWindow::global_layer_2_mode_selected(int p_mode) { global_layer_mode_selected(1,p_mode); }
+void ChionicWindow::global_layer_3_mode_selected(int p_mode) { global_layer_mode_selected(2,p_mode); }
+void ChionicWindow::global_layer_4_mode_selected(int p_mode) { global_layer_mode_selected(3,p_mode); }
+void ChionicWindow::global_layer_5_mode_selected(int p_mode) { global_layer_mode_selected(4,p_mode); }
+void ChionicWindow::global_layer_6_mode_selected(int p_mode) { global_layer_mode_selected(5,p_mode); }
+
+void ChionicWindow::global_matrix_changed_slot() {
+	
+	/* Filling again all the synthesis routes, so this requieres locking */
+	
+	AudioControl::mutex_lock();
+	
+	//Clear all
+	for (int i=0;i<(ChionicParams::MAX_LAYERS+1);i++) 
+		chionic->get_params()->global.modulation_source[i].read_from.clear();
+	
+	//Fill it again
+	for(int i=1;i<(ChionicParams::MAX_LAYERS+2);i++) { //layers, plus inputs/outputs
+		
+		
+		for (int j=0;j<i;j++) {
+	
+			int layer=i-1;
+			int source=(j==0)?ChionicParams::MAX_LAYERS:(j-1);
+			
+			if (!global.route_edit->are_connected( i,j))
+				continue;
+			
+			chionic->get_params()->global.modulation_source[layer].read_from.push_back(source);
+		}
+	}	
+	AudioControl::mutex_unlock();
+	
+	
+}
 
 void ChionicWindow::init_regions_page() {
 		
@@ -807,7 +893,7 @@ void ChionicWindow::init_regions_page() {
 	
 	region_mode_group->add_button( new PixmapButton(region_mode_hbox, PixmapButton::Skin( QPixmap( (const char**)region__button_remove_xpm), QPixmap( (const char**)region__button_remove_active_xpm) ),  PixmapButton::TYPE_TOGGLE ) );
 	
-	region_mode_group->set_seleted_index( 0 );
+	region_mode_group->set_selected_index( 0 );
 	QObject::connect( region_mode_group, SIGNAL(button_selected_signal( int )), this, SLOT(region_mode_changed( int ) ) ); 
 	
 	regions.region_map_editor = new KeyboardRegionsEditor( region_map_vbox2,skin );
@@ -1138,7 +1224,7 @@ void ChionicWindow::init_envlfo_page() {
 	end_control_frame();
 	
 	envlfo.selected_param=0;
-	envlfo.parameter_edited->set_seleted_index( 0 );
+	envlfo.parameter_edited->set_selected_index( 0 );
 	
 }
 
@@ -1411,7 +1497,7 @@ void ChionicWindow::add_main_label(QString p_text,QWidget *p_parent) {
 	QLabel *l = new QLabel(p_text,p_parent);
 	QPalette p = l->palette();
 	p.setColor(QPalette::Text,settings.main_label_color);
-	p.setColor(QPalette::WindowText,settings.main_label_color);
+//	p.setColor(QPalette::WindowText,settings.main_label_color);
 	l->setPalette(p);
 	QFont f;
 	f.setPixelSize(13);
@@ -1425,7 +1511,7 @@ void ChionicWindow::add_control_label(QString p_text,QWidget *p_parent) {
 	QLabel *l = new QLabel(p_text,p_parent);
 	QPalette p = l->palette();
 	p.setColor(QPalette::Text,settings.control_label_color);
-	p.setColor(QPalette::WindowText,settings.control_label_color);
+//	p.setColor(QPalette::WindowText,settings.control_label_color);
 	l->setPalette(p);
 	QFont f;
 	f.setPixelSize(13);
@@ -1472,7 +1558,7 @@ void ChionicWindow::layer_selected_slot(int p_layer) {
 	params.pan_random->set_property( &p.pan.random );
 	params.pan_random_disp->set_property( &p.pan.random );
 	
-	params.filter_mode_group->set_seleted_index( p.filter.type.get_current() );
+	params.filter_mode_group->set_selected_index( p.filter.type.get_current() );
 	
 	params.filter_editor->set_properties( &p.filter.type, &p.filter.cutoff, &p.filter.resonance );
 	
@@ -1640,7 +1726,7 @@ ChionicWindow::ChionicWindow(QWidget *p_parent,Chionic *p_chionic) : QDialog(p_p
 	main_stack->setCurrentWidget(regions.main_hbox);
 	
 	
-	layers.button_group->set_seleted_index( 0 );
+	layers.button_group->set_selected_index( 0 );
 	hide();
 	
 	layout()->setMargin(0);

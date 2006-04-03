@@ -51,10 +51,10 @@ void LFO_ParamsEditor::update_values() {
 	
 	switch (lfo->get_mode()) {
 		
-		case LFO::MODE_SINE: lfo_mode_group->set_seleted_index( 0 ); break;
-		case LFO::MODE_SQUARE: lfo_mode_group->set_seleted_index( 1 ); break;
-		case LFO::MODE_SAW_UP: lfo_mode_group->set_seleted_index( 2 ); break;
-		case LFO::MODE_SAW_DOWN: lfo_mode_group->set_seleted_index( 3 ); break;
+		case LFO::MODE_SINE: lfo_mode_group->set_selected_index( 0 ); break;
+		case LFO::MODE_SQUARE: lfo_mode_group->set_selected_index( 1 ); break;
+		case LFO::MODE_SAW_UP: lfo_mode_group->set_selected_index( 2 ); break;
+		case LFO::MODE_SAW_DOWN: lfo_mode_group->set_selected_index( 3 ); break;
 	}
 	
 }
@@ -93,7 +93,7 @@ void LFO_ParamsEditor::add_label(QString p_text,QWidget *p_parent) {
 	QLabel *l = new QLabel(p_text,p_parent);
 	QPalette p = l->palette();
 	p.setColor(QPalette::Text,skin.label);
-	p.setColor(QPalette::WindowText,skin.label);
+//	p.setColor(QPalette::WindowText,skin.label);
 	l->setPalette(p);
 	QFont f;
 	f.setPixelSize(13);

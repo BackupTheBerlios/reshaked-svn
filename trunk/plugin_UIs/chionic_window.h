@@ -261,6 +261,19 @@ private slots:
 	void layer_selected_slot(int p_layer);
 	void layer_copy_slot();
 	void layer_paste_slot();
+	
+	void global_update_matrix();
+	void global_matrix_changed_slot();
+	
+	/* damn Qt :( */
+	void global_layer_1_mode_selected(int p_mode);
+	void global_layer_2_mode_selected(int p_mode);
+	void global_layer_3_mode_selected(int p_mode);
+	void global_layer_4_mode_selected(int p_mode);
+	void global_layer_5_mode_selected(int p_mode);
+	void global_layer_6_mode_selected(int p_mode);
+	void global_layer_mode_selected(int p_layer,int p_mode);
+	
 public:
 	ChionicWindow(QWidget *p_parent,Chionic *p_chionic);
 	~ChionicWindow();

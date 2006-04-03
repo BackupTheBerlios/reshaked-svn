@@ -95,7 +95,7 @@ signals:
 public:	
 	
 	void add_button(PixmapButton *p_button);
-	void set_seleted_index(int p_index);
+	void set_selected_index(int p_index);
 	
 	PixmapButtonGroup(QObject *p_parent);
 	

@@ -58,6 +58,9 @@ signals:
 	void matrix_changed_signal();
 public:	
 	
+	
+	void clear_connections();
+	
 	void connect_nodes(int p_node,int p_to_node);
 	void disconnect_nodes(int p_node,int p_from_node);
 	bool are_connected(int p_node,int p_with_node);	
