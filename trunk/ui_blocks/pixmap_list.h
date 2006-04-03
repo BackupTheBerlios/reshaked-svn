@@ -52,6 +52,8 @@ private:
 	void paintEvent(QPaintEvent *e);
 	void mousePressEvent(QMouseEvent *e);
 	
+	void update_scrollbar();
+	void resizeEvent ( QResizeEvent * );
 private slots:	
 	
 	void scrollbar_value_changed(int p_to_val);

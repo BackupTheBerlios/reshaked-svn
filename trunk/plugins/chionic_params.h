@@ -13,10 +13,13 @@
 #define RESHAKEDCHIONIC_PARAMS_H
 
 #include "dsp/sample.h"
+#include "dsp/oscillator.h"
 #include "dsp/lfo.h"
 #include "dsp/envelope.h"
+#include "dsp/region.h"
 #include "property.h"
 #include "value_stream.h"
+
 
 namespace ReShaked {
 
@@ -41,9 +44,41 @@ public:
 		Type type;
 		
 		Sample *sample; ///<sample, NULL if source is not sample
-//		Ocillator *osc;///<oscillator, NULL if source is not oscillator
+		Oscillator *osc;///<oscillator, NULL if source is not oscillator
 		
 		String name; //must have a name!
+		
+		void copy_from(const Source &p_source) { 
+			
+			clear();
+			
+			type = p_source.type; 
+			name=p_source.name; 
+			if (type==TYPE_SAMPLE) { 
+				sample = new Sample;
+				*sample=*p_source.sample;
+				osc=NULL;
+			} else {
+				
+				osc = new Oscillator;
+				*osc=*p_source.osc;
+				sample=NULL;
+	
+			}
+		}		
+				
+		void clear() {
+			
+			if (osc)
+				delete osc;
+			if (sample)
+				delete sample;
+			osc=NULL;
+			sample=NULL;
+			name="";
+			
+		}
+		Source() { type=TYPE_SAMPLE; sample=NULL; osc=NULL; }
 	};
 	
 	struct Global {
@@ -82,17 +117,11 @@ public:
 			struct Blending {
 				
 				
-				LocalProperty enabled;
+				bool enabled;
 				LocalProperty curve;
 			} blending;
 			
-			struct Region {
-				
-				signed char base_note; //- 0.. 127 -1 is disabled */
-				int source_idx;
-			};
-			
-			ValueStream<char,Region> map;
+			RegionMap map;
 			
 
 		} regions;
@@ -148,7 +177,9 @@ public:
 				LocalProperty random;
 				
 				Envelope envelope;
+				Envelope envelope_depth;
 				LFO lfo;
+				LFO lfo_depth;
 				
 			} pan;
 			
@@ -182,6 +213,7 @@ public:
 		Mode mode;
 		std::vector<char> modulation; //list of voices to where this one writes! MAX_LAYERS means it writes to output
 		
+		void copy_from(Layer *p_from);
 		
 		
 	} layer[MAX_LAYERS];

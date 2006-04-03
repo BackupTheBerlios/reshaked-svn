@@ -34,6 +34,9 @@ ChionicParams::ChionicParams() {
 		String c="Layer "+String::num(i+1)+"/";
 		String n="layer_"+String::num(i+1)+"_";
 		
+		layer[i].regions.blending.enabled=false;
+		layer[i].regions.blending.curve.set_all(0.0,-1.0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,n+"region_blend","Region Blend");
+		
 		Layer::Parameters &p=layer[i].params;
 		
 		p.volume.send.set_all(0.7,0.0,1.0,0.7,0.01,Property::DISPLAY_SLIDER,n+"volume_send","Send","","Mute");
@@ -90,6 +93,11 @@ ChionicParams::ChionicParams() {
 		p.pan.envelope.set_prefix("pan",2);
 		p.pan.lfo.set_rate_unit_size(1000); //msecs
 		
+		p.pan.envelope_depth.set_max_value(1.0);
+		p.pan.envelope_depth.set_min_value(-1.0);
+		p.pan.envelope_depth.set_prefix("pan",2);
+		p.pan.lfo_depth.set_rate_unit_size(1000); //msecs
+		
 		p.pitch.tune_coarse.set_all(0,-24,24,0,1,Property::DISPLAY_SPIN,n+"pitch_tune_coarse","Coarse");
 		p.pitch.tune_fine.set_all(0.0,-1.0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,n+"pitch_tune_fine","Fine");
 		p.pitch.envelope.set_max_value(24.0);
@@ -104,6 +112,11 @@ ChionicParams::ChionicParams() {
 	
 }
 
+void ChionicParams::Layer::copy_from(Layer *p_from) {
+	
+	
+	
+}
 
 ChionicParams::~ChionicParams()
 {

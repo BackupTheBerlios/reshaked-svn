@@ -110,4 +110,34 @@ BindIntSignal::BindIntSignal(QObject *p_parent,int p_int) :QObject(p_parent){
 	
 }
 
+QString get_note_string(int p_note) {
+	
+	if (p_note<0)
+		return "";
+	
+	/* Helpers */
+	static const char* note_str[12] = {
+		"C-",
+		"C#",
+		"D-",
+		"D#",
+		"E-",
+		"F-",
+
+		"F#",
+		"G-",
+		"G#",
+		"A-",
+		"A#",
+		"B-"
+	};
+
+	
+	QString note=note_str[p_note%12];
+	note+=QString::number(p_note/12);
+	
+	return note;
+	
+}
+
 }

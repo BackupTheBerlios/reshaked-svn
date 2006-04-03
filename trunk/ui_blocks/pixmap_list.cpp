@@ -73,11 +73,39 @@ void PixmapList::mousePressEvent(QMouseEvent *e) {
 	update();
 }
 	
+	
+void PixmapList::resizeEvent ( QResizeEvent * ) {
+	
+	
+	update_scrollbar();
+}
+
+void PixmapList::update_scrollbar() {
+	
+	if (!scroll_bar)
+		return;
+	
+	int row_height=skin.font_height+skin.separator;
+	
+	int visible_rows=height()/row_height;
+	
+	int scrollable_rows=strings.size()-visible_rows;
+	
+	if (scrollable_rows<=0)
+		scroll_bar->hide();
+	else 
+		scroll_bar->show();
+	
+	scroll_bar->set_max(scrollable_rows);
+	scroll_bar->set_pagesize( visible_rows );
+	scroll_bar->set_value( view_offset );
+	
+}
 
 void PixmapList::scrollbar_value_changed(int p_to_val) {
 	
-	
-	
+	view_offset=p_to_val;
+	update();
 }
 
 
@@ -87,6 +115,7 @@ void PixmapList::add_item(QString p_item,int p_at_pos) {
 		strings.push_back(p_item);
 	
 	update();
+	update_scrollbar();
 }
 void PixmapList::clear() {
 	
@@ -94,6 +123,7 @@ void PixmapList::clear() {
 	view_offset=0;
 	selected=-1;	
 	update();
+	update_scrollbar();
 	
 }
 
@@ -121,6 +151,12 @@ void PixmapList::select_item(int p_index) {
 void PixmapList::set_scrollbar(PixmapScrollBar *p_scroll_bar) {
 	
 	scroll_bar=p_scroll_bar;
+	if (scroll_bar) {
+		
+		QObject::connect(scroll_bar,SIGNAL(value_changed_signal( int )),this,SLOT(scrollbar_value_changed( int )));
+		update_scrollbar();
+	}
+	
 }
 
 PixmapList::PixmapList(QWidget *p_parent,const Skin& p_skin) : QWidget(p_parent) {

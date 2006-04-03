@@ -20,7 +20,7 @@ namespace ReShaked {
 	@author red <red@killy>
 */
 class Oscillator {
-	
+public:	
 	enum {
 		BASE_SIZE=2048,	//somewhat standard, OK base size for oscillator.
 		MIN_LEVEL_SIZE=4

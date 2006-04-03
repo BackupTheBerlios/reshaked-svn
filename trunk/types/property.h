@@ -220,6 +220,68 @@ public:
 
 };
 
+template<class T>
+class PropertyVarPtr : public Property { 
+
+	T* ptr;
+
+	double stepping;
+	T default_v;
+
+	//alternates if funcs are not present
+	T min;
+	T max; 
+
+	String name;
+	String caption;
+	String postfix;
+
+	DisplayMode dispmode;
+public:	
+
+	double get() { return *ptr; }
+	virtual void set(double p_val) { if (p_val>get_max()) p_val=get_max(); if (p_val<get_min()) p_val=get_min(); *ptr=(T)p_val; }
+	virtual double get_stepping() { return stepping; }
+	virtual double get_min() { return (T)min; }
+	virtual double get_max() { return (T)max; }
+	virtual double get_default() { return default_v; }
+	virtual String get_name() { return name; }
+	virtual String get_caption() { return caption; }
+	virtual String get_postfix() { return postfix; }
+
+	virtual String get_text_value(double p_for_value,bool p_no_postfix=false) { 
+
+		int digits=-1;
+
+		if (stepping!=0 && stepping!=floorf(stepping)) {
+
+			digits=0;
+			double step_aux=stepping;
+			do {
+				step_aux*=10;
+//step_aux+=1e-10;
+				digits++;
+				if (step_aux-floor(step_aux) < 1e-6 )
+					break;
+
+
+			} while (true);
+		} 
+		String res=String::num(p_for_value,digits);
+		if (!p_no_postfix)
+			res+=postfix;
+		return res;
+	}
+
+	virtual bool has_text_value() { return true; }
+
+	virtual DisplayMode get_display_mode() { return dispmode; }
+
+	void config(String p_name,String p_caption,T* p_var_ptr, T p_min, T p_max,double p_stepping, double p_default,String p_postfix="") { name=p_name; caption=p_caption; stepping=p_stepping; default_v=p_default; postfix=p_postfix; ptr=p_var_ptr; min=p_min; max=p_max; };
+
+	PropertyVarPtr() { ptr=NULL; stepping=0; default_v=0;  min=0; max=0; dispmode=DISPLAY_SLIDER; }
+
+};
 
 class PropertyEditor {
 	

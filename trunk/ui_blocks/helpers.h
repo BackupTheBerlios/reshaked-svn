@@ -70,7 +70,7 @@ public:
 };
 
 
-
+QString get_note_string(int p_note);
 
 
 /* Useful for some stuff but for now mainly used for workarounding a bug in Qt4 */

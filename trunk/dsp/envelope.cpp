@@ -132,10 +132,10 @@ int Envelope::add_node_at_offset(int p_ofs,float p_value) {
 	new_node=i;
 	node.resize(node.size()+1);
 
-	if (loop_begin_node>=new_node) loop_begin_node++;
-	if (loop_end_node>=new_node) loop_end_node++;
-	if (sustain_loop_begin_node>=new_node) sustain_loop_begin_node++;
-	if (sustain_loop_end_node>=new_node) sustain_loop_end_node++;
+	if (loop_begin_node>=new_node && node.size()>=2) loop_begin_node++;
+	if (loop_end_node>=new_node && node.size()>=2) loop_end_node++;
+	if (sustain_loop_begin_node>=new_node && node.size()>=2) sustain_loop_begin_node++;
+	if (sustain_loop_end_node>=new_node && node.size()>=2) sustain_loop_end_node++;
 
 	for (i=node.size()-1;i>new_node;i--) node[i]=node[i-1];
 

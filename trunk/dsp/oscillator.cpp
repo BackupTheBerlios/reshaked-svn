@@ -11,7 +11,7 @@
 //
 #include "oscillator.h"
 #include "error_macros.h"
-
+#include <math.h>
 namespace ReShaked {
 
 
@@ -61,6 +61,14 @@ Oscillator::Oscillator() {
 		oscil_maps.push_back(v);
 		level_size/=2;
 	}
+	
+	/* default to a sinewave */
+	for (int i=0;i<BASE_SIZE;i++) {
+		
+		set_frame(i,sinf( ((float)i/(float)BASE_SIZE) * M_PI*2.0 ) );
+	}
+	
+	update_submaps();
 	
 }
 

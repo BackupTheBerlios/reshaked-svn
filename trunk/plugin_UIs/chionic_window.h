@@ -29,6 +29,10 @@
 #include "ui_blocks/lfo_params_editor.h"
 #include "ui_blocks/pixmap_list.h"
 #include "ui_blocks/sample_viewer.h"
+#include "ui_blocks/oscillator_display.h"
+#include "ui_blocks/keyboard_regions_editor.h"
+#include "ui_blocks/sens_curve_editor.h"
+#include "ui_blocks/route_editor.h"
 
 namespace ReShaked {
 
@@ -78,9 +82,16 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 		
 		CHBox *main_vbox;
 		PixmapList *source_list;
+		
+		QStackedWidget *preview_stack;
 		SampleViewer *sample_viewer;
+		OscillatorDisplay *oscil_viewer;
+		ChionicParams::Source clipboard;
 		
 	} sources;
+	
+	
+	
 	
 	struct EnvLFO {
 		
@@ -88,9 +99,36 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 		EnvelopeEditor *envelope_editor;
 		EnvelopeParamsEditor *envelope_params;
 		LFO_ParamsEditor *lfo_params;
-		
+		PixmapButtonGroup *parameter_edited;
+		int selected_param;
+			
 	} envlfo;
 	
+	struct Global {
+		
+		CVBox *main_vbox;
+				
+		RouteEditor *route_edit;
+		std::vector< PixmapButtonGroup*> modulation_modes;
+		
+	} global;
+	
+	struct Regions {
+		
+		
+		CHBox *main_hbox;
+		KeyboardRegionsEditor *region_map_editor;
+		PixmapLabel *note_over;
+		PixmapLabel *current_region;
+		PixmapUpDown *current_updown;
+		
+		PixmapLabel *current_note;
+		PixmapUpDown *current_note_updown;
+		PixmapList *source;
+		SensCurveEditor *sens_curve_editor;
+		PixmapButton *blend_enable;
+		
+	} regions;
 	
 	struct ParamsPage {
 		
@@ -155,20 +193,31 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 		QPixmap spin_bg;
 		PixmapUpDown::Skin updown_skin;
 		SkinBox list_bg;
+		SkinBox scroll_bg;
+		SkinBox scroll_grab;
+		SensCurveEditor::Skin sens_skin;
 		
 		CVBox *current_frame_vb;
 		CHBox *current_frame_hb;
+		
 	} settings;
 	
 	struct Layers {
+		
+		CHBox *layer_hb;
+		CHBox *layer_vb;
+		PixmapButtonGroup *button_group;
+		
 		
 		int selected;
 		
 	} layers;
 	
 	void init_sources_page();
+	void init_regions_page();
 	void init_params_page();
 	void init_envlfo_page();
+	void init_global_page();
 	
 	/* helpers */
 	
@@ -194,6 +243,24 @@ private slots:
 	void filter_mode_select(int p_mode);
 	void main_page_select(int p_page);
 	
+	void envlfo_parameter_selected(int p_param);
+	
+	void region_changed_note_over(int p_to_note);
+	void region_selected_changed(int p_to_which);
+	void region_mode_changed(int p_to_mode);
+	
+	void region_select_up();
+	void region_select_down();
+	void region_base_note_select_up();
+	void region_base_note_select_down();
+	
+	void update_selected_region_source();
+	void region_source_selected(int p_source);
+	void region_blend_toggle(bool p_blend);
+	
+	void layer_selected_slot(int p_layer);
+	void layer_copy_slot();
+	void layer_paste_slot();
 public:
 	ChionicWindow(QWidget *p_parent,Chionic *p_chionic);
 	~ChionicWindow();
