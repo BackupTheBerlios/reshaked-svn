@@ -156,7 +156,7 @@ SettingsSound::SettingsSound(QWidget *p_parent) :CVBox (p_parent)
 	
 	driver_enabled = new QCheckBox("Active",hb);
 	
-	driver_restart = new QPushButton(hb);
+	driver_restart = new QPushButton("Restart",hb);
 	driver_restart->setIcon(QPixmap( (const char **)icon_restart_xpm ) );
 	
 	options_holder = new CVBox(this);

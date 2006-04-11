@@ -123,6 +123,15 @@ bool SongPlayback::is_recording_automations() {
 	return record_automation;
 }
 
+void SongPlayback::set_recording(bool p_recording) {
+	
+	record=p_recording;
+}
+bool SongPlayback::is_recording() {
+	
+	return record;
+}
+
 SongPlayback::SongPlayback(GlobalProperties *p_properties) {
 	
 	properties=p_properties;	
@@ -132,6 +141,7 @@ SongPlayback::SongPlayback(GlobalProperties *p_properties) {
 	prev_tick=0;
 	latency_buffer.clear();
 	record_automation=false;
+	record=false;
 	play_start_time=0;
 }
 

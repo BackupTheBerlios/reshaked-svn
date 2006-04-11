@@ -94,12 +94,15 @@ void RackUI::update_rack_combo_slot() {
 	if (selected_rack>=rack_choose->get_item_count())
 		selected_rack=rack_choose->get_item_count()-1;
 	
+	editor->set_current_rack_track( selected_rack - 1 );
+	
 	rack_choose->select_item(selected_rack);
 }
 
 void RackUI::rack_selected_slot(int p_selected_rack) {
 	
 	selected_rack=p_selected_rack;
+	editor->set_current_rack_track( selected_rack - 1 );
 	update_selected_rack_slot();
 }
 
@@ -109,6 +112,7 @@ void RackUI::select_track(int p_track) {
 	
 	ERR_FAIL_INDEX(p_track,editor->get_song()->get_track_count());
 	selected_rack=p_track+1;
+	editor->set_current_rack_track( selected_rack - 1 );
 	rack_choose->select_item( p_track+1 );
 	update_selected_rack_slot();
 	
@@ -118,6 +122,7 @@ void RackUI::select_global() {
 	
 	selected_rack=0;
 	rack_choose->select_item( 0 );
+	editor->set_current_rack_track( selected_rack - 1 );
 	update_selected_rack_slot();
 	
 }

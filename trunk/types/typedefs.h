@@ -80,7 +80,7 @@ static inline int rand_from_seed(unsigned int *seed) {
 	return (int)(s & RAND_MAX);
 }
 
-
+typedef long long Sint64;
 
 #ifdef WIN32_ENABLED
 

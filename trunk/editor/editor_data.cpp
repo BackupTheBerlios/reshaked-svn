@@ -22,6 +22,13 @@ EditorData::EditorData(Song *p_song,UI_UpdateNotify *p_ui_update_notify) :cursor
 	selection.shift_selection_valid=false;
 	pattern_edit.volume_mask=99;
 	pattern_edit.volume_mask_active=true;
+	pattern_edit.poly_input_offset=0;
+	pattern_edit.last_noteon=0;
+	
+	global_edit.current_rack_track=-1;
+	global_edit.pattern_midi_input_enabled=false;
+	global_edit.polyphonic_midi_input_enabled=false;
+	
 }
 
 

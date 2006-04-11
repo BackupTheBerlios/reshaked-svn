@@ -23,6 +23,9 @@ SettingsDialog::SettingsDialog(QWidget *p_parent) :QDialog (p_parent)
 	settings_sound = new SettingsSound(NULL);
 	tabs->addTab(settings_sound,"Audio");
 	
+	settings_midi = new SettingsMidi(NULL);
+	tabs->addTab(settings_midi,"MIDI");
+	
 	key_settings = new SettingsKeys(NULL);
 	tabs->addTab(key_settings,"Key Bindings");
 	

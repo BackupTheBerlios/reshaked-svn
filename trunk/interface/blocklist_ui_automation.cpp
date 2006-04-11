@@ -18,6 +18,7 @@
 #include <Qt/qaction.h>
 #include <Qt/qmenu.h>
 #include "interface/automation_dialog.h"
+#include "interface/automation_input_select.h"
 namespace ReShaked {
 
 int BlockListUI_Automation::get_row_size() {
@@ -972,6 +973,13 @@ void BlockListUI_Automation::show_popup() {
 		
 	}
 	
+	QAction* ac_record = new QAction(GET_QPIXMAP(ICON_CONTROL_RECORD),"MIDI Recording..",topLevelOf(this));
+	action_list.push_back( ac_record );
+	
+	
+	sep = new QAction("",topLevelOf(this));
+	sep->setSeparator(topLevelOf(this));
+	action_list.push_back(sep);
 	
 	QAction* ac_hide = new QAction("Hide",topLevelOf(this));
 	action_list.push_back( ac_hide );
@@ -1045,6 +1053,20 @@ void BlockListUI_Automation::show_popup() {
 		update();
 		delete lfo_settings;
 		
+	} else if (res==ac_record) {
+		
+		AutomationInputSelect *input_select = new AutomationInputSelect(topLevelOf(this),automation->get_recording_channel(),automation->get_recording_control(),automation->is_recording_enabled());
+		
+		input_select->exec();
+		
+		automation->set_recording_channel( input_select->get_channel() );
+		automation->set_recording_control( input_select->get_control() );
+		automation->set_recording_enabled( input_select->is_input_enabled() );
+		
+		delete input_select;
+		
+		editor->get_ui_update_notify()->rack_repaint();
+		
 	} else if (res==ac_hide) {
 		
 		int track_idx=editor->get_blocklist_track( editor->find_blocklist( automation) );
@@ -1056,7 +1078,7 @@ void BlockListUI_Automation::show_popup() {
 				editor->hide_automation( i, tr );
 			}
 		}
-	}
+	} 
 	
 	
 	foreach(I,action_list) {

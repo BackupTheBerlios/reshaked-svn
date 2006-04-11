@@ -16,6 +16,7 @@
 
 #include "editor/editor_commands.h"
 #include "tree_loader_disk.h"
+#include "engine/midi_driver.h"
 namespace ReShaked {
 
 /**
@@ -43,7 +44,7 @@ class Editor {
 	void selection_clear_area(EditorData::Selection::Pos p_from,EditorData::Selection::Pos p_to);
 	EditorData::Selection::Pos get_selection_end_from_pos(EditorData::Selection::Pos p_pos);
 	
-	void play_note_at_cursor();
+	void play_note_at_cursor(int p_custom_column=-1);
 	
 	void selection_transpose(bool p_up);	
 	
@@ -204,6 +205,18 @@ public:
 	Cursor &get_cursor();
 	Song* get_song();
 	UI_UpdateNotify *get_ui_update_notify();
+	void set_current_rack_track(int p_track);
+	int get_current_rack_track();
+	void set_pattern_midi_input_enabled(bool p_enabled);
+	bool is_pattern_midi_input_enabled();
+	
+	/** MIDI */
+	
+	void midi_record_event(const DriverInputEvent& ev);
+	void midi_edit_event(const EventMidi& ev);
+	void midi_record_automation_event(Track *p_track,const DriverInputEvent& ev);
+	void set_polyphonic_midi_input_enabled(bool p_enabled);	
+	void midi_reset();
 	
 	/** PRESETS */
 	

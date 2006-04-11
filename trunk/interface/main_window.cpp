@@ -26,6 +26,8 @@
 #include "pixmaps/view_controls.xpm"
 #include "visual_settings.h"
 #include "engine/sound_driver_list.h"
+#include "engine/midi_driver_list.h"
+#include "editor/midi_input_handler.h"
 
 #include "tree_saver_disk.h"
 #include "tree_loader_disk.h"
@@ -38,7 +40,7 @@
 #include <Qt/qmessagebox.h>
 
 #include "interface/info_editor.h"
-
+#include "interface/midi_output_editor.h"
 #include "interface/blocklist_ui_automation.h"
 
 namespace ReShaked {
@@ -285,6 +287,7 @@ void MainWindow::menu_action_callback(int p_action) {
 			
 			if (data.editor->get_blocklist_count())
 				data.song.play(data.editor->get_cursor().get_tick_pos());
+			data.editor->midi_reset();
 			
 		} break;
 		case CONTROL_PLAY_BLOCK: {
@@ -300,6 +303,7 @@ void MainWindow::menu_action_callback(int p_action) {
 				break;
 			
 			data.song.loop( bl->get_block_pos( block_idx ), bl->get_block_pos( block_idx )+bl->get_block( block_idx )->get_length());
+			data.editor->midi_reset();
 		} break;
 		
 		case CONTROL_PLAY: {
@@ -315,6 +319,7 @@ void MainWindow::menu_action_callback(int p_action) {
 		case CONTROL_STOP: {
 			
 			data.song.stop();
+			data.editor->midi_reset();
 			
 		} break;
 		
@@ -327,6 +332,12 @@ void MainWindow::menu_action_callback(int p_action) {
 		case SETTINGS_CONFIG: {
 			
 			settings->exec();
+		} break;
+		case SETTINGS_MIDI_OUTPUT: {
+			
+			MidiOutputEditor *moe = new MidiOutputEditor(this);
+			moe->exec();
+			delete moe;
 		} break;
 		case HELP_ABOUT: {
 			
@@ -431,6 +442,7 @@ void MainWindow::add_menus() {
 	create_action(DELETE_BLOCKS,"Delete Blocks","delete_blocks",NULL,NULL);
 	
 	create_action(SETTINGS_CONFIG,"Settings","settings",top_bar->get_settings_menu());
+	create_action(SETTINGS_MIDI_OUTPUT,"Midi Output Assign","midi_output_assign",top_bar->get_settings_menu());
 	create_action(HELP_HELP,"Help","help",top_bar->get_help_menu());
 	create_action(HELP_ABOUT,"About","about",top_bar->get_help_menu());
 	
@@ -465,10 +477,14 @@ void MainWindow::ui_update_slot() {
 	//if (data.song.get_song_playback().get_status()==SongPlayback::STATUS_PLAY)
 //		printf("play pos at %f\n",(float)data.song.get_song_playback().get_current_tick_from()/(float)TICKS_PER_BEAT);
 	
+	MidiInputHandler::get_singleton()->gui_thread_callback();
+		
 	data.property_edit_updater.update_editors();
 	blui_list->update_play_position();
 	blui_list->update_vus();
 	top_bar->update_playback_indicator();
+	
+	
 	
 }
 
@@ -512,10 +528,12 @@ void MainWindow::automation_options(int p_blocklist) {
 MainWindow::MainWindow() {
 
 	SoundDriverList::get_singleton()->set_song(&data.song);
+	MidiDriverList::get_singleton()->set_song_playback(&data.song.get_song_playback());
 	update_notify = new Qt_UpdateNotify(this);
 
 	data.editor = new Editor( &data.song, update_notify );
 
+	MidiInputHandler::get_singleton()->set_editor( data.editor );
 
 	CVBox *main_vbox = new CVBox(this);
 	setCentralWidget(main_vbox);

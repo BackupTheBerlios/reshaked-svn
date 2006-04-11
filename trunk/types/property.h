@@ -68,7 +68,7 @@ public:
 
 class LocalProperty : public Property {
 			    
-	
+protected:
 	double max;
 	double min;
 	double val;
@@ -110,6 +110,17 @@ public:
 
 };
 
+
+class NoteProperty : public LocalProperty {
+	
+	
+public:	
+	
+	void config(String p_name,String p_caption);
+	String get_text_value(double p_for_value,bool p_no_postfix=false);
+	NoteProperty();
+	
+};
 
 class OptionsProperty : public Property {
 	

@@ -174,6 +174,7 @@ public:
 	
 	//called from non-player_thread
 	void add_edit_event(const EventMidi &p_event_midi,int p_column);
+	void play_external_event(const EventMidi &p_event_midi);
 	
 	Property &swing();
 	Property &volume();

@@ -44,6 +44,7 @@ private:
 	
 	Status status;
 	bool record_automation;
+	bool record;
 	unsigned int play_start_time;			    
 	LatencyBuffer latency_buffer;
 public:
@@ -58,6 +59,8 @@ public:
 	
 	void set_recording_automations(bool p_recording);
 	bool is_recording_automations();
+	void set_recording(bool p_recording);
+	bool is_recording();
 	
 	/* Info */
 	

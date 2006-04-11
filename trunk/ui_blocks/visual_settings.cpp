@@ -224,6 +224,8 @@
 #include "pixmaps/default_skin/edit_toolbar__end.xpm"
 #include "pixmaps/default_skin/edit_toolbar__midi_in_config_pushed.xpm"
 #include "pixmaps/default_skin/edit_toolbar__midi_in_config.xpm"
+#include "pixmaps/default_skin/edit_toolbar__poly.xpm"
+#include "pixmaps/default_skin/edit_toolbar__poly_active.xpm"
 #include "pixmaps/default_skin/edit_toolbar__play_current_block_pushed.xpm"
 #include "pixmaps/default_skin/edit_toolbar__play_current_block.xpm"
 #include "pixmaps/default_skin/edit_toolbar__play_from_cursor_pushed.xpm"
@@ -665,6 +667,8 @@ VisualSettings::VisualSettings() {
 	pixmap_map[THEME_EDIT_TOOLBAR__END]=QPixmap((const char**)edit_toolbar__end_xpm);
 	pixmap_map[THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG_PUSHED]=QPixmap((const char**)edit_toolbar__midi_in_config_pushed_xpm);
 	pixmap_map[THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG]=QPixmap((const char**)edit_toolbar__midi_in_config_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__POLY]=QPixmap((const char**)edit_toolbar__poly_xpm);
+	pixmap_map[THEME_EDIT_TOOLBAR__POLY_ACTIVE]=QPixmap((const char**)edit_toolbar__poly_active_xpm);
 	pixmap_map[THEME_EDIT_TOOLBAR__PLAY_CURRENT_BLOCK_PUSHED]=QPixmap((const char**)edit_toolbar__play_current_block_pushed_xpm);
 	pixmap_map[THEME_EDIT_TOOLBAR__PLAY_CURRENT_BLOCK]=QPixmap((const char**)edit_toolbar__play_current_block_xpm);
 	pixmap_map[THEME_EDIT_TOOLBAR__PLAY_FROM_CURSOR_PUSHED]=QPixmap((const char**)edit_toolbar__play_from_cursor_pushed_xpm);

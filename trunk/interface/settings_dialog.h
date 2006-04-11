@@ -17,6 +17,8 @@
 #include <Qt/qtabwidget.h>
 #include "interface/settings_sound.h"
 #include "interface/settings_keys.h"
+#include "interface/settings_midi.h"
+
 namespace ReShaked {
 
 /**
@@ -27,6 +29,7 @@ class SettingsDialog : public QDialog {
 	QTabWidget *tabs;
 	SettingsSound *settings_sound;
 	SettingsKeys *key_settings;
+	SettingsMidi *settings_midi;
 	
 public:
 	

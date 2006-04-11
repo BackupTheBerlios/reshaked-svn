@@ -66,7 +66,8 @@ friend class MainWindow;
 	PixmapButton *automation_envelope;
 	PixmapButton *automation_stream;
 	PixmapCombo *cursor_stepping;
-	PixmapButton *midi_in_config;;
+	PixmapButton *midi_in_edit;;
+	PixmapButton *poly_input;
 	PixmapCombo *snap_config;
 
 	QMenu *edit_menu;
@@ -132,6 +133,9 @@ public slots:
 	void blocklist_ui_under_cursor_request_signal(BlockListUI_Base*p_ui);	
 	
 	void volume_mask_togled(bool);
+	
+	void poly_input_toggle(bool p_enabled);
+	void midi_in_toggle(bool p_enabled);
 public:
 
 	BlockListUI_Base *get_blocklist_ui(int p_idx);

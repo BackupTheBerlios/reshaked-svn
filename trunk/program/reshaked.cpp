@@ -4,6 +4,7 @@
 #include "interface/main_window.h"
 #include <Qt/qapplication.h>
 #include "engine/sound_driver_list.h"
+#include "engine/midi_driver_list.h"
 #include "engine/audio_control.h"
 #include "drivers/sound_driver_jack.h"
 #include "engine/sound_plugin_list.h"
@@ -14,7 +15,9 @@
 #include "plugin_UIs/chionic_interface.h"
 #include "drivers/get_time_posix.h"
 #include "dsp/sample_file.h"
+#include "editor/midi_input_handler.h"
 
+#include "drivers/mididriver_alsa.h"
 
 #include "drivers/sound_driver_portaudio.h"
 
@@ -102,7 +105,14 @@ int main(int argc, char *argv[]) {
 	
 	QApplication *q = new QApplication(argc,argv);
 	
+	ReShaked::MidiInputHandler midi_input_handler;
+	
 	ReShaked::SoundDriverList driver_list;
+	driver_list.set_midi_input_handler( &midi_input_handler );
+	
+	ReShaked::MidiDriverList midi_driver_list;
+	midi_input_handler.set_midi_driver( &midi_driver_list );
+	
 	ReShaked::SampleFile sample_file;
 		
 #ifdef SNDFILE_ENABLED
@@ -113,6 +123,13 @@ int main(int argc, char *argv[]) {
 	
 #endif
 	
+#ifdef DRIVER_ALSA_ENABLED
+	
+	ReShaked::MidiDriver_Alsa midi_driver_alsa;
+	midi_driver_list.add_driver( &midi_driver_alsa );
+	
+#endif
+
 	
 #ifdef POSIX_ENABLED
 	
@@ -174,6 +191,7 @@ int main(int argc, char *argv[]) {
 	
 	ReShaked::MainWindow *w = new ReShaked::MainWindow;
 	driver_list.init_driver(0,false);
+	midi_driver_list.init_driver(0);
 	
 	//q.setMainWidget(&w);
 	w->show();

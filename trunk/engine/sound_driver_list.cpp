@@ -52,6 +52,7 @@ bool SoundDriverList::init_driver(int p_index,bool p_internal_init) {
 	driver_list[current]->set_audio_graph(&song->get_track_graph());
 	driver_list[current]->set_audio_process_base(song);
 	driver_list[current]->set_port_layout(&song->get_audio_port_layout());
+	driver_list[current]->set_midi_input_handler(midi_input_handler);
 	song->set_input_node( driver_list[current]->get_input_node() );
 	song->set_output_node( driver_list[current]->get_output_node() );
 	
@@ -122,6 +123,12 @@ void SoundDriverList::set_song(Song *p_song) {
 	
 	song=p_song;	
 }
+
+void SoundDriverList::set_midi_input_handler(MidiInputHandlerBase *p_midi_input_handler) {
+	
+	midi_input_handler=p_midi_input_handler;
+}
+
 SoundDriver *SoundDriverList::get_driver(int p_index) {
 	
 	ERR_FAIL_INDEX_V(p_index,driver_list.size(),NULL);
@@ -133,6 +140,7 @@ SoundDriverList::SoundDriverList() {
 	current=-1;
 	song=NULL;
 	singleton=this;
+	midi_input_handler=NULL;
 }
 
 

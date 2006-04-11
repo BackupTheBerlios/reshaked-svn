@@ -12,6 +12,8 @@
 #ifndef RESHAKEDGET_TIME_H
 #define RESHAKEDGET_TIME_H
 
+#include "typedefs.h"
+
 namespace ReShaked {
 
 /**
@@ -23,6 +25,7 @@ protected:
 	virtual void get_time(unsigned int &sec,unsigned int &usec)=0; //time since app started
 public:
 	static unsigned int get_time_msec();	
+	static Sint64 get_time_usec();	
 	
 	virtual ~GetTime();
 	

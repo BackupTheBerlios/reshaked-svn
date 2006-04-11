@@ -52,7 +52,9 @@ void TopBarControls::redo_pressed() {
 
 void TopBarControls::playback_play_slot(bool p_selected) {
 	
+	editor->midi_reset();
 	editor->get_song()->play(0);
+	
 }
 
 void TopBarControls::playback_loop_slot(bool p_selected) {
@@ -67,6 +69,7 @@ void TopBarControls::playback_pause_slot(bool p_selected) {
 void TopBarControls::playback_stop_slot(bool p_selected) {
 	
 	editor->get_song()->stop();	
+	editor->midi_reset();
 }
 
 
@@ -233,6 +236,8 @@ TopBarControls::TopBarControls(QWidget *p_parent,Editor *p_editor,PropertyEditUp
 	
 	control_button_record_auto = new PixmapButton(buttons_hb,PixmapButton::Skin(GET_QPIXMAP(THEME_TOP__BUTTON_RECORD_AUTOMATIONS),GET_QPIXMAP(THEME_TOP__BUTTON_RECORD_AUTOMATIONS_ACTIVE)),PixmapButton::TYPE_TOGGLE);
 	QObject::connect(control_button_record_auto,SIGNAL(mouse_toggled_signal( bool )),this,SLOT(record_automations_toggle( bool )));
+	control_button_record_auto->set_ignore_actions(true);	
+
 	
 	buttons_hb->layout()->setSpacing(0);
 	buttons_hb->layout()->setMargin(0);

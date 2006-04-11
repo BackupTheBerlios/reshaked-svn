@@ -111,6 +111,23 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 		RouteEditor *route_edit;
 		std::vector< PixmapButtonGroup*> modulation_modes;
 		
+		PropertyEditor *vol_send;
+		PropertyEditor *vol_send_disp;
+		
+		SensCurveEditor *sens_editor;
+		
+		PannerEditor *pan_panner;
+				
+		PropertyEditor *pan_pitch_scale;
+			
+		PropertyEditor *pan_pitch_scale_center;
+		PropertyEditor *pan_pitch_scale_center_updown;
+		
+		PropertyEditor *tune_fine;
+		PropertyEditor *tune_fine_disp;
+		PropertyEditor *tune_coarse;
+		PropertyEditor *tune_coarse_updown;
+		
 	} global;
 	
 	struct Regions {

@@ -17,6 +17,8 @@
 #include "engine/audio_port_layout.h"
 #include "engine/audio_graph.h"
 #include "engine/audio_process_base.h"
+#include "engine/midi_input_handler_base.h"
+
 #include "property.h"
 #include <vector>
 
@@ -74,7 +76,7 @@ class SoundDriver{
 	const AudioPortLayout *port_layout;
 	AudioGraph *graph;
 	AudioProcessBase *audio_process_base;
-	
+	MidiInputHandlerBase *midi_input_handler;
 protected:	
 
 	/* INTERNAL API */
@@ -130,6 +132,7 @@ public:
 	void set_port_layout(const AudioPortLayout *p_layout);
 	void set_audio_graph(AudioGraph *p_graph);
 	void set_audio_process_base(AudioProcessBase *p_base);
+	void set_midi_input_handler(MidiInputHandlerBase *p_handler);
 	
 	AudioNode *get_input_node();
 	AudioNode *get_output_node();

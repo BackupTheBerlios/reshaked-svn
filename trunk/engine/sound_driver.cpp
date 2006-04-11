@@ -128,6 +128,8 @@ void SoundDriver::OutputNode::process(int p_frames) {
 
 int SoundDriver::process_graph(int p_frames) {
 	
+	if (midi_input_handler)
+		midi_input_handler->sound_thread_callback();
 	return audio_process_base->process(p_frames);
 }
 int SoundDriver::get_input_count() {
@@ -205,5 +207,11 @@ void SoundDriver::set_port_layout(const AudioPortLayout *p_layout) {
 	
 	
 }
+
+void SoundDriver::set_midi_input_handler(MidiInputHandlerBase *p_handler) {
+	
+	midi_input_handler=p_handler;
+}
+
 
 }

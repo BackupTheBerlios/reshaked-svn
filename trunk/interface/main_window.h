@@ -84,6 +84,7 @@ class MainWindow : public QMainWindow {
 		CONTROL_RECORD_AUTOMATIONS,
 		
 		SETTINGS_CONFIG,
+		SETTINGS_MIDI_OUTPUT,
 		HELP_HELP,
 		HELP_ABOUT,
 				

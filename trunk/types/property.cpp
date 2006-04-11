@@ -11,6 +11,7 @@
 //
 #include "property.h"
 #include <stdio.h>
+#include "misc_funcs.h"
 
 namespace ReShaked {
 
@@ -180,6 +181,26 @@ LocalProperty::~LocalProperty() {
 	
 	
 }
+
+
+/****************************************/
+
+void NoteProperty::config(String p_name,String p_caption) {
+	
+	name=p_name;
+	caption=p_caption;
+}
+
+String NoteProperty::get_text_value(double p_for_value,bool p_no_postfix) {
+	
+	return get_note_str((int)p_for_value);
+}
+
+NoteProperty::NoteProperty() {
+	
+	set_all( 60,0,120,64,1,	DISPLAY_SPIN, "note","Note");
+}
+
 
 /****************************************************************************/
 

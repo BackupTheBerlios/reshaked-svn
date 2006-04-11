@@ -782,6 +782,80 @@ void ChionicWindow::init_global_page() {
 	new PixmapLabel(mod_vb,QPixmap( (const char**)global__modulation_bottom_xpm) );
 	
 	end_control_frame();
+	
+	CHBox *params_hb = new CHBox(global.main_vbox);
+	
+	
+	CVBox *left_vb = new CVBox( params_hb );
+	params_hb->layout()->setAlignment(left_vb,Qt::AlignTop);
+	
+	add_main_label("Volume",left_vb);
+	
+	begin_control_frame( left_vb );
+	
+	CVBox * controls_vb = new CVBox(control_frame_current());
+	global.vol_send=add_slider_edit_control( controls_vb, &chionic->get_params()->global.volume.send,&global.vol_send_disp );
+	
+	add_control_label( "Velocity Sens.",controls_vb);
+	
+	global.sens_editor = new SensCurveEditor(controls_vb,settings.sens_skin);
+	global.sens_editor->set_property( &chionic->get_params()->global.volume.sens );
+	
+	controls_vb->layout()->setAlignment(global.sens_editor,Qt::AlignHCenter);
+	
+	end_control_frame();
+	
+	(new QFrame(params_hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	
+	CVBox *right_vb = new CVBox( params_hb );
+	params_hb->layout()->setAlignment(right_vb,Qt::AlignTop);
+	
+	add_main_label("Pan",right_vb);
+
+	begin_control_frame( right_vb );
+	
+	controls_vb = new CVBox( control_frame_current() );
+	
+	if (chionic->get_channels_created()==4) {
+		
+		CHBox *panner_hb = new CHBox(controls_vb);
+		add_control_label("Pos ",panner_hb);
+		global.pan_panner = new PannerEditor( panner_hb, true, settings.panner_skin );
+		global.pan_panner->set_properties(&chionic->get_params()->global.pan.pos,&chionic->get_params()->global.pan.depth);
+		
+	} else {
+		
+		add_control_label("Position",controls_vb);
+		global.pan_panner = new PannerEditor( controls_vb,false,settings.panner_skin );
+		global.pan_panner->set_properties(&chionic->get_params()->global.pan.pos,&chionic->get_params()->global.pan.depth);
+	}
+			
+	
+	global.pan_pitch_scale=add_slider_edit_control( controls_vb, &chionic->get_params()->global.pan.pitch_scale,NULL );
+	
+	global.pan_pitch_scale_center = add_spin_edit_control( controls_vb,&chionic->get_params()->global.pan.pitch_scale_center,&global.pan_pitch_scale_center_updown );
+		
+	/* base note */
+	
+	end_control_frame();
+	
+	(new QFrame(global.main_vbox))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	
+	
+	add_main_label("Tune",global.main_vbox);
+	begin_control_frame(global.main_vbox);	
+	
+	CHBox *controls_hb = new CHBox( control_frame_current() );
+	global.tune_fine=add_slider_edit_control( controls_hb, &chionic->get_params()->global.pitch.tune_fine,&global.tune_fine_disp );
+	/* separate ^^ */
+	(new QFrame(controls_hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	
+	global.tune_coarse=add_spin_edit_control(controls_hb,&chionic->get_params()->global.pitch.tune_coarse,&global.tune_coarse_updown);
+	
+
+	end_control_frame();
+	
+	
 }
 
 void ChionicWindow::global_update_matrix() {
@@ -1119,7 +1193,7 @@ void ChionicWindow::region_base_note_select_down() {
 
 void ChionicWindow::region_changed_note_over(int p_to_note) {
 	
-	ChionicParams::Layer::Parameters &p=chionic->get_params()->layer[ layers.selected ].params;
+//	ChionicParams::Layer::Parameters &p=chionic->get_params()->layer[ layers.selected ].params;
 	
 	QString str=get_note_string(p_to_note);
 	
@@ -1497,7 +1571,7 @@ void ChionicWindow::add_main_label(QString p_text,QWidget *p_parent) {
 	QLabel *l = new QLabel(p_text,p_parent);
 	QPalette p = l->palette();
 	p.setColor(QPalette::Text,settings.main_label_color);
-//	p.setColor(QPalette::WindowText,settings.main_label_color);
+	p.setColor(QPalette::WindowText,settings.main_label_color);
 	l->setPalette(p);
 	QFont f;
 	f.setPixelSize(13);
@@ -1511,7 +1585,7 @@ void ChionicWindow::add_control_label(QString p_text,QWidget *p_parent) {
 	QLabel *l = new QLabel(p_text,p_parent);
 	QPalette p = l->palette();
 	p.setColor(QPalette::Text,settings.control_label_color);
-//	p.setColor(QPalette::WindowText,settings.control_label_color);
+	p.setColor(QPalette::WindowText,settings.control_label_color);
 	l->setPalette(p);
 	QFont f;
 	f.setPixelSize(13);

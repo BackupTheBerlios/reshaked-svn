@@ -17,13 +17,13 @@ ChionicParams::ChionicParams() {
 	
 	/* Global */
 	
-	global.volume.send.set_all(1.0,0.0,1.0,1.0,0.01,Property::DISPLAY_SLIDER,"global_volume_send","Send","","Mute");
-	global.volume.sens.set_all(0.0,-1.0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,"global_volume_sens","Sens");
+	global.volume.send.set_all(0.7,0.0,1.0,1.0,0.01,Property::DISPLAY_SLIDER,"global_volume_send","Send","","Mute");
+	global.volume.sens.set_all(0.2,-1.0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,"global_volume_sens","Sens");
 	
-	global.pan.pos.set_all(0.0,-1.0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,"global_pan_pos","Position");
-	global.pan.pitch_scale.set_all(0.0,-1.0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,"global_pan_pitch_scale","Pitch/Scale");
-	global.pan.pitch_scale_center.set_all(60,0,119,60,1,Property::DISPLAY_SPIN,"global_pan_scale_center","Scale Center");
-	
+	global.pan.pos.set_all(0.5,0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,"global_pan_pos","Position");
+	global.pan.depth.set_all(0.5,0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,"global_pan_depth","Depth");
+	global.pan.pitch_scale.set_all(0.0,-1.0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,"global_pan_freq_scale","Pitch Scaling");
+	global.pan.pitch_scale_center.config("global_pan_scale_center","Scale Pivot");
 	global.pitch.tune_coarse.set_all(0,-24,24,0,1,Property::DISPLAY_SPIN,"global_pitch_tune_coarse","Coarse");
 	global.pitch.tune_fine.set_all(0.0,-1.0,1.0,0.0,0.01,Property::DISPLAY_SLIDER,"global_pitch_tune_fine","Fine");
 	

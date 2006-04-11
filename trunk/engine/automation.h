@@ -88,6 +88,11 @@ private:
 
 	double initial_value;
 	
+	struct MidiRecording {
+		bool enabled;
+		int channel; //channel to record
+		int control; //control to record;			
+	} recording;
 public:
 	
 	Block *create_duplicate_block(Block *p_block);
@@ -106,6 +111,14 @@ public:
 	static AutomationBlock* create_automation_block();
 	Block* create_block(BlockCreationData *p_creation_data=NULL);
 
+	bool is_recording_enabled();
+	void set_recording_enabled(bool p_enabled);
+	
+	int get_recording_channel();
+	void set_recording_channel(int p_chan);
+	int get_recording_control();
+	void set_recording_control(int p_ctrl);
+	
 	void apply(Tick p_pos);
 	
 	void clear();

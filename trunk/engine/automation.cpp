@@ -298,11 +298,41 @@ double Automation::get_initial_value() {
 	return initial_value;
 }
 
+bool Automation::is_recording_enabled() {
+	
+	return recording.enabled;
+}
+void Automation::set_recording_enabled(bool p_enabled) {
+	
+	recording.enabled=p_enabled;	
+}
+
+int Automation::get_recording_channel() {
+	
+	return recording.channel;
+}
+void Automation::set_recording_channel(int p_chan) {
+	
+	recording.channel=p_chan;
+}
+int Automation::get_recording_control() {
+	
+	return recording.control;
+}
+void Automation::set_recording_control(int p_ctrl) {
+	
+	recording.control=p_ctrl;
+}
+
 void Automation::clear() {
 	
 	clear_blocks();
 	display_size=DISPLAY_SIZE_SMALL;
 	initial_value=property->get();
+	recording.enabled=false;
+	recording.channel=0;
+	recording.control=0;
+	
 }
 Automation::Automation(Property *p_property) : BlockList(BLOCK_TYPE_FIXED_TO_BEAT) {
 

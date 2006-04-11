@@ -96,8 +96,9 @@ public:
 		struct Pan {
 			
 			LocalProperty pos;
+			LocalProperty depth;
 			LocalProperty pitch_scale;
-			LocalProperty pitch_scale_center;
+			NoteProperty pitch_scale_center;
 			
 		} pan;
 		

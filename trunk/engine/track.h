@@ -37,6 +37,7 @@ public:
 	friend class Track;	// will add more stuff later
 		void *private_data;
 		bool visible;
+		int property_idx;
 	public:
 		TrackAutomation(Property *p_property) : Automation(p_property) { private_data=NULL; visible=false; }
 	};
@@ -47,7 +48,6 @@ public:
 		Property *property; //pointer to property
 		String visual_path;
 		TrackAutomation *automation;
-		bool automation_visible;
 		bool builtin;
 		
 	};
@@ -165,6 +165,7 @@ public:
 	
 	int find_plugin_idx_for_property(Property *p_property);
 
+	int find_recording_property(int p_chan,int p_control);
 	
 	void set_name(String p_name);
 	String get_name();

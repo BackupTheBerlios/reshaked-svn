@@ -403,10 +403,19 @@ void BlockListUIList::show_edit_menu() {
 	
 }
 
+void BlockListUIList::midi_in_toggle(bool p_enabled) {
+	
+	editor->set_pattern_midi_input_enabled(p_enabled);
+}
+
+void BlockListUIList::poly_input_toggle(bool p_enabled) {
+	
+	editor->set_polyphonic_midi_input_enabled(p_enabled);
+}
+
 void BlockListUIList::edit_menu_selected_item(int p_item) {
 	
 	
-	printf("MEMEREMEEE!!!\n");
 	switch(p_item) {
 		case ACTION_SET_SELECTION_BEGIN: editor->selection_begin(); break;
 		case ACTION_SET_SELECTION_END: editor->selection_end(); break;
@@ -424,9 +433,9 @@ void BlockListUIList::edit_menu_selected_item(int p_item) {
 
 void BlockListUIList::volume_mask_togled(bool p_active) {
 	
-	
 	editor->set_volume_mask_active( p_active );
 }
+
 
 void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 	
@@ -492,9 +501,16 @@ void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 		
 	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
 	
-	midi_in_config = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG),GET_QPIXMAP(THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG_PUSHED)));
+	midi_in_edit = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG),GET_QPIXMAP(THEME_EDIT_TOOLBAR__MIDI_IN_CONFIG_PUSHED)),PixmapButton::TYPE_TOGGLE);
+	QObject::connect(midi_in_edit,SIGNAL(mouse_toggled_signal( bool )),this,SLOT(midi_in_toggle( bool )));
+	
+	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
+	
+	poly_input = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__POLY),GET_QPIXMAP(THEME_EDIT_TOOLBAR__POLY_ACTIVE)),PixmapButton::TYPE_TOGGLE);
+	QObject::connect(poly_input,SIGNAL(mouse_toggled_signal( bool )),this,SLOT(poly_input_toggle( bool )));
 	
 	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SPACER),PixmapLabel::EXPAND_TILE_H);
+	
 	
 	CVBox *snap_vb = new CVBox(p_hb_top);
 	snap_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);

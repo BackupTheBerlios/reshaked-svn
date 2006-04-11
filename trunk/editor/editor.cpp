@@ -368,7 +368,10 @@ UI_UpdateNotify *Editor::get_ui_update_notify() {
 }
 
 
-void Editor::play_note_at_cursor() {
+void Editor::play_note_at_cursor(int p_custom_column) {
+	
+	if (p_custom_column==-1)
+		p_custom_column=d->pattern_edit.column;
 	
 	int ti=get_current_track();
 	if (ti<0)
@@ -382,7 +385,7 @@ void Editor::play_note_at_cursor() {
 	if (!pattern_track)
 		return;
 	
-	Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column ) );
+	Track_Pattern::Note note=pattern_track->get_note( Track_Pattern::Position( d->cursor.get_tick_pos(), p_custom_column ) );
 	if (note.is_empty())
 		return;
 					
@@ -392,7 +395,7 @@ void Editor::play_note_at_cursor() {
 	em.data.note.note=note.note;
 	em.data.note.velocity=note.is_note_off()?0:note.volume;
 						
-	pattern_track->add_edit_event( em, d->pattern_edit.column );
+	pattern_track->add_edit_event( em, p_custom_column );
 	pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
 	
 	
@@ -469,6 +472,29 @@ void Editor::reset() {
 	d->selection.data.clear();
 	d->undo_stream.clear();
 }
+
+void Editor::set_pattern_midi_input_enabled(bool p_enabled) {
+	
+	
+	d->global_edit.pattern_midi_input_enabled=p_enabled;	
+}
+
+bool Editor::is_pattern_midi_input_enabled() {
+	
+	return d->global_edit.pattern_midi_input_enabled;
+}
+
+
+void Editor::set_current_rack_track(int p_track) {
+	
+	d->global_edit.current_rack_track=p_track;
+}
+int Editor::get_current_rack_track() {
+	
+	return d->global_edit.current_rack_track;
+}
+
+
 Editor::~Editor()
 {
 }

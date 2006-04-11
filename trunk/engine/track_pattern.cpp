@@ -366,6 +366,17 @@ void Track_Pattern::add_edit_event(const EventMidi &p_event_midi,int p_column) {
 
 }
 
+void Track_Pattern::play_external_event(const EventMidi &p_event_midi) {
+	
+	Event m_e;
+	m_e.type=Event::TYPE_MIDI;			       
+	m_e.param.midi=p_event_midi;
+	m_e.frame_offset=0;
+	
+	data.edit_event_buffer.push_event(m_e);
+}
+
+
 void Track_Pattern::track_pre_process(int p_frames) {
 	
 	data.event_buffer.clear(); //first of all, always clear event buffer	

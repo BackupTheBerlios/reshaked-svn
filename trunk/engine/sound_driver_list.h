@@ -24,6 +24,7 @@ class SoundDriverList {
 	
 	static SoundDriverList *singleton;
 	Song *song;
+	MidiInputHandlerBase *midi_input_handler;
 	std::vector<SoundDriver*> driver_list;
 	int current;
 public:
@@ -45,6 +46,7 @@ public:
 	int get_output_latency();
 	
 	void set_song(Song *p_song);
+	void set_midi_input_handler(MidiInputHandlerBase *p_midi_input_handler);
 
     	SoundDriverList();
 

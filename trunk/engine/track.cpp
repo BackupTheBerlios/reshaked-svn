@@ -540,8 +540,11 @@ void Track::rebuild_active_automation_cache() {
 	
 	for (int i=0;i<get_property_count();i++) {
 		
+		base_private.property_list[i]->automation->property_idx=i;
+		
 		if (has_property_visible_automation(i) || base_private.property_list[i]->automation->get_block_count() > 0 ) {
 			base_private.active_automation_cache.push_back( base_private.property_list[i]->automation);
+			
 		
 		} 
 		
@@ -609,6 +612,29 @@ int Track::find_plugin_idx_for_property(Property *p_property) {
 
 	return -1;
 }
+
+int Track::find_recording_property(int p_chan,int p_control) {
+	
+	for (int i=0;i<base_private.active_automation_cache.size();i++) {
+		
+		TrackAutomation *ta=base_private.active_automation_cache[i];
+		
+		int prop_idx=ta->property_idx;
+		
+		ERR_CONTINUE(prop_idx<0 || prop_idx>=base_private.property_list.size());
+		
+		//printf("prop %i enabled %i - %i,%i against %i,%i - visible %i\n",i,ta->is_recording_enabled(),ta->get_recording_channel(),ta->get_recording_control(),p_chan,p_control,base_private.property_list[prop_idx]->automation_visible);
+		if (!ta->visible)
+			continue;
+		
+		if (ta->is_recording_enabled() && ta->get_recording_channel()==p_chan && ta->get_recording_control()==p_control)
+			return prop_idx;
+		
+	}
+	
+	return -1;
+}
+
 
 void Track::set_rack_file(String p_file) {
 	

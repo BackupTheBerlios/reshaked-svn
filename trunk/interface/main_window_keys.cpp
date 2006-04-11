@@ -115,7 +115,7 @@ void MainWindow::create_keybindings() {
 
 	data.keyboard_codes.add_key_bind("editor/automation_mode_stream","Stream Automation Edit",Qt::CTRL+Qt::Key_T,false,NULL,new QWidget_KeybindDescription(blui_list->automation_stream));
 	data.keyboard_codes.add_key_bind("editor/automation_mode_envelope","Envelope Automation Edit",Qt::CTRL+Qt::Key_E,false,NULL,new QWidget_KeybindDescription(blui_list->automation_envelope));
-	data.keyboard_codes.add_key_bind("editor/midi_input_assign","Midi Input Assign",Qt::CTRL+Qt::Key_M,false,NULL,new QWidget_KeybindDescription(blui_list->midi_in_config));
+	data.keyboard_codes.add_key_bind("editor/midi_input_insert","Insert Notes from MIDI",Qt::CTRL+Qt::Key_M,false,NULL,new QWidget_KeybindDescription(blui_list->midi_in_edit));
 	data.keyboard_codes.add_key_bind("editor/quantize","Quantize",Qt::ALT+Qt::Key_T);
 	
 	data.keyboard_codes.add_key_bind("note_entry/toggle_volume_mask","Toggle Volume Mask",Qt::Key_Comma,false,NULL,new QWidget_KeybindDescription(blui_list->edit_mask));

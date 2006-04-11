@@ -27,6 +27,20 @@ unsigned int GetTime::get_time_msec() {
 	return sec+usec;
 }
 
+Sint64 GetTime::get_time_usec() {
+	
+	if (!singleton)
+		return 0;
+	
+	unsigned int sec,usec;
+	singleton->get_time(sec,usec);
+	
+	Sint64 time=sec;
+	time*=1000000;
+	time+=(Sint64)usec;
+	
+	return time;
+}
 
 GetTime::~GetTime() {}
 }

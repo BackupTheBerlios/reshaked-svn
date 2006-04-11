@@ -54,6 +54,10 @@ friend class EditorCommands;
 		int field;
 		int volume_mask;
 		bool volume_mask_active;
+		
+		/* realtime input */
+		int poly_input_offset;
+		int last_noteon;
 
 	} pattern_edit;
 
@@ -63,7 +67,9 @@ friend class EditorCommands;
 		int editing_octave;
 		bool setnote_dont_update;
 		bool automation_point_dont_update;
-
+		int current_rack_track;
+		bool pattern_midi_input_enabled;
+		bool polyphonic_midi_input_enabled;
 		
 	} global_edit;
 
