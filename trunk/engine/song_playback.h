@@ -31,9 +31,17 @@ public:
 	};
 	
 private:
+	
+	enum {
+		
+		TICK_FRAC=24
+	};
+	
 	float mix_rate;
 	Tick prev_tick;
-	Tick current_tick;
+	
+	Sint64 current_tick; //< needs to be fractional, since ticks are advanced according to frames
+
 	
 	GlobalProperties *properties;
 	
@@ -47,6 +55,8 @@ private:
 	bool record;
 	unsigned int play_start_time;			    
 	LatencyBuffer latency_buffer;
+	
+	bool process_tick; 
 public:
 
 
@@ -56,6 +66,8 @@ public:
 	void loop(Tick p_begin,Tick p_end);
 	void set_pause(bool p_paused);
 	void stop();
+	
+	bool can_process_tick(); ///< If the amount of frames processed isnt enough for a change of tick, this is false
 	
 	void set_recording_automations(bool p_recording);
 	bool is_recording_automations();

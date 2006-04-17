@@ -16,12 +16,20 @@
 
 namespace ReShaked {
 
+void Knob::value_changed(float p_new_value) {
+	
+	
+}
+
 void Knob::mousePressEvent ( QMouseEvent * e ) {
 	
 	printf("press\n");
-	if (e->buttons()&Qt::LeftButton)
+	if (e->button()==Qt::LeftButton) {
 		oldpos=e->pos();
+		grabbing=true;		
+	}
 		
+	
 }
 
 void Knob::mouseMoveEvent ( QMouseEvent * e ) {
@@ -37,13 +45,31 @@ void Knob::mouseMoveEvent ( QMouseEvent * e ) {
 	turnamount/=100; //?
 	if (e->modifiers()&Qt::ShiftModifier)
 		turnamount/=8.0;
-	set_value( value+turnamount );				
+	set_value_internal( value+turnamount );				
+	
+	value_changed_signal(value);
+	value_changed(value);
 	
 	oldpos=e->pos();
 }
 
+void Knob::mouseReleaseEvent ( QMouseEvent * e ) {
+	
+	if (e->button()==Qt::LeftButton) {
+		grabbing=false;		
+	}
+	
+}
 
 void Knob::set_value(float p_value) {
+	
+	if (grabbing)
+		return;
+				
+	set_value_internal(p_value);
+
+}
+void Knob::set_value_internal(float p_value) {
 	
 	if (p_value<0)
 		p_value=0;
@@ -54,8 +80,6 @@ void Knob::set_value(float p_value) {
 	
 	value=p_value;
 	update();
-	
-	value_changed_signal(value);
 	
 }
 float Knob::get_value() {
@@ -96,12 +120,17 @@ Knob::Knob(QWidget *p_parent): QWidget(p_parent) {
 	handle_at_radius=16;
 }
 
-Knob::Knob(QWidget *p_parent,QPixmap p_base,QPixmap p_handle,int p_handle_at_radius,int p_angle_begin) : QWidget(p_parent)
+Knob::Knob(QWidget *p_parent,const Skin& p_skin) : QWidget(p_parent)
 {
-	angle_begin=p_angle_begin;
-	handle_at_radius=p_handle_at_radius;
-	setFixedSize(p_base.width(),p_base.height());
+	angle_begin=p_skin.angle_begin;
+	handle_at_radius=p_skin.handle_at_distance;
+	base=p_skin.base;
+	handle=p_skin.handle;
+	
+	setFixedSize(base.size());
 	value=0;
+	
+	grabbing=false;
 }
 
 

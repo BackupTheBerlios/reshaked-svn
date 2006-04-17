@@ -33,23 +33,37 @@ class Knob : public QWidget {
 	
 	void paintEvent(QPaintEvent *pe);
 
-	void mouseMoveEvent ( QMouseEvent * e );
-	void mousePressEvent ( QMouseEvent * e );
+	bool grabbing;
 	
 	QPoint oldpos;
 	
+	void set_value_internal(float p_value);
 	
+protected:	
 	
+	void mouseMoveEvent ( QMouseEvent * e );
+	void mousePressEvent ( QMouseEvent * e );
+	void mouseReleaseEvent ( QMouseEvent * e );
+	
+	virtual void value_changed(float p_new_value);
 signals:	
 	
 	
 	void value_changed_signal(float p_new_value);
 public:
 	
+	struct Skin {
+		
+		QPixmap base;
+		QPixmap handle;
+		int handle_at_distance;
+		int angle_begin;
+	};
+	
 	void set_value(float p_value);
 	float get_value();
 	Knob(QWidget *p_parent);
-	Knob(QWidget *p_parent,QPixmap p_base,QPixmap p_handle,int p_handle_at_radius,int p_angle_begin=30); //custom knob
+	Knob(QWidget *p_parent,const Skin& p_skin); //custom knob
 	~Knob();
 
 };

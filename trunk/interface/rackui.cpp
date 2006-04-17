@@ -29,12 +29,14 @@ void RackUI::add_plugin_slot() {
 	track=editor->get_song()->get_track( selected_rack-1 );
 	ERR_FAIL_COND(track==NULL);
 	
-	SoundPluginChooser *plugin_chooser = new SoundPluginChooser(topLevelOf(this),track->can_use_synths());
+	SoundPluginChooser *plugin_chooser = new SoundPluginChooser(topLevelOf(this),track->can_use_synths(),track->get_channels());
 	plugin_chooser->exec();
 	int plugin_idx=plugin_chooser->get_selected_plugin_idx();
+	int custom_chans=plugin_chooser->get_selected_channels();
 	delete plugin_chooser;
 	if (plugin_chooser->get_selected_plugin_idx()<0)
 		return;
+	/*
 	int custom_channels=-1;
 	if (SoundPluginList::get_singleton()->get_plugin_info(plugin_idx)->can_custom_channels) {
 		int default_channels=track->get_channels();
@@ -47,8 +49,10 @@ void RackUI::add_plugin_slot() {
 		custom_channels=channels;
 		
 	}
-		
-	SoundPlugin *plugin = SoundPluginList::get_singleton()->instance_plugin(plugin_idx,custom_channels);
+	*/	
+	SoundPlugin *plugin = SoundPluginList::get_singleton()->instance_plugin(plugin_idx,custom_chans);
+	if (plugin==NULL) 
+		return;
 	editor->add_plugin_to_track(track,plugin);
 }
 

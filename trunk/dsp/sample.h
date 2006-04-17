@@ -88,7 +88,8 @@ public:
 	
 	int get_channels() const;
 	int get_length();
-	float* get_buffer(int p_channel);
+	const float* get_buffer(int p_channel);
+	float* get_buffer_w(int p_channel);
 	
 	FrameData get_frame(int p_pos) const;
 	void set_frame(int p_pos,const FrameData& p_data);

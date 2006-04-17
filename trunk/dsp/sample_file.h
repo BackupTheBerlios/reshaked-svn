@@ -33,7 +33,7 @@ public:
 	
 	static SampleFile *get_singleton();
 		
-	Sample *load_sample(String p_filename);
+	SampleLoader::LoadStatus load_sample(String p_filename,Sample *p_sample);
 	
 	void add_loader(SampleLoader *p_loader);
 	

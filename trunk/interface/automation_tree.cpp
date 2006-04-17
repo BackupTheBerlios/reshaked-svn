@@ -186,7 +186,7 @@ void AutomationTree::set_track(Track *p_track) {
 void AutomationTree::item_clicked( QTreeWidgetItem * p_item, int column ) {
 	
 	QTreeAutomationItem *item = dynamic_cast<QTreeAutomationItem*>(p_item);
-				
+	printf("callbacko\n");				
 	if (!item)
 		return;
 	bool checked=(item->checkState(0)==Qt::Checked);
@@ -199,7 +199,9 @@ void AutomationTree::item_clicked( QTreeWidgetItem * p_item, int column ) {
 	if (checked==has_auto)
 		return; //nothing to do
 	
+	printf("checked %i\n",idx);
 	if (checked)
+
 		attempt_automation_add_signal(idx);	
 	else
 		attempt_automation_remove_signal(idx);	
@@ -218,9 +220,8 @@ AutomationTree::AutomationTree(QWidget *p_parent) : CHBox(p_parent) {
 	track=NULL;
 	tree->header()->setResizeMode(0,QHeaderView::Stretch);
 	
-	QObject::connect(tree,SIGNAL(itemActivated(QTreeWidgetItem*,int)),this,SLOT(item_activated( QTreeWidgetItem*, int )));
-	QObject::connect(tree,SIGNAL(itemClicked(QTreeWidgetItem*,int)),this,SLOT(item_clicked( QTreeWidgetItem*, int )));
-	QObject::connect(tree,SIGNAL(itemClicked(QTreeWidgetItem*,int)),this,SLOT(item_pressed( QTreeWidgetItem*, int )));
+//	QObject::connect(tree,SIGNAL(itemActivated(QTreeWidgetItem*,int)),this,SLOT(item_activated( QTreeWidgetItem*, int )));
+	QObject::connect(tree,SIGNAL(itemChanged(QTreeWidgetItem , int)),this,SLOT(item_clicked( QTreeWidgetItem*, int )));
 }
 
 
@@ -231,10 +232,12 @@ AutomationTree::~AutomationTree()
 
 void AutomationTreeeDialog::attempt_automation_add_slot(int p_index) {
 	
+	printf("add %i\n",p_index);
 	editor->show_automation( p_index, track );
 }
 void AutomationTreeeDialog::attempt_automation_remove_slot(int p_index) {
 	
+	printf("rem %i\n",p_index);
 	editor->hide_automation( p_index, track );
 	
 }

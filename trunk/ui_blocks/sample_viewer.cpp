@@ -90,6 +90,8 @@ int SampleViewer::screen_pos_to_sample_pos(int p_pos) {
 
 bool SampleViewer::event ( QEvent * e ) {
 
+	if (!sample_data)
+		return QWidget::event(e);;
 	switch (e->type()) {
 
 		case QEvent::MouseMove: {

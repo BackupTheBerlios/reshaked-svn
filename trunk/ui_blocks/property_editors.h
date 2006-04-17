@@ -17,6 +17,7 @@
 #include "ui_blocks/pixmap_slider.h"
 #include "ui_blocks/pixmap_slider_vu.h"
 #include "ui_blocks/pixmap_vu.h"
+#include "ui_blocks/knob.h"
 #include "ui_blocks/pixmap_updown.h"
 #include "property.h"
 #include <Qt/qspinbox.h>
@@ -35,21 +36,20 @@ namespace ReShaked {
 				    
 
 				    
-class PropertyEditKnob : public CVBox {
+class PropertyEditKnob : public Knob, public PropertyEditor {
 
 	Q_OBJECT
-
-	Property *property;
-	QLabel *label;
-	Knob *knob;
-	QLabel *value;
-protected slots:
+	
+	virtual void changed();
+	virtual void value_changed(float p_new_value);
 			
-	void knob_changed(float p_to_val);
+	void mousePressEvent(QMouseEvent *e);
+signals:	
+
+	void external_edit_signal(Property *p_property);
 public:
 	
-	void set_property(Property *p_property);
-	PropertyEditKnob(QWidget *p_parent);
+	PropertyEditKnob(QWidget *p_parent,const Knob::Skin &p_skin);
 	~PropertyEditKnob();
 
 };

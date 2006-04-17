@@ -28,7 +28,7 @@ typedef long long Tick;
 
 typedef signed char Note;
 
-enum NoteConstants {
+ enum NoteConstants {
 	NOTE_EMPTY=-1,
 	NOTE_OFF=-2,
 	NOTE_MAX=128,

@@ -170,10 +170,18 @@ int Sample::get_length(){
 	return data[0].size();
 	
 }
-float* Sample::get_buffer(int p_channel){
+const float* Sample::get_buffer(int p_channel){
 	
 	ERR_FAIL_INDEX_V(p_channel,data.size(),NULL);
 	
+	return &data[p_channel][0];
+}
+
+float* Sample::get_buffer_w(int p_channel){
+	
+	ERR_FAIL_INDEX_V(p_channel,data.size(),NULL);
+	
+	peakcache_dirty=true;
 	return &data[p_channel][0];
 }
 
@@ -218,6 +226,7 @@ void Sample::set_base_freq(float p_freq) {
 
 void Sample::set_loop_begin(int p_pos) {
 	
+	ERR_FAIL_INDEX(p_pos,(get_length()+1));
 	loop_begin=p_pos;
 }
 
@@ -228,6 +237,7 @@ int Sample::get_loop_begin() {
 
 void Sample::set_loop_end(int p_pos) {
 	
+	ERR_FAIL_INDEX(p_pos,(get_length()+1));
 	loop_end=p_pos;
 }
 

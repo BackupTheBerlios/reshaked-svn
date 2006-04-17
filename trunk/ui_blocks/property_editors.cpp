@@ -19,43 +19,43 @@
 
 namespace ReShaked {
 
+/*********************/
 
 
-void PropertyEditKnob::knob_changed(float p_to_val) {
-	if (property==NULL)
-		return;
-	property->set_coeff_value(p_to_val);
-	value->setText( QStrify(property->get_text_value()) ); 
+
+void PropertyEditKnob::changed() {
 	
+	
+	set_value( get_property()->get_coeff_value() );
+	update();
 }
 
-void PropertyEditKnob::set_property(Property *p_property) {
+void PropertyEditKnob::value_changed(float p_new_value) {
 	
-	property=p_property;	
-	label->setText( QStrify(property->get_caption()) );
-	value->setText( QStrify(property->get_text_value()) ); 
-	knob->set_value( property->get_coeff_value() );
-	QObject::connect(knob,SIGNAL(value_changed_signal( float )),this,SLOT(knob_changed( float )));
-	
+	set( get_property()->get_value_from_coeff( p_new_value) );
 }
 
-PropertyEditKnob::PropertyEditKnob(QWidget *p_parent) :CVBox(p_parent) {
+void PropertyEditKnob::mousePressEvent(QMouseEvent *e) {
 	
-	label = new QLabel(this);
-	knob = new Knob(this);
-	value = new QLabel(this);
-	label->setAlignment(Qt::AlignHCenter);
-	value->setAlignment(Qt::AlignHCenter);
-	
-	layout()->setSpacing(0);
-	property=NULL;
-	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	if (e->button()==Qt::RightButton)
+		external_edit_signal( get_property() );
+	else	
+		Knob::mousePressEvent(e);
 }
 
+PropertyEditKnob::PropertyEditKnob(QWidget *p_parent,const Skin& p_skin) : Knob(p_parent,p_skin) {
+	
+		
+	
+}
+		
 PropertyEditKnob::~PropertyEditKnob() {
 	
 	
+	
 }
+
+/***********************************/
 
 
 void PropertyEditLabel::set_postfix_visible(bool p_visible) {

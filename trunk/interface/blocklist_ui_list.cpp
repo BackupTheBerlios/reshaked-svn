@@ -240,14 +240,19 @@ void BlockListUIList::update_track_list() {
 	
 	for (int i=0;i<editor->get_song()->get_global_track().get_visible_automation_count();i++) {
 		
-		
+		CVBox *auto_vb = new CVBox(hbox);
+		hbox_layout->addWidget( auto_vb );
+		BlackWidget * top = new BlackWidget(auto_vb);
+		top->setFixedHeight( GET_QPIXMAP( PIXMAP_TRACK_OPTIONS ).height() );
+				
+		CHBox *auto_hb = new CHBox(auto_vb);
+				
 		Automation *a=editor->get_song()->get_global_track().get_visible_automation(i);
-		BlockListUI_Automation *au_wg=new BlockListUI_Automation(hbox,editor,a);
+		BlockListUI_Automation *au_wg=new BlockListUI_Automation(auto_hb,editor,a);
 		block_list_ui_list.push_back( au_wg );
-		hbox_layout->addWidget( au_wg );
+		
 			
-		BlockList_Separator *s = new BlockList_Separator(hbox,QStrify(a->get_property()->get_caption()));
-		hbox_layout->addWidget(s);
+		BlockList_Separator *s = new BlockList_Separator(auto_hb,QStrify(a->get_property()->get_caption()));
 		
 	}
 	
@@ -278,7 +283,7 @@ void BlockListUIList::update_track_list() {
 				Track_Pattern *pattern=dynamic_cast<Track_Pattern *>(editor->get_song()->get_track(i));
 				ERR_CONTINUE(pattern==NULL);
 				
-		
+
 				/*
 				new PixmapLabel(cvb,GET_QPIXMAP(PIXMAP_TRACK_SLIDER_VU_ICON));
 				PropertyEditSliderVU *slider_vu = new PropertyEditSliderVU(cvb,amp_slider_vu_skin);

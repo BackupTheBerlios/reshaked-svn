@@ -59,6 +59,7 @@ class TrackTop : public QWidget {
 	
 	void mousePressEvent(QMouseEvent *e);
 	void rename();
+	bool can_mute;
 	bool can_rename;
 	bool can_synths;
 	

@@ -77,8 +77,11 @@ void TrackTop::mousePressEvent(QMouseEvent *e) {
 	QPixmap px = VisualSettings::get_singleton()->get_pixmap( PIXMAP_TRACK_OPTIONS );
 	if (e->x()<px.width()) {
 		
-		mute->setChecked(track->is_mute());
-		mute->setText(track->is_mute()?"Un-Mute":"Mute");
+		if (can_mute) {
+
+			mute->setChecked(track->is_mute());
+			mute->setText(track->is_mute()?"Un-Mute":"Mute");
+		}
 		automation_menu->rebuild();
 		menu->popup(mapToGlobal( QPoint(0,height()) ) );
 		
@@ -200,13 +203,16 @@ TrackTop::TrackTop(QWidget *p_parent,Track *p_track,Editor *p_editor,TrackType p
 	
 	menu =new QMenu("Track Options",this);
 	mute=NULL;
+	
 	if (p_type!=TYPE_GLOBAL) {
 		mute= new IndexedAction(ACTION_MUTE,"Mute",GET_QPIXMAP(ICON_MUTE),this);
 		mute->setCheckable(true);
 		menu->addAction(mute);
 		menu->addAction(new IndexedAction(ACTION_SOLO,"Solo",GET_QPIXMAP(ICON_SOLO),this));
 		menu->addSeparator();
-	} 
+		can_mute=true;
+	}  else
+		can_mute=false;
 		
 	
 	

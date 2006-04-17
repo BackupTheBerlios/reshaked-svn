@@ -45,11 +45,11 @@ public:
 	String get_path();
 	
 	void add_int(String p_name,int p_int);
-	void add_int_array(String p_name,int *p_arr,int p_len);
+	void add_int_array(String p_name,const int *p_arr,int p_len);
 	void add_float(String p_name,float p_float);
-	void add_float_array(String p_name,float *p_arr,int p_len);
+	void add_float_array(String p_name,const float *p_arr,int p_len);
 	void add_string(String p_name,String p_string);
-	void add_raw(String p_name,unsigned char *p_raw,int p_bytes);
+	void add_raw(String p_name,const unsigned char *p_raw,int p_bytes);
 	
 	bool open_file(String p_file);
 	void close_file();

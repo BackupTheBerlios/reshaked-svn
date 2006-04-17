@@ -45,6 +45,19 @@ const SoundPluginInfo* SoundPlugin::get_info() {
 	return _plugin_info;
 }
 
+Property& SoundPlugin::get_port_by_name(String p_name) {
+	
+	Property *retprop=NULL;	
+	
+	for(int i=0;i<get_port_count();i++) {
+		
+		if (get_port(i).get_name()==p_name)
+			retprop=&get_port(i);
+	}
+
+	return *retprop;
+}
+
 int SoundPlugin::get_channels_created() {
 	
 	return _channels_created;

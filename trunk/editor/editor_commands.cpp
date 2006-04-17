@@ -690,6 +690,8 @@ CommandFunc* EditorCommands::plugin_load_preset(bool p_no_undo,SoundPlugin *p_pl
 		}
 	}
 	
+	d->ui_update_notify->rack_changed();
+		
 	return ret;
 	
 }

@@ -147,12 +147,12 @@ void Song::set_mix_rate(float p_mix_rate) {
 
 int Song::process(int p_frames) {
 	
-	
+	/*
 	song_playback.advance(p_frames);
 	global_track.process_automations(true);
 	track_graph.process( p_frames );
 	return p_frames;
-	
+	*/
 
 	
 	int todo=p_frames;
@@ -161,7 +161,7 @@ int Song::process(int p_frames) {
 		
 		int to_write=(todo<process_size)?todo:process_size;
 		
-		to_write=song_playback.advance(to_write);
+		song_playback.advance(to_write);
 		global_track.process_automations(true);
 		
 		int to_process=to_write;

@@ -10,9 +10,11 @@
 #include "engine/sound_plugin_list.h"
 #include "plugins/amplifier_plugin.h"
 #include "plugins/sine_synth.h"
+#include "plugins/simpler.h"
 #include "plugins/chionic.h"
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 #include "plugin_UIs/chionic_interface.h"
+#include "plugin_UIs/simpler_ui.h"
 #include "drivers/get_time_posix.h"
 #include "dsp/sample_file.h"
 #include "editor/midi_input_handler.h"
@@ -66,6 +68,7 @@ static void init_sound_plugin_list() {
 	sound_plugin_list.add_info( ReShaked::AmplifierPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::SineSynth::create_info() );
 	sound_plugin_list.add_info( ReShaked::Chionic::create_info() );
+	sound_plugin_list.add_info( ReShaked::Simpler::create_info() );
 	
 }
 
@@ -75,6 +78,8 @@ ReShaked::SoundPluginUI_List sound_plugin_UI_list;
 static void init_sound_plugin_UI_list() {
 		
 	sound_plugin_UI_list.add_creator(    ReShaked::ChionicInterface::create_this );
+	sound_plugin_UI_list.add_creator(    ReShaked::SimplerUI::create_this );
+	/* this one must go last, since it's the last resort */
 	sound_plugin_UI_list.add_creator(    ReShaked::SoundPluginUI_Generic::create_this );
 	
 }

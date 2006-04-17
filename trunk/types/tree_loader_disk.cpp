@@ -78,6 +78,7 @@ void TreeLoaderDisk::enter(String p_dir) {
 		}
 	}
 	
+	printf("child dir at %s\n",p_dir.ascii().get_data());
 	ERR_PRINT("Child dir doesnt exist");
 }
 void TreeLoaderDisk::exit() {
@@ -536,7 +537,9 @@ int TreeLoaderDisk::get_child_count() {
 }
 String TreeLoaderDisk::get_child_name(int i) {
 	
-	ERR_FAIL_INDEX_V(i,current->childs.size(),"");
+	if (i<0 || i>=current->childs.size()) {
+		ERR_FAIL_INDEX_V(i,current->childs.size(),"");
+	}
 	return current->childs[i]->name;
 }
 

@@ -31,22 +31,23 @@ public:
 	
 		struct Internal {
 			float mix_rate;
-			float amplitude;
-			char original_note; ///< used to keep track after transpose
-			int note; ///< mapped to midi 0 .. 127 , but could be greater/lesser given transpose
+			float total_amplitude; //expression+mainvol+velocity
+			char original_note; ///< Note from the midi event, for reference (note off)
+			float note; ///< Note after transpose, this can be modified by portamento, too
 			int velocity; ///< 0 .. 127 always
 			float note_fine;
 			std::vector<float*> *buffers;
 			bool active;
 			bool off; //note off happened
+			float current_note; // note+porta+pitchbend+mod
 		} internal;		
 		void reset_internal();
 	protected:		
 		
 		bool is_off();
 		float get_mix_rate();
-		float get_amplitude();
-		int get_note();
+		float get_total_amplitude(); //expression+mainvol+velocity
+		int get_original_note();
 		float get_current_note();
 		int get_velocity();
 		int get_buffer_count();
@@ -76,7 +77,7 @@ public:
 	
 private:		
 		
-	typedef  std::list<int> ActiveVoiceList;	
+	typedef  PreallocList<int> ActiveVoiceList;	
 	
 	void terminate_voice(ActiveVoiceList::iterator p_it);
 	
@@ -84,22 +85,36 @@ private:
 	
 	float mix_rate;	
 	std::vector<Voice*> voice_pool;
+	
 
+	Sint64 frames_mixed;
+	float lfo_depth;
+	float lfo_pos;
+	
+	int last_voice_idx;
+	
+	struct PortamentoData {
+		
+		int voice_idx;
+		float target_base_note;
+		
+	} portamento_data;
+	
 	//typedef ActiveVoiceList PreallocList<int>;
 	ActiveVoiceList active_voices;
 	
 	/* input internal properties */
-	LocalProperty expression;
-	LocalProperty main_volume;
-	LocalProperty pitch_bend;
-	LocalProperty portamento;
-	LocalProperty modulation_speed;
-	LocalProperty modulation_depth;
-	LocalProperty mono_mode;
+	LocalProperty expression; //ok
+	LocalProperty main_volume; //ok
+	LocalProperty pitch_bend; //ok
+	LocalProperty portamento; //ok
+	LocalProperty modulation_speed; //ok
+	LocalProperty modulation_depth; //ook
+	LocalProperty mono_mode; //ok
 	LocalProperty sustain;
-	LocalProperty transpose;
-	LocalProperty finetune;
-	LocalProperty duplicate_check;
+	LocalProperty transpose; //ok
+	LocalProperty finetune; //ok
+	LocalProperty duplicate_check; //ok
 	
 	/* output internal properties */
 	LocalProperty voice_count;
@@ -108,6 +123,9 @@ private:
 	
 	std::vector<Property*> input_properties;
 	std::vector<Property*> output_properties;
+	
+	void stop_all_voices();
+	
 public:
 	
 	int get_channels();

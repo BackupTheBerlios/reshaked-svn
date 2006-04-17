@@ -28,7 +28,7 @@ TrackControlSettings::TrackControlSettings(QWidget *p_parent) :QWidget(p_parent)
 {
 	QGridLayout *gl = new QGridLayout(this);
 	setLayout(gl);
-	
+	/*
 	edit_swing= new PropertyEditKnob(this);
 	gl->addWidget(edit_swing,0,0);
 	edit_balance =  new PropertyEditKnob(this);
@@ -36,7 +36,7 @@ TrackControlSettings::TrackControlSettings(QWidget *p_parent) :QWidget(p_parent)
 	
 	layout()->setMargin(0);
 	layout()->setSpacing(2);
-	
+	*/
 	
 }
 

@@ -47,6 +47,7 @@ Track_Pattern::NoteList Track_Pattern::get_notes_in_range(Tick p_from, Tick p_to
 			NoteListElement e;
 			e.note=b->get_note( j );
 			e.pos=b->get_note_pos( j );
+			e.pos.tick+=get_block_pos( i );
 			res.push_back(e);
 		}
 	}
@@ -298,13 +299,16 @@ void Track_Pattern::plugin_added_notify(SoundPlugin *p_plugin) {
 
 void Track_Pattern::add_noteon_event_to_buffer(char p_note,char p_velocity,int p_column,EventBuffer &p_buffer,int p_frame_offset) {
 	
+	printf("note %i\n",p_note);
+	
 	if (data.last_note[p_column].is_note() && data.last_note[p_column].note==p_note) {
 		/* IF the note is the same, we must mute it before */
 		Event e;
 		SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[p_column].note,0);
 		e.frame_offset=p_frame_offset; //off te
 		p_buffer.push_event(e);
-
+		data.last_note[p_column]=Note(Note::NOTE_OFF); //avoid the next check
+		
 	}
 	
 	/* send new note */
@@ -318,7 +322,7 @@ void Track_Pattern::add_noteon_event_to_buffer(char p_note,char p_velocity,int p
 	}
 	
 	if (data.last_note[p_column].is_note() && data.last_note[p_column].note!=p_note) {
-		/* IF the note is the same, we must mute it before */
+		/* If the note is different, mute it later */
 		Event e;
 		SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[p_column].note,0);
 		e.frame_offset=p_frame_offset; //off te
@@ -378,6 +382,7 @@ void Track_Pattern::play_external_event(const EventMidi &p_event_midi) {
 
 
 void Track_Pattern::track_pre_process(int p_frames) {
+	/* I HATE THIS FUNCTION */
 	
 	data.event_buffer.clear(); //first of all, always clear event buffer	
 	
@@ -392,15 +397,34 @@ void Track_Pattern::track_pre_process(int p_frames) {
 	data.edit_event_buffer.clear();
 
 	
-	if (get_song_playback()->get_status()!=SongPlayback::STATUS_PLAY)
+	if (get_song_playback()->get_status()!=SongPlayback::STATUS_PLAY) {
+		
+		data.old_tick_to=-1;
 		return; //nothing much to do
-	
+	}
 	int block_count=get_block_count();
-	if (block_count==0)
+	if (block_count==0) {
+		data.old_tick_to=-1;
 		return; //nuthin' to do
+	}
 	
-	Tick tick_from=get_song_playback()->get_current_tick_from();
-	Tick tick_to=get_song_playback()->get_current_tick_to()-1;
+	/* Up to where we are going to process. */
+	Tick tick_to=get_song_playback()->get_current_tick_to();
+		
+	Tick tick_from; //from where we process
+	
+	if (data.old_tick_to==-1 || tick_to<data.old_tick_to || abs(tick_to-data.old_tick_to)>TICKS_PER_BEAT)
+		// if previous processing pos is invalid, or position changed
+		tick_from=get_song_playback()->get_current_tick_from();
+	else
+		
+		tick_from=data.old_tick_to+1;
+	
+	
+	if (tick_from>tick_to) //we already processed up to this tick
+		return; //nothing to do
+	
+	data.old_tick_to=tick_to;
 	
 	int block_idx=get_prev_block_from_idx(tick_from);
 	//printf("PAT: from %i to %i\n",(int)tick_from,(int)tick_to);
@@ -410,7 +434,7 @@ void Track_Pattern::track_pre_process(int p_frames) {
 		block_idx++;
 	}
 	
-	while (block_idx<block_count && (get_block_pos(block_idx)<tick_to) ) {
+	while (block_idx<block_count && (get_block_pos(block_idx)<=tick_to) ) {
 		
 		Tick block_pos=get_block_pos(block_idx);
 		Tick tick_from_local=tick_from-block_pos;
@@ -420,10 +444,13 @@ void Track_Pattern::track_pre_process(int p_frames) {
 		if (tick_to_local<0)
 			tick_to_local=0;
 		
+		Position pos_from_local(tick_from_local,0);
+		Position pos_to_local(tick_to_local,MAX_COLUMNS);
+		
 		Pattern *pd=get_block(block_idx)->get_pattern();
 		int from_idx;
 		int to_idx;
-		if (!pd->data.find_values_in_range(tick_from_local,tick_to_local,&from_idx,&to_idx)) {
+		if (!pd->data.find_values_in_range(pos_from_local,pos_to_local,&from_idx,&to_idx)) {
 			//printf("ticks %i to %i have indexes %i to %i\n",(int)tick_from_local,(int)tick_to_local,from_idx,to_idx);
 		
 			for (int i=from_idx;i<=to_idx;i++) {
@@ -446,7 +473,7 @@ void Track_Pattern::track_pre_process(int p_frames) {
 					
 					add_noteon_event_to_buffer(n.note,n.volume,col,data.event_buffer,frame);
 					
-				} else if (n.is_note_off()) {
+				} else if (n.is_note_off() && data.last_note[col].is_note()) {
 					
 					//printf("AT %i - note off\n",(int)tick_to);
 					
@@ -459,7 +486,30 @@ void Track_Pattern::track_pre_process(int p_frames) {
 			}
 		}
 
+		/* Process note OFFs at end of block */
 		
+		/* Is there a reason for this?
+		Tick block_len=get_block(block_idx)->get_length();
+		if (tick_from_local<=block_len && tick_to_local>=block_len) {
+			
+			int frame=block_len*(tick_to_local-tick_from_local)/(Tick)p_frames;
+			
+			for (int i=0;i<MAX_COLUMNS;i++) {
+				
+				if (data.last_note[i].is_note()) {
+					
+					//printf("AT %i - note off\n",(int)tick_to);
+					
+					Event e;
+					SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[i].note,0);
+					e.frame_offset=frame; //off te
+					data.event_buffer.push_event(e);
+					data.last_note[i]=Note(Note::NOTE_OFF);
+				}				
+			}
+		}
+		
+		*/
 		block_idx++;
 	}
 	
@@ -508,7 +558,7 @@ Track_Pattern::Track_Pattern(int p_channels,GlobalProperties *p_global_props,Son
 	add_property("Track/",&data.swing);
 	add_property("Track/",&data.volume);
 	add_property("Track/",&data.balance);
-	
+	data.old_tick_to=-1;	
 }
 
 

@@ -333,7 +333,7 @@ void TreeContainer::add_int(String p_name,int p_int) {
 	current->values.push_back(v);
 		
 }
-void TreeContainer::add_int_array(String p_name,int *p_arr,int p_len) {
+void TreeContainer::add_int_array(String p_name,const int *p_arr,int p_len) {
 	
 	ERR_FAIL_COND(is_var(p_name));	
 	
@@ -352,7 +352,10 @@ void TreeContainer::add_int_array(String p_name,int *p_arr,int p_len) {
 	
 }
 void TreeContainer::add_float(String p_name,float p_float)  {
-	
+	if (is_var(p_name)) {
+		
+		printf("%s exists\n",p_name.ascii().get_data());
+	}
 	ERR_FAIL_COND(is_var(p_name));	
 	
 	Value *v = new Value;
@@ -362,7 +365,7 @@ void TreeContainer::add_float(String p_name,float p_float)  {
 	current->values.push_back(v);
 	
 }
-void TreeContainer::add_float_array(String p_name,float *p_arr,int p_len) {
+void TreeContainer::add_float_array(String p_name,const float *p_arr,int p_len) {
 	
 	ERR_FAIL_COND(is_var(p_name));	
 	
@@ -390,7 +393,7 @@ void TreeContainer::add_string(String p_name,String p_string) {
 	v->string_val=p_string;
 	current->values.push_back(v);
 }
-void TreeContainer::add_raw(String p_name,unsigned char *p_raw,int p_bytes) {
+void TreeContainer::add_raw(String p_name,const unsigned char *p_raw,int p_bytes) {
 	
 	ERR_FAIL_COND(is_var(p_name));	
 	
@@ -439,11 +442,13 @@ void TreeContainer::erase_node(Node *p_node) {
 
 void TreeContainer::load_node(TreeLoader *p_loader) {
 	
-	p_loader->goto_root();
-	for (int i=0;p_loader->get_child_count();i++) {
+	printf("path %s\n",get_path().ascii().get_data());
+
+	for (int i=0;i<p_loader->get_child_count();i++) {
 	
-		p_loader->enter( p_loader->get_child_name(i) );
-		enter(p_loader->get_child_name(i));
+		String child_name=p_loader->get_child_name(i);
+		p_loader->enter( child_name );
+		enter( child_name );
 		
 		load_node(p_loader);
 		
@@ -523,7 +528,7 @@ TreeContainer::TreeContainer(TreeLoader *p_loader) {
 	tree = new Node;
 	tree->parent=NULL;
 	current=tree;
-	
+	p_loader->goto_root();	
 	load_node( p_loader );
 	
 }

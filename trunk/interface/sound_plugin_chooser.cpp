@@ -14,6 +14,7 @@
 #include <Qt/qlayout.h>
 #include <Qt/qheaderview.h>
 #include <Qt/qpushbutton.h>
+#include <Qt/qlabel.h>
 #include "ui_blocks/helpers.h"
 #include "pixmaps/note.xpm"
 
@@ -92,6 +93,8 @@ void SoundPluginChooserItem::set_selected(bool p_selected) {
 	update();
 }
 
+
+
 int SoundPluginChooserItem::get_index() {
 	
 	return index;
@@ -123,6 +126,19 @@ int SoundPluginChooser::get_selected_plugin_idx() {
 	
 }
 
+int SoundPluginChooser::get_selected_channels() {
+	
+	int idx=channels->currentIndex();
+	if (idx<0 || idx>=channels->count())
+		return -1;
+		
+	int chans=channels->itemData(idx).toInt();
+	
+	if (chans<1 || chans>8)
+		return -1;
+		
+	return chans;
+}
 
 void SoundPluginChooser::accept() {
 	
@@ -140,7 +156,53 @@ void SoundPluginChooser::selected_slot(SoundPluginChooserItem * p_item) {
 	
 	selected_idx=p_item->get_index();
 	
-	bool synth_selected=SoundPluginList::get_singleton()->get_plugin_info(selected_idx)->is_synth;
+	const SoundPluginInfo *info=SoundPluginList::get_singleton()->get_plugin_info(selected_idx);
+	bool synth_selected=info->is_synth;
+	
+	channels->clear();
+	
+	if (info->can_custom_channels) {
+		
+		int preselect_index=-1;
+#define	ADD_COMBO_OPTION(mchans) {\
+	QString text; \
+	if (mchans==1)\
+		text="1- Mono";\
+	else if (mchans==2)\
+		text="2- Stereo";\
+	else if (mchans==4)\
+		text="4- Quad";\
+	else\
+		text=QString::number(mchans);\
+	\
+	channels->addItem(text,QVariant(mchans));\
+	if (track_channels==mchans)\
+		preselect_index=channels->count()-1;\
+	}
+		
+		if (info->custom_channels.size()) {
+			
+
+			for (int i=0;i<info->custom_channels.size();i++) {
+				
+				ADD_COMBO_OPTION(info->custom_channels[i]);
+			}
+			
+		} else {
+			
+			for (int i=1;i<8;i++) {
+				
+				ADD_COMBO_OPTION(i);
+			}
+			
+		}
+					
+#undef ADD_COMBO_OPTION
+
+		if (preselect_index>=0)
+			channels->setCurrentIndex(preselect_index);
+					
+	}
 	
 	append->setText(synth_selected?"Connect Synth to Output":"Append Effect to Output");
 }
@@ -151,8 +213,9 @@ bool SoundPluginChooser::append_to_output() {
 	return append->isChecked();
 }
 
-SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths) : QDialog(p_parent) {
+SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths,int p_track_channels) : QDialog(p_parent) {
 	
+	track_channels=p_track_channels;
 	setLayout(new QVBoxLayout);
 	
 	scroll = new QScrollArea(this);
@@ -193,6 +256,16 @@ SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths) : Q
 	
 	(new QFrame(hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 	
+	hb = new CHBox(this);
+	layout()->addWidget(hb);
+	
+//	(new QFrame(hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	new QLabel("Channels to Instance",hb);
+	
+	(new QFrame(hb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	
+	channels = new QComboBox(hb);
+	channels->setMinimumWidth(100);	
 	hb = new CHBox(this);
 	layout()->addWidget(hb);
 	

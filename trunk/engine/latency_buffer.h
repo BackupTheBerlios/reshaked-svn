@@ -19,10 +19,10 @@ namespace ReShaked {
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
-					       
+
 //not the most accurate thing ever, but accurate enough
 					       
-class LatencyBuffer{
+class LatencyBuffer {
 
 	enum {
 		MSECS_MAX=4000,

@@ -72,6 +72,8 @@ void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Patter
 
 	Tick row_ticks=editor->get_cursor().get_snap_tick_size();
 	Tick note_ofs=p_note.pos.tick-editor->get_cursor().get_snapped_window_tick_pos(p_row);
+	
+	
 	if (note_ofs!=0) {
 		int pix_ofs=(int)note_ofs*get_row_size()/(int)row_ticks;
 		textofs+=pix_ofs;
@@ -79,7 +81,7 @@ void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Patter
 		font=VisualSettings::get_singleton()->get_pattern_font_nofit();
 		font_vol=VisualSettings::get_singleton()->get_pattern_font_nofit();
 		
-	}
+	} 
 
 
 	static char buf[4]={0,0,0,0};
@@ -487,6 +489,7 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 		Tick to=editor->get_cursor().get_snapped_window_tick_pos(i+1)-1;
 
 		Track_Pattern::NoteList nl = track->get_notes_in_range( from, to );
+
 		if (!nl.empty()) {
 
 			paint_multiple_note_events( p,i , nl );

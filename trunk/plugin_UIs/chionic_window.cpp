@@ -342,7 +342,12 @@ void ChionicWindow::sources_action(int p_action) {
 				break;
 			
 			/* try with sample */
-			Sample *s=SampleFile::get_singleton()->load_sample( DeQStrify(file) );
+			Sample *s = new Sample;
+			
+			if (SampleFile::get_singleton()->load_sample( DeQStrify(file),s )) {
+				delete s; //failed loading
+				break;
+			}
 			
 			QString fname=file;
 			
@@ -387,13 +392,18 @@ void ChionicWindow::sources_action(int p_action) {
 			if (source<0 ||	source >=chionic->get_params()->global.sources.size() )
 				break;
 			
+			
 			QString file=QFileDialog::getOpenFileName ( this, "Open Sample/OSC",".", "Waveforms (*.wav *.au *.aif *.WAV);;Oscs (*.osc);;All Files (*)");
 			
 			if (file=="")
 				break;
 			
-			/* try with sample */
-			Sample *s=SampleFile::get_singleton()->load_sample( DeQStrify(file) );
+			Sample *s = new Sample;
+			
+			if (SampleFile::get_singleton()->load_sample( DeQStrify(file),s )) {
+				delete s; //failed loading
+				break;
+			}
 			
 			QString fname=file;
 			

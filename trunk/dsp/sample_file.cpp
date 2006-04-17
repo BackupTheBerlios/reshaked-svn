@@ -22,19 +22,16 @@ SampleFile *SampleFile::get_singleton() {
 }
 
 
-Sample *SampleFile::load_sample(String p_filename) {
-	
-	Sample * smp = new Sample;
+SampleLoader::LoadStatus SampleFile::load_sample(String p_filename,Sample *p_sample) {
 	
 	for (int i=0;i<loaders.size();i++) {
 		
-		if (loaders[i]->load_sample(p_filename,smp)==SampleLoader::LOAD_OK)
-			return smp;
+		if (loaders[i]->load_sample(p_filename,p_sample)==SampleLoader::LOAD_OK)
+			return SampleLoader::LOAD_OK;
 	}
 	
-	delete smp;
 	
-	return NULL;
+	return SampleLoader::LOAD_UNRECOGNIZED;
 }
 
 void SampleFile::add_loader(SampleLoader *p_loader) {

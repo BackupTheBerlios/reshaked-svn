@@ -155,6 +155,7 @@ friend class Saver; //saver needs access to Pattern structure for comparing it
 		EventBuffer edit_event_buffer;
 		
 		Note last_note[MAX_COLUMNS];
+		Tick old_tick_to;;
 	} data;
 	
 	SwingProcess swing_process;

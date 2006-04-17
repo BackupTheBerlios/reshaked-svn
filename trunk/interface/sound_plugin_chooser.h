@@ -17,6 +17,7 @@
 #include <Qt/qdialog.h>
 #include <Qt/qpixmap.h>
 #include <Qt/qcheckbox.h>
+#include <Qt/qcombobox.h>
 
 namespace ReShaked {
 
@@ -63,21 +64,23 @@ class SoundPluginChooser : public QDialog {
 			
 	QScrollArea *scroll;
 	QCheckBox *append;
-	
+	QComboBox *channels;
 	
 	std::vector<SoundPluginChooserItem*> items;
 			
 	int selected_idx;
 	virtual void accept();		
 
+	int track_channels;
 public slots:	
 	
 	void selected_slot(SoundPluginChooserItem * p_item);
 public:
+	int get_selected_channels();
 	int get_selected_plugin_idx();
 	bool append_to_output();
 	
-	SoundPluginChooser(QWidget *p_parent, bool p_show_synths);
+	SoundPluginChooser(QWidget *p_parent, bool p_show_synths,int p_track_channels);
 	~SoundPluginChooser();
 
 };

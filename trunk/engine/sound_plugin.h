@@ -77,6 +77,7 @@ public:
 	/* Port Info */
 	virtual int get_port_count()=0;
 	virtual Property& get_port(int p_index)=0;
+	virtual Property& get_port_by_name(String p_name);
 	virtual PortType get_port_type(int p_index)=0;
 		
 	

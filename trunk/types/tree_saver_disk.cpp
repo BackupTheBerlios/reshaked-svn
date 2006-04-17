@@ -86,7 +86,7 @@ void TreeSaverDisk::add_int(String p_name,int p_int){
 	write_string(p_name);
 	write_sint(p_int);
 }
-void TreeSaverDisk::add_int_array(String p_name,int *p_arr,int p_len){
+void TreeSaverDisk::add_int_array(String p_name,const int *p_arr,int p_len){
 	
 	write_byte(FILE_FIELD_INT_ARRAY);
 	write_string(p_name);
@@ -104,7 +104,7 @@ void TreeSaverDisk::add_float(String p_name,float p_float){
 	write_float(p_float); 
 	
 }
-void TreeSaverDisk::add_float_array(String p_name,float *p_arr,int p_len){
+void TreeSaverDisk::add_float_array(String p_name,const float *p_arr,int p_len){
 	
 	write_byte(FILE_FIELD_FLOAT_ARRAY);
 	write_string(p_name);
@@ -123,7 +123,7 @@ void TreeSaverDisk::add_string(String p_name,String p_string){
 	write_string(p_string);
 	
 }
-void TreeSaverDisk::add_raw(String p_name,unsigned char *p_raw,int p_bytes){
+void TreeSaverDisk::add_raw(String p_name,const unsigned char *p_raw,int p_bytes){
 	
 	write_byte(FILE_FIELD_RAW);
 	write_string(p_name);
