@@ -46,11 +46,12 @@ private:
 	std::vector<Connection> connections;
 	AudioGraphProcess graph_process;
 	ConnectError last_error;
-	
+	bool graph_order_valid;
 	VisualNodeOrder * visual_node_order;
 
 	bool recompute_process_order(); /* return true if cyclic connection found */
 	void recompute_graph();
+	
 	
 public:
 	

@@ -36,6 +36,8 @@ friend class Editor;
 	CommandFunc* track_move_left(bool p_no_undo,int p_which);
 	CommandFunc* track_move_right(bool p_no_undo,int p_which);
 	
+	CommandFunc* track_swap_properties(bool p_no_undo,Track *p_track,int p_which,int p_with_which);
+	
 	
 	CommandFunc* automation_show(bool p_no_undo,Track *p_track,int p_property);
 	CommandFunc* automation_hide(bool p_no_undo,Track *p_track,int p_property);

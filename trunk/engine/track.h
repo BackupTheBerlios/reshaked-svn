@@ -153,6 +153,7 @@ public:
 
 	int get_property_count();
 	//int get_idx_by_path(String p_path);
+	void swap_properties(int p_which,int p_with_which); //switch places of 2 properties
 	Property *get_property(int p_idx);
 	Automation *get_property_automation(int p_idx);
 	String get_property_visual_path(int p_idx);

@@ -22,7 +22,39 @@ void Loader::load_automation_block(TreeLoader *p_loader) {
 	
 	a->set_length( p_loader->get_int("length" ) );
 	
-	/* MISSING LFO & INTERPOLATION!! */
+	/* LFO */
+	a->get_data()->get_lfo().set_delay( p_loader->get_int("lfo_delay" ) );
+	
+	LFO::Mode lfo_mode;
+	switch( p_loader->get_int("lfo_mode") ) {
+		case 0: lfo_mode=LFO::MODE_SINE; break;
+		case 1: lfo_mode=LFO::MODE_SAW_UP; break;
+		case 2: lfo_mode=LFO::MODE_SAW_DOWN; break;
+		case 3: lfo_mode=LFO::MODE_SQUARE; break;
+		default: lfo_mode=LFO::MODE_SINE; break; 
+	}
+	a->get_data()->get_lfo().set_mode( lfo_mode );
+	
+	a->get_data()->get_lfo().set_rate( p_loader->get_float("lfo_rate") );
+	a->get_data()->get_lfo().set_depth( p_loader->get_float("lfo_depth") );
+	a->get_data()->get_lfo().set_phase(p_loader->get_float("lfo_phase") );
+	a->get_data()->get_lfo().set_random_depth(p_loader->get_float("lfo_random_depth") );
+	a->get_data()->get_lfo().set_random_seed( p_loader->get_float("lfo_random_seed") );
+	
+	/* Interpolation */
+	Automation::BlockInterpolationMethod interp;
+	
+	switch ( p_loader->get_int("interpolation_mode") ) {
+		
+		case 0: interp=Automation::INTERP_NONE; break;
+		case 1: interp=Automation::INTERP_LINEAR; break;
+		case 2: interp=Automation::INTERP_CUBIC; break;
+		default: interp=Automation::INTERP_LINEAR; break;
+	}
+	
+	a->get_data()->set_interpolation(interp);
+	
+	/* POINTS */
 	
 	p_loader->enter("points");
 	
@@ -312,6 +344,12 @@ void Loader::load_track(Track *p_track, TreeLoader *p_loader) {
 		Automation *a=p_track->get_property_automation(prop_idx);
 		/* Dont save unused automations, to save space in file */
 		a->set_initial_value( p_loader->get_int("initial") );
+		switch (p_loader->get_int("display_size")) {
+			case 0: a->set_display_size( Automation::DISPLAY_SIZE_SMALL ); break;
+			case 1: a->set_display_size( Automation::DISPLAY_SIZE_MEDIUM ); break;
+			case 2: a->set_display_size( Automation::DISPLAY_SIZE_BIG ); break;
+		}
+
 		{
 			p_loader->enter("blocks");
 		
@@ -346,7 +384,8 @@ void Loader::load_track(Track *p_track, TreeLoader *p_loader) {
 				p_track->property_show_automation(prop_idx);
 						  
 		}
-		
+		int original_index=p_loader->get_int("property_index"); //original index
+		p_track->swap_properties(original_index,prop_idx); //puts the automation where it was originally located
 		p_loader->exit(); //automation_idx
 	
 	}

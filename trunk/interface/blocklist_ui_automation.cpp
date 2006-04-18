@@ -990,11 +990,34 @@ void BlockListUI_Automation::show_popup() {
 
 	if (res==ac_left) {
 		
+		int track_idx=editor->get_blocklist_track( editor->find_blocklist( automation) );
+		Track *tr = (track_idx>=0)?editor->get_song()->get_track(track_idx):&editor->get_song()->get_global_track();
 		
+		int prop_idx=-1;
+		
+		for (int i=0;i<tr->get_property_count();i++) {
+			
+			if (tr->get_property_automation(i)==automation)
+				prop_idx=i;
+		}
+		if (prop_idx>=0)
+			editor->track_automation_move_left(tr,prop_idx);
 		
 	} else if (res==ac_right) {
 		
 		
+		int track_idx=editor->get_blocklist_track( editor->find_blocklist( automation) );
+		Track *tr = (track_idx>=0)?editor->get_song()->get_track(track_idx):&editor->get_song()->get_global_track();
+		
+		int prop_idx=-1;
+		
+		for (int i=0;i<tr->get_property_count();i++) {
+			
+			if (tr->get_property_automation(i)==automation)
+				prop_idx=i;
+		}
+		if (prop_idx>=0)
+			editor->track_automation_move_right(tr,prop_idx);
 		
 		
 	} else if (res==ac_small) {

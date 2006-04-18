@@ -344,4 +344,51 @@ void Editor::set_track_solo(int p_track_idx) {
 	end_meta_undo_block();
 }
 
+void Editor::track_automation_move_left(Track *p_track,int p_property) {
+	
+	int curr=p_property-1;
+	
+	while (curr>=0) {
+		
+		if (p_track->has_property_visible_automation( curr ) )
+			break;
+		curr--;
+	}
+	
+	if (curr<0)
+		return; //couldnt find anything
+	
+	d->undo_stream.begin("Move Automation Left",true);
+	d->undo_stream.add_command(Command3(&commands,&EditorCommands::track_swap_properties,p_track,p_property,curr));
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
+
+}
+
+void Editor::track_automation_move_right(Track *p_track,int p_property) {
+	
+	int curr=p_property+1;
+	
+	int max=p_track->get_property_count();
+	
+	while (curr<max) {
+		
+		if (p_track->has_property_visible_automation( curr ) )
+			break;
+		curr++;
+	}
+	
+	if (curr>=max)
+		return; //couldnt find anything
+	
+	d->undo_stream.begin("Move Automation Right",true);
+	d->undo_stream.add_command(Command3(&commands,&EditorCommands::track_swap_properties,p_track,p_property,curr));
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
+	
+}
+	
+
 } //end of namespace

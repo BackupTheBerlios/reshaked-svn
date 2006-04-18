@@ -140,7 +140,21 @@ CommandFunc* EditorCommands::track_move_right(bool p_no_undo,int p_which) {
 	
 }
 
-
+CommandFunc* EditorCommands::track_swap_properties(bool p_no_undo,Track *p_track,int p_which,int p_with_which) {
+	
+	CommandFunc *ret=NULL;
+	if (!p_no_undo) {
+	
+		ret=Command3(this,&EditorCommands::track_swap_properties,p_track,p_with_which,p_which);
+		
+	}
+	
+	p_track->swap_properties( p_which,p_with_which );
+	
+	d->ui_update_notify->track_list_changed(); 
+	
+	return ret;
+}
 CommandFunc* EditorCommands::automation_show(bool p_no_undo,Track *p_track,int p_property) {
 	
 	CommandFunc *ret=NULL;

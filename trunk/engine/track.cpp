@@ -271,6 +271,23 @@ AudioNode *Track::get_playback_node() {
 }
 
 
+void Track::swap_properties(int p_which,int p_with_which) {
+	
+	ERR_FAIL_INDEX(p_which,get_property_count());
+	ERR_FAIL_INDEX(p_with_which,get_property_count());
+	
+	AudioControl::mutex_lock();
+	
+	PropertyRef * aux_p=base_private.property_list[p_which];
+	
+	base_private.property_list[p_which]=base_private.property_list[p_with_which];
+	base_private.property_list[p_with_which]=aux_p;
+	
+	void rebuild_active_automation_cache();	
+	AudioControl::mutex_unlock();
+
+}
+
 int Track::get_property_count() {
 	
 	return base_private.property_list.size();	
@@ -400,7 +417,12 @@ void Track::validate_plugin_duplicate(SoundPlugin *p_plugin) {
 	p_plugin->set_duplicate( free_duplicate );
 }
 
+
 void Track::add_plugin(PluginInsertData* p_plugin) {
+	
+//	printf("ADD- BEFORE\n");
+//	for (int i=0;i<get_property_count();i++)
+//		printf("%i - %s\n",i,get_property(i)->get_caption().ascii().get_data());
 	
 	AudioControl::mutex_lock();
 	
@@ -426,22 +448,33 @@ void Track::add_plugin(PluginInsertData* p_plugin) {
 		
 	
 	/* add properties and automations */
+	
+	//add existing ones first, so they are added in proper order
+	foreach(I,p_plugin->automated_tracks) {
+		
+		add_property(path,I->automation->get_property(),I->automation,I->pos,false);	
+	}
+		
+	/* now add any property that may not have been included */
 	for (int i=0;i<p_plugin->plugin->get_port_count();i++) {
 		if (p_plugin->plugin->get_port_type(i)==SoundPlugin::TYPE_READ)
 			continue;
 		
-		TrackAutomation *automation=NULL;
-		int pos=-1;
 		Property *prop=&p_plugin->plugin->get_port(i);
+		bool included=false;// was included, so it was already added
+		
 		foreach(I,p_plugin->automated_tracks) {
 		
 			if (I->automation->get_property()==prop) {
-				automation=I->automation;
-				pos=I->pos;
+				
+				included=true;
 				break;
 			}
 		}
-		add_property(path,&p_plugin->plugin->get_port(i),automation,pos,false);	
+		
+		if (included)
+			continue;
+		add_property(path,prop,NULL,-1,false);	
 	}
 	
 
@@ -456,9 +489,17 @@ void Track::add_plugin(PluginInsertData* p_plugin) {
 	
 	AudioControl::mutex_unlock();
 	
+//	printf("ADD - AFTER\n");
+//	for (int i=0;i<get_property_count();i++)
+//		printf("%i - %s\n",i,get_property(i)->get_caption().ascii().get_data());
+	
 }
 
 void Track::remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery) {
+	
+//	printf("REM - BEFORE\n");
+//	for (int i=0;i<get_property_count();i++)
+//		printf("%i - %s\n",i,get_property(i)->get_caption().ascii().get_data());
 	
 	ERR_FAIL_INDEX(p_pos,get_plugin_count());
 	
@@ -475,7 +516,8 @@ void Track::remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery) {
 	
 	/* Erase properties and save automations*/
 	
-	for (int i=0;i<base_private.property_list.size();i++) {
+	for (int i=(base_private.property_list.size()-1);i>=0;i--) {
+		//go backwards, since we need to erase stuff + remember position of erased element
 	
 		int port=-1;
 		for (int j=0;j<node->get_port_count();j++) {
@@ -495,11 +537,12 @@ void Track::remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery) {
 		PluginInsertData::AutomationTrack atdata;
 		atdata.pos=i;
 		atdata.automation=base_private.property_list[i]->automation;
+		
+		//push front because we go backwards
 		p_plugin_recovery->automated_tracks.push_front(atdata);
 		
 		delete base_private.property_list[i]; //erase property ref
 		base_private.property_list.erase( base_private.property_list.begin() + i ); //and erase from array
-		i--;
 		
 	}
 	
@@ -508,6 +551,10 @@ void Track::remove_plugin(int p_pos,PluginInsertData* p_plugin_recovery) {
 	rebuild_active_automation_cache();
 		
 	AudioControl::mutex_unlock();
+	
+//	printf("REM - AFTER\n");
+//	for (int i=0;i<get_property_count();i++)
+//		printf("%i - %s\n",i,get_property(i)->get_caption().ascii().get_data());
 }
 
 void Track::update_plugins_mix_rate() {
@@ -603,7 +650,7 @@ int Track::find_plugin_idx_for_property(Property *p_property) {
 		SoundPlugin *p=get_plugin(i);
 		for (int j=0;j<p->get_port_count();j++) {
 		
-			if (&p->get_port(i)==p_property)
+			if (&p->get_port(j)==p_property)
 				return i;
 		
 		}

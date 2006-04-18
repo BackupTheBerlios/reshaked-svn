@@ -200,6 +200,10 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 		if (!builtin) { //belongs to a plugin
 			
 			plugin_idx=p_track->find_plugin_idx_for_property(a->get_property());
+			if (plugin_idx==-1) {
+				
+				printf("Failed to find plugin for property %s\n",a->get_property()->get_caption().ascii().get_data() );
+			}
 			ERR_CONTINUE(plugin_idx==-1);
 		}
 		
@@ -207,11 +211,14 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 		
 		p_saver->enter("automation_"+String::num(i));
 		
+		p_saver->add_int("property_index",i); //original index
+		
+		p_saver->add_int("display_size",a->get_display_size());
 		p_saver->add_int("visible",p_track->has_property_visible_automation(i));
 		p_saver->add_int("initial",a->get_initial_value());
 		p_saver->add_int("builtin",builtin); //belongs to plugin or not
 		p_saver->add_string("name",a->get_property()->get_name());
-		if (builtin) 
+		if (!builtin) 
 			p_saver->add_int("plugin_idx",plugin_idx); //plugin it belongs to
 	
 		
@@ -248,7 +255,18 @@ void Saver::save_automation_block(Automation::AutomationBlock *p_block,TreeSaver
 	
 	p_saver->add_int("length",p_block->get_length());
 	
-	/* MISSING LFO & INTERPOLATION!! */
+	/* LFO */
+	p_saver->add_int("lfo_delay", p_block->get_data()->get_lfo().get_delay() );
+	p_saver->add_int("lfo_mode", p_block->get_data()->get_lfo().get_mode() );
+	p_saver->add_float("lfo_rate", p_block->get_data()->get_lfo().get_rate() );
+	p_saver->add_float("lfo_depth", p_block->get_data()->get_lfo().get_depth() );
+	p_saver->add_float("lfo_phase", p_block->get_data()->get_lfo().get_phase() );
+	p_saver->add_float("lfo_random_depth", p_block->get_data()->get_lfo().get_random_depth() );
+	p_saver->add_float("lfo_random_seed", p_block->get_data()->get_lfo().get_random_seed() );
+	
+	/* Interpolation */
+	
+	p_saver->add_int("interpolation_mode", p_block->get_data()->get_interpolation() );
 	
 	p_saver->enter("points");
 	for (int i=0;i<p_block->get_data()->get_stream_size();i++) {

@@ -25,7 +25,6 @@
 
 #include "drivers/get_time_win32.h"
 
-
 #include <Qt/qdir.h>
 
 #include "interface/sound_plugin_ui_list.h"
@@ -195,7 +194,8 @@ int main(int argc, char *argv[]) {
 	
 	
 	ReShaked::MainWindow *w = new ReShaked::MainWindow;
-	driver_list.init_driver(0,false);
+	
+	driver_list.init_driver(0);
 	midi_driver_list.init_driver(0);
 	
 	//q.setMainWidget(&w);

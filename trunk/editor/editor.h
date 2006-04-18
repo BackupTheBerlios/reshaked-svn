@@ -140,6 +140,9 @@ public:
 	void set_track_mute(Track *p_track,bool p_mute);
 	void set_track_solo(int p_track_idx);
 	
+	void track_automation_move_left(Track *p_track,int p_property);
+	void track_automation_move_right(Track *p_track,int p_property);
+	
 	/** SELECTION EDITING */
 	
 	int get_selection_begin_column();

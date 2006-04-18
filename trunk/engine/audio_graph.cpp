@@ -21,6 +21,9 @@ AudioNode *AudioGraph::get_node_at_visual_pos(int p_pos) {
 
 bool AudioGraph::recompute_process_order() {
 
+	
+	graph_order_valid=false;
+	
 	if (nodes.size()<2)
 		return false;
 	
@@ -85,6 +88,7 @@ bool AudioGraph::recompute_process_order() {
 		process_order[ inv_process_order[i] ] = i;
 	}
 	
+	graph_order_valid=true;	
 	return false;
 }
 
@@ -93,16 +97,24 @@ void AudioGraph::recompute_graph() {
 
 	graph_process.clear();
 	
-	if (nodes.size()<2) { //no graph can work with less than 2 nodes
+	if (!graph_order_valid) {
+		/* just put the nodes in any order */		
+		for (int i=0;i<nodes.size();i++) {
+
+			graph_process.add_node(nodes[i]);
+		}
+		/* but dont make any connections */
+		graph_process.configure_connections(); 
 		
-		graph_process.configure_connections();
 		return;
 	}
+	
 	
 	for (int i=0;i<nodes.size();i++) {
 		//printf("%i: %lls\n",i, nodes[process_order[i]]->get_caption().c_str() );
 		graph_process.add_node(nodes[process_order[i]]);
 	}
+	
 	
 	for (int i=0;i<connections.size();i++) {
 		
@@ -370,5 +382,6 @@ AudioGraph::AudioGraph() {
 	
 	last_error=CONNECT_OK;
 	visual_node_order=NULL;
+	graph_order_valid=false;
 }
 };
