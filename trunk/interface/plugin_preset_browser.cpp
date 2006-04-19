@@ -241,7 +241,11 @@ PluginPresetBrowser::TreeItem::TreeItem(QTreeWidget *p_parent) : QTreeWidgetItem
 
 void PluginPresetBrowser::tree_item_changed (  ) {
 	
-	QTreeWidgetItem * current=tree->currentItem();
+	QList<QTreeWidgetItem *> sel_items = tree->selectedItems ();
+	if (sel_items.empty())
+		return;
+			
+	QTreeWidgetItem * current=*sel_items.begin();
 	TreeItem *ti = dynamic_cast<TreeItem*>(current);
 	ERR_FAIL_COND(!ti);
 	
