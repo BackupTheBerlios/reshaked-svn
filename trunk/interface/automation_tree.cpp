@@ -220,7 +220,7 @@ AutomationTree::AutomationTree(QWidget *p_parent) : CHBox(p_parent) {
 	track=NULL;
 	tree->header()->setResizeMode(0,QHeaderView::Stretch);
 	
-//	QObject::connect(tree,SIGNAL(itemActivated(QTreeWidgetItem*,int)),this,SLOT(item_activated( QTreeWidgetItem*, int )));
+//	QObject::connect(tree,SIGNAL(itemActivated(QTreeWidgetItem*,int)),this,SLOT(item_clicked( QTreeWidgetItem*, int )));
 	QObject::connect(tree,SIGNAL(itemChanged(QTreeWidgetItem* , int)),this,SLOT(item_clicked( QTreeWidgetItem*, int )));
 }
 

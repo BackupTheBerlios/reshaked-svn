@@ -88,11 +88,15 @@ private:
 
 	double initial_value;
 	
+	bool swing_follow;
+	
 	struct MidiRecording {
 		bool enabled;
 		int channel; //channel to record
 		int control; //control to record;			
 	} recording;
+	
+	
 public:
 	
 	Block *create_duplicate_block(Block *p_block);
@@ -118,6 +122,9 @@ public:
 	void set_recording_channel(int p_chan);
 	int get_recording_control();
 	void set_recording_control(int p_ctrl);
+	
+	void set_swing_follow_enabled(bool p_swing_follow);
+	bool is_swing_follow_enabled();
 	
 	void apply(Tick p_pos);
 	

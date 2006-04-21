@@ -14,6 +14,7 @@
 
 #include "interface/connection_rack.h"
 #include "interface/sound_plugin_rack.h"
+#include "interface/track_rack.h"
 #include "editor/editor.h"
 #include "ui_blocks/helpers.h"
 #include <Qt/qlineedit.h>
@@ -52,6 +53,7 @@ class RackUI : public CVBox {
 	
 	ConnectionRack *connections;
 	SoundPluginRack *plugins;
+	TrackRack *tracks;
 	
 	
 	void update_rack_file_label();
@@ -80,6 +82,7 @@ public slots:
 	void test_note(int p_note,int p_vel=99);
 	void test_note_off(int p_note_off);
 	
+	void ui_update_callback();
 public:
 	
 	void select_track(int p_track);

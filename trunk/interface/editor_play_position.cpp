@@ -10,7 +10,7 @@
 //
 //
 #include "editor_play_position.h"
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 
 namespace ReShaked {
 

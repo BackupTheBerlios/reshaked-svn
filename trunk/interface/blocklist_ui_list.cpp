@@ -18,7 +18,7 @@
 #include <Qt/qscrollbar.h>
 #include <Qt/qpainter.h>
 #include "interface/blocklist_separator.h"
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 #include "interface/indexed_action.h"
 #include "editor/keyboard_input.h"
 
@@ -139,7 +139,7 @@ void BlockListUIList::blocklist_ui_under_cursor_request_signal(BlockListUI_Base*
 }
 
 void BlockListUIList::update_vus() {
-	
+	/*	
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
 		
 		float vu_val=editor->get_song()->get_track(i)->read_highest_energy();
@@ -147,6 +147,7 @@ void BlockListUIList::update_vus() {
 			break;
 		slider_vus[i]->update_vu(vu_val);
 	}
+	*/
 }
 
 void BlockListUIList::ensure_cursor_visible() {
@@ -532,7 +533,7 @@ void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 	}
 	snap_config->select_item(3);
 		
-	QObject::connect(snap_config,SIGNAL(item_selected( int )),this,SLOT(snap_changed_slot( int )));
+	QObject::connect(snap_config,SIGNAL(item_selected_signal( int )),this,SLOT(snap_changed_slot( int )));
 
 	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__END));
 	

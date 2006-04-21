@@ -12,7 +12,7 @@
 #include "editor/editor.h"
 #include <set>
 #include <list>
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 
 namespace ReShaked {
 

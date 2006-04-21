@@ -66,6 +66,14 @@ void GlobalTrack::process_track(AudioBuffer *p_in_buf,AudioBuffer *p_out_buf,int
 
 GlobalTrack::GlobalTrack(GlobalProperties *p_global_props,SongPlayback *p_song_playback) : Track(1,BLOCK_TYPE_FIXED_TO_BEAT,p_global_props,p_song_playback) {
 	
+	remove_property(&swing()); 
+	remove_property(&swing_base()); 
+	remove_property(&swing_local()); 
+	remove_property(&volume()); 
+			
+			
+	swing_local().set(1.0); //activate it, and set it to 0 so it's disabled
+	
 	set_name("Main");
 	add_property("/",&p_global_props->get_swing());
 	add_property("/",&p_global_props->get_volume());

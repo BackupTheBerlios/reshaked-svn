@@ -15,6 +15,7 @@
 
 #include <Qt/qwidget.h>
 #include <Qt/qpixmap.h>
+#include <Qt/qtimer.h>
 
 namespace ReShaked {
 
@@ -22,8 +23,10 @@ namespace ReShaked {
 	@author red <red@killy>
 */
 class PixmapVU : public QWidget {
-public:
+	Q_OBJECT
 	
+public:
+			
 	enum Type {
 		
 		TYPE_VERTICAL,
@@ -31,6 +34,10 @@ public:
 		
 	};
 	
+	enum {
+		
+		UPDATE_INTERVAL=50
+	};
 	struct Skin {
 		
 		QPixmap bottom;	
@@ -48,8 +55,19 @@ private:
 	Skin skin;		
 	void paintEvent(QPaintEvent *pe);
 	Type type;
+
+	float fall_time;
+	float visual_value;
+	
+	QTimer *updater;
+	
+private slots:	
+	
+	void updater_slot();
 public:	
 		
+	void set_fall_time(float p_speed);
+	
 	void set_value(float p_value);	
 	
 	PixmapVU(QWidget *p_parent,const Skin& p_skin,Type p_type=TYPE_VERTICAL,int p_margin_beg=5,int p_margin_end=5);

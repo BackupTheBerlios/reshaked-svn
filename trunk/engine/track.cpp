@@ -12,7 +12,7 @@
 #include "track.h"
 #include "engine/audio_control.h"
 #include <math.h>
-
+#include "dsp/formulas.h"
 namespace ReShaked {
 
 
@@ -47,7 +47,21 @@ void Track::add_property(String p_visual_path,Property *p_prop,TrackAutomation *
 	AudioControl::mutex_unlock();	
 }
 
-
+void Track::remove_property(Property *p_prop) {
+	
+	AudioControl::mutex_lock();
+	
+	for (int i=0;i<get_property_count();i++) {
+		
+		if (get_property(i)==p_prop) {
+			base_private.property_list.erase(		base_private.property_list.begin()+i );
+			break;
+		}
+	}
+	
+	AudioControl::mutex_unlock();	
+	
+}
 
 void Track::set_sequencer_event_buffer(const EventBuffer *p_seq) {
 	
@@ -187,29 +201,36 @@ void Track::read_output(int p_frames) {
 	AudioBuffer *track_output_buff=base_private.output_plug->get_buffer();
 	AudioBuffer *output_buff=base_private.output_proxy.get_input_plug(0)->get_buffer();
 	
-	float max_nrg=0;
+	
 	
 	for (int i=0;i<output_buff->get_channels();i++) {
 		
 		float *src=output_buff->get_buffer(i);
 		float *dst=track_output_buff->get_buffer(i);
+		
+		float max_chan_nrg=0;
+		
 		for (int j=0;j<p_frames;j++) {
 			
 			dst[j]=src[j]*base_private.audio.volume_ratio;
 			float abs_dst=fabsf(dst[j]);
-			if (abs_dst>max_nrg)
-				base_private.audio.highest_energy=max_nrg;
+			if (abs_dst>max_chan_nrg)
+				max_chan_nrg=abs_dst;
+				
 		}
+		
+		if (max_chan_nrg>base_private.audio.highest_energy[i])
+			base_private.audio.highest_energy[i]=max_chan_nrg;
 	}
 
-	if (max_nrg>base_private.audio.highest_energy)
-		base_private.audio.highest_energy=max_nrg;
 }
 
-float Track::read_highest_energy() {
+float Track::read_highest_energy(int p_which) {
 	
-	float highest_nrg=base_private.audio.highest_energy;
-	base_private.audio.highest_energy=0;
+	ERR_FAIL_INDEX_V(p_which,base_private.audio.highest_energy.size(),0);
+	
+	float highest_nrg=base_private.audio.highest_energy[p_which];
+	base_private.audio.highest_energy[p_which]=0;
 	return highest_nrg;
 }
 
@@ -222,12 +243,17 @@ bool Track::is_mute() {
 	return base_private.audio.mute;
 }
 
-void Track::process_automations_at_tick(Tick p_tick) {
+void Track::process_automations_at_tick(Tick p_tick,bool p_process_swing) {
 	
 	/* update automations */
+	Tick swinged_tick=get_swinged_tick( p_tick ); //do it here for speed
+	
 	for (int i=0;i<base_private.active_automation_cache.size();i++) {
 		
-		base_private.active_automation_cache[i]->apply(p_tick);
+		Tick local=p_tick;
+		if (base_private.active_automation_cache[i]->is_swing_follow_enabled() && p_process_swing)
+			local=swinged_tick;
+		base_private.active_automation_cache[i]->apply(local);
 	}
 }
 
@@ -249,7 +275,7 @@ void Track::process_automations(bool p_use_current_tick_to) {
 
 	Tick tick = p_use_current_tick_to?base_private.song_playback->get_current_tick_to():base_private.song_playback->get_current_tick_from();
 	
-	process_automations_at_tick( tick );
+	process_automations_at_tick( tick,true );
 	
 	
 }
@@ -416,6 +442,7 @@ void Track::validate_plugin_duplicate(SoundPlugin *p_plugin) {
 	
 	p_plugin->set_duplicate( free_duplicate );
 }
+
 
 
 void Track::add_plugin(PluginInsertData* p_plugin) {
@@ -692,7 +719,47 @@ String Track::get_rack_file() {
 	return base_private.rack_file;
 }
 
+Tick Track::get_swinged_tick(Tick p_base_tick) {
+	
+	float swing=(base_private.swing_local.get()>0.5)?base_private.swing.get():base_private.global_props->get_swing().get();
+	
+	if (swing==0)
+		return p_base_tick;
+	
+	swing/=100.0; //% -> ratio
+	
+	int base=base_private.swing_base.get_current();
+	ERR_FAIL_INDEX_V(base,MAX_DIVISORS,p_base_tick);
+	base=divisors[base];
+	
+	return get_swing_pos(p_base_tick,base,swing);
+}
+
+Property &Track::swing() {
+	
+	return base_private.swing;
+}
+Property &Track::swing_base() {
+	
+	return base_private.swing_base;
+}
+Property &Track::swing_local() {
+	
+	return base_private.swing_local;
+}
+
+Property &Track::volume() {
+	
+	return base_private.volume;
+	
+}
+
+
 Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,SongPlayback *p_song_playback) : BlockList(p_type) {
+	
+	base_private.global_props=p_global_props;
+	
+	base_private.audio.highest_energy.resize(p_channels);
 	
 	base_private.channels=p_channels;
 	base_private.seq_events=NULL;
@@ -714,11 +781,30 @@ Track::Track(int p_channels,BlockType p_type,GlobalProperties *p_global_props,So
 	
 	
 	
-	base_private.audio.highest_energy=0;
+	for (int i=0;i<get_channels();i++)
+		base_private.audio.highest_energy[i]=0;
 	base_private.audio.volume_ratio=1;
 	base_private.audio.mute=0;
 	
 	base_private.plugin_graph.set_visual_node_order( this );
+	
+	base_private.swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "swing","Swing","%","Disabled");
+	base_private.swing_local.set_all( 0, 0, 1, 0, 1, Property::DISPLAY_CHECKBOX, "swing_local","Swing local","","Off","On");
+	
+	std::vector<String> base_divisors;
+	
+	for (int i=0;i<MAX_DIVISORS;i++) {
+		
+		base_divisors.push_back( String::num( divisors[i] ) );
+	}
+	
+	base_private.swing_base.set_all("swing_base","Swing Base",base_divisors,0);
+	base_private.volume.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "volume","Volume","dB");
+	
+	add_property("Track/",&base_private.swing);
+	add_property("Track/",&base_private.swing_local);
+	add_property("Track/",&base_private.swing_base);
+	add_property("Track/",&base_private.volume);
 	
 }
 

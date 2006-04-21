@@ -12,6 +12,7 @@
 #include <Qt/qlabel.h>
 #include <Qt/qinputdialog.h>
 #include <Qt/qevent.h>
+#include <Qt/qtooltip.h>
 #include "ui_blocks/knob.h"
 #include "property_editors.h"
 #include "helpers.h"
@@ -28,11 +29,15 @@ void PropertyEditKnob::changed() {
 	
 	set_value( get_property()->get_coeff_value() );
 	update();
+	setToolTip( QStrify( get_property()->get_text_value() ) );
+	
 }
 
 void PropertyEditKnob::value_changed(float p_new_value) {
 	
 	set( get_property()->get_value_from_coeff( p_new_value) );
+	setToolTip( QStrify( get_property()->get_text_value() ) );
+	QToolTip::showText( mapToGlobal( QPoint( 0, height() ) ), QStrify( get_property()->get_text_value() ), this );
 }
 
 void PropertyEditKnob::mousePressEvent(QMouseEvent *e) {
@@ -112,11 +117,15 @@ void PropertyEditSlider::changed() {
 	
 	set_value( get_property()->get_coeff_value() );
 	update();
+	setToolTip( QStrify( get_property()->get_text_value() ) );
+	
 }
 
 void PropertyEditSlider::value_changed(float p_new_value) {
 	
 	set( get_property()->get_value_from_coeff( p_new_value) );
+	setToolTip( QStrify( get_property()->get_text_value() ) );
+	
 }
 
 void PropertyEditSlider::mousePressEvent(QMouseEvent *e) {
@@ -243,6 +252,72 @@ PropertyEditUpDown::~PropertyEditUpDown() {
 	
 }
 
+/********* COMBO ********************/
+
+void PropertyEditCombo::changed() {
+	
+	if (!get_property())
+		return;
+	
+	clear();
+	int opcount=lrint( (get_property()->get_max()-get_property()->get_min() )/get_property()->get_stepping() );
+	
+	ERR_FAIL_COND( opcount>100 ); //wtf?
+	
+	for (int i=0;i<opcount;i++) {
+		
+		int op = lrint( get_property()->get_min() + (double)i*get_property()->get_stepping() );
+		
+		String optxt = get_property()->get_text_value( (double) op );
+		
+		add_item( QStrify( optxt ) );
+
+	}
+	
+	double current = (get_property()->get()-get_property()->get_min())/get_property()->get_stepping();
+	
+	select_item( lrint ( current ) );
+}
+void PropertyEditCombo::item_selected(int p_to_item) {
+	
+	if (!get_property())
+		return;
+	
+	set( (double) p_to_item );
+	
+}
+
+PropertyEditCombo::PropertyEditCombo(QWidget *p_parent,QPixmap p_bg) : PixmapCombo(p_parent,p_bg) { }
+PropertyEditCombo::~PropertyEditCombo() {}
+
+/* BUTTON */
+
+
+
+
+void PropertyEditButton::changed() {
+	
+	if ((get_property()->get()-get_property()->get_min()) < ( (get_property()->get_max()-get_property()->get_min())/2.0) ) 
+		set_pressed( false );
+	else
+		set_pressed( true );
+}
+
+void PropertyEditButton::mouse_toggled(bool p_new_status) {
+	
+	set( p_new_status? get_property()->get_max() : get_property()->get_min() );
+	
+}
+
+PropertyEditButton::PropertyEditButton(QWidget *p_parent,const Skin& p_skin) : PixmapButton(p_parent,p_skin,PixmapButton::TYPE_TOGGLE) {
+	
+	
+}
+PropertyEditButton::~PropertyEditButton() {
+	
+	
+	
+}
 
 
 }

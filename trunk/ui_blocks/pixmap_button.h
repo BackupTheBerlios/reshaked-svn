@@ -66,6 +66,7 @@ private:
 protected:
 			
 	virtual void mouse_press_event_override();
+	virtual void mouse_toggled(bool p_new_status);
 signals:	
 	
 	void mouse_pressed_signal();

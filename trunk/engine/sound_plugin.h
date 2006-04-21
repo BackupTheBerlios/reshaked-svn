@@ -61,6 +61,7 @@ class SoundPlugin : public AudioNode {
 	bool _skip_processing;
 	int _duplicate;
 	String _current_file;
+	String _current_preset_name;
 	SoundPlugin_MetaData *_metadata;
 	
 	const EventBuffer *_event_buffer;
@@ -106,6 +107,10 @@ public:
 	
 	String get_current_file(); //current file the plugin last saved to
 	void set_current_file(String p_current_file);
+	
+	String get_current_preset_name(); //current preset_name of the plugin
+	void set_current_preset_name(String p_current_preset_name);
+	
 	virtual void save(TreeSaver *p_saver);	
 	virtual void load(TreeLoader *p_saver);	
 	

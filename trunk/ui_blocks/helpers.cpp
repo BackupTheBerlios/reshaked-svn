@@ -140,4 +140,27 @@ QString get_note_string(int p_note) {
 	
 }
 
+QString get_file_from_path(QString p_path) {
+	
+	if (p_path.lastIndexOf("/")!=-1) {
+			
+		p_path.remove(0,p_path.lastIndexOf("/")+1);
+	}
+	
+	return p_path;
+}
+
+QString get_dir_from_path(QString p_path) {
+	
+	if (p_path.lastIndexOf("/")!=-1) {
+			
+		p_path=p_path.left( p_path.lastIndexOf("/") );
+		
+		p_path.remove(0,p_path.lastIndexOf("/")+1);
+	}
+	
+	return p_path;
+}
+
+
 }

@@ -25,6 +25,7 @@ class SwingProcess {
 	SongPlayback *playback;
 	
 	//Tick last_tick_to;
+	
 public:
 	Tick get_current_tick_from();
 	Tick get_current_tick_to();

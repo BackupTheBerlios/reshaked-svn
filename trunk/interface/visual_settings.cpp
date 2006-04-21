@@ -294,6 +294,29 @@
 #include "pixmaps/default_skin/rack_panel__jack_out.xpm"
 #include "pixmaps/default_skin/rack_panel__jack_forbidden.xpm"
 
+#include "pixmaps/default_skin/effect_panel_generic_bottom_left.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_bottom_right.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_bottom.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_label.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_left.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_right.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_slider_base.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_slider_grabber.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_slider_light.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_top_left.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_top_right.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_top.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_value.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_vu_empty.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_vu_fill.xpm"
+#include "pixmaps/default_skin/track_panel__swing_base.xpm"
+#include "pixmaps/default_skin/track_panel__swing_combo.xpm"
+#include "pixmaps/default_skin/track_panel__swing_label.xpm"
+#include "pixmaps/default_skin/track_panel__swing_local_off.xpm"
+#include "pixmaps/default_skin/track_panel__swing_local_on.xpm"
+#include "pixmaps/default_skin/track_panel__swing_local.xpm"
+#include "pixmaps/default_skin/track_panel__swing_value.xpm"
+
 #include "pixmaps/icon_file_open.xpm"
 #include "pixmaps/icon_file_save.xpm"
 #include "pixmaps/icon_file_saveas.xpm"
@@ -535,6 +558,9 @@ VisualSettings::VisualSettings() {
 	pixmap_map[ICON_CONTROL_RECORD]=QPixmap((const char**)control_record_xpm);
 	pixmap_map[ICON_CONTROL_RECORD_AUTOMATIONS]=QPixmap((const char**)control_record_automations_xpm);
 		
+	load_default_theme_pixmaps();
+	
+	/*
 	pixmap_map[THEME_TOP__BPM_BOTTOM]=QPixmap((const char**)top__bpm_bottom_xpm);
 	pixmap_map[THEME_TOP__BPM_DISPLAY]=QPixmap((const char**)top__bpm_display_xpm);
 	pixmap_map[THEME_TOP__BPM_END]=QPixmap((const char**)top__bpm_end_xpm);
@@ -741,7 +767,30 @@ VisualSettings::VisualSettings() {
 	pixmap_map[THEME_SCROLLBAR_ARROW_UP]=QPixmap((const char**)scrollbar_arrow_up_xpm);
 	
 	
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_BOTTOM_LEFT]==QPixmap((const char**)THEME_EFFECT_PANEL__GENERIC_BOTTOM_LEFT.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_BOTTOM_RIGHT]=QPixmap((const char**)EFFECT_PANEL__GENERIC_BOTTOM_RIGHT.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_BOTTOM]=QPixmap((const char**)EFFECT_PANEL__GENERIC_BOTTOM.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_LABEL]=QPixmap((const char**)EFFECT_PANEL__GENERIC_LABEL.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_LEFT]=QPixmap((const char**)EFFECT_PANEL__GENERIC_LEFT.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_RIGHT]=QPixmap((const char**)EFFECT_PANEL__GENERIC_RIGHT.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_SLIDER_BASE]=QPixmap((const char**)EFFECT_PANEL__GENERIC_SLIDER_BASE.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_SLIDER_GRABBER]=QPixmap((const char**)EFFECT_PANEL__GENERIC_SLIDER_GRABBER.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_SLIDER_LIGHT]=QPixmap((const char**)EFFECT_PANEL__GENERIC_SLIDER_LIGHT.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_TOP_LEFT]=QPixmap((const char**)EFFECT_PANEL__GENERIC_TOP_LEFT.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_TOP_RIGHT]=QPixmap((const char**)EFFECT_PANEL__GENERIC_TOP_RIGHT.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_TOP]=QPixmap((const char**)EFFECT_PANEL__GENERIC_TOP.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_VALUE]=QPixmap((const char**)EFFECT_PANEL__GENERIC_VALUE.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_VU_EMPTY]=QPixmap((const char**)EFFECT_PANEL__GENERIC_VU_EMPTY.xpm);
+	pixmap_map[THEME_EFFECT_PANEL__GENERIC_VU_FILL]=QPixmap((const char**)EFFECT_PANEL__GENERIC_VU_FILL.xpm);
+	pixmap_map[THEME_TRACK_PANEL__SWING_BASE]=QPixmap((const char**)TRACK_PANEL__SWING_BASE.xpm);
+	pixmap_map[THEME_TRACK_PANEL__SWING_COMBO]=QPixmap((const char**)TRACK_PANEL__SWING_COMBO.xpm);
+	pixmap_map[THEME_TRACK_PANEL__SWING_LABEL]=QPixmap((const char**)TRACK_PANEL__SWING_LABEL.xpm);
+	pixmap_map[THEME_TRACK_PANEL__SWING_LOCAL_OFF]=QPixmap((const char**)TRACK_PANEL__SWING_LOCAL_OFF.xpm);
+	pixmap_map[THEME_TRACK_PANEL__SWING_LOCAL_ON]=QPixmap((const char**)TRACK_PANEL__SWING_LOCAL_ON.xpm);
+	pixmap_map[THEME_TRACK_PANEL__SWING_LOCAL]=QPixmap((const char**).xpm);
+	pixmap_map[THEME_TRACK_PANEL__SWING_VALUE]=QPixmap((const char**).xpm);
 	
+	*/
 	
 	pixmap_map[ICON_EDIT_VIEW_ROW_PLAYED]=QPixmap((const char**)row_icon_play_xpm);
 	pixmap_map[ICON_EDIT_VIEW_ROW_LOOP_BEGIN]=QPixmap((const char**)row_icon_loop_begin_xpm);

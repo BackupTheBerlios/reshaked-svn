@@ -25,7 +25,7 @@
 #include <Qt/qdockwidget.h>
 #include <Qt/qtimer.h>
 
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 #include <Qt/qtoolbar.h>
 #include <Qt/qspinbox.h>
 #include <Qt/qcombobox.h>
@@ -70,7 +70,6 @@ class MainWindow : public QMainWindow {
 
 		NAVIGATION_GLOBAL_VIEW,
 		NAVIGATION_EDIT_VIEW,
-		NAVIGATION_MIX_VIEW,
 			
 		CONTROL_RW,
 		CONTROL_PLAY,

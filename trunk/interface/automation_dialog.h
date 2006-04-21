@@ -61,6 +61,7 @@ class AutomationSettingsLFO : public QDialog {
 	QSlider *rate;
 	QSlider *depth;
 	QSlider *random;
+	QSlider *random_seed;
 	bool lfo_changed;
 	Automation::AutomationData *blockdata;
 	

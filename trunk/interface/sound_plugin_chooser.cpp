@@ -21,7 +21,7 @@
 #include <Qt/qpainter.h>
 #include <Qt/qfontmetrics.h>
 #include <Qt/qevent.h>
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 #include "ui_blocks/helpers.h"
 
 

@@ -139,6 +139,17 @@ void SoundPlugin::set_current_file(String p_current_file) {
 	_current_file=p_current_file;	
 }
 
+String SoundPlugin::get_current_preset_name() {
+	
+	return _current_preset_name;
+	
+}
+void SoundPlugin::set_current_preset_name(String p_current_preset_name) {
+	
+	_current_preset_name=p_current_preset_name;	
+}
+
+
 void SoundPlugin::set_metadata(SoundPlugin_MetaData *p_metadata) {
 	
 	_metadata=p_metadata;

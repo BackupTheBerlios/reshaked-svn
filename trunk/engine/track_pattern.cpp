@@ -409,7 +409,7 @@ void Track_Pattern::track_pre_process(int p_frames) {
 	}
 	
 	/* Up to where we are going to process. */
-	Tick tick_to=get_song_playback()->get_current_tick_to();
+	Tick tick_to=get_swinged_tick( get_song_playback()->get_current_tick_to() );
 		
 	Tick tick_from; //from where we process
 	
@@ -517,20 +517,6 @@ void Track_Pattern::track_pre_process(int p_frames) {
 	
 }
 
-Property &Track_Pattern::swing() {
-	
-	return data.swing;
-}
-Property &Track_Pattern::volume() {
-	
-	return data.volume;
-	
-}
-Property &Track_Pattern::balance() {
-	
-	return data.balance;
-	
-}
 
 void Track_Pattern::reset_last_notes() {
 	
@@ -551,13 +537,7 @@ Track_Pattern::Track_Pattern(int p_channels,GlobalProperties *p_global_props,Son
 	data.visible_columns=1;
 	reset_last_notes();
 	
-	data.swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "swing","Swing","%","Disabled");
-	data.volume.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "volume","Volume","dB");
-	data.balance.set_all( 0, -1.0, 1.0, 0, 0.01, Property::DISPLAY_KNOB,"balance","Balance","","Left","Right");
-	
-	add_property("Track/",&data.swing);
-	add_property("Track/",&data.volume);
-	add_property("Track/",&data.balance);
+
 	data.old_tick_to=-1;	
 }
 

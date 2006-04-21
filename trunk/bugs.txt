@@ -1,0 +1,2 @@
+-decimal computation is ok, BUT conversion is shit, it goes minus one (??) I
+need to clean up/abstract that

@@ -83,6 +83,28 @@ QWidget *topLevelOf(QWidget* p_widget);
 		QObject::connect(_bis,SIGNAL(activated_signal(int)),m_to,m_to_sigslot);	\
 	}
 	
+/* helper for racks */	
+class RackHBox : public CHBox {
+
+	Q_OBJECT
+
+			void resizeEvent(QResizeEvent * event) { new_height_signal(height()); }
+
+	signals:			
 	
+		void new_height_signal(int p_height);
+	public:	
+
+
+		RackHBox(QWidget *p_parent) : CHBox(p_parent) {}
+};
+	
+QString get_file_from_path(QString p_path);
+QString get_dir_from_path(QString p_path); 
+
+
 }
+
+
+
 #endif

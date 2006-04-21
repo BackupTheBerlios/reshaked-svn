@@ -25,9 +25,18 @@ void PixmapCombo::wheelEvent ( QWheelEvent * e )  {
 	else if (e->delta()<0)
 		select_item( selected +1 );
 		
-	if (prev!=selected)
+	if (prev!=selected) {
 		item_selected(selected);
+		item_selected_signal(selected);
+	}
 }
+
+
+void PixmapCombo::item_selected(int p_to_item) {
+	
+	
+}
+
 void PixmapCombo::click_override() {
 	
 	if (string_list.empty())
@@ -57,6 +66,7 @@ void PixmapCombo::click_override() {
 			selected=idx_selected;
 			update_internal();
 			item_selected(selected);
+			item_selected_signal(selected);
 		}
 		
 	}

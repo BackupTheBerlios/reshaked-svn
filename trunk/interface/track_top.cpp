@@ -10,7 +10,7 @@
 //
 //
 #include "track_top.h"
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 #include "ui_blocks/helpers.h"
 #include <Qt/qpainter.h>
 #include <Qt/qfont.h>

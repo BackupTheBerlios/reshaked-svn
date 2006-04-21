@@ -30,9 +30,13 @@ class PixmapCombo : public PixmapLabel {
 	void wheelEvent ( QWheelEvent * e ) ;
 	
 	void update_internal();
+	
+protected:	
+	
+	virtual void item_selected(int p_to_item);
 signals:
 			
-	void item_selected(int p_idx);
+	void item_selected_signal(int p_idx);
 public:
 	void clear();
 	void add_item(QString p_item);

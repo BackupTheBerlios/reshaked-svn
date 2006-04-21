@@ -14,8 +14,44 @@
 #define FORMULAS_H
 
 #include <math.h>
-
+#include "typedefs.h"
 namespace ReShaked {
+
+
+static inline Tick get_swing_pos(Tick p_src_tick,int p_swing_base,double p_swing) {
+	
+	Tick tick_frac_size=TICKS_PER_BEAT/p_swing_base;
+	Tick tick_frac=p_src_tick%tick_frac_size;
+	Tick tick_debased=p_src_tick-tick_frac;
+	
+	
+	Tick swing_split=llrint( ((1.0+p_swing)*(double)tick_frac_size )/2.0 );
+	
+	if (tick_frac<=swing_split) {
+		
+		tick_frac=tick_frac*(tick_frac_size/2)/swing_split;
+		
+	} else {
+				
+		tick_frac=tick_frac_size-tick_frac; //invert
+		
+		Tick diff=tick_frac_size-swing_split;
+		if (diff==0)
+			tick_frac=tick_frac_size;
+		else
+			tick_frac=tick_frac*(tick_frac_size/2)/diff;
+		
+		tick_frac=tick_frac_size-tick_frac; //revert
+		
+	}
+	
+	return tick_frac+tick_debased;
+}
+
+static inline double energy_to_db(double p_nrg) {
+	
+	return 20.0*(log(p_nrg)/log(10.0));
+}
 
 static inline double vel_sens_function(double p_velocity,double p_velocity_sens) {
 

@@ -11,7 +11,7 @@
 //
 #include "editor/plugin_preset_manager.h"
 #include "plugin_preset_browser.h"
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 #include "ui_blocks/helpers.h"
 #include <Qt/qmessagebox.h>
 #include <Qt/qdir.h>
@@ -249,7 +249,7 @@ void PluginPresetBrowser::tree_item_changed (  ) {
 	TreeItem *ti = dynamic_cast<TreeItem*>(current);
 	ERR_FAIL_COND(!ti);
 	
-	printf("Item Changed\n");
+//	printf("Item Changed\n");
 	save->setEnabled(ti->file!="");
 	open->setEnabled(ti->file!="");
 	if (ti->file!="")

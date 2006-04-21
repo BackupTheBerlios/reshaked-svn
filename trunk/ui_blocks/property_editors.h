@@ -19,6 +19,8 @@
 #include "ui_blocks/pixmap_vu.h"
 #include "ui_blocks/knob.h"
 #include "ui_blocks/pixmap_updown.h"
+#include "ui_blocks/pixmap_combo.h"
+#include "ui_blocks/pixmap_button.h"
 #include "property.h"
 #include <Qt/qspinbox.h>
 
@@ -142,7 +144,32 @@ public:
 };
 
 
+class PropertyEditCombo : public PixmapCombo, public PropertyEditor {
 
+	Q_OBJECT
+
+	virtual void changed();
+	virtual void item_selected(int p_to_item);
+public:
+
+	PropertyEditCombo(QWidget *p_parent,QPixmap p_bg);
+	~PropertyEditCombo();
+
+};
+
+class PropertyEditButton : public PixmapButton, public PropertyEditor {
+
+	Q_OBJECT
+
+	virtual void changed();
+	virtual void mouse_toggled(bool p_new_status);	
+
+public:
+
+	PropertyEditButton(QWidget *p_parent,const Skin& p_skin);
+	~PropertyEditButton();
+
+};
 
 }
 

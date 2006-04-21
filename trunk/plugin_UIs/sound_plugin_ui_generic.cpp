@@ -16,22 +16,8 @@
 #include "ui_blocks/pixmap_label.h"
 #include "ui_blocks/pixmap_slider.h"
 #include "ui_blocks/property_editors.h"
+#include "interface/visual_settings.h"
 
-#include "pixmaps/effect_panel_generic_top_left.xpm"
-#include "pixmaps/effect_panel_generic_top_right.xpm"
-#include "pixmaps/effect_panel_generic_top.xpm"
-#include "pixmaps/effect_panel_generic_left.xpm"
-#include "pixmaps/effect_panel_generic_right.xpm"
-#include "pixmaps/effect_panel_generic_label.xpm"
-#include "pixmaps/effect_panel_generic_value.xpm"
-#include "pixmaps/effect_panel_generic_slider_base.xpm"
-#include "pixmaps/effect_panel_generic_slider_light.xpm"
-#include "pixmaps/effect_panel_generic_slider_grabber.xpm"
-#include "pixmaps/effect_panel_generic_vu_empty.xpm"
-#include "pixmaps/effect_panel_generic_vu_fill.xpm"
-#include "pixmaps/effect_panel_generic_bottom_left.xpm"
-#include "pixmaps/effect_panel_generic_bottom_right.xpm"
-#include "pixmaps/effect_panel_generic_bottom.xpm"
 
 namespace ReShaked {
 
@@ -46,25 +32,25 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 	setLayout(new QVBoxLayout(this));
 	CHBox *hb_top = new CHBox(this);
 	layout()->addWidget(hb_top);
-	new PixmapLabel(hb_top,QPixmap((const char**)effect_panel_generic_top_left_xpm));
-	PixmapLabel *title = new PixmapLabel(hb_top,QPixmap((const char**)effect_panel_generic_top_xpm) ,PixmapLabel::EXPAND_TILE_H);
+	new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP_LEFT));
+	PixmapLabel *title = new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP) ,PixmapLabel::EXPAND_TILE_H);
 	title->set_text( QStrify(p_plugin->get_caption())) ;
 	title->setToolTip( QStrify(p_plugin->get_caption())) ;
-	new PixmapLabel(hb_top,QPixmap((const char**)effect_panel_generic_top_right_xpm));
+	new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP_RIGHT));
 	
 	
 	
 	CHBox *hb = new CHBox(this);
 	layout()->addWidget(hb);
 	
-	PixmapLabel *label_name = new PixmapLabel(hb,QPixmap((const char**)effect_panel_generic_left_xpm));
+	PixmapLabel *label_name = new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_LEFT));
 	label_name->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 	
-	QPixmap value_pixmap((const char**)effect_panel_generic_value_xpm);
-	QPixmap label_pixmap((const char**)effect_panel_generic_label_xpm);
-	PixmapSlider::Skin slider_skin(effect_panel_generic_slider_base_xpm,effect_panel_generic_slider_light_xpm,effect_panel_generic_slider_grabber_xpm);
+	QPixmap value_pixmap(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VALUE));
+	QPixmap label_pixmap(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_LABEL));
+	PixmapSlider::Skin slider_skin(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_BASE),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_LIGHT),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_GRABBER));
 	
-	PixmapVU::Skin vu_skin(effect_panel_generic_vu_empty_xpm,effect_panel_generic_vu_fill_xpm);
+	PixmapVU::Skin vu_skin(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VU_EMPTY),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VU_FILL));
 	
 	for (int i=0;i<p_plugin->get_port_count();i++) {
 		
@@ -120,13 +106,13 @@ SoundPluginUI_Generic::SoundPluginUI_Generic(QWidget *p_parent,SoundPlugin *p_pl
 		
 	}
 	
-	new PixmapLabel(hb,QPixmap((const char**)effect_panel_generic_right_xpm));
+	new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_RIGHT));
 	
 	CHBox *hb_bottom = new CHBox(this);
 	layout()->addWidget(hb_bottom);
-	new PixmapLabel(hb_bottom,QPixmap((const char**)effect_panel_generic_bottom_left_xpm));
-	new PixmapLabel(hb_bottom,QPixmap((const char**)effect_panel_generic_bottom_xpm),PixmapLabel::EXPAND_TILE_H);
-	new PixmapLabel(hb_bottom,QPixmap((const char**)effect_panel_generic_bottom_right_xpm));
+	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_LEFT));
+	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM),PixmapLabel::EXPAND_TILE_H);
+	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_RIGHT));
 	
 	
 	layout()->setMargin(0);

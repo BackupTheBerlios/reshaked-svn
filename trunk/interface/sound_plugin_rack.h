@@ -28,21 +28,6 @@ namespace ReShaked {
 */
 				    
 				    
-class RackHBox : public CHBox {
-
-Q_OBJECT
-
-	void resizeEvent(QResizeEvent * event) { new_height_signal(height()); }
-
-signals:			
-	
-	void new_height_signal(int p_height);
-public:	
-
-
-	RackHBox(QWidget *p_parent) : CHBox(p_parent) {}
-};
-
 
 class PluginTop : public CHBox {
 	
@@ -79,7 +64,7 @@ signals:
 public:	
 	void set_skipping_state(bool p_state);
 	
-	PluginTop(QWidget *p_parent,int p_plugin_index,bool p_skipping,int p_total_plugins);
+	PluginTop(QWidget *p_parent,QString p_name,int p_plugin_index,bool p_skipping,int p_total_plugins);
 };
 
 class SoundPluginRack : public QScrollArea {

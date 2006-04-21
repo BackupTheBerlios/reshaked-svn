@@ -52,6 +52,15 @@ void Editor::hide_automation(int p_property,Track *p_track) {
 	
 }
 
+void Editor::automation_set_follow_swing(Automation *p_auto,bool p_follow) {
+	
+	d->undo_stream.begin("Follow Swing");
+	d->undo_stream.add_command( Command2(&commands,&EditorCommands::automation_set_follow_swing,p_auto,p_follow) );
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
+}
+
 void Editor::add_automation_point(Automation *p_automation,Tick p_tick, float p_val,float p_lfo_depth,bool p_collapsable) {
 	
 	int block_idx=p_automation->get_block_idx_at_pos( p_tick );

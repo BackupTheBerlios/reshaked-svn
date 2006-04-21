@@ -215,6 +215,7 @@ void AutomationSettingsLFO::set_lfo() {
 	lfo_local.set_depth( (float)depth->value()/1024.0 );
 	lfo_local.set_phase( ((float)phase->value()/1024.0) );
 	lfo_local.set_random_depth( (float)random->value()/1024.0 );
+	lfo_local.set_random_seed( (float)random_seed->value()/1024.0 );
 	
 	blockdata->get_lfo()=lfo_local;
 	lfo_changed=true;
@@ -277,12 +278,20 @@ AutomationSettingsLFO::AutomationSettingsLFO(QWidget *p_parent,Automation::Autom
 	QObject::connect(phase,SIGNAL(valueChanged(int)),this,SLOT(slider_changed( int )));
 
 	
-	LABEL("Random");
+	LABEL("Random Depth");
 	
 	random = new QSlider(Qt::Horizontal,hb);
 	random->setRange(0,1024);
 	random->setValue(p_blockdata->get_lfo().get_random_depth()*1024);
 	QObject::connect(random,SIGNAL(valueChanged(int)),this,SLOT(slider_changed( int )));
+	
+	LABEL("Random Seed");
+	
+	random_seed = new QSlider(Qt::Horizontal,hb);
+	random_seed->setRange(0,1024);
+	random_seed->setValue(p_blockdata->get_lfo().get_random_seed()*1024);
+	QObject::connect(random_seed,SIGNAL(valueChanged(int)),this,SLOT(slider_changed( int )));
+		
 	layout()->setMargin(10);
 	layout()->setSpacing(2);
 	

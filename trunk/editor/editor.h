@@ -87,6 +87,7 @@ public:
 	void automation_set_lfo(Automation *p_automation,int p_block,LFO p_lfo);
 	void automation_set_interpolation(Automation *p_automation,int p_block,Automation::BlockInterpolationMethod p_int);
 	
+	void automation_set_follow_swing(Automation *p_auto,bool p_follow);
 		
 	
 	/** BLOCK LIST ACCESS ABSTRACTION (editor_blocklist.cpp) */

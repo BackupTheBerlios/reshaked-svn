@@ -18,7 +18,10 @@
 #include "ui_blocks/helpers.h"
 namespace ReShaked {
 
-
+void PixmapButton::mouse_toggled(bool p_new_status) {
+	
+	
+}
 void PixmapButton::paintEvent(QPaintEvent *e) {
 	
 	QPainter p(this);
@@ -92,6 +95,7 @@ void PixmapButton::mouseReleaseEvent(QMouseEvent *e) {
 			status.pressed=!status.pressed;
 			mouse_pressed_signal();
 			mouse_toggled_signal(status.pressed);
+			mouse_toggled(status.pressed);			
 			if (status.pressed && !ignore_actions)
 				emit_qactions();
 			

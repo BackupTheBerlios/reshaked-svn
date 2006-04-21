@@ -1,0 +1,11 @@
+/* XPM */
+static char * top__swing_knob_pos_xpm[] = {
+"5 5 3 1",
+" 	c None",
+".	c #154D7C",
+"+	c #CEF5FC",
+" ... ",
+".+++.",
+".+++.",
+".+++.",
+" ... "};

@@ -33,7 +33,6 @@ public:
 	enum ScreenList {
 		SCREEN_SONG,
 		SCREEN_EDIT,
-		SCREEN_MIX,
 	};
 		
 private:		
@@ -42,7 +41,6 @@ private:
 friend class MainWindow;	
 	PixmapButton *song_view;
 	PixmapButton *edit_view;
-	PixmapButton *mix_view;
 	
 	PixmapButton *icon_menu_file;
 	PixmapButton *icon_menu_add;
@@ -62,6 +60,7 @@ friend class MainWindow;
 	PropertyEditLabel *label_prop_bpm;
 	PropertyEditUpDown *updown_prop_bpm;
 	
+	PropertyEditKnob *knob_swing;
 	
 	PixmapButton *icon_menu_settings;
 	PixmapButton *icon_menu_help;
@@ -81,7 +80,7 @@ public slots:
 	
 	void song_screen_selected(bool p_selected);
 	void edit_screen_selected(bool p_selected);
-	void mix_screen_selected(bool p_selected);
+
 	
 
 	void playback_play_slot(bool p_selected);

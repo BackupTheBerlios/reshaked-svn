@@ -1,0 +1,12 @@
+cosas de editor:
+
+-cursor step
+-paste insert
+-alt-l
+-insertar valores de automation con numeros
+-shift select (mouse) arreglar
+-hacer un selection -> make blocks
+-block repeat, sera tan dificil?
+-hacer volume mask set/wipe/ramp tool
+-hacer que tab sea mas util y hacer alt-left/right como el tab anterior
+-set marker/loop desde la UI

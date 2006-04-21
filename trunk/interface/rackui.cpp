@@ -13,7 +13,7 @@
 #include <Qt/qlabel.h>
 #include <Qt/qinputdialog.h>
 #include <Qt/qmessagebox.h>
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 #include "engine/sound_plugin_list.h"
 #include "interface/sound_plugin_chooser.h"
 #include "engine/track_pattern.h"
@@ -86,10 +86,10 @@ void RackUI::update_rack_combo_names_slot() {
 void RackUI::update_rack_combo_slot() {
 	
 	rack_choose->clear();
-	rack_choose->add_item("Global Track Routing");
+	rack_choose->add_item("-Track Rack");
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
 		
-		rack_choose->add_item(QStrify(editor->get_song()->get_track(i)->get_name()));
+		rack_choose->add_item(QString("  -") +QStrify(editor->get_song()->get_track(i)->get_name()));
 		
 	}
 	
@@ -136,34 +136,40 @@ void RackUI::update_selected_rack_slot() {
 	if ((editor->get_song()->get_track_count()+1)!=rack_choose->get_item_count())
 		update_rack_combo_slot();
 	
+	tracks->rebuild_track_rack();
+	
 	if (selected_rack==0) {
 		
 		
 		connections->set_audio_graph( &editor->get_song()->get_track_graph() );
 		plugins->set_track( NULL );
 		
-		rack_back_selected();
-		
+
 		hbox_options->hide();
 	} else {
 		
 		connections->set_audio_graph( &editor->get_song()->get_track(selected_rack-1)->get_plugin_graph() );		
 		plugins->set_track( editor->get_song()->get_track(selected_rack-1) );
-		
-		if (rack_front->is_pressed())
-			rack_front_selected();
-		else
-			rack_back_selected();
 			
 		hbox_options->show();
 		update_rack_file_label();
 		
 	}
 	
+	if (rack_front->is_pressed())
+		rack_front_selected();
+	else
+		rack_back_selected();
+	
+	
 }
 void RackUI::rack_front_selected() {
 	
-	stack->setCurrentWidget(plugins);
+	if (selected_rack==0)
+		stack->setCurrentWidget(tracks);
+	else
+		stack->setCurrentWidget(plugins);
+	
 	rack_back->set_pressed(false);	
 	rack_front->set_pressed(true);	
 }
@@ -289,6 +295,10 @@ void RackUI::blocklist_changed_slot() {
 	
 }
 
+void RackUI::ui_update_callback() {
+	
+	tracks->update_VUs();
+}
 
 RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater) : CVBox(p_parent) {
 	
@@ -306,13 +316,22 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	new PixmapLabel(rack_choose_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__TRACK_DROPDOWN_BOTTOM));
 	rack_choose_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
+	
+	rack_front = new PixmapButton(hbox_main,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT_ACTIVE)),PixmapButton::TYPE_TOGGLE);
+	rack_front->setToolTip("Show Rack Front (Controls)");
+
+	rack_back = new PixmapButton(hbox_main,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK_ACTIVE)),PixmapButton::TYPE_TOGGLE);	
+	rack_back->setToolTip("Show Rack Back (Connections)");
+	
+	new PixmapLabel(hbox_main,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
+
 	follow_cursor = new PixmapButton(hbox_main,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__RACK_FOLLOW_CURSOR),GET_QPIXMAP(THEME_RACK_TOOLBAR__RACK_FOLLOW_CURSOR_ACTIVE)),PixmapButton::TYPE_TOGGLE);
 	follow_cursor->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 	follow_cursor->setToolTip("Rack Follows Cursor");
 	
 	
 	new PixmapLabel(hbox_main,GET_QPIXMAP(THEME_RACK_TOOLBAR__SPACER),PixmapLabel::EXPAND_TILE_H);
-		
+	
 	hbox_options = new CHBox(hbox_main); //
 	
 	hbox_options->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
@@ -325,13 +344,7 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	
 	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
 	
-	rack_front = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT_ACTIVE)),PixmapButton::TYPE_TOGGLE);
-	rack_front->setToolTip("Show Rack Front (Controls)");
-
-	rack_back = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_BACK_ACTIVE)),PixmapButton::TYPE_TOGGLE);	
-	rack_back->setToolTip("Show Rack Back (Connections)");
 	
-	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SEPARATOR));
 	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__SPACER),PixmapLabel::EXPAND_TILE_H);
 	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_ICON));
 	
@@ -343,7 +356,7 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	
 	rack_file = new PixmapButton(hbox_options,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_FILE),GET_QPIXMAP(THEME_RACK_TOOLBAR__PRESET_FILE_PUSHED)));	
 	QObject::connect(rack_file,SIGNAL(mouse_pressed_signal()),this,SLOT(rack_presets()));
-	rack_back->setToolTip("Presets");
+	rack_file->setToolTip("Presets");
 	
 	
 	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__END));
@@ -357,12 +370,17 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	
 	plugins = new SoundPluginRack(stack,p_updater,editor);
 	stack->addWidget(plugins);
+	
 	stack->setCurrentWidget(plugins);
 	stack->setMinimumHeight(GET_CONSTANT(CONSTANT_RACK_MINIMUM_HEIGHT));	
-	QObject::connect(rack_choose,SIGNAL(item_selected( int )),this,SLOT(rack_selected_slot( int )));
+	QObject::connect(rack_choose,SIGNAL(item_selected_signal( int )),this,SLOT(rack_selected_slot( int )));
+	
+	tracks = new TrackRack(stack,editor,p_updater);
+	stack->addWidget(tracks);
 	
 	hbox_options->layout()->setSpacing(0);
 	hbox_options->layout()->setMargin(0);
+	
 	
 	selected_rack=0;
 	update_rack();

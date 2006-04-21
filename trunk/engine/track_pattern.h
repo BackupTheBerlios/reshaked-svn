@@ -148,9 +148,6 @@ friend class Saver; //saver needs access to Pattern structure for comparing it
 	struct Data {
 		
 		int visible_columns;	
-		LocalProperty swing;
-		LocalProperty volume;
-		LocalProperty balance;
 		EventBuffer event_buffer;
 		EventBuffer edit_event_buffer;
 		
@@ -177,9 +174,6 @@ public:
 	void add_edit_event(const EventMidi &p_event_midi,int p_column);
 	void play_external_event(const EventMidi &p_event_midi);
 	
-	Property &swing();
-	Property &volume();
-	Property &balance();
 	
 	static PatternBlock* create_pattern_block();
 

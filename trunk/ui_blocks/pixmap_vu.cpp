@@ -34,8 +34,9 @@ void PixmapVU::paintEvent(QPaintEvent *pe) {
 	
 	area-=margin_beg+margin_end;
 
+	float ref_value=(fall_time>0)?visual_value:value;
 	
-	int value_ofs=(int)(value*area);
+	int value_ofs=(int)(ref_value*area);
 	
 	int fill_size=value_ofs+margin_beg;
 	
@@ -61,7 +62,33 @@ void PixmapVU::set_value(float p_value) {
 		p_value=1;
 	
 	value=p_value;
+	if (value>visual_value)
+		visual_value=value;
 	update();
+}
+
+
+void PixmapVU::updater_slot() {
+	if (fall_time==0)
+		return; // guess it can happen?
+	float old_val=visual_value;
+	visual_value-=((float)UPDATE_INTERVAL/1000.0)/fall_time;
+	if (visual_value<0)
+		visual_value=0;
+	
+	if (old_val!=visual_value)
+		update();
+}
+
+void PixmapVU::set_fall_time(float p_speed) {
+	
+	fall_time=p_speed;
+	
+	if (fall_time==0)
+		updater->stop();
+	else
+		updater->start(UPDATE_INTERVAL);
+	
 }
 
 PixmapVU::PixmapVU(QWidget *p_parent,const Skin& p_skin,Type p_type,int p_margin_beg,int p_margin_end) :QWidget(p_parent) {
@@ -73,6 +100,9 @@ PixmapVU::PixmapVU(QWidget *p_parent,const Skin& p_skin,Type p_type,int p_margin
 	margin_beg=p_margin_beg;
 	margin_end=p_margin_end;
 	value=0.5;
+	fall_time=0;
+	updater = new QTimer(this);
+	QObject::connect(updater,SIGNAL(timeout()),this,SLOT(updater_slot()));
 }
 
 

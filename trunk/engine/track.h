@@ -87,10 +87,15 @@ private:
 		ProxyNode output_proxy;
 		SongPlayback *song_playback;
 		
+		LocalProperty swing;
+		LocalProperty swing_local;
+		OptionsProperty swing_base;
+		LocalProperty volume;
+		
 		
 		String rack_file;
 		struct Audio {
-			float highest_energy;
+			std::vector<float> highest_energy;
 			float volume_ratio;
 			bool mute;
 		} audio;
@@ -115,6 +120,7 @@ protected:
 	GlobalProperties &get_global_props();
 
 	void add_property(String p_visual_path,Property *p_prop,TrackAutomation *p_automation=NULL,int p_pos=-1,bool p_builtin=true);
+	void remove_property(Property *p_prop);
 	
 	
 
@@ -127,9 +133,16 @@ protected:
 	void rebuild_active_automation_cache();	
 	AudioNode *get_node_at_visual_pos(int p_pos);	
 	
-	void process_automations_at_tick(Tick p_tick);	
+	void process_automations_at_tick(Tick p_tick,bool p_process_swing=false);	
+	
+	Tick get_swinged_tick(Tick p_base_tick);
 public:
 	
+	Property &swing_base();
+	Property &swing_local();
+	Property &swing();
+	Property &volume();
+
 
 	void offline_process_automations(Tick p_tick);
 	void process_automations(bool p_use_current_tick_to=false);
@@ -173,7 +186,7 @@ public:
 	int get_channels();
 	
 	void reset_automations();
-	float read_highest_energy();
+	float read_highest_energy(int p_channel);
 	void set_mute(bool p_mute);
 	bool is_mute();
 	

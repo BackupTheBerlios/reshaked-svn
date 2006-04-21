@@ -11,7 +11,7 @@
 //
 #include "sound_plugin_rack.h"
 #include "interface/sound_plugin_ui_list.h"
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 #include <Qt/qmessagebox.h>
 #include <Qt/qmenu.h>
 #include <Qt/qcursor.h>
@@ -60,7 +60,7 @@ void PluginTop::remove_pressed() {
 	
 }
 	
-PluginTop::PluginTop(QWidget *p_parent,int p_plugin,bool p_skipping,int p_total_plugins) :CHBox(p_parent) {
+PluginTop::PluginTop(QWidget *p_parent,QString p_name,int p_plugin,bool p_skipping,int p_total_plugins) :CHBox(p_parent) {
 	
 	plugin=p_plugin;
 	
@@ -69,7 +69,10 @@ PluginTop::PluginTop(QWidget *p_parent,int p_plugin,bool p_skipping,int p_total_
 	PixmapButton *info = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__INFO),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__INFO_PUSHED)));
 	QObject::connect(info,SIGNAL(mouse_pressed_signal()),this,SLOT(info_pressed()));
 	
+	PixmapLabel *preset_name=
 	new PixmapLabel(this,GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET_NAME),PixmapLabel::EXPAND_TILE_H);	
+	
+	preset_name->set_text( p_name );
 	
 	file = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET_PUSHED)));
 	QObject::connect(file,SIGNAL(mouse_pressed_signal()),this,SLOT(file_pressed()));
@@ -155,6 +158,8 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 				case PluginPresetBrowser::ACTION_OPEN: {
 					
 					editor->load_plugin_preset(plugin,DeQStrify( ppb->get_file() ),track);
+					
+					plugin->set_current_preset_name( DeQStrify( get_file_from_path( ppb->get_file()) ));
 				} break;
 				case PluginPresetBrowser::ACTION_SAVE: {
 					
@@ -164,8 +169,9 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 					} else {
 						
 						plugin->set_current_file( DeQStrify( ppb->get_file() ) );
+						plugin->set_current_preset_name( DeQStrify( get_file_from_path( ppb->get_file()) ));
+						
 					}
-					
 					
 				} break;
 				
@@ -271,7 +277,10 @@ void SoundPluginRack::update_rack() {
 		ui->set_property_editor_updater( property_edit_updater );
 		RackElement e;
 		e.plugin_ui=ui;
-		e.top=new PluginTop(plugin_vb,i,track->get_plugin( i )->skips_processing(),track->get_plugin_count());
+		
+		QString preset_name=QStrify(track->get_plugin( i )->get_current_preset_name());
+		
+		e.top=new PluginTop(plugin_vb,preset_name,i,track->get_plugin( i )->skips_processing(),track->get_plugin_count());
 		rack_elements.push_back(e);
 		QObject::connect(ui,SIGNAL(property_edited_signal( Property*, double )),this,SLOT(property_edited_slot( Property*, double )));
 		QObject::connect(e.top,SIGNAL(action_signal( int,int )),this,SLOT(plugin_action_signal( int,int )),Qt::QueuedConnection);

@@ -10,7 +10,7 @@
 //
 //
 #include "top_bar_controls.h"
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 #include "ui_blocks/pixmap_label.h"
 
 #include <Qt/qinputdialog.h>
@@ -124,11 +124,6 @@ void TopBarControls::edit_screen_selected(bool p_selected) {
 	set_screen(SCREEN_EDIT);
 	
 }
-void TopBarControls::mix_screen_selected(bool p_selected) {
-	
-	set_screen(SCREEN_MIX);
-	
-}
 
 
 void TopBarControls::set_screen(ScreenList p_screen) {
@@ -139,21 +134,12 @@ void TopBarControls::set_screen(ScreenList p_screen) {
 			
 			song_view->set_pressed( true );
 			edit_view->set_pressed( false );
-			mix_view->set_pressed( false );
 		} break;
 		case SCREEN_EDIT: {
 			
 			song_view->set_pressed( false );
 			edit_view->set_pressed( true );
-			mix_view->set_pressed( false );
 
-		} break;
-		case SCREEN_MIX: {
-			
-			song_view->set_pressed( false );
-			edit_view->set_pressed( false );
-			mix_view->set_pressed( true );
-			
 		} break;
 	}
 	
@@ -188,8 +174,6 @@ TopBarControls::TopBarControls(QWidget *p_parent,Editor *p_editor,PropertyEditUp
 	QObject::connect(song_view,SIGNAL(mouse_toggled_signal(bool)),this,SLOT(song_screen_selected( bool )));
 	edit_view = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_TOP__TAB_EDIT),GET_QPIXMAP(THEME_TOP__TAB_EDIT_ACTIVE)),PixmapButton::TYPE_TOGGLE);
 	QObject::connect(edit_view,SIGNAL(mouse_toggled_signal(bool)),this,SLOT(edit_screen_selected( bool )));
-	mix_view = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_TOP__TAB_MIX),GET_QPIXMAP(THEME_TOP__TAB_MIX_ACTIVE)),PixmapButton::TYPE_TOGGLE);
-	QObject::connect(mix_view,SIGNAL(mouse_toggled_signal(bool)),this,SLOT(mix_screen_selected( bool )));
 
 	
 	
@@ -263,6 +247,23 @@ TopBarControls::TopBarControls(QWidget *p_parent,Editor *p_editor,PropertyEditUp
 	
 	new PixmapLabel(controls_hbox,GET_QPIXMAP(THEME_TOP__BPM_END));
 	
+	new PixmapLabel(controls_hbox,GET_QPIXMAP(THEME_TOP__SWING_BEGIN));
+	CVBox *swing_vb = new CVBox(controls_hbox);
+	new PixmapLabel(swing_vb,GET_QPIXMAP(THEME_TOP__SWING_TOP));
+	
+	Knob::Skin knob_skin;
+	knob_skin.angle_begin=30;
+	knob_skin.handle_at_distance=8;
+	knob_skin.base=GET_QPIXMAP(THEME_TOP__SWING_KNOB);
+	knob_skin.handle=GET_QPIXMAP(THEME_TOP__SWING_KNOB_POS);
+	knob_swing = new PropertyEditKnob(swing_vb,knob_skin);
+	knob_swing->set_property( &p_editor->get_song()->get_global_properties().get_swing() );
+	p_property_edit_updater->add_editor( knob_swing );
+	
+	new PixmapLabel(swing_vb,GET_QPIXMAP(THEME_TOP__SWING_BOTTOM));
+	
+	new PixmapLabel(controls_hbox,GET_QPIXMAP(THEME_TOP__SWING_END));
+	
 	
 	/** END OF CONTROLS */
 	
@@ -273,6 +274,7 @@ TopBarControls::TopBarControls(QWidget *p_parent,Editor *p_editor,PropertyEditUp
 	icon_menu_help= new PixmapButton(controls_hbox,PixmapButton::Skin(GET_QPIXMAP(THEME_TOP__ICON_HELP),GET_QPIXMAP(THEME_TOP__ICON_HELP_ACTIVATED)));
 	QObject::connect(icon_menu_help,SIGNAL(mouse_pressed_signal()),this,SLOT(show_help_menu()));
 
+	
 	
 	new PixmapLabel(vb,GET_QPIXMAP(THEME_TOP__MARGIN_BOTTOM),PixmapLabel::EXPAND_TILE_H);
 	new PixmapLabel(this,GET_QPIXMAP(THEME_TOP__MARGIN_RIGHT));

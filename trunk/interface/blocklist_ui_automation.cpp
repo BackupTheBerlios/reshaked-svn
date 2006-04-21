@@ -10,7 +10,7 @@
 //
 //
 #include "blocklist_ui_automation.h"
-#include "ui_blocks/visual_settings.h"
+#include "interface/visual_settings.h"
 #include <Qt/qpainter.h>
 #include <Qt/qevent.h>
 #include <math.h>
@@ -942,19 +942,19 @@ void BlockListUI_Automation::show_popup() {
 	 
 	if (block_idx>=0) {
 		
-		ac_noint = new QAction("No Interpolation",topLevelOf(this));
+		ac_noint = new QAction("No Interpolation (Block)",topLevelOf(this));
 		ac_noint->setCheckable(true);
 		if (ad->get_interpolation()==Automation::INTERP_NONE)
 			ac_noint->setChecked(true);
 		action_list.push_back(ac_noint);
 
-		ac_linint = new QAction("Linear Interpolation",topLevelOf(this));
+		ac_linint = new QAction("Linear Interpolation  (Block)",topLevelOf(this));
 		ac_linint->setCheckable(true);
 		if (ad->get_interpolation()==Automation::INTERP_LINEAR)
 			ac_linint->setChecked(true);
 		action_list.push_back(ac_linint);
 		
-		ac_cubint = new QAction("Cubic Interpolation",topLevelOf(this));
+		ac_cubint = new QAction("Cubic Interpolation (Block)",topLevelOf(this));
 		ac_cubint->setCheckable(true);
 		if (ad->get_interpolation()==Automation::INTERP_CUBIC)
 			ac_cubint->setChecked(true);
@@ -981,6 +981,22 @@ void BlockListUI_Automation::show_popup() {
 	sep->setSeparator(topLevelOf(this));
 	action_list.push_back(sep);
 	
+	
+	QAction* ac_swing=NULL;
+	 
+	if (editor->get_blocklist_track( editor->find_blocklist( automation) )>=0) {
+		ac_swing= new QAction("Follow Swing",topLevelOf(this));
+		ac_swing->setCheckable(true);
+		if (automation->is_swing_follow_enabled())
+			ac_swing->setChecked(true);
+		
+		action_list.push_back( ac_swing );
+	
+		sep = new QAction("",topLevelOf(this));
+		sep->setSeparator(topLevelOf(this));
+		action_list.push_back(sep);
+	}
+		
 	QAction* ac_hide = new QAction("Hide",topLevelOf(this));
 	action_list.push_back( ac_hide );
 	
@@ -1089,6 +1105,10 @@ void BlockListUI_Automation::show_popup() {
 		delete input_select;
 		
 		editor->get_ui_update_notify()->rack_repaint();
+		
+	} else if (res==ac_swing && ac_swing) {
+		
+		editor->automation_set_follow_swing(automation,ac_swing->isChecked());
 		
 	} else if (res==ac_hide) {
 		

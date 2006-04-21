@@ -329,6 +329,22 @@ CommandFunc* EditorCommands::automation_set_interpolation(bool p_no_undo,Automat
 	
 }
 
+CommandFunc* EditorCommands::automation_set_follow_swing(bool p_no_undo,Automation *p_automation, bool p_follow) {
+	
+	
+	CommandFunc *ret=NULL;
+	
+	if (!p_no_undo) { //must undo, retrieve previous note
+		ret=Command2(this,&EditorCommands::automation_set_follow_swing,p_automation,p_automation->is_swing_follow_enabled());
+	}
+	
+	p_automation->set_swing_follow_enabled( p_follow );
+	
+	return ret;
+	
+}
+
+
 CommandFunc* EditorCommands::blocklist_insert_block(bool p_no_undo,BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos) {
 	
 	

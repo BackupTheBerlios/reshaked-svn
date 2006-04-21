@@ -46,6 +46,9 @@ bool load_sample_from_tree(TreeLoader *p_tree,Sample *p_sample) {
 
 void save_sample_to_tree(TreeSaver *p_tree,Sample *p_sample) {
 	
+	p_tree->add_string("format","raw" );
+	
+
 	p_tree->add_float("base_freq",p_sample->get_base_freq());
 		
 	p_tree->add_int("loop_type",p_sample->get_loop_type());

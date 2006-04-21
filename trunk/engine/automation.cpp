@@ -332,8 +332,19 @@ void Automation::clear() {
 	recording.enabled=false;
 	recording.channel=0;
 	recording.control=0;
+	swing_follow=false;
 	
 }
+
+void Automation::set_swing_follow_enabled(bool p_swing_follow) {
+	
+	swing_follow=p_swing_follow;
+}
+bool Automation::is_swing_follow_enabled() {
+	
+	return swing_follow;
+}
+
 Automation::Automation(Property *p_property) : BlockList(BLOCK_TYPE_FIXED_TO_BEAT) {
 
 	property=p_property;

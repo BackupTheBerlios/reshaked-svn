@@ -229,12 +229,6 @@ void MainWindow::menu_action_callback(int p_action) {
 			get_action(DELETE_BLOCKS)->setEnabled(false);
 
 		} break;
-		case NAVIGATION_MIX_VIEW: {
-
-			top_bar->set_screen( TopBarControls::SCREEN_MIX );
-			get_action(DELETE_BLOCKS)->setEnabled(false);
-
-		} break;
 		case RACK_TOGGLE: {
 
 			bottom_bar->rack_toggle->set_pressed( !bottom_bar->rack_toggle->is_pressed() );
@@ -422,7 +416,6 @@ void MainWindow::add_menus() {
 
 	create_action(NAVIGATION_GLOBAL_VIEW,"Global View","song_view",NULL,top_bar->song_view);
 	create_action(NAVIGATION_EDIT_VIEW,"Edit View","edit_view",NULL,top_bar->edit_view);
-	create_action(NAVIGATION_MIX_VIEW,"Mix View","mix_view",NULL,top_bar->mix_view);
 	
 	create_action(CONTROL_RW,"Rewind","rewind",NULL,top_bar->control_button_rw);
 	create_action(CONTROL_PLAY,"Play","play",NULL,top_bar->control_button_play);
@@ -456,8 +449,6 @@ void MainWindow::screen_changed_slot(TopBarControls::ScreenList p_screen) {
 		
 		case TopBarControls::SCREEN_SONG: main_stack->setCurrentWidget(global_view_frame); break;
 		case TopBarControls::SCREEN_EDIT: main_stack->setCurrentWidget(blui_list); break;
-		case TopBarControls::SCREEN_MIX:  break;
-				
 
 	} 
 }
@@ -483,7 +474,7 @@ void MainWindow::ui_update_slot() {
 	blui_list->update_play_position();
 	blui_list->update_vus();
 	top_bar->update_playback_indicator();
-	
+	rack->ui_update_callback();	
 	
 	
 }

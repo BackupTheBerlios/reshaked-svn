@@ -20,32 +20,9 @@
 #include "ui_blocks/property_editors.h"
 #include "ui_blocks/pixmap_button.h"
 
-#include "pixmaps/effect_panel_generic_top_left.xpm"
-#include "pixmaps/effect_panel_generic_top_right.xpm"
-#include "pixmaps/effect_panel_generic_top.xpm"
-#include "pixmaps/effect_panel_generic_left.xpm"
-#include "pixmaps/effect_panel_generic_right.xpm"
-#include "pixmaps/effect_panel_generic_bottom_left.xpm"
-#include "pixmaps/effect_panel_generic_bottom_right.xpm"
-#include "pixmaps/effect_panel_generic_bottom.xpm"
-
-#include "plugin_UIs/pixmaps/simpler__bottom.xpm"
-#include "plugin_UIs/pixmaps/simpler__display_bottom.xpm"
-#include "plugin_UIs/pixmaps/simpler__display_left.xpm"
-#include "plugin_UIs/pixmaps/simpler__display_right.xpm"
-#include "plugin_UIs/pixmaps/simpler__edit_pushed.xpm"
-#include "plugin_UIs/pixmaps/simpler__edit.xpm"
-#include "plugin_UIs/pixmaps/simpler__knob_pos.xpm"
-#include "plugin_UIs/pixmaps/simpler__knob.xpm"
-#include "plugin_UIs/pixmaps/simpler__knob_separator.xpm"
-#include "plugin_UIs/pixmaps/simpler__left.xpm"
-#include "plugin_UIs/pixmaps/simpler__load_pushed.xpm"
-#include "plugin_UIs/pixmaps/simpler__load.xpm"
-#include "plugin_UIs/pixmaps/simpler__right.xpm"
-#include "plugin_UIs/pixmaps/simpler__top_left.xpm"
-#include "plugin_UIs/pixmaps/simpler__top_right.xpm"
 #include "dsp/sample_file.h"
 #include "ui_blocks/sample_editor.h"
+#include "interface/visual_settings.h"
 #include "engine/audio_control.h"
 
 namespace ReShaked {
@@ -109,17 +86,18 @@ SimplerUI::SimplerUI(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_p
 	setLayout(new QVBoxLayout(this));
 	CHBox *hb_top = new CHBox(this);
 	layout()->addWidget(hb_top);
-	new PixmapLabel(hb_top,QPixmap((const char**)effect_panel_generic_top_left_xpm));
-	PixmapLabel *title = new PixmapLabel(hb_top,QPixmap((const char**)effect_panel_generic_top_xpm) ,PixmapLabel::EXPAND_TILE_H);
+	new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP_LEFT));
+	PixmapLabel *title = new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP) ,PixmapLabel::EXPAND_TILE_H);
 	title->set_text( QStrify(p_plugin->get_caption())) ;
 	title->setToolTip( QStrify(p_plugin->get_caption())) ;
-	new PixmapLabel(hb_top,QPixmap((const char**)effect_panel_generic_top_right_xpm));
+	new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP_RIGHT));
+	
 	
 	
 	CHBox *hb = new CHBox(this);
 	layout()->addWidget(hb);
 	
-	PixmapLabel *label_name = new PixmapLabel(hb,QPixmap((const char**)effect_panel_generic_left_xpm));
+	PixmapLabel *label_name = new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_LEFT));
 	label_name->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 	
 	/*****/
@@ -128,19 +106,19 @@ SimplerUI::SimplerUI(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_p
 	
 	CHBox *top_hb_simpler = new CHBox(vb_simpler);
 	
-	new PixmapLabel(top_hb_simpler,QPixmap( (const char**)simpler__top_left_xpm ) );
+	new PixmapLabel(top_hb_simpler,GET_QPIXMAP(THEME_SIMPLER__TOP_LEFT ) );
 	
-	PixmapButton *load_button = new PixmapButton(top_hb_simpler,PixmapButton::Skin( QPixmap( (const char**)simpler__load_xpm ),QPixmap( (const char**)simpler__load_pushed_xpm )));
+	PixmapButton *load_button = new PixmapButton(top_hb_simpler,PixmapButton::Skin( GET_QPIXMAP(THEME_SIMPLER__LOAD ),GET_QPIXMAP(THEME_SIMPLER__LOAD_PUSHED )));
 	QObject::connect( load_button, SIGNAL( mouse_pressed_signal() ), this, SLOT(load_sample_slot()));
 	
-	PixmapButton *edit_button = new PixmapButton(top_hb_simpler,PixmapButton::Skin( QPixmap( (const char**)simpler__edit_xpm ),QPixmap( (const char**)simpler__edit_pushed_xpm )));
+	PixmapButton *edit_button = new PixmapButton(top_hb_simpler,PixmapButton::Skin( GET_QPIXMAP(THEME_SIMPLER__EDIT ),GET_QPIXMAP(THEME_SIMPLER__EDIT_PUSHED )));
 	QObject::connect( edit_button, SIGNAL( mouse_pressed_signal() ), this, SLOT(edit_sample_slot()));
 	
-	new PixmapLabel(top_hb_simpler,QPixmap( (const char**)simpler__top_right_xpm ) );
+	new PixmapLabel(top_hb_simpler,GET_QPIXMAP(THEME_SIMPLER__TOP_RIGHT ) );
 	
 	CHBox *mid_hb_simpler = new CHBox(vb_simpler);
 	
-	new PixmapLabel(mid_hb_simpler,QPixmap( (const char**)simpler__left_xpm ) );
+	new PixmapLabel(mid_hb_simpler,GET_QPIXMAP(THEME_SIMPLER__LEFT ) );
 	
 	CVBox *center_vb_simpler = new CVBox(mid_hb_simpler);
 	
@@ -148,7 +126,7 @@ SimplerUI::SimplerUI(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_p
 	
 	// screen
 	
-	new PixmapLabel(screen_hb,QPixmap( (const char**)simpler__display_left_xpm ) );
+	new PixmapLabel(screen_hb,GET_QPIXMAP(THEME_SIMPLER__DISPLAY_LEFT ) );
 	
 	viewer = new SampleViewer(screen_hb);
 	if (simpler->get_sample().get_length())
@@ -156,56 +134,57 @@ SimplerUI::SimplerUI(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_p
 	else
 		viewer->set_sample_data( NULL );
 
-	new PixmapLabel(screen_hb,QPixmap( (const char**)simpler__display_right_xpm ) );
+	new PixmapLabel(screen_hb,GET_QPIXMAP(THEME_SIMPLER__DISPLAY_RIGHT ) );
 	
 	// - screen
 	
-	new PixmapLabel(center_vb_simpler,QPixmap( (const char**)simpler__display_bottom_xpm ) );
+	new PixmapLabel(center_vb_simpler,GET_QPIXMAP(THEME_SIMPLER__DISPLAY_BOTTOM ) );
 	
 	CHBox *adsr_hb = new CHBox(center_vb_simpler);
 	
 	PropertyEditKnob * k;
 	Knob::Skin knob_skin;
 	knob_skin.angle_begin=30;
-	knob_skin.base=QPixmap( (const char**)simpler__knob_xpm );
-	knob_skin.handle=QPixmap( (const char**)simpler__knob_pos_xpm );
+	knob_skin.base=GET_QPIXMAP(THEME_SIMPLER__KNOB );
+	knob_skin.handle=GET_QPIXMAP(THEME_SIMPLER__KNOB_POS );
 	knob_skin.handle_at_distance=10;
 	
 	k = new PropertyEditKnob(adsr_hb,knob_skin);
 	k->set_property( &simpler->get_port_by_name( "adsr_attack" ) );
 	register_property_editor( k );
 	
-	new PixmapLabel(adsr_hb,QPixmap( (const char**)simpler__knob_separator_xpm ) );
+	new PixmapLabel(adsr_hb,GET_QPIXMAP(THEME_SIMPLER__KNOB_SEPARATOR ) );
 	
 	k = new PropertyEditKnob(adsr_hb,knob_skin);
 	k->set_property( &simpler->get_port_by_name( "adsr_decay" ) );
 	register_property_editor( k );
 	
-	new PixmapLabel(adsr_hb,QPixmap( (const char**)simpler__knob_separator_xpm ) );
+	new PixmapLabel(adsr_hb,GET_QPIXMAP(THEME_SIMPLER__KNOB_SEPARATOR ) );
 	
 	k = new PropertyEditKnob(adsr_hb,knob_skin);
 	k->set_property( &simpler->get_port_by_name( "adsr_sustain" ) );
 	register_property_editor( k );
 	
-	new PixmapLabel(adsr_hb,QPixmap( (const char**)simpler__knob_separator_xpm ) );
+	new PixmapLabel(adsr_hb,GET_QPIXMAP(THEME_SIMPLER__KNOB_SEPARATOR ) );
 	
 	k = new PropertyEditKnob(adsr_hb,knob_skin);
 	k->set_property( &simpler->get_port_by_name( "adsr_release" ) );
 	register_property_editor( k );
 	
-	new PixmapLabel(mid_hb_simpler,QPixmap( (const char**)simpler__right_xpm ) );
+	new PixmapLabel(mid_hb_simpler,GET_QPIXMAP(THEME_SIMPLER__RIGHT ) );
 	
-	new PixmapLabel(vb_simpler,QPixmap( (const char**)simpler__bottom_xpm ) );
+	new PixmapLabel(vb_simpler,GET_QPIXMAP(THEME_SIMPLER__BOTTOM ) );
 	
 	/* ***/
-	new PixmapLabel(hb,QPixmap((const char**)effect_panel_generic_right_xpm));
+	
+	
+	new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_RIGHT));
 	
 	CHBox *hb_bottom = new CHBox(this);
 	layout()->addWidget(hb_bottom);
-	new PixmapLabel(hb_bottom,QPixmap((const char**)effect_panel_generic_bottom_left_xpm));
-	new PixmapLabel(hb_bottom,QPixmap((const char**)effect_panel_generic_bottom_xpm),PixmapLabel::EXPAND_TILE_H);
-	new PixmapLabel(hb_bottom,QPixmap((const char**)effect_panel_generic_bottom_right_xpm));
-	
+	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_LEFT));
+	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM),PixmapLabel::EXPAND_TILE_H);
+	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_RIGHT));
 	
 	layout()->setMargin(0);
 	layout()->setSpacing(0);
