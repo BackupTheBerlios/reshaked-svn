@@ -67,10 +67,21 @@ void SettingsKeys::update_keybinds() {
 
 void SettingsKeys::itemSelectionChangedSlot() {
 	
+	
 	set_bind->setEnabled(true);
 	clear_bind->setEnabled(true);
 	
-	QTreeWidgetItem * current=tree->currentItem();
+	QList<QTreeWidgetItem *> sel_items = tree->selectedItems ();
+	if (sel_items.empty()) {
+		set_bind->setEnabled(false);
+		clear_bind->setEnabled(false);
+		
+		return;
+	}
+			
+	QTreeWidgetItem * current=*sel_items.begin();
+	
+
 	KeybindItem *ki = dynamic_cast<KeybindItem*>(current);
 	ERR_FAIL_COND(!ki);
 	
