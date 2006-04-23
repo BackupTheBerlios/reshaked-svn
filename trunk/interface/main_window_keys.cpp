@@ -62,8 +62,10 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("down","Move Down",Qt::Key_Down,true);
 	data.keyboard_codes.add_key_bind("left","Move Left",Qt::Key_Left,true);
 	data.keyboard_codes.add_key_bind("right","Move Right",Qt::Key_Right,true);
-	data.keyboard_codes.add_key_bind("next_track","Next Track",Qt::Key_Tab,true);
-	data.keyboard_codes.add_key_bind("prev_track","Prev Track",Qt::Key_Backtab,true);
+	data.keyboard_codes.add_key_bind("next_track","Next Track",Qt::ALT+Qt::Key_Right,true);
+	data.keyboard_codes.add_key_bind("prev_track","Prev Track",Qt::ALT+Qt::Key_Left,true);
+	data.keyboard_codes.add_key_bind("next_column","Next Column",Qt::Key_Tab,true);
+	data.keyboard_codes.add_key_bind("prev_column","Prev Column",Qt::Key_Backtab,true);
 	data.keyboard_codes.add_key_bind("page_up","Page Up",Qt::Key_PageUp,true);
 	data.keyboard_codes.add_key_bind("page_down","Page Down",Qt::Key_PageDown,true);
 	data.keyboard_codes.add_key_bind("home","Home",Qt::Key_Home,true);
@@ -85,7 +87,7 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/selection_paste_insert","Selection Paste Insert",Qt::ALT+Qt::Key_I);
 	data.keyboard_codes.add_key_bind("editor/selection_paste_overwrite","Selection Paste Overwrite",Qt::ALT+Qt::Key_P);
 	data.keyboard_codes.add_key_bind("editor/selection_paste_mix","Selection Paste Mix",Qt::ALT+Qt::Key_M);
-	data.keyboard_codes.add_key_bind("editor/select_column_block_all","Select Column/Block/All",Qt::ALT+Qt::Key_L);
+	data.keyboard_codes.add_key_bind("editor/select_column_block","Select Column/Block",Qt::ALT+Qt::Key_L);
 	data.keyboard_codes.add_key_bind("editor/selection_disable","Selection Disable",Qt::ALT+Qt::Key_U);
 	data.keyboard_codes.add_key_bind("editor/selection_zap","Erase Data Under Selection",Qt::ALT+Qt::Key_Z);
 	
@@ -98,6 +100,9 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/selection_move_home","Selection Home",Qt::SHIFT+Qt::Key_Home,true);
 	data.keyboard_codes.add_key_bind("editor/selection_move_end","Selection End",Qt::SHIFT+Qt::Key_End,true);
 	
+	data.keyboard_codes.add_key_bind("editor/selection_scale_volumes","Selection Scale Volumes",Qt::ALT+Qt::Key_J);
+	
+	data.keyboard_codes.add_key_bind("editor/selection_apply_volume_mask","Selection Apply Volume Mask",Qt::ALT+Qt::Key_V);
 	
 	data.keyboard_codes.add_key_bind("editor/delete","Delete",Qt::Key_Delete);
 	
@@ -120,7 +125,13 @@ void MainWindow::create_keybindings() {
 	
 	data.keyboard_codes.add_key_bind("note_entry/toggle_volume_mask","Toggle Volume Mask",Qt::Key_Comma,false,NULL,new QWidget_KeybindDescription(blui_list->edit_mask));
 	
-
+	data.keyboard_codes.add_key_bind("editor/edit_marker","Edit Marker",Qt::CTRL+Qt::Key_K);
+	data.keyboard_codes.add_key_bind("editor/set_loop_begin","Set Loop Begin",Qt::CTRL+Qt::Key_B);
+	data.keyboard_codes.add_key_bind("editor/set_loop_end","Set Loop End",Qt::CTRL+Qt::Key_E);
+	data.keyboard_codes.add_key_bind("editor/selection_to_loop","Selection -> Loop",Qt::CTRL+Qt::Key_L);
+	data.keyboard_codes.add_key_bind("editor/selection_create_blocks","Selection -> Create Blocks",Qt::CTRL+Qt::Key_A);
+	
+	
 	data.keyboard_codes.add_key_bind("global/raise_octave","Raise Octave",Qt::Key_Asterisk);
 
 	data.keyboard_codes.add_key_bind("global/lower_octave","Lower Octave",Qt::Key_Slash);
@@ -135,6 +146,34 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("note_entry/play_note_at_cursor","Play Note Under Cursor",Qt::Key_4);
 
 	data.keyboard_codes.add_key_bind("note_entry/play_row_at_cursor","Play Row Under Cursor",Qt::Key_8);
+	
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_0","Set Cursor Step to 0",Qt::ALT+Qt::Key_0);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_1","Set Cursor Step to 1",Qt::ALT+Qt::Key_1);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_2","Set Cursor Step to 2",Qt::ALT+Qt::Key_2);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_3","Set Cursor Step to 3",Qt::ALT+Qt::Key_3);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_4","Set Cursor Step to 4",Qt::ALT+Qt::Key_4);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_5","Set Cursor Step to 5",Qt::ALT+Qt::Key_5);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_6","Set Cursor Step to 6",Qt::ALT+Qt::Key_6);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_7","Set Cursor Step to 7",Qt::ALT+Qt::Key_7);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_8","Set Cursor Step to 8",Qt::ALT+Qt::Key_8);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_8","Set Cursor Step to 8",Qt::ALT+Qt::Key_8);
+	
+	data.keyboard_codes.add_key_bind("editor/window_snap_1","Set Window Snap to 1",Qt::CTRL+Qt::SHIFT+Qt::Key_0);
+	data.keyboard_codes.add_key_bind("editor/window_snap_2","Set Window Snap to 2",Qt::CTRL+Qt::SHIFT+Qt::Key_1);
+	data.keyboard_codes.add_key_bind("editor/window_snap_3","Set Window Snap to 3",Qt::CTRL+Qt::Key_1);
+	data.keyboard_codes.add_key_bind("editor/window_snap_4","Set Window Snap to 4",Qt::CTRL+Qt::Key_2);
+	data.keyboard_codes.add_key_bind("editor/window_snap_6","Set Window Snap to 6",Qt::CTRL+Qt::Key_3);
+	data.keyboard_codes.add_key_bind("editor/window_snap_8","Set Window Snap to 8",Qt::CTRL+Qt::Key_4);
+	data.keyboard_codes.add_key_bind("editor/window_snap_12","Set Window Snap to 12",Qt::CTRL+Qt::Key_5);
+	data.keyboard_codes.add_key_bind("editor/window_snap_16","Set Window Snap to 16",Qt::CTRL+Qt::Key_6);
+	data.keyboard_codes.add_key_bind("editor/window_snap_24","Set Window Snap to 24",Qt::CTRL+Qt::Key_7);
+	data.keyboard_codes.add_key_bind("editor/window_snap_32","Set Window Snap to 32",Qt::CTRL+Qt::Key_8);
+	data.keyboard_codes.add_key_bind("editor/window_snap_48","Set Window Snap to 48",Qt::CTRL+Qt::Key_9);
+	data.keyboard_codes.add_key_bind("editor/window_snap_64","Set Window Snap to 64",Qt::CTRL+Qt::Key_0);
+	
+	data.keyboard_codes.add_key_bind("editor/window_snap_half","Half Size Snap",Qt::CTRL+Qt::Key_W);
+	data.keyboard_codes.add_key_bind("editor/window_snap_double","Double Size Snap",Qt::CTRL+Qt::Key_S);
+	
 	data.keyboard_codes.set_key_bind_key_by_name("actions/undo",Qt::CTRL+Qt::Key_Z);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/redo",Qt::SHIFT+Qt::CTRL+Qt::Key_Z);
 
@@ -158,7 +197,7 @@ void MainWindow::create_keybindings() {
 	
 	data.keyboard_codes.set_key_bind_key_by_name("actions/song_view",Qt::Key_F1);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/edit_view",Qt::Key_F2);
-	data.keyboard_codes.set_key_bind_key_by_name("actions/mix_view",Qt::Key_F3);
+	
 	
 }
 

@@ -90,11 +90,17 @@ friend class MainWindow;
 		ACTION_PASTE_INSERT,
 		ACTION_PASTE_MIX,
 		/***/
-		ACTION_RAISE_SEMITONE,
-		ACTION_LOWER_SEMITONE,
-		ACTION_RAISE_OCTAVE,
-		ACTION_LOWER_OCTAVE,
+		ACTION_EDIT_MARKER,
+		ACTION_SET_LOOP_BEGIN,
+		ACTION_SET_LOOP_END,
+		ACTION_SELECTION_TO_LOOP,
 		/**/
+		ACTION_SELECTION_TO_BLOCK,
+		/**/
+		ACTION_SELECTION_RAISE_SEMITONE,
+		ACTION_SELECTION_LOWER_SEMITONE,
+		ACTION_SELECTION_SCALE_VOLUMES,
+		ACTION_SELECTION_SET_VOLUMES_TO_MASK,
 	
 	};
 
@@ -125,7 +131,8 @@ public slots:
 	
 	void update_play_position();
 	void update_vus();
-	void update_mask();
+	
+	void update_top_bar();
 	
 	void h_qscrollbar_range_changed(int p_min,int p_max);
 	void h_qscrollbar_changed(int p_val);
@@ -136,6 +143,12 @@ public slots:
 	
 	void poly_input_toggle(bool p_enabled);
 	void midi_in_toggle(bool p_enabled);
+	
+	void cursor_step_changed(int p_step);
+	
+	void scale_volume_slot();
+	void edit_marker_slot();
+	
 public:
 
 	BlockListUI_Base *get_blocklist_ui(int p_idx);

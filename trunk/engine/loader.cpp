@@ -344,6 +344,7 @@ void Loader::load_track(Track *p_track, TreeLoader *p_loader) {
 		Automation *a=p_track->get_property_automation(prop_idx);
 		/* Dont save unused automations, to save space in file */
 		a->set_initial_value( p_loader->get_int("initial") );
+		a->set_swing_follow_enabled( p_loader->get_int("swing_follow") );
 		switch (p_loader->get_int("display_size")) {
 			case 0: a->set_display_size( Automation::DISPLAY_SIZE_SMALL ); break;
 			case 1: a->set_display_size( Automation::DISPLAY_SIZE_MEDIUM ); break;

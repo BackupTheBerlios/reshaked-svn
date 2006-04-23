@@ -240,7 +240,22 @@ void Editor::blocklist_resize_block(BlockList *p_blocklist,int p_which,Tick p_ne
 			
 		} else if (dynamic_cast<Automation*>(p_blocklist)) {
 			
-			
+			Automation *au=dynamic_cast<Automation*>(p_blocklist);
+			Automation::AutomationBlock *ab=au->get_block(p_which);
+			if (ab) {
+				
+				Automation::AutomationData *ad=ab->get_data();
+				
+				for (int l=0;l<ad->get_stream_size();l++) {
+									
+					Tick tick=ad->get_index_pos( l );
+					if (tick<p_new_size)
+						continue;
+					d->undo_stream.add_command( Command3(&commands,&EditorCommands::remove_automation_point,au,p_which,l) );
+	
+					l--; //since we deleted, size is minus one
+				}
+			}			
 			
 			
 		} else {
@@ -279,6 +294,11 @@ void Editor::enter_blocklist(EditorData::EnterBLDir p_dir) {
 			d->pattern_edit.column=tp->get_visible_columns()-1;
 			d->pattern_edit.field=1;
 		}
+	} else {
+		
+		d->pattern_edit.column=0;
+		d->pattern_edit.field=0;
+		
 	}
 
 	d->ui_update_notify->cursor_changed_blocklist();

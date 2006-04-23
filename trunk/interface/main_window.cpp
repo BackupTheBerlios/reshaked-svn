@@ -618,13 +618,17 @@ MainWindow::MainWindow() {
 	QObject::connect(update_notify,SIGNAL(automation_editor_popup( int )),this,SLOT(automation_editor_popup_slot( int )),Qt::QueuedConnection);
 	QObject::connect(update_notify,SIGNAL(automation_options( int )),this,SLOT(automation_options( int )),Qt::QueuedConnection);
 	
-	QObject::connect(update_notify,SIGNAL(volume_mask_changed()),blui_list,SLOT(update_mask()));
+	QObject::connect(update_notify,SIGNAL(volume_mask_changed()),blui_list,SLOT(update_top_bar()));
+	QObject::connect(update_notify,SIGNAL(cursor_step_changed()),blui_list,SLOT(update_top_bar()));
 	
 	QObject::connect(update_notify,SIGNAL(notify_action( String )),bottom_bar,SLOT(action_notify( String )));
 	QObject::connect(update_notify,SIGNAL(editing_octave_changed()),bottom_bar->vpiano,SLOT(octave_changed_slot()));
 	
 	QObject::connect(bottom_bar->vpiano,SIGNAL(key_pressed_signal( int )),rack,SLOT(test_note( int)));
 	QObject::connect(bottom_bar->vpiano,SIGNAL(key_released_signal( int )),rack,SLOT(test_note_off( int)));
+	
+	QObject::connect(update_notify,SIGNAL(editor_marker_edit_request()),blui_list,SLOT(edit_marker_slot()));
+	QObject::connect(update_notify,SIGNAL(editor_volume_scale_request()),blui_list,SLOT(scale_volume_slot()));
 	
 	ui_updater = new QTimer(this);
 	QObject::connect(ui_updater,SIGNAL(timeout()),this,SLOT(ui_update_slot()));

@@ -29,6 +29,8 @@ EditorData::EditorData(Song *p_song,UI_UpdateNotify *p_ui_update_notify) :cursor
 	global_edit.pattern_midi_input_enabled=false;
 	global_edit.polyphonic_midi_input_enabled=false;
 	
+	global_edit.cursor_step=1;
+	
 }
 
 

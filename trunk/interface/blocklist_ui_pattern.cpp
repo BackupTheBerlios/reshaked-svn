@@ -550,6 +550,7 @@ void BlockListUI_Pattern::get_pos_at_pointer(QPoint p_pointer, int *p_blocklist,
 	
 	int field;
 	get_row_column_and_field( p_pointer, p_row, p_column, &field );
+	*p_row+=editor->get_cursor().get_window_offset();
 	*p_blocklist=editor->find_blocklist( track );
 	
 }
@@ -581,6 +582,7 @@ void BlockListUI_Pattern::mousePressEvent ( QMouseEvent * e ) {
 
 void BlockListUI_Pattern::mouseMoveEvent ( QMouseEvent * e ) {
 	
+
 	mouse_selection_update_check();
 }
 void BlockListUI_Pattern::mouseReleaseEvent ( QMouseEvent * e ) {

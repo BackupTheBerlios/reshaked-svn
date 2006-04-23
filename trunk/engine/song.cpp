@@ -217,10 +217,11 @@ void Song::stop() {
 void Song::set_loop_begin(int p_beat) {
 	
 	loopdata.begin_beat=p_beat;
+	/*
 	if (loopdata.begin_beat>loopdata.end_beat) {
 		
 		SWAP(loopdata.begin_beat,loopdata.end_beat);
-	}
+} */
 }
 int Song::get_loop_begin() {
 	
@@ -230,10 +231,10 @@ int Song::get_loop_begin() {
 void Song::set_loop_end(int p_beat) {
 	
 	loopdata.end_beat=p_beat;
-	if (loopdata.begin_beat>loopdata.end_beat) {
+	/*if (loopdata.begin_beat>loopdata.end_beat) {
 		
 		SWAP(loopdata.begin_beat,loopdata.end_beat);
-	}
+} */
 	
 }
 int Song::get_loop_end() {

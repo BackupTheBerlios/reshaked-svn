@@ -642,7 +642,7 @@ void BlockListUI_Automation::cancel_motion() {
 
 void BlockListUI_Automation::get_pos_at_pointer(QPoint p_pointer, int *p_blocklist,int *p_column, int *p_row) {
 	
-	*p_row=p_pointer.y()/VisualSettings::get_singleton()->get_editing_row_height();
+	*p_row=p_pointer.y()/VisualSettings::get_singleton()->get_editing_row_height()+editor->get_cursor().get_window_offset();
 	*p_blocklist=editor->find_blocklist( automation );
 	*p_column=0;
 }

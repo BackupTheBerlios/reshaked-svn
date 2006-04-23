@@ -217,6 +217,8 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 		p_saver->add_int("visible",p_track->has_property_visible_automation(i));
 		p_saver->add_int("initial",a->get_initial_value());
 		p_saver->add_int("builtin",builtin); //belongs to plugin or not
+		p_saver->add_int("swing_follow",a->is_swing_follow_enabled());
+		
 		p_saver->add_string("name",a->get_property()->get_name());
 		if (!builtin) 
 			p_saver->add_int("plugin_idx",plugin_idx); //plugin it belongs to

@@ -31,6 +31,11 @@ void BlockListUI_Base::set_blocklist_ui_under_cursor(BlockListUI_Base *p_ui, QPo
 	p_ui->get_pos_at_pointer(p_pos, &bl,&column,&row);
 	
 	_editor->selection_mouse_drag_end(bl,column,row);
+	_editor->set_pattern_edit_column( column );
+	_editor->get_cursor().set_pos( row );
+	if (_editor->get_current_blocklist()!=bl)
+		_editor->set_current_blocklist( bl );
+	update();
 	
 }
 

@@ -377,7 +377,7 @@ void Editor::selection_transpose(bool p_up) {
 	
 	d->undo_stream.end();
         d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
-        printf("Transpose End\n");
+        
 
 }
 
@@ -663,7 +663,45 @@ void Editor::selection_end() {
 
 }
 void Editor::selection_column_all() {
+	printf("meh");
+	BlockList *bl=get_blocklist( get_current_blocklist() );
+	if (!bl)
+		return;
 	
+	int block_idx=bl->get_block_idx_at_pos( d->cursor.get_tick_pos() );
+	
+	if (block_idx<0)
+		return;
+	
+	
+	EditorData::Selection::Pos s_col_from=get_cursor_selection_pos();
+	EditorData::Selection::Pos s_col_to=get_cursor_selection_pos();
+	
+	Tick snap=d->cursor.get_snap();
+	s_col_from.tick=bl->get_block_pos( block_idx );
+	s_col_to.tick=s_col_from.tick+bl->get_block(block_idx)->get_length()-snap;
+	
+	EditorData::Selection::Pos s_block_from=s_col_from;
+	EditorData::Selection::Pos s_block_to=s_col_to;
+
+	s_block_from.column=0;
+	s_block_to.column=get_current_track_columns()-1;
+		
+	if (d->selection.enabled && d->selection.begin==s_col_from && d->selection.end==s_col_to) {
+		
+		d->selection.begin=s_block_from;
+		d->selection.end=s_block_to;
+	} else {
+		
+		d->selection.begin=s_col_from;
+		d->selection.end=s_col_to;
+		d->selection.enabled=true;
+		
+	}
+	
+	fix_selection();
+	d->ui_update_notify->edit_window_changed();
+	printf("moh");
 	
 }
 void Editor::selection_zap() {
@@ -712,6 +750,237 @@ void Editor::selection_paste_mix() {
 bool Editor::selection_can_paste_at_cursor() {
 	
 	return selection_can_paste_at( get_cursor_selection_pos() );
+}
+
+void Editor::selection_volume_scale(int p_percent) {
+	
+	if (!d->selection.enabled)
+		return;
+	
+	Tick tick_from=d->selection.begin.tick;
+	Tick tick_to=d->selection.end.tick+TICKS_PER_BEAT/d->cursor.get_snap();
+	
+	d->undo_stream.begin(String("Scale Volume by ") +String::num(p_percent) +"%");
+	
+	for (int i=d->selection.begin.blocklist;i<=d->selection.end.blocklist;i++) {
+		
+		BlockList *bl=get_blocklist(i);
+		
+		if (dynamic_cast<Track_Pattern*>(bl)) {
+			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
+			int columns=tp->get_visible_columns();
+			int column_from=(i==0)?d->selection.begin.column:0;
+			int column_to=(i==d->selection.end.blocklist)?d->selection.end.column:(columns-1);
+						
+			for (int j=column_from;j<=column_to;j++) {
+				
+				int block_from,block_to;
+				if (tp->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
+					continue;
+				for (int k=block_from;k<=block_to;k++) {
+					
+					Track_Pattern::PatternBlock *pb=tp->get_block( k );
+					
+					for (int l=0;l<pb->get_note_count();l++) {
+								
+						Track_Pattern::Note note=pb->get_note( l );;
+						Track_Pattern::Position pos=pb->get_note_pos( l );
+						pos.tick+=tp->get_block_pos(k);	
+				
+						if (pos.column!=j)
+							continue;
+						if (pos.tick<tick_from || pos.tick >tick_to)
+							continue;
+						
+						Track_Pattern *pattern_track=tp;
+							
+						int new_vol=(p_percent*note.volume)/100;
+						if (new_vol<0)
+							new_vol=0;
+						if (new_vol>99)
+							new_vol=99;
+						note.volume=new_vol;
+						
+						SET_NOTE(pos,note);	
+					}
+				}
+			}
+		}
+	}
+	
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+
+}
+
+void Editor::selection_to_loop() {
+	
+
+	if (!is_selection_active())
+		return;
+			
+	int beat_begin=get_selection_begin_row()/get_cursor().get_snap();
+
+	int beat_end=get_selection_end_row()/get_cursor().get_snap()+1;
+			
+	get_song()->set_loop_begin( beat_begin );
+	get_song()->set_loop_end( beat_end );
+
+	d->ui_update_notify->edit_window_changed();
+		
+}
+void Editor::selection_create_block() {
+	
+	if (!d->selection.enabled)
+		return;
+	
+	int beat_begin=get_selection_begin_row()/get_cursor().get_snap();
+
+	int beat_end=get_selection_end_row()/get_cursor().get_snap()+1;
+	
+	Tick tick_from=beat_begin*TICKS_PER_BEAT;
+	Tick tick_to=beat_end*TICKS_PER_BEAT;
+	
+	for (int i=d->selection.begin.blocklist;i<=d->selection.end.blocklist;i++) {
+		int block_from,block_to;
+		BlockList *bl = get_blocklist(i);
+		if (!bl)
+			return;
+		//if there are blocks where we want create, quit!
+		if (!bl->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
+			return;
+	}
+	begin_meta_undo_block("Create Blocks from Selection");
+	
+	for (int i=d->selection.begin.blocklist;i<=d->selection.end.blocklist;i++) {
+	
+		BlockList *bl = get_blocklist(i);
+		
+		BlockList::Block* b = bl->create_block();
+		
+		if (!b)
+			continue; //cant create blocks out of nowhere here
+		b->set_length( tick_to-tick_from );
+		
+		blocklist_insert_block( bl,b,tick_from );
+	}
+	
+	end_meta_undo_block();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+}
+void Editor::selection_set_volumes_to_mask() {
+	
+	if (!d->selection.enabled)
+		return;
+	printf("Transpose Begin\n");
+	
+	Tick tick_from=d->selection.begin.tick;
+	Tick tick_to=d->selection.end.tick+TICKS_PER_BEAT/d->cursor.get_snap();
+	
+	d->undo_stream.begin("Apply Volume Mask");
+	
+	for (int i=d->selection.begin.blocklist;i<=d->selection.end.blocklist;i++) {
+		
+		BlockList *bl=get_blocklist(i);
+		
+		if (dynamic_cast<Track_Pattern*>(bl)) {
+			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
+			int columns=tp->get_visible_columns();
+			int column_from=(i==0)?d->selection.begin.column:0;
+			int column_to=(i==d->selection.end.blocklist)?d->selection.end.column:(columns-1);
+						
+			for (int j=column_from;j<=column_to;j++) {
+				
+				int block_from,block_to;
+				if (tp->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
+					continue;
+				for (int k=block_from;k<=block_to;k++) {
+					
+					Track_Pattern::PatternBlock *pb=tp->get_block( k );
+					
+					for (int l=0;l<pb->get_note_count();l++) {
+								
+						Track_Pattern::Note note=pb->get_note( l );;
+						Track_Pattern::Position pos=pb->get_note_pos( l );
+						pos.tick+=tp->get_block_pos(k);	
+				
+						if (pos.column!=j)
+							continue;
+						if (pos.tick<tick_from || pos.tick >tick_to)
+							continue;
+						
+						Track_Pattern *pattern_track=tp;
+							
+						note.volume=d->pattern_edit.volume_mask;
+						
+						SET_NOTE(pos,note);	
+					}
+				}
+			}
+		}
+	}
+	
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+        
+	
+}
+
+void Editor::selection_cursor_transpose_up() {
+	
+	if (!d->selection.enabled) {
+				
+		BlockList *bl = get_blocklist( get_current_blocklist() );
+		Track_Pattern * pattern_track = dynamic_cast<Track_Pattern*>(bl);
+		if (pattern_track) {
+					
+			Track_Pattern::Position pos=Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column );
+					
+			Track_Pattern::Note note=pattern_track->get_note( pos );
+			if (note.is_empty())
+				return;
+			note.note++;
+			if (note.note>=Track_Pattern::Note::MAX_NOTES)
+				note.note=Track_Pattern::Note::MAX_NOTES-1;
+					
+			d->undo_stream.begin("Transpose Note Up");				
+			SET_NOTE(pos ,note);
+			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+			play_note_at_cursor();
+		}
+	} else
+		selection_transpose(true);	
+	
+}
+void Editor::selection_cursor_transpose_down() {
+
+	if (!d->selection.enabled) {
+				
+
+		BlockList *bl = get_blocklist( get_current_blocklist() );
+		Track_Pattern * pattern_track = dynamic_cast<Track_Pattern*>(bl);
+		if (pattern_track) {
+				
+			Track_Pattern::Position pos=Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column );
+					
+			Track_Pattern::Note note=pattern_track->get_note( pos );
+			if (note.is_empty() || note.note==0)
+				return;
+					
+			note.note--;
+			if (note.note>=Track_Pattern::Note::MAX_NOTES)
+				note.note=Track_Pattern::Note::MAX_NOTES-1;
+					
+			d->undo_stream.begin("Transpose Note Down");				
+			SET_NOTE( pos ,note);
+			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+			play_note_at_cursor();
+		}
+	} else
+		selection_transpose(false);	
+
 }
 
 } //end of namespace

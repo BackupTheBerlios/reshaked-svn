@@ -17,6 +17,7 @@
 #include <Qt/qlabel.h>
 #include <Qt/qscrollbar.h>
 #include <Qt/qpainter.h>
+#include <Qt/qinputdialog.h>
 #include "interface/blocklist_separator.h"
 #include "interface/visual_settings.h"
 #include "interface/indexed_action.h"
@@ -128,11 +129,13 @@ void BlockListUIList::blocklist_ui_under_cursor_request_signal(BlockListUI_Base*
 	for (int i=0;i<block_list_ui_list.size();i++) {
 		
 		QRect global_rect(block_list_ui_list[i]->mapToGlobal(QPoint(0,0)),block_list_ui_list[i]->size());
-		if (!global_rect.contains( QCursor::pos() ))
+		
+		if (QCursor::pos().x()<global_rect.x() && QCursor::pos().x()>(global_rect.x()+global_rect.width()))
 			continue;
 		
 		QPoint contained=QCursor::pos()-global_rect.topLeft();
 		p_ui->set_blocklist_ui_under_cursor( block_list_ui_list[i], contained );
+		break;
 		
 	}
 	
@@ -393,7 +396,7 @@ void BlockListUIList::show_edit_menu() {
 
 	ADD_ACTION("Set Selection Begin",ACTION_SET_SELECTION_BEGIN,"editor/selection_begin",editor->get_blocklist_count()>0);
 	ADD_ACTION("Set Selection End",ACTION_SET_SELECTION_END,"editor/selection_end",editor->get_blocklist_count()>0);
-	ADD_ACTION("Select Column/All",ACTION_SELECT_COLUMN_ALL,"editor/select_column_block_all",editor->get_blocklist_count()>0);
+	ADD_ACTION("Select Column/Block",ACTION_SELECT_COLUMN_ALL,"editor/select_column_block",editor->get_blocklist_count()>0);
 	ADD_ACTION("Disable Selection",ACTION_CLEAR_SELECTION,"editor/selection_disable",editor->is_selection_active());
 	
 	edit_menu->addSeparator();
@@ -403,6 +406,33 @@ void BlockListUIList::show_edit_menu() {
 	ADD_ACTION("Paste",ACTION_PASTE,"editor/selection_paste_overwrite",editor->selection_can_paste_at_cursor());
 	ADD_ACTION("Paste Insert",ACTION_PASTE_INSERT,"editor/selection_paste_insert",editor->selection_can_paste_at_cursor());
 	ADD_ACTION("Paste Mix",ACTION_PASTE_MIX,"editor/selection_paste_mix",editor->selection_can_paste_at_cursor());
+	
+	edit_menu->addSeparator();
+	
+	ADD_ACTION("Edit Marker",ACTION_EDIT_MARKER,"editor/edit_marker",editor->get_blocklist_count()>0);
+	
+	edit_menu->addSeparator();
+	
+	ADD_ACTION("Set Loop Begin",ACTION_SET_LOOP_BEGIN,"editor/set_loop_begin",editor->get_blocklist_count()>0);
+	ADD_ACTION("Set Loop End",ACTION_SET_LOOP_END,"editor/set_loop_end",editor->get_blocklist_count()>0);
+	
+	ADD_ACTION("Set Loop from Selection",ACTION_SELECTION_TO_LOOP,"editor/selection_to_loop",editor->is_selection_active());
+	
+	edit_menu->addSeparator();
+	
+	ADD_ACTION("Create Block from Selection",ACTION_SELECTION_TO_BLOCK,"editor/selection_create_blocks",editor->is_selection_active());
+
+	edit_menu->addSeparator();
+	
+	bool sel_active=editor->is_selection_active();
+	ADD_ACTION(sel_active?"Selection Transpose Up Semitone":"Cursor Transpose Up Semitone",ACTION_SELECTION_RAISE_SEMITONE,"editor/transpose_up",editor->is_selection_active());
+	
+	ADD_ACTION(sel_active?"Selection Transpose Down Semitone":"Cursor Transpose Down Semitone",ACTION_SELECTION_LOWER_SEMITONE,"editor/transpose_down",editor->is_selection_active());
+	
+	ADD_ACTION("Selection Scale Volumes",ACTION_SELECTION_SCALE_VOLUMES,"editor/selection_scale_volumes",editor->is_selection_active());
+	
+	ADD_ACTION("Selection Apply Volume Mask",ACTION_SELECTION_SET_VOLUMES_TO_MASK,"editor/selection_apply_volume_mask",editor->is_selection_active());
+	
 #undef ADD_ACTION		
 
 	edit_menu->popup(edit_button->mapToGlobal(QPoint(0,edit_button->height())));
@@ -419,6 +449,10 @@ void BlockListUIList::poly_input_toggle(bool p_enabled) {
 	editor->set_polyphonic_midi_input_enabled(p_enabled);
 }
 
+void BlockListUIList::cursor_step_changed(int p_step) {
+	
+	editor->cursor_set_step(p_step);
+}
 void BlockListUIList::edit_menu_selected_item(int p_item) {
 	
 	
@@ -433,7 +467,66 @@ void BlockListUIList::edit_menu_selected_item(int p_item) {
 		case ACTION_PASTE: editor->selection_paste_overwrite(); break;
 		case ACTION_PASTE_INSERT: editor->selection_paste_insert(); break;
 		case ACTION_PASTE_MIX: editor->selection_paste_mix(); break;
+		
+		case ACTION_EDIT_MARKER: {
+			
+		}break;
+		case ACTION_SET_LOOP_BEGIN: {
+			
+			editor->set_loop_begin_at_cursor();
+		} break;
+		case ACTION_SET_LOOP_END: {
+			
+			editor->set_loop_end_at_cursor();
+		
+		}break;
+		case ACTION_SELECTION_TO_LOOP: {
+			
+			editor->selection_to_loop();			
+		} break;
+		/**/
+		case ACTION_SELECTION_TO_BLOCK: editor->selection_create_block(); break;
+		/**/
+		case ACTION_SELECTION_RAISE_SEMITONE: editor->selection_cursor_transpose_up(); break;
+		case ACTION_SELECTION_LOWER_SEMITONE: editor->selection_cursor_transpose_down();break;
+		case ACTION_SELECTION_SCALE_VOLUMES: scale_volume_slot(); break;
+		case ACTION_SELECTION_SET_VOLUMES_TO_MASK: editor->selection_set_volumes_to_mask(); break;
+		
 	}
+}
+
+void BlockListUIList::scale_volume_slot() {
+	
+	static int last_scale=100;
+	
+	bool ok;
+	
+	int scale_factor= QInputDialog::getInteger ( topLevelOf(this), "Scale Volumes", "Scale %", last_scale, 1, 500,  1,&ok );
+	
+	if (!ok)
+		return;
+	
+	editor->selection_volume_scale(scale_factor);
+	last_scale=scale_factor;
+	
+}
+void BlockListUIList::edit_marker_slot() {
+	
+	int beat=editor->get_cursor().get_tick_pos()/TICKS_PER_BEAT;
+	int marker_idx=editor->get_song()->get_marker_list().get_exact_index( beat );
+			
+	QString current_text=QStrify( (marker_idx>=0)?editor->get_song()->get_marker_list().get_index_value( marker_idx ):"" );
+	bool ok;
+	QString text=QInputDialog::getText ( this,"Insert Marker", "Marker Text:", QLineEdit::Normal, current_text,&ok);
+	if (!ok)
+		return;
+	if (text=="" && marker_idx>=0)
+		editor->marker_remove(marker_idx);		
+	else
+		editor->marker_set(beat,DeQStrify(text));
+			
+	row_display->update();
+	
 }
 
 
@@ -500,9 +593,11 @@ void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 	new PixmapLabel(cursor_stepping_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN_TOP));
 	cursor_stepping = new PixmapCombo(cursor_stepping_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN));
 	cursor_stepping->get_font().setPixelSize(GET_CONSTANT(CONSTANT_EDIT_TOOLBAR_FONT_HEIGHT));
-	for (int i=0;i<=16;i++) {
+	for (int i=0;i<=9;i++) {
 		cursor_stepping->add_item( QString::number(i) );
 	}
+	QObject::connect(cursor_stepping,SIGNAL(item_selected_signal( int )),this,SLOT(cursor_step_changed(int p_step)));
+	cursor_stepping->select_item( 1 ); //1 preselected
 	new PixmapLabel(cursor_stepping_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN_BOTTOM));
 		
 	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
@@ -558,10 +653,19 @@ void BlockListUIList::h_qscrollbar_changed(int p_val) {
 }	
 	
 
-void BlockListUIList::update_mask() {
-	printf("UPDATING MASK!\n");
+void BlockListUIList::update_top_bar() {
+	
 	edit_mask->set_pressed( editor->is_volume_mask_active() );
 	mask_label->set_text( QString::number( editor->get_volume_mask() ) );
+	cursor_stepping->select_item( editor->cursor_get_step() );
+	for (int i=0;i<MAX_DIVISORS;i++) {
+		
+		if (editor->get_cursor().get_snap()==divisors[i]) {
+			
+			snap_config->select_item(i);
+			break;
+		}
+	}
 }
 void BlockListUIList::update_play_position() {
 	

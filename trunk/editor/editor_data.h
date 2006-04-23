@@ -71,6 +71,7 @@ friend class EditorCommands;
 		bool pattern_midi_input_enabled;
 		bool polyphonic_midi_input_enabled;
 		
+		int cursor_step;
 	} global_edit;
 
 	struct Selection {

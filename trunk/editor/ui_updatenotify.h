@@ -40,8 +40,12 @@ public:
 	virtual void track_names_changed()=0;
 	
 	virtual void volume_mask_changed()=0;
+	virtual void cursor_step_changed()=0;
 	
 	virtual void notify_action(String p_action)=0;
+	
+	virtual void editor_marker_edit_request()=0;
+	virtual void editor_volume_scale_request()=0;
 	
 	/* MVC Hacks */
 	virtual void current_track_add_column()=0;	

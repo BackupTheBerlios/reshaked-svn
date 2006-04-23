@@ -1,4 +1,4 @@
-//
+////
 // C++ Implementation: editor
 //
 // Description: 
@@ -39,7 +39,7 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		CASE( KEYBIND("up") ) {
 
 			begin_check_shift_selection();
-			d->cursor.set_pos( d->cursor.get_pos() -1 );
+			d->cursor.set_pos( d->cursor.get_pos() - d->global_edit.cursor_step );
 			end_check_shift_selection();
 			
 
@@ -47,7 +47,7 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		CASE( KEYBIND("down") ) {
 
 			begin_check_shift_selection();
-			d->cursor.set_pos( d->cursor.get_pos() +1 );
+			d->cursor.set_pos( d->cursor.get_pos() + d->global_edit.cursor_step );
 			end_check_shift_selection();
 
 		}
@@ -105,6 +105,36 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		
 		}
 
+		CASE( KEYBIND("next_column") ) {
+		
+			
+			if (d->pattern_edit.column<(get_current_track_columns()-1)) {
+				d->pattern_edit.column++;
+				d->pattern_edit.field=0;
+					
+			} else if (d->global_edit.current_blocklist<(get_blocklist_count()-1)) {
+					
+				d->global_edit.current_blocklist++;
+				enter_blocklist(EditorData::ENTER_LEFT);
+					
+			}			
+		
+		}
+		CASE( KEYBIND("prev_column") ) {
+		
+		
+			if (d->pattern_edit.column>0 && d->pattern_edit.column<get_current_track_columns()) {
+				d->pattern_edit.column--;
+				
+				
+			} else if (d->global_edit.current_blocklist>0) {
+				
+				d->global_edit.current_blocklist--;
+				enter_blocklist(EditorData::ENTER_RIGHT);
+			}				
+		
+			d->pattern_edit.field=0;
+		}
 		
 
 		CASE( KEYBIND("global/raise_octave") ) {
@@ -211,9 +241,9 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		
 			selection_paste_mix();
 		}
-		CASE( KEYBIND("editor/select_column_block_all") ) {
+		CASE( KEYBIND("editor/select_column_block") ) {
 		
-			
+			selection_column_all();			
 		}
 		CASE( KEYBIND("editor/selection_zap") ) {
 		
@@ -223,6 +253,86 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		
 			d->selection.enabled=false;
 			d->ui_update_notify->edit_window_changed();			
+		}
+		
+		CASE( KEYBIND("editor/edit_marker") ) {
+		
+			d->ui_update_notify->editor_marker_edit_request();
+		}
+		CASE( KEYBIND("editor/set_loop_begin") ) {
+		
+			set_loop_begin_at_cursor();
+		}
+		CASE( KEYBIND("editor/set_loop_end") ) {
+		
+			set_loop_end_at_cursor();
+		}
+		CASE( KEYBIND("editor/selection_to_loop") ) {
+		
+			selection_to_loop();
+			
+		}
+		CASE( KEYBIND("editor/selection_apply_volume_mask") ) {
+		
+			selection_set_volumes_to_mask();			
+		}
+		CASE( KEYBIND("editor/selection_scale_volumes") ) {
+		
+			d->ui_update_notify->editor_volume_scale_request();			
+		}
+		
+		CASE( KEYBIND("editor/selection_create_blocks") ) {
+		
+			selection_create_block();
+		}		
+		
+		CASE( KEYBIND("note_entry/cursor_step_0") ) { cursor_set_step(0); }
+		CASE( KEYBIND("note_entry/cursor_step_1") ) { cursor_set_step(1); }
+		CASE( KEYBIND("note_entry/cursor_step_2") ) { cursor_set_step(2); }
+		CASE( KEYBIND("note_entry/cursor_step_3") ) { cursor_set_step(3); }
+		CASE( KEYBIND("note_entry/cursor_step_4") ) { cursor_set_step(4); }
+		CASE( KEYBIND("note_entry/cursor_step_5") ) { cursor_set_step(5); }
+		CASE( KEYBIND("note_entry/cursor_step_6") ) { cursor_set_step(6); }
+		CASE( KEYBIND("note_entry/cursor_step_7") ) { cursor_set_step(7); }
+		CASE( KEYBIND("note_entry/cursor_step_8") ) { cursor_set_step(8); }
+		CASE( KEYBIND("note_entry/cursor_step_9") ) { cursor_set_step(9); }
+		
+		CASE( KEYBIND("editor/window_snap_1") ) { set_snap(1); }
+		CASE( KEYBIND("editor/window_snap_2") ) { set_snap(2); }
+		CASE( KEYBIND("editor/window_snap_3") ) { set_snap(3); }
+		CASE( KEYBIND("editor/window_snap_4") ) { set_snap(4); }
+		CASE( KEYBIND("editor/window_snap_6") ) { set_snap(6); }
+		CASE( KEYBIND("editor/window_snap_8") ) { set_snap(8); }
+		CASE( KEYBIND("editor/window_snap_12") ) { set_snap(12); }
+		CASE( KEYBIND("editor/window_snap_16") ) { set_snap(16); }
+		CASE( KEYBIND("editor/window_snap_24") ) { set_snap(24); }
+		CASE( KEYBIND("editor/window_snap_32") ) { set_snap(32); }
+		CASE( KEYBIND("editor/window_snap_48") ) { set_snap(48); }
+		CASE( KEYBIND("editor/window_snap_64") ) { set_snap(64); }
+
+		CASE( KEYBIND("editor/window_snap_half") ) { 
+			
+			int current_snap=d->cursor.get_snap();
+			
+			if (current_snap!=1 && current_snap !=3) {
+				
+				current_snap/=2;
+				set_snap(current_snap);
+			}
+			
+			
+		}
+		
+		CASE( KEYBIND("editor/window_snap_double") ) { 
+			
+			int current_snap=d->cursor.get_snap();
+			
+			if (current_snap!=48 && current_snap !=64) {
+				
+				current_snap*=2;
+				set_snap(current_snap);
+			}
+			
 		}
 		
 		DEFAULT
@@ -235,7 +345,16 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 }
 
 
-
+int Editor::get_current_track_columns() {
+	
+	BlockList *bl=get_blocklist( get_current_blocklist() );
+	if (dynamic_cast<Track_Pattern*>(bl)) {
+		
+		return dynamic_cast<Track_Pattern*>(bl)->get_visible_columns();
+	}
+	
+	return 1;
+}
 
 void Editor::revalidate_cursor() {
 	
@@ -297,6 +416,7 @@ int Editor::get_editing_octave() {
 void Editor::set_snap(int p_new_snap) {
 	
 	d->cursor.set_snap( p_new_snap );	
+	d->ui_update_notify->cursor_step_changed();
 }
 
 
@@ -492,6 +612,38 @@ void Editor::set_current_rack_track(int p_track) {
 int Editor::get_current_rack_track() {
 	
 	return d->global_edit.current_rack_track;
+}
+
+void Editor::cursor_set_step(int p_step) {
+	
+	d->global_edit.cursor_step=p_step;
+	d->ui_update_notify->cursor_step_changed();
+}
+int Editor::cursor_get_step() {
+	
+	return d->global_edit.cursor_step;
+}
+
+void Editor::set_loop_begin_at_cursor() {
+	
+	int beat=get_cursor().get_tick_pos()/TICKS_PER_BEAT;
+	if ( get_song()->get_loop_end() < beat )
+		get_song()->set_loop_end( beat+1 );
+			
+	get_song()->set_loop_begin( beat );
+	
+	d->ui_update_notify->edit_window_changed();
+
+}
+void Editor::set_loop_end_at_cursor() {
+	
+	int beat=get_cursor().get_tick_pos()/TICKS_PER_BEAT;
+	if ( get_song()->get_loop_begin() < beat )
+		get_song()->set_loop_end( beat );
+			
+	get_song()->set_loop_end( beat+1 );
+	d->ui_update_notify->edit_window_changed();
+	
 }
 
 

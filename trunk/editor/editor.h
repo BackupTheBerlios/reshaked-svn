@@ -48,6 +48,8 @@ class Editor {
 	
 	void selection_transpose(bool p_up);	
 	
+	int get_current_track_columns();
+	
 friend class EditorCommands;	
 	
 	void revalidate_cursor();
@@ -171,10 +173,19 @@ public:
 	void selection_mouse_drag_begin(int p_blocklist,int p_column,int p_row);
 	void selection_mouse_drag_end(int p_blocklist,int p_column,int p_row);
 
+	void selection_volume_scale(int p_percent);
+	void selection_to_loop();
+	void selection_create_block();
+	void selection_set_volumes_to_mask();
+	
+	void selection_cursor_transpose_up();
+	void selection_cursor_transpose_down();
 	
 	/** CURSOR EDITING (editor.cpp) */	
 	
 	
+	void cursor_set_step(int p_step);
+	int cursor_get_step();
 	void set_snap(int p_new_snap);
 	void set_editing_octave(int p_octave);
 	int get_editing_octave();
@@ -191,6 +202,9 @@ public:
 	void set_volume_mask(int p_val);
 	bool is_volume_mask_active();
 	void set_volume_mask_active(bool p_active);
+	
+	void set_loop_begin_at_cursor();
+	void set_loop_end_at_cursor();
 	
 	/** UNDO SYSTEM (edit.cpp) */
 	
