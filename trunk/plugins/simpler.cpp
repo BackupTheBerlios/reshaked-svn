@@ -33,7 +33,7 @@ const SoundPluginInfo *Simpler::create_info() {
 	info.description="Simple Sampler";
 	info.long_description="Sampler with just the basics. Load Mono/Stereo files and ADSR.";
 	info.unique_ID="INTERNAL_simpler"; 
-	info.category_path="/basic"; 
+	info.category="Internal"; 
 	info.can_custom_channels=true;
 	info.custom_channels.push_back(1);
 	info.custom_channels.push_back(2);

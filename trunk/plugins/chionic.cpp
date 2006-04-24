@@ -31,7 +31,7 @@ const SoundPluginInfo *Chionic::create_info() {
 	info.description="Advanced Sampler and Additive Synthesizer";
 	info.long_description="Chionic 2 is an advanced sampler and additive synthesizer. It's capable of multi layered voices and many kind of modulations between them, as well as modulating an audio source. It also supports many features intended for producing extremely realistic instruments";
 	info.unique_ID="INTERNAL_chionic"; 
-	info.category_path="/synthesizers"; 
+	info.category="Internal"; 
 	info.can_custom_channels=true;
 	info.custom_channels.push_back(2);
 	info.custom_channels.push_back(4);

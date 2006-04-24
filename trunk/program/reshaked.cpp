@@ -19,6 +19,8 @@
 #include "dsp/sample_file.h"
 #include "editor/midi_input_handler.h"
 
+#include "drivers/ladspa_sound_plugin_source.h"
+
 #include "drivers/mididriver_alsa.h"
 
 #include "drivers/sound_driver_portaudio.h"
@@ -175,6 +177,11 @@ int main(int argc, char *argv[]) {
 #endif
 	
 	init_sound_plugin_list();
+#ifdef LADSPA_ENABLED
+		
+	ReShaked::LADSPA_SoundPluginSource ladspa_plugin_source;
+	
+#endif;
 	init_sound_plugin_UI_list();
 	
 	ReShaked::AudioControl::init();

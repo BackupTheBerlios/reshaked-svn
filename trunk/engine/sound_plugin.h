@@ -34,7 +34,7 @@ struct SoundPluginInfo {
 	String description; ///< Short description of the plugin
 	String long_description; ///< Long description of the plugin
 	String unique_ID; ///< Unique String ID of plugin
-	String category_path; ///< path to categorize this plugin
+	String category; ///< string to categorize this plugin
 	bool can_custom_channels; ///< If true, then it can instance in ANY amount of channels, limited only by custom_channels
 	std::vector<int> custom_channels; ///< Limit the can_custom_channesls value to the given ones.
 	bool has_internal_UI; ///< Plugin uses internal UI, for external plugins (VST/DSSI/ETC)

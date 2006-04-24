@@ -31,6 +31,7 @@ else: #POSIX
 	env.Append(LIBS=['QtGui','QtCore']);
 	env.Append(LIBS=['pthread']);
 	version.enables+=['POSIX_ENABLED'];
+	version.enables+=['LADSPA_ENABLED'];
 	detect.check_pkg_config();
 
 

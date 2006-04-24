@@ -28,7 +28,7 @@ const SoundPluginInfo *AmplifierPlugin::create_info() {
 	info.description="Changes signal amplitude";
 	info.long_description="The amplifier works like any volume knob or slider in your stereo/discman/etc.";
 	info.unique_ID="INTERNAL_amplifier"; 
-	info.category_path="/basic"; 
+	info.category="Internal"; 
 	info.can_custom_channels=true;
 	info.has_internal_UI=false; 
 	info.is_synth=false;
