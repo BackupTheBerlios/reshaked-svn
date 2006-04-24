@@ -28,6 +28,7 @@ class LADSPA_SoundPluginSource{
 		
 		SoundPluginInfo plugin_info;
 		String path;
+		int index;
 	};
 	
 	
@@ -45,6 +46,9 @@ class LADSPA_SoundPluginSource{
 
 	
 	std::vector<const LADSPA_Struct *> plugin_list;
+	
+	static LADSPA_SoundPluginSource *singleton;
+	static SoundPlugin* create_ladspa_plugin(const SoundPluginInfo *p_info,int p_channels);	
 	
 public:
 	

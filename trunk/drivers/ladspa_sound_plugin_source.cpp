@@ -23,13 +23,24 @@
 
 #include "engine/sound_plugin_list.h"
 #include "ladspa.xpm"
-
+#include "drivers/sound_plugin_ladspa.h"
 namespace ReShaked {
 
+LADSPA_SoundPluginSource *LADSPA_SoundPluginSource::singleton=NULL;
 
-static SoundPlugin* create_ladspa_plugin(const SoundPluginInfo *p_info,int p_channels) {
+SoundPlugin* LADSPA_SoundPluginSource::create_ladspa_plugin(const SoundPluginInfo *p_info,int p_channels) {
 	
+	for (int i=0;i<singleton->plugin_list.size();i++) {
+		
+		if (&singleton->plugin_list[i]->plugin_info!=p_info) 
+			continue;
+		
+		return new SoundPlugin_LADSPA(	p_info, singleton->plugin_list[i]->path, singleton->plugin_list[i]->index, p_channels);
+			
+		
+	}
 	return NULL;
+	
 	//return new Simpler(p_info,p_channels);
 }
 
@@ -87,6 +98,7 @@ void LADSPA_SoundPluginSource::scan_plugins(String p_dir) {
 
 			LADSPA_Struct *plugin_data= new LADSPA_Struct;
 			plugin_data->path=lib_name;
+			plugin_data->index=k;
 			SoundPluginInfo &info=plugin_data->plugin_info;
 
 			info.caption=descriptor->Name;
@@ -103,7 +115,7 @@ void LADSPA_SoundPluginSource::scan_plugins(String p_dir) {
 			info.has_internal_UI=false; 
 			info.is_synth=false;
 			info.xpm_preview=(const char**)ladspa_xpm;
-			info.creation_func=&create_ladspa_plugin;
+			info.creation_func=&LADSPA_SoundPluginSource::create_ladspa_plugin;
 			info.version=1;
 			
 			
@@ -116,7 +128,8 @@ void LADSPA_SoundPluginSource::scan_plugins(String p_dir) {
 }
 
 LADSPA_SoundPluginSource::LADSPA_SoundPluginSource() {
-	
+	ERR_FAIL_COND(singleton!=NULL);
+	singleton=this;
 	char *ladspa_path;
 
 	ladspa_path= getenv("LADSPA_PATH");
