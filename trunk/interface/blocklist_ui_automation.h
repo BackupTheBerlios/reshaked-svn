@@ -80,6 +80,7 @@ class BlockListUI_Automation : public BlockListUI_Base {
 		float new_value;
 		float new_lfo;
 		
+		bool snap;
 		
 	} moving_point;
 	

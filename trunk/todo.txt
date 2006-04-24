@@ -2,13 +2,13 @@ Goals for 50%
 
 Automation:
 *-Edit UNDO
--LFO edit
--Interpolation Edit
--Move left/right
--more mouse support in widegt
--RESIZE still miss automation
+*LFO edit
+*Interpolation Edit
+*Move left/right
+*more mouse support in widegt
+*RESIZE still miss automation
 Pattern:
--add/remove track column has no undo/redo
+*add/remove track column has no undo/redo
 
 BUG:
 *-Fix Screen-Screen Copy in automation, add in pattern
@@ -25,9 +25,9 @@ Global View
 *-Fix block MOVING
 *-Add undo/redo to all block operations
 *-Optimize painting a bit using clip regions ikk
--display linked blocks differently
--select other linked blocks
-*?-delete blocks gdannit
+*display linked blocks differently
+*select other linked blocks
+*delete blocks gdannit
 
 Selection
 *Make selection :) )buggy)
@@ -40,7 +40,7 @@ Goals for 60%
 *Routing Working
 
 Goals for 70% 
--Buses
+XBuses
 *Global Track
 *Global Stuff (tempo)
 *Labels thru song (marks
@@ -63,7 +63,7 @@ NB-MIDI in the DRIVERS
 	NB-MIDI Input
 *-DDS improvement
 	*-SAVE/LOAD
-		-Presets
+		*Presets
 	-Track Duplicate
 -UI:
 	*-Play from Cursor / Play Block at Editor
@@ -98,8 +98,8 @@ NB-MIDI in the DRIVERS
 Goals for 100%
 -Settings dialog
 -Overal beautify/fix interface, make more intuitive
--Big Mixer
--hints (yellow little boxes) over most buttons
+*Big Mixer
+*hints (yellow little boxes) over most buttons
 
 -=-=-=-=
 

@@ -335,6 +335,19 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 			
 		}
 		
+		CASE( KEYBIND("editor/quantize_up") ) { 
+			
+			selection_quantize( QUANTIZE_UP );
+		}
+		CASE( KEYBIND("editor/quantize_nearest") ) { 
+			
+			selection_quantize( QUANTIZE_NEAREST );
+		}
+		CASE( KEYBIND("editor/quantize_down") ) { 
+			
+			selection_quantize( QUANTIZE_DOWN );
+		}
+		
 		DEFAULT
 			
 			handled=false;

@@ -181,6 +181,14 @@ public:
 	void selection_cursor_transpose_up();
 	void selection_cursor_transpose_down();
 	
+	enum QuantizeType {
+		QUANTIZE_UP,
+		QUANTIZE_NEAREST,
+		QUANTIZE_DOWN
+	};
+			
+	void selection_quantize(QuantizeType p_type);
+	
 	/** CURSOR EDITING (editor.cpp) */	
 	
 	

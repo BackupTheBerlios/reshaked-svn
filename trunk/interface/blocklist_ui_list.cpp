@@ -130,11 +130,12 @@ void BlockListUIList::blocklist_ui_under_cursor_request_signal(BlockListUI_Base*
 		
 		QRect global_rect(block_list_ui_list[i]->mapToGlobal(QPoint(0,0)),block_list_ui_list[i]->size());
 		
-		if (QCursor::pos().x()<global_rect.x() && QCursor::pos().x()>(global_rect.x()+global_rect.width()))
+		if (QCursor::pos().x()<global_rect.x() || QCursor::pos().x()>(global_rect.x()+global_rect.width()))
 			continue;
 		
 		QPoint contained=QCursor::pos()-global_rect.topLeft();
 		p_ui->set_blocklist_ui_under_cursor( block_list_ui_list[i], contained );
+
 		break;
 		
 	}
@@ -254,6 +255,7 @@ void BlockListUIList::update_track_list() {
 		Automation *a=editor->get_song()->get_global_track().get_visible_automation(i);
 		BlockListUI_Automation *au_wg=new BlockListUI_Automation(auto_hb,editor,a);
 		block_list_ui_list.push_back( au_wg );
+		QObject::connect( au_wg, SIGNAL(blocklist_ui_under_cursor_request_signal( BlockListUI_Base* )), this, SLOT(blocklist_ui_under_cursor_request_signal( BlockListUI_Base* ) ));
 		
 			
 		BlockList_Separator *s = new BlockList_Separator(auto_hb,QStrify(a->get_property()->get_caption()));
@@ -309,6 +311,8 @@ void BlockListUIList::update_track_list() {
 			Automation *a=editor->get_song()->get_track(i)->get_visible_automation(j);
 			BlockListUI_Automation *au_wg= new BlockListUI_Automation(track_hb,editor,a);
 			block_list_ui_list.push_back( au_wg );
+			
+			QObject::connect( au_wg, SIGNAL(blocklist_ui_under_cursor_request_signal( BlockListUI_Base* )), this, SLOT(blocklist_ui_under_cursor_request_signal( BlockListUI_Base* ) ));
 			
 			new BlockList_Separator(track_hb,QStrify(a->get_property()->get_caption()));
 		}
@@ -393,6 +397,7 @@ void BlockListUIList::show_edit_menu() {
 	edit_menu->clear();
 #define ADD_ACTION(m_text,m_index,m_accel,m_can) { QString _txt = m_text; if (m_accel!="") { _txt+=" ( "+(QKeySequence(KEYBIND(m_accel)).operator QString() )+" )"; }; QAction *_a = new IndexedAction(m_index,_txt,edit_menu); _a->setData(m_index); edit_menu->addAction(_a); QObject::connect(_a,SIGNAL(selected_index_signal(int)),this,SLOT(edit_menu_selected_item( int ))); _a->setDisabled(!(m_can)); }
 
+#define ADD_ACTION2(m_text,m_index,m_accel,m_can) { QString _txt = m_text; if (m_accel!="") { _txt+=" ( "+(QKeySequence(KEYBIND(m_accel)).operator QString() )+" )"; }; QAction *_a = new IndexedAction(m_index,_txt,sel_submenu); _a->setData(m_index); sel_submenu->addAction(_a); QObject::connect(_a,SIGNAL(selected_index_signal(int)),this,SLOT(edit_menu_selected_item( int ))); _a->setDisabled(!(m_can)); }
 
 	ADD_ACTION("Set Selection Begin",ACTION_SET_SELECTION_BEGIN,"editor/selection_begin",editor->get_blocklist_count()>0);
 	ADD_ACTION("Set Selection End",ACTION_SET_SELECTION_END,"editor/selection_end",editor->get_blocklist_count()>0);
@@ -409,6 +414,10 @@ void BlockListUIList::show_edit_menu() {
 	
 	edit_menu->addSeparator();
 	
+	QMenu *sel_submenu = edit_menu->addMenu("Selection..");
+	
+	edit_menu->addSeparator();
+	
 	ADD_ACTION("Edit Marker",ACTION_EDIT_MARKER,"editor/edit_marker",editor->get_blocklist_count()>0);
 	
 	edit_menu->addSeparator();
@@ -416,24 +425,47 @@ void BlockListUIList::show_edit_menu() {
 	ADD_ACTION("Set Loop Begin",ACTION_SET_LOOP_BEGIN,"editor/set_loop_begin",editor->get_blocklist_count()>0);
 	ADD_ACTION("Set Loop End",ACTION_SET_LOOP_END,"editor/set_loop_end",editor->get_blocklist_count()>0);
 	
-	ADD_ACTION("Set Loop from Selection",ACTION_SELECTION_TO_LOOP,"editor/selection_to_loop",editor->is_selection_active());
 	
-	edit_menu->addSeparator();
 	
-	ADD_ACTION("Create Block from Selection",ACTION_SELECTION_TO_BLOCK,"editor/selection_create_blocks",editor->is_selection_active());
+	ADD_ACTION2("Create Blocks",ACTION_SELECTION_TO_BLOCK,"editor/selection_create_blocks",editor->is_selection_active());
+	
+	sel_submenu->addSeparator();
+		
+	ADD_ACTION2("Make Loop",ACTION_SELECTION_TO_LOOP,"editor/selection_to_loop",editor->is_selection_active());
 
-	edit_menu->addSeparator();
+	sel_submenu->addSeparator();
+	if (editor->is_selection_active()) {
+		
+		ADD_ACTION2("Transpose Up Semitone",ACTION_SELECTION_RAISE_SEMITONE,"editor/transpose_up",editor->is_selection_active());
+		
+		ADD_ACTION2("Transpose Down Semitone",ACTION_SELECTION_LOWER_SEMITONE,"editor/transpose_down",editor->is_selection_active());
+		
+		sel_submenu->addSeparator();
+	} else {
+		
+		edit_menu->addSeparator();
+		
+		ADD_ACTION("Transpose Up Semitone",ACTION_SELECTION_RAISE_SEMITONE,"editor/transpose_up",editor->get_blocklist_count()>0);
+		
+		ADD_ACTION("Transpose Down Semitone",ACTION_SELECTION_LOWER_SEMITONE,"editor/transpose_down",editor->get_blocklist_count()>0);
+		
+	}
 	
-	bool sel_active=editor->is_selection_active();
-	ADD_ACTION(sel_active?"Selection Transpose Up Semitone":"Cursor Transpose Up Semitone",ACTION_SELECTION_RAISE_SEMITONE,"editor/transpose_up",editor->is_selection_active());
+	ADD_ACTION2("Scale Volumes",ACTION_SELECTION_SCALE_VOLUMES,"editor/selection_scale_volumes",editor->is_selection_active());
 	
-	ADD_ACTION(sel_active?"Selection Transpose Down Semitone":"Cursor Transpose Down Semitone",ACTION_SELECTION_LOWER_SEMITONE,"editor/transpose_down",editor->is_selection_active());
+	ADD_ACTION2("Apply Volume Mask",ACTION_SELECTION_SET_VOLUMES_TO_MASK,"editor/selection_apply_volume_mask",editor->is_selection_active());
 	
-	ADD_ACTION("Selection Scale Volumes",ACTION_SELECTION_SCALE_VOLUMES,"editor/selection_scale_volumes",editor->is_selection_active());
+	sel_submenu->addSeparator();
 	
-	ADD_ACTION("Selection Apply Volume Mask",ACTION_SELECTION_SET_VOLUMES_TO_MASK,"editor/selection_apply_volume_mask",editor->is_selection_active());
+	
+	ADD_ACTION2("Quantize Up",ACTION_SELECTION_QUANTIZE_UP,"editor/quantize_up",editor->is_selection_active());
+	
+	ADD_ACTION2("Quantize Nearest",ACTION_SELECTION_QUANTIZE_NEAREST,"editor/quantize_nearest",editor->is_selection_active());
+
+	ADD_ACTION2("Quantize Down",ACTION_SELECTION_QUANTIZE_DOWN,"editor/quantize_down",editor->is_selection_active());
 	
 #undef ADD_ACTION		
+#undef ADD_ACTION2
 
 	edit_menu->popup(edit_button->mapToGlobal(QPoint(0,edit_button->height())));
 	
@@ -491,6 +523,9 @@ void BlockListUIList::edit_menu_selected_item(int p_item) {
 		case ACTION_SELECTION_LOWER_SEMITONE: editor->selection_cursor_transpose_down();break;
 		case ACTION_SELECTION_SCALE_VOLUMES: scale_volume_slot(); break;
 		case ACTION_SELECTION_SET_VOLUMES_TO_MASK: editor->selection_set_volumes_to_mask(); break;
+		case ACTION_SELECTION_QUANTIZE_UP: editor->selection_quantize(Editor::QUANTIZE_UP); break;
+		case ACTION_SELECTION_QUANTIZE_NEAREST: editor->selection_quantize(Editor::QUANTIZE_NEAREST); break;
+		case ACTION_SELECTION_QUANTIZE_DOWN: editor->selection_quantize(Editor::QUANTIZE_DOWN); break;
 		
 	}
 }

@@ -983,4 +983,108 @@ void Editor::selection_cursor_transpose_down() {
 
 }
 
+void Editor::selection_quantize(QuantizeType p_type) {
+	
+	if (!d->selection.enabled)
+		return;
+
+	
+	Tick tick_from=d->selection.begin.tick;
+	Tick tick_to=d->selection.end.tick+TICKS_PER_BEAT/d->cursor.get_snap();
+	
+	switch(p_type) {
+		case QUANTIZE_UP: d->undo_stream.begin("Quantize Up"); break;
+		case QUANTIZE_NEAREST: d->undo_stream.begin("Quantize Nearest"); break;
+		case QUANTIZE_DOWN: d->undo_stream.begin("Quantize Down"); break;
+	}
+	
+	for (int i=d->selection.begin.blocklist;i<=d->selection.end.blocklist;i++) {
+		
+		BlockList *bl=get_blocklist(i);
+		
+		if (dynamic_cast<Track_Pattern*>(bl)) {
+			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
+			int columns=tp->get_visible_columns();
+			int column_from=(i==0)?d->selection.begin.column:0;
+			int column_to=(i==d->selection.end.blocklist)?d->selection.end.column:(columns-1);
+						
+			for (int j=column_from;j<=column_to;j++) {
+				
+				int block_from,block_to;
+				if (tp->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
+					continue;
+				for (int k=block_from;k<=block_to;k++) {
+					
+					Track_Pattern::PatternBlock *pb=tp->get_block( k );
+					
+					for (int l=0;l<pb->get_note_count();l++) {
+								
+						Track_Pattern::Note note=pb->get_note( l );;
+						Track_Pattern::Position pos=pb->get_note_pos( l );
+						pos.tick+=tp->get_block_pos(k);	
+				
+						if (pos.column!=j)
+							continue;
+						if (pos.tick<tick_from || pos.tick >tick_to)
+							continue;
+						
+						Tick row_size=(TICKS_PER_BEAT/d->cursor.get_snap());
+						Tick row_frac=pos.tick%row_size;
+						Tick row_pos=pos.tick-row_frac;
+						Tick row_next=row_pos+row_size;
+						
+						if (row_frac==0) //no need to quantize
+							continue;
+						//must be quantized
+					
+						bool up=(p_type==QUANTIZE_UP);
+						bool down=(p_type==QUANTIZE_DOWN);
+						
+						Track_Pattern *pattern_track=tp;
+						
+						if (p_type==QUANTIZE_NEAREST) {
+							
+							if (row_frac<=(row_size/2))
+								up=true;
+							else
+								down=true;
+						}
+						
+						if (up) {
+							//cant move it up, because there is a nother note
+							if (l!=0 && pb->get_note_pos( l-1 ).tick>=row_pos)
+								continue;
+							
+							SET_NOTE(pos,Track_Pattern::Note());	
+							SET_NOTE(Track_Pattern::Position(row_pos,pos.column),note);
+
+						}
+						
+						if (down) {
+							
+							//cant quantize to end of block
+							if (row_next>=pb->get_length())
+								continue;
+							
+							if (l!=(pb->get_note_count()-1) && pb->get_note_pos( l+1 ).tick<=row_next)
+								continue;
+							
+							SET_NOTE(pos,Track_Pattern::Note());	
+							SET_NOTE(Track_Pattern::Position(row_next,pos.column),note);
+
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
+	
+	
+}
+
+
 } //end of namespace

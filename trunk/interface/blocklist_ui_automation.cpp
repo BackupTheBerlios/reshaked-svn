@@ -547,7 +547,8 @@ void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 	
 	
 	/* track to point over */
-	
+	mouse_selection_update_check();
+
 	compute_point_over(e->x(),e->y());
 	
 	if (!moving_point.moving)
@@ -563,6 +564,7 @@ void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 		
 	new_tick-=automation->get_block_pos(moving_point.block); //convert to block relative
 	
+	
 
 	
 	Automation::AutomationData *d=automation->get_block(moving_point.block)->get_data();
@@ -571,6 +573,13 @@ void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 	
 	if (!moving_point.lfo_depthing) {
 	
+		moving_point.snap=e->modifiers()&Qt::ShiftModifier;
+		
+		if (moving_point.snap) {
+			Tick row_size=(TICKS_PER_BEAT/editor->get_cursor().get_snap());
+			new_tick-=((new_tick+row_size/2)%row_size)-(row_size/2);
+		}			
+		
 		if (new_tick<0)
 			new_tick=0;
 		
@@ -675,6 +684,8 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 			
 			setFocus();
 			update();
+			mouse_selection_begin( e->pos() );
+			printf("SELECTION BEGIN?\n");
 			return;
 		}
 	}
@@ -727,6 +738,18 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 		
 		Automation::AutomationData *d=automation->get_block(moving_point.block)->get_data();
 		
+		if (e->modifiers()&Qt::ShiftModifier) { //snap!
+			
+			Tick row_size=(TICKS_PER_BEAT/editor->get_cursor().get_snap());
+			new_tick-=((new_tick+row_size/2)%row_size)-(row_size/2);;
+			
+			if (d->get_exact_index( new_tick )>=0)
+				return; //cant snap in this case
+			
+			moving_point.snap=true;
+			
+		}
+		//make sure we dont ovrwrite a point
 		while (d->get_exact_index( new_tick )>=0)
 			new_tick--;
 		
@@ -782,6 +805,8 @@ void BlockListUI_Automation::mouseReleaseEvent ( QMouseEvent * e ) {
 	if (e->button()!=Qt::LeftButton)
 		return;
 	
+	mouse_selection_end();	
+	
 	if (e->button()==Qt::LeftButton)
 		editor->unlock_undo_stream();
 	
@@ -806,6 +831,7 @@ void BlockListUI_Automation::mouseReleaseEvent ( QMouseEvent * e ) {
 	
 	moving_point.moving=false;
 	moving_point.lfo_depthing=false;
+	moving_point.snap=false;	
 	update();	
 	
 }

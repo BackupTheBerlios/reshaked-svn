@@ -174,6 +174,10 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/window_snap_half","Half Size Snap",Qt::CTRL+Qt::Key_W);
 	data.keyboard_codes.add_key_bind("editor/window_snap_double","Double Size Snap",Qt::CTRL+Qt::Key_S);
 	
+	data.keyboard_codes.add_key_bind("editor/quantize_up","Quantize Up",Qt::CTRL+Qt::Key_U);
+	data.keyboard_codes.add_key_bind("editor/quantize_nearest","Quantize Nearest",Qt::CTRL+Qt::Key_I);
+	data.keyboard_codes.add_key_bind("editor/quantize_down","Quantize Down",Qt::CTRL+Qt::Key_O);
+	
 	data.keyboard_codes.set_key_bind_key_by_name("actions/undo",Qt::CTRL+Qt::Key_Z);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/redo",Qt::SHIFT+Qt::CTRL+Qt::Key_Z);
 

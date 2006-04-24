@@ -31,6 +31,8 @@ void BlockListUI_Base::set_blocklist_ui_under_cursor(BlockListUI_Base *p_ui, QPo
 	p_ui->get_pos_at_pointer(p_pos, &bl,&column,&row);
 	
 	_editor->selection_mouse_drag_end(bl,column,row);
+	
+
 	_editor->set_pattern_edit_column( column );
 	_editor->get_cursor().set_pos( row );
 	if (_editor->get_current_blocklist()!=bl)
@@ -48,6 +50,7 @@ void BlockListUI_Base::mouse_selection_begin(QPoint p_pos) {
 	
 	_editor->selection_mouse_drag_begin(bl,column,row);
 	
+
 }
 
 
@@ -58,12 +61,15 @@ void BlockListUI_Base::mouse_selection_update_check() {
 	
 	blocklist_ui_under_cursor_request_signal(this);
 	_editor->get_ui_update_notify()->block_layout_changed();	
+	
+
 }
 
 
 void BlockListUI_Base::mouse_selection_end() {
 	
 	_mouse_selecting=false;	
+
 	
 }
 

@@ -9,6 +9,25 @@ cosas de editor:
 *resize de automation no destrye los points
 *shortcut para snap
 *hacer volume mask set/wipe/ramp tool
+*snap en automation
+*quantize (left/closer/right)
+
+>>para despues
 -paste insert
--insertar valores de automation con numeros
 -block repeat, sera tan dificil?
+
+
+Settings dialog:
+-UI repaint interval
+-Process interval
+-Save Settings
+-Theme screen
+-default paths..?
+-default dir copy
+
+bugs:
+*fix selection in automations(mouse)
+
+-plugins
+LADSPA support
+-plugin browser, add categories..
