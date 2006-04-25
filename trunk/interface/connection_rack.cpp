@@ -267,7 +267,7 @@ void ConnectionRack::paint_jack(QPainter&p, int p_x,int p_y, AudioPlug *p_plug,Q
 	f.setBold(true);
 	f.setPixelSize(10);
 	p.setFont(f);
-	p.setPen(QColor(255,255,255,120));
+	p.setPen(QColor(200,200,240));
 	
 	if (connecting.enabled && p_type==connecting.from.type)
 		p.drawPixmap(p_x,p_y+jack_hole().height(),GET_QPIXMAP(THEME_RACK_PANEL__JACK_FORBIDDEN));
@@ -288,7 +288,7 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 	f.setBold(true);
 	p.setFont(f);
 	f.setPixelSize(skin()->get_top()/2);
-	p.setPen(QColor(255,255,255,220));
+	p.setPen(QColor(200,200,240));
 	int node_width=get_node_width(p_node);
 	
 	int font_margin=VisualSettings::get_singleton()->get_rack_panel_h_margin();

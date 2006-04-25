@@ -32,7 +32,7 @@ class ConnectionRack : public QWidget {
 
 				       
 	enum {
-		STEPS_DIVISOR=14,
+		STEPS_DIVISOR=8,
 		BOTTOM_DIVISOR=80,
 		BOTTOM_BASE_OFFSET=20	
 		

@@ -94,7 +94,7 @@ void LADSPA_SoundPluginSource::scan_plugins(String p_dir) {
 				}
 			}
 
-			bool can_stereo=(in_count >= 2 && out_count >= 2);
+			bool can_stereo=(in_count == 2 && out_count == 2);
 
 			LADSPA_Struct *plugin_data= new LADSPA_Struct;
 			plugin_data->path=lib_name;
@@ -106,7 +106,8 @@ void LADSPA_SoundPluginSource::scan_plugins(String p_dir) {
 			info.long_description="LADSPA Plugin Info:\n Name: "+String(descriptor->Name) +"\n ID: "+ String::num(descriptor->UniqueID) + "\n Author: " + String(descriptor->Maker) + "\n Copyright: " + String(descriptor->Copyright);
 			info.unique_ID="LADSPA_"+String::num(descriptor->UniqueID);
 			info.category="LADSPA"; 
-			info.can_custom_channels=true;
+		
+			info.can_custom_channels=(in_count<=2 && out_count<=2);
 			if (can_stereo) {
 				
 				info.custom_channels.push_back(2); //only this

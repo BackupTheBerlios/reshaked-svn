@@ -212,7 +212,7 @@ void SoundPlugin_LADSPA::reset() {
 				
 				for (int j=0;j<instances.size();j++) {
 					
-					int idx=outport_count*instances.size()*j;
+					int idx=outport_count*instances.size()+j;
 					ERR_CONTINUE(idx<0 || idx>=output_ports.size());
 							
 					descriptor->connect_port(instances[j], i, &output_ports[idx]->value);
@@ -298,7 +298,10 @@ SoundPlugin_LADSPA::SoundPlugin_LADSPA(const SoundPluginInfo *p_info,String p_pa
 
 	/* I ASSUME plugin is stereo... (only one instance needed) */
 	
-	stereo_mode=(in_count >= 2 && out_count >= 2);
+	stereo_mode=(in_count == 2 && out_count == 2);
+	
+	if (in_count>2 || out_count>2)
+		p_channels=1; //ignore requested channels and just instance individual ones. 
 	
 	if (p_channels!=2 && stereo_mode) {
 		
