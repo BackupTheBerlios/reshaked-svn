@@ -18,18 +18,18 @@ cosas de editor:
 
 
 Settings dialog:
--UI repaint interval
--Process interval
+*UI repaint interval
+XProcess interval
 -Save Settings
 -Theme screen
 -default paths..?
 -default dir copy
 
--search in plugin browser
+*search in plugin browser
 bugs:
 *fix selection in automations(mouse)
--fix decimal stuff
+*fix decimal stuff
 
 -plugins
-LADSPA support
--plugin browser, add categories..
+*LADSPA support
+*plugin browser, has incremental search

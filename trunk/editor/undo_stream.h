@@ -209,6 +209,8 @@ class UndoStream {
 	int lock_count;
 	unsigned int collapse_max_time_window; //in msecs
 	
+	static int max_undo_steps; //static, since it's a setting
+	void fix_undo_history_length();
 	
 public:	
 	
@@ -229,6 +231,8 @@ public:
 	void redo();
 	
 	void clear();
+	
+	static void set_max_undo_steps(int p_max);
 	
 	UndoStream();
 	~UndoStream();

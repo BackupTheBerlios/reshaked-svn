@@ -32,10 +32,7 @@ class SoundPlugin_LADSPA : public SoundPlugin {
 		PropertyVarPtr<float> property;
 		float value; //shared by plugin and property
 		
-		float freq_adj; //for gayfrequency ports
-		bool use_freq_adj;
-		
-		SharedProperty() { value=0; freq_adj=0; use_freq_adj=false; }
+		SharedProperty() { value=0; }
 		
 	};
 		

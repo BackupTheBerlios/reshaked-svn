@@ -18,6 +18,7 @@
 #include "interface/settings_sound.h"
 #include "interface/settings_keys.h"
 #include "interface/settings_midi.h"
+#include "interface/settings_interface.h"
 
 namespace ReShaked {
 
@@ -30,8 +31,15 @@ class SettingsDialog : public QDialog {
 	SettingsSound *settings_sound;
 	SettingsKeys *key_settings;
 	SettingsMidi *settings_midi;
+	SettingsInterface *settings_interface;
 	
 public:
+	
+	SettingsSound *get_settings_sound();
+	SettingsKeys *get_key_settings();
+	SettingsMidi *get_settings_midi();
+	SettingsInterface *get_settings_interface();
+	
 	
 	SettingsDialog(QWidget *p_parent);
 	~SettingsDialog();

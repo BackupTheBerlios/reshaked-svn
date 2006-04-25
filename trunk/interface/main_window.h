@@ -145,6 +145,7 @@ class MainWindow : public QMainWindow {
 	void closeEvent ( QCloseEvent * e );
 public slots:
 	
+	void ui_update_interval_changed(int p_to_value);
 	
 	void screen_changed_slot(TopBarControls::ScreenList p_screen);
 	void menu_action_callback(int p_action);

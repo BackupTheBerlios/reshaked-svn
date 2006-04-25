@@ -42,6 +42,8 @@
 #include "interface/info_editor.h"
 #include "interface/midi_output_editor.h"
 #include "interface/blocklist_ui_automation.h"
+#include "tree_container.h"
+#include "config_handler.h"
 
 namespace ReShaked {
 
@@ -147,6 +149,25 @@ void MainWindow::menu_action_callback(int p_action) {
 			
 			if (save_file=="")
 				break;
+			
+
+			/* temporary */
+			{		
+				TreeContainer tc;
+				Saver saver;
+			
+				saver.save_song(&data.song,&tc);
+				
+				ConfigHandler ch;
+				ch.set_header_check("RESHAKED");
+				ch.save( DeQStrify(save_file), &tc );
+				break;
+			}
+				
+				
+
+			
+			/* temp */
 			TreeSaverDisk tsd("RESHAKED",5);
 			
 			
@@ -515,6 +536,10 @@ void MainWindow::automation_options(int p_blocklist) {
 	
 }
 
+void MainWindow::ui_update_interval_changed(int p_to_value) {
+	
+	ui_updater->setInterval(p_to_value);
+}
 
 MainWindow::MainWindow() {
 
@@ -642,6 +667,8 @@ MainWindow::MainWindow() {
 	rack_vbox->hide();
 
 	settings = new SettingsDialog(this);
+	
+	QObject::connect(settings->get_settings_interface(),SIGNAL(ui_update_interval_changed( int )),this,SLOT(ui_update_interval_changed( int )));
 	
 	update_titlebar();
 }

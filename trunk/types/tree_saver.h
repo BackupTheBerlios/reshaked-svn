@@ -26,6 +26,7 @@ public:
 	virtual void enter(String p_dir)=0;
 	virtual void exit()=0;
 	virtual String get_path()=0;
+	virtual void goto_root()=0;
 	
 	virtual void add_int(String p_name,int p_int)=0;
 	virtual void add_int_array(String p_name,const int *p_arr,int p_len)=0;
@@ -33,6 +34,7 @@ public:
 	virtual void add_float_array(String p_name,const float *p_arr,int p_len)=0;
 	virtual void add_string(String p_name,String p_string)=0;
 	virtual void add_raw(String p_name,const unsigned char *p_raw,int p_bytes)=0;
+	
 	
 	
 	TreeSaver();

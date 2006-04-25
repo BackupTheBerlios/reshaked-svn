@@ -21,7 +21,7 @@
 #include <dirent.h>
 #include <dlfcn.h>
 
-#define DEFAULT_PORT_FREQ 20000.0
+#define DEFAULT_PORT_FREQ 48000.0
 
 namespace ReShaked {
 
@@ -92,14 +92,6 @@ void SoundPlugin_LADSPA::process(int p_frames) {
 	if (!working)
 		return;
 	connect_audio_ports(); //must be done always
-	
-	for (int i=0;i<input_ports.size();i++) {
-		
-		if (input_ports[i]->use_freq_adj) {
-			
-			input_ports[i]->value=input_ports[i]->freq_adj*mix_freq/DEFAULT_PORT_FREQ;
-		}
-	}
 	
 	for (int i=0;i<instances.size();i++) {
 		descriptor->run(instances[i], p_frames);
@@ -463,12 +455,7 @@ SoundPlugin_LADSPA::SoundPlugin_LADSPA(const SoundPluginInfo *p_info,String p_pa
 			} else {
 				SharedProperty *prop = new SharedProperty;
 			
-				if (gay_sample_rate) {
-					prop->use_freq_adj=true;
-
-					prop->property.config(port_var_name,port_name,&prop->freq_adj,min,max,step,def);
-				} else
-					prop->property.config(port_var_name,port_name,&prop->value,min,max,step,def);
+				prop->property.config(port_var_name,port_name,&prop->value,min,max,step,def);
 				
 				input_ports.push_back(prop);
 			}

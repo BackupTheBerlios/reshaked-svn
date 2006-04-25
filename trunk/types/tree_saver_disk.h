@@ -43,6 +43,7 @@ public:
 	void enter(String p_dir);
 	void exit();
 	String get_path();
+	void goto_root();
 	
 	void add_int(String p_name,int p_int);
 	void add_int_array(String p_name,const int *p_arr,int p_len);

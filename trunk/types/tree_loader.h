@@ -35,6 +35,7 @@ public:
 	virtual void enter(String p_dir)=0;
 	virtual void exit()=0;
 	virtual String get_path()=0;
+	virtual void goto_root()=0;
 	
 	virtual int get_int(String p_name)=0;
 	virtual void get_int_array(String p_name,int *p_arr)=0;
@@ -55,7 +56,6 @@ public:
 	virtual bool is_var(String p_var)=0;
 	virtual VarType get_var_type(String p_var)=0;
 	
-	virtual void goto_root()=0;
 	
 	TreeLoader();
 	virtual ~TreeLoader();

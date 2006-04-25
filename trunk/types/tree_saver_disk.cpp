@@ -153,6 +153,12 @@ bool TreeSaverDisk::open_file(String p_file) {
 	}	
 	return (!f);
 }
+
+void TreeSaverDisk::goto_root() {
+	
+	//NOT IMPLEMENTED!!
+}
+
 void TreeSaverDisk::close_file() {
 	
 	write_byte(FILE_FIELD_EOF);

@@ -14,6 +14,24 @@
 
 namespace ReShaked {
 
+SettingsSound *SettingsDialog::get_settings_sound() {
+	
+	return settings_sound;
+}
+SettingsKeys *SettingsDialog::get_key_settings() {
+	
+	return key_settings;
+	
+}
+SettingsMidi *SettingsDialog::get_settings_midi() {
+	
+	return settings_midi;
+}
+SettingsInterface *SettingsDialog::get_settings_interface() {
+	
+	return settings_interface;
+}
+
 SettingsDialog::SettingsDialog(QWidget *p_parent) :QDialog (p_parent)
 {
 	setLayout(new QHBoxLayout(this));
@@ -28,6 +46,9 @@ SettingsDialog::SettingsDialog(QWidget *p_parent) :QDialog (p_parent)
 	
 	key_settings = new SettingsKeys(NULL);
 	tabs->addTab(key_settings,"Key Bindings");
+	
+	settings_interface = new SettingsInterface(NULL);
+	tabs->addTab(settings_interface,"Interface");
 	
 	setMinimumSize(500,400);	
 	setWindowTitle("Reshaked Configuration");

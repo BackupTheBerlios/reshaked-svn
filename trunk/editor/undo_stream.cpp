@@ -47,6 +47,35 @@ void UndoStream::delete_redo_history() {
 	
 }
 
+void UndoStream::fix_undo_history_length() {
+	
+	if (max_undo_steps<5)
+		return;
+	
+	int to_erase=(int)undo_stream.size()-max_undo_steps;
+	
+	if (to_erase<=0)
+		return;
+	
+	while (to_erase--) {
+		
+		UndoGroup&ug=undo_stream.front();
+		std::list<UndoElement>::iterator I=ug.command_list.begin();
+		for (;I!=ug.command_list.end();I++) {
+			I->undo->erase_delete_data(); //since this undo is no longer needed, we erase the create data
+			delete I->undo;
+			delete I->redo;
+		}
+		undo_stream.pop_front(); //remove this
+		
+	}
+}
+
+void UndoStream::set_max_undo_steps(int p_max) {
+	
+	max_undo_steps=p_max;
+}
+
 void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 
         printf("Undo Begin!\n");
@@ -73,6 +102,7 @@ void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 		
 		undo_stream.push_back( undo_group );
 		current_index++;
+		fix_undo_history_length();
 	}
 	
 	
@@ -239,8 +269,11 @@ void UndoStream::clear() {
 
 }
 
+int UndoStream::max_undo_steps=-1; //static, since it's a setting
+
 UndoStream::UndoStream() {
 
+	max_undo_steps=-1; //infinite
 	lock_count=0;
 	current_index=-1;
 	inside_count=0;
