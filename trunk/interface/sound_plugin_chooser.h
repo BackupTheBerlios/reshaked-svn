@@ -18,6 +18,8 @@
 #include <Qt/qpixmap.h>
 #include <Qt/qcheckbox.h>
 #include <Qt/qcombobox.h>
+#include <Qt/qtimer.h>
+#include "ui_blocks/helpers.h"
 
 namespace ReShaked {
 
@@ -40,11 +42,15 @@ class SoundPluginChooserItem : public QWidget {
 	QPixmap px;
 	QString title;
 	QString description;
+	void keyPressEvent ( QKeyEvent * event );	
 	
 signals:
 			
+	void char_press_event_signal(QChar p_char);
 	void selected_signal(SoundPluginChooserItem *);
 public:	
+	
+	QString get_title();
 	
 	void set_selected(bool p_selected);
 	
@@ -61,6 +67,7 @@ class SoundPluginChooser : public QDialog {
 			
 			
 	
+	CVBox *vb;
 			
 	QScrollArea *scroll;
 	QCheckBox *append;
@@ -72,9 +79,19 @@ class SoundPluginChooser : public QDialog {
 	virtual void accept();		
 
 	int track_channels;
+	
+	QString current_search;
+	
+	QTimer *keyb_search_timeout;
+	
+	void update_current_search();
+	void ensure_selected_visible();
+	
 public slots:	
 	
+	void char_press_event_slot(QChar p_char);
 	void selected_slot(SoundPluginChooserItem * p_item);
+	void kb_search_timeout_slot();
 public:
 	int get_selected_channels();
 	int get_selected_plugin_idx();

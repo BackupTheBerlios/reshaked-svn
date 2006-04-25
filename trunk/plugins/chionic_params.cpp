@@ -107,8 +107,8 @@ ChionicParams::ChionicParams() {
 		p.pitch.lfo.set_rate_unit_size(1000); //msecs
 		p.pitch.lfo.set_max_depth(24.0); //msecs
 		
-		p.time.delay.set_all(0.0,0.0,4.0,0.0,0.00001,Property::DISPLAY_SLIDER,n+"time_delay","Delay");
-		p.time.random.set_all(0.0,0.0,0.1,0.0,0.01,Property::DISPLAY_SLIDER,n+"time_random","Random");
+		p.time.delay.set_all(0.0,0.0,4.0,0.0,0.001,Property::DISPLAY_SLIDER,n+"time_delay","Delay");
+		p.time.random.set_all(0.0,0.0,0.1,0.0,0.1,Property::DISPLAY_SLIDER,n+"time_random","Random");
 	}
 	
 }

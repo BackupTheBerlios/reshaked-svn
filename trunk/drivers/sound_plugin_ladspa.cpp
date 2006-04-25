@@ -20,6 +20,9 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <dlfcn.h>
+
+#define DEFAULT_PORT_FREQ 20000.0
+
 namespace ReShaked {
 
 
@@ -89,6 +92,14 @@ void SoundPlugin_LADSPA::process(int p_frames) {
 	if (!working)
 		return;
 	connect_audio_ports(); //must be done always
+	
+	for (int i=0;i<input_ports.size();i++) {
+		
+		if (input_ports[i]->use_freq_adj) {
+			
+			input_ports[i]->value=input_ports[i]->freq_adj*mix_freq/DEFAULT_PORT_FREQ;
+		}
+	}
 	
 	for (int i=0;i<instances.size();i++) {
 		descriptor->run(instances[i], p_frames);
@@ -171,16 +182,17 @@ void SoundPlugin_LADSPA::reset() {
 	
 	for (int i=0;i<instances.size();i++) {
 		
-		if (!instances[i])
-			continue;
+		if (instances[i]) {
 		
-		if (descriptor->deactivate) {
-			descriptor->deactivate(instances[i]);
+			if (descriptor->deactivate) {
+				descriptor->deactivate(instances[i]);
+			}
+			//cleanup
+			if (descriptor->cleanup)
+				descriptor->cleanup(instances[i]);
+			//recreate
 		}
-		//cleanup
-		descriptor->cleanup(instances[i]);
-		//recreate
-		instances[i]=descriptor->instantiate(descriptor,(int)mix_freq);
+		instances[i]=descriptor->instantiate(descriptor,(int)mix_freq);		
 
 	}
 
@@ -214,9 +226,13 @@ void SoundPlugin_LADSPA::reset() {
 				for (int j=0;j<instances.size();j++) {
 					
 					int idx=inport_count;
-					ERR_CONTINUE(idx<0 || idx>=output_ports.size());
+					if (idx<0 || idx>=input_ports.size()) {
+						
+						printf("idx %i / %i\n",idx,input_ports.size());
+					}
+					ERR_CONTINUE(idx<0 || idx>=input_ports.size());
 							
-					descriptor->connect_port(instances[j], i, &input_ports[i]->value);
+					descriptor->connect_port(instances[j], i, &input_ports[idx]->value);
 
 				}
 				
@@ -227,8 +243,8 @@ void SoundPlugin_LADSPA::reset() {
 	}
 
 	for (int i=0;i<instances.size();i++) {
-		
-		descriptor->activate( instances[i] );
+		if (descriptor->activate)
+			descriptor->activate( instances[i] );
 	}
 }
 
@@ -284,10 +300,10 @@ SoundPlugin_LADSPA::SoundPlugin_LADSPA(const SoundPluginInfo *p_info,String p_pa
 	
 	stereo_mode=(in_count >= 2 && out_count >= 2);
 	
-	if (p_channels==2 && !stereo_mode) {
+	if (p_channels!=2 && stereo_mode) {
 		
 		dlclose(library);
-		ERR_FAIL_COND(p_channels==2 && !stereo_mode); //buggo
+		ERR_FAIL_COND(p_channels!=2 && stereo_mode); //buggo
 	}
 	
 	if (stereo_mode) {
@@ -334,12 +350,8 @@ SoundPlugin_LADSPA::SoundPlugin_LADSPA(const SoundPluginInfo *p_info,String p_pa
 			bool is_int=false;
 			bool is_toggle=false;
 			float step;
-			
+		
 
-			if (LADSPA_IS_HINT_TOGGLED(hints[i].HintDescriptor)) {
-
-				is_toggle=true;
-			}
 
 			if (LADSPA_IS_HINT_BOUNDED_BELOW(hints[i].HintDescriptor)) {
 				min= hints[i].LowerBound;
@@ -398,15 +410,31 @@ SoundPlugin_LADSPA::SoundPlugin_LADSPA(const SoundPluginInfo *p_info,String p_pa
 					def=min + (max-min) * 0.5;
 			}
 
+			
+			if (gay_sample_rate) {
+				
+				min*=DEFAULT_PORT_FREQ;
+				max*=DEFAULT_PORT_FREQ;
+				def*=DEFAULT_PORT_FREQ;
+			}
+			
 			if (is_int) {
 				
 				step=1;
 			} else if (fabsf(max)>1000.0 || fabsf(min)>1000.0) {
 			
-				step=0.01;
+				step=0.1;
 			} else {
 				
-				step=0.001;
+				step=0.01;
+			}
+			
+			if (LADSPA_IS_HINT_TOGGLED(hints[i].HintDescriptor)) {
+
+				min=0;
+				max=1;
+				def=0;
+				step=1;
 			}
 			
 			
@@ -420,11 +448,11 @@ SoundPlugin_LADSPA::SoundPlugin_LADSPA(const SoundPluginInfo *p_info,String p_pa
 				
 					output_ports.push_back(prop);
 				} else {
-					for (int i=0;i<instances.size();i++) {
+					for (int j=0;j<instances.size();j++) {
 						
 						SharedProperty *prop = new SharedProperty;
 				
-						prop->property.config(port_var_name+"_" +String::num(i+1),port_name+" " +String::num(i+1),&prop->value,min,max,step,def);
+						prop->property.config(port_var_name+"_" +String::num(j+1),port_name+" " +String::num(j+1),&prop->value,min,max,step,def);
 	
 						output_ports.push_back(prop);
 					}
@@ -432,7 +460,12 @@ SoundPlugin_LADSPA::SoundPlugin_LADSPA(const SoundPluginInfo *p_info,String p_pa
 			} else {
 				SharedProperty *prop = new SharedProperty;
 			
-				prop->property.config(port_var_name,port_name,&prop->value,min,max,step,def);
+				if (gay_sample_rate) {
+					prop->use_freq_adj=true;
+
+					prop->property.config(port_var_name,port_name,&prop->freq_adj,min,max,step,def);
+				} else
+					prop->property.config(port_var_name,port_name,&prop->value,min,max,step,def);
 				
 				input_ports.push_back(prop);
 			}

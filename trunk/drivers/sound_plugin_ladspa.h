@@ -28,10 +28,19 @@ class SoundPlugin_LADSPA : public SoundPlugin {
 	std::vector<LADSPA_Handle> instances;
 		
 	struct SharedProperty {
+		
 		PropertyVarPtr<float> property;
 		float value; //shared by plugin and property
+		
+		float freq_adj; //for gayfrequency ports
+		bool use_freq_adj;
+		
+		SharedProperty() { value=0; freq_adj=0; use_freq_adj=false; }
+		
 	};
 		
+	
+	
 	std::vector<SharedProperty*> input_ports;
 	std::vector<SharedProperty*> output_ports;
 	

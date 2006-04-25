@@ -128,22 +128,8 @@ String LocalProperty::get_text_value(double p_for_value,bool p_no_postfix) {
 	else if (max_label!="" && p_for_value==max)
 		return max_label;
 	
-	int digits=-1;
+	int digits=(interval!=0)?get_decimal_count(interval):-1;
 	
-	if (interval!=0 && interval!=floorf(interval)) {
-		
-		digits=0;
-		double step_aux=interval;
-		do {
-			step_aux*=10;
-			//step_aux+=1e-10;
-			digits++;
-			if (step_aux-floor(step_aux) < 1e-6 )
-				break;
-			
-		
-		} while (true);
-	} 
 	String res=String::num(p_for_value,digits);
 	if (!p_no_postfix)
 		res+=postfix;

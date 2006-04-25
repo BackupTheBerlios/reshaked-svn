@@ -60,4 +60,25 @@ std::vector<String> split_str(String::CharType p_key,String p_string) {
 		
 }
 
+int get_decimal_count(double p_number) {
+	
+	char buff[100];
+	sprintf(buff,"%lg",p_number);
+	
+	int decimals=0;
+	int idx=0;
+	bool zero=false;
+	while (buff[idx]!=0) {
+		
+		
+		if (buff[idx]=='.')
+			zero=true;
+		else if (zero)
+			decimals++;
+		idx++;
+	}
+	
+	return decimals;
+}
+
 }

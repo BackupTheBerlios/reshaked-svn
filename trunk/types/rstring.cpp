@@ -430,33 +430,18 @@ const String::CharType * String::c_str() const {
 String String::num(double p_num,int p_digits) {
 
 	String s;
+	String sd;
 	/* integer part */
 	
 	bool neg=p_num<0;
 	p_num=fabs(p_num);
 	int intn=(int)p_num;
 	
-	if (intn==0)
-		
-		s="0";
-	else {
-		while(intn) {
-			
-			CharType num='0'+(intn%10);
-			intn/=10;
-			
-			//printf("s pre %c\n",num);
-			s=num+s;
-			
-		}
-	}
 	//printf("int - %lls\n",s.c_str());			
 	/* decimal part */
 
 	
 	if (p_digits>0 || (p_digits==-1 && (int)p_num!=p_num)) {
-		
-		s+=".";
 		
 		double dec=p_num-floor(p_num);
 		
@@ -464,12 +449,16 @@ String String::num(double p_num,int p_digits) {
 		if (p_digits>MAX_DIGITS)
 			p_digits=MAX_DIGITS;
 		
+		int dec_int=0;
+		int dec_max=0;
+		
 		while (true) {
 			
-			dec*=10;
-			CharType num='0'+(int)dec%10;
+			dec*=10.0;
+			dec_int=dec_int*10+(int)dec%10;
+			dec_max=dec_max*10+9;
 			digit++;
-			s+=num;
+
 			//printf("s post %c\n",num);
 			
 			if (p_digits==-1) {
@@ -486,9 +475,47 @@ String String::num(double p_num,int p_digits) {
 			
 			
 		}
-	
+		dec*=10;
+		int last=(int)dec%10;
+		printf("last %i, dec_int %i, dec max %i - val %lg\n",last,dec_int,dec_max,p_num);
+		if (last>5) {
+			if (dec_int==dec_max) {
+				
+				dec_int=0;
+				intn++;
+			} else {
+				
+				dec_int++;
+			}
+		}
+  			
+		String decimal;
+		for (int i=0;i<digit;i++) {
+			
+			decimal=String('0'+dec_int%10)+decimal;
+			dec_int/=10;
+			
+		}
+		sd='.'+decimal;
+		
 	}
 
+	if (intn==0)
+		
+		s="0";
+	else {
+		while(intn) {
+			
+			CharType num='0'+(intn%10);
+			intn/=10;
+			
+			//printf("s pre %c\n",num);
+			s=num+s;
+			
+		}
+	}
+	
+	s=s+sd;
 	if (neg)
 		s="-"+s;
 	return s;

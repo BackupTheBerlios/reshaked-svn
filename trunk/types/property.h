@@ -13,6 +13,7 @@
 #define RESHAKEDPROPERTY_H
 
 #include "typedefs.h"
+#include "misc_funcs.h"
 #include <vector>
 
 #include <math.h>
@@ -192,22 +193,8 @@ public:
 	
 	virtual String get_text_value(double p_for_value,bool p_no_postfix=false) { 
 		
-		int digits=-1;
+		int digits=(stepping!=0)?get_decimal_count(stepping):-1;
 	
-		if (stepping!=0 && stepping!=floorf(stepping)) {
-		
-			digits=0;
-			double step_aux=stepping;
-			do {
-				step_aux*=10;
-			//step_aux+=1e-10;
-				digits++;
-				if (step_aux-floor(step_aux) < 1e-6 )
-					break;
-			
-		
-			} while (true);
-		} 
 		String res=String::num(p_for_value,digits);
 		if (!p_no_postfix)
 			res+=postfix;
@@ -262,22 +249,8 @@ public:
 
 	virtual String get_text_value(double p_for_value,bool p_no_postfix=false) { 
 
-		int digits=-1;
-
-		if (stepping!=0 && stepping!=floorf(stepping)) {
-
-			digits=0;
-			double step_aux=stepping;
-			do {
-				step_aux*=10;
-//step_aux+=1e-10;
-				digits++;
-				if (step_aux-floor(step_aux) < 1e-6 )
-					break;
-
-
-			} while (true);
-		} 
+		int digits=(stepping!=0)?get_decimal_count(stepping):-1;
+		
 		String res=String::num(p_for_value,digits);
 		if (!p_no_postfix)
 			res+=postfix;
