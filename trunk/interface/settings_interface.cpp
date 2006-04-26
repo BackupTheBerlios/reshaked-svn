@@ -34,6 +34,18 @@ void SettingsInterface::save_template_request() {
 }
 
 
+void SettingsInterface::load(TreeLoader *p_loader) {
+	
+	
+}
+
+void SettingsInterface::save(TreeSaver *p_saver) {
+	
+	
+	
+}
+
+
 #define LABELS_BEGIN\
 	CHBox *hb;\
 	QLabel *label;\

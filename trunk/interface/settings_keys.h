@@ -17,6 +17,9 @@
 #include <Qt/qtreewidget.h>
 #include <Qt/qpushbutton.h>
 
+#include "tree_loader.h"
+#include "tree_saver.h"
+
 namespace ReShaked {
 
 /**
@@ -51,6 +54,9 @@ public slots:
 	
 	void itemSelectionChangedSlot();
 public:
+	
+	void load(TreeLoader *p_loader);
+	void save(TreeSaver *p_saver);
 	
 	void update_keybinds();
 	SettingsKeys(QWidget *p_parent);

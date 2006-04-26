@@ -150,22 +150,6 @@ void MainWindow::menu_action_callback(int p_action) {
 			if (save_file=="")
 				break;
 			
-
-			/* temporary */
-			{		
-				TreeContainer tc;
-				Saver saver;
-			
-				saver.save_song(&data.song,&tc);
-				
-				ConfigHandler ch;
-				ch.set_header_check("RESHAKED");
-				ch.save( DeQStrify(save_file), &tc );
-				break;
-			}
-				
-				
-
 			
 			/* temp */
 			TreeSaverDisk tsd("RESHAKED",5);

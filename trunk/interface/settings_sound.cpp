@@ -34,6 +34,18 @@ namespace ReShaked {
 
 
 
+void SettingsSound::load(TreeLoader *p_loader) {
+	
+	
+	
+}
+void SettingsSound::save(TreeSaver *p_saver) {
+	
+	
+	
+}
+
+
 void SettingsSound::restart() {
 	
 	SoundDriverList::get_singleton()->init_driver();

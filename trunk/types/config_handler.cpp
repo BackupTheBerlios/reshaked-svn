@@ -31,7 +31,7 @@ void ConfigHandler::save_subtree(String p_path,FILE *f, TreeLoader *p_loader) {
 		String subsection_name = p_loader->get_child_name(i);
 		
 		p_loader->enter(subsection_name);
-		save_subtree( "/"+subsection_name, f, p_loader);
+		save_subtree( p_path+"/"+subsection_name, f, p_loader);
 		p_loader->exit();
 		
 		
@@ -52,7 +52,11 @@ void ConfigHandler::save_subtree(String p_path,FILE *f, TreeLoader *p_loader) {
 			} break;
 			case TreeLoader::VAR_FLOAT: {
 				field+="(float)"+name+"=";
-					
+				
+				char faux[100];
+
+				sprintf(faux,"%g",p_loader->get_float(name) );
+				field+=faux;
 					
 			} break;
 			case TreeLoader::VAR_STRING: {

@@ -86,9 +86,16 @@ void LocalProperty::set(double p_val) {
 		p_val=max;
 
 	if (interval!=0) {
+		
 		p_val-=min;
-		p_val=p_val-fmod(p_val,interval);
+		p_val=p_val-fmod(p_val+0.000000001,interval); //avoids a precision problem with doubles, there will be a little bit of accum error, but oh well!
+		
 		p_val+=min;
+		
+		if (fabs(p_val)<(interval/2.0))
+			p_val=0; //avoid precision stuff
+		  
+
 	}
 	val=p_val;
 				

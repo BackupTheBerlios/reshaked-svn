@@ -20,6 +20,10 @@
 #include "interface/settings_midi.h"
 #include "interface/settings_interface.h"
 
+#include "tree_loader.h"
+#include "tree_saver.h"
+
+
 namespace ReShaked {
 
 /**
@@ -40,6 +44,9 @@ public:
 	SettingsMidi *get_settings_midi();
 	SettingsInterface *get_settings_interface();
 	
+	void load(TreeLoader *p_loader);
+	void save(TreeSaver *p_saver);
+		
 	
 	SettingsDialog(QWidget *p_parent);
 	~SettingsDialog();

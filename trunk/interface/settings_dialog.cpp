@@ -32,6 +32,48 @@ SettingsInterface *SettingsDialog::get_settings_interface() {
 	return settings_interface;
 }
 
+
+void SettingsDialog::load(TreeLoader *p_loader) {
+	
+	p_loader->enter("audio");
+	settings_sound->load(p_loader);
+	p_loader->exit();
+	
+	p_loader->enter("midi");
+	settings_midi->load(p_loader);
+	p_loader->exit();
+	
+	p_loader->enter("keyboard");
+	key_settings->load(p_loader);
+	p_loader->exit();
+	
+	p_loader->enter("interface");
+	settings_interface->load(p_loader);
+	p_loader->exit();
+	
+}
+void SettingsDialog::save(TreeSaver *p_saver) {
+	
+	
+	p_saver->enter("audio");
+	settings_sound->save(p_saver);
+	p_saver->exit();
+	
+	p_saver->enter("midi");
+	settings_midi->save(p_saver);
+	p_saver->exit();
+	
+	p_saver->enter("keyboard");
+	key_settings->save(p_saver);
+	p_saver->exit();
+	
+	p_saver->enter("interface");
+	settings_interface->save(p_saver);
+	p_saver->exit();
+	
+}
+
+
 SettingsDialog::SettingsDialog(QWidget *p_parent) :QDialog (p_parent)
 {
 	setLayout(new QHBoxLayout(this));

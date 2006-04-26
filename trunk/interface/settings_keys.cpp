@@ -19,6 +19,19 @@
 
 namespace ReShaked {
 
+
+void SettingsKeys::load(TreeLoader *p_loader) {
+	
+	
+}
+
+void SettingsKeys::save(TreeSaver *p_saver) {
+	
+		
+	
+}
+
+
 void SettingsKeys::KeybindItem::update_bind() {
 	
 	ERR_FAIL_INDEX(bind_idx,Keyboard_Input::get_singleton_instance()->get_key_bind_count());

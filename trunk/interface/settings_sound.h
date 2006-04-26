@@ -20,6 +20,9 @@
 #include <Qt/qpushbutton.h>
 #include <Qt/qlineedit.h>
 
+#include "tree_loader.h"
+#include "tree_saver.h"
+
 namespace ReShaked {
 
 /**
@@ -49,6 +52,10 @@ public slots:
 	void driver_changed(int p_to_which);
 	
 public:
+	
+	void load(TreeLoader *p_loader);
+	void save(TreeSaver *p_saver);
+	
 	SettingsSound(QWidget *p_parent);
 	~SettingsSound();
 

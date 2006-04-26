@@ -18,6 +18,9 @@
 #include <Qt/qcheckbox.h>
 #include <Qt/qpushbutton.h>
 
+#include "tree_loader.h"
+#include "tree_saver.h"
+
 namespace ReShaked {
 
 /**
@@ -39,14 +42,16 @@ class SettingsInterface : public CVBox{
 private slots:	
 	
 	void change_max_undo(int p_steps);
-	
 	void change_theme_request();
-	
 	void save_template_request();
 signals:	
 	
 	void ui_update_interval_changed(int p_interval);
 public:
+	
+	void load(TreeLoader *p_loader);
+	void save(TreeSaver *p_saver);
+	
 	SettingsInterface(QWidget *p_parent);
 	
 	~SettingsInterface();

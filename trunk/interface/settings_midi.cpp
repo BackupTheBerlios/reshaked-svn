@@ -34,6 +34,16 @@ namespace ReShaked {
 
 
 
+void SettingsMidi::load(TreeLoader *p_loader) {
+	
+	
+}
+void SettingsMidi::save(TreeSaver *p_saver) {
+	
+	
+}
+
+
 void SettingsMidi::restart() {
 	
 	MidiDriverList::get_singleton()->init_driver();
