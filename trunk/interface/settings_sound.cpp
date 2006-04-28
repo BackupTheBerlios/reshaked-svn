@@ -37,11 +37,76 @@ namespace ReShaked {
 void SettingsSound::load(TreeLoader *p_loader) {
 	
 	
+	if (!p_loader->is_var("driver_name")) {
+		
+		SoundDriverList::get_singleton()->init_driver(0,false);
+		select_engine->setCurrentIndex(0);
+		check_driver_status();
+		update_driver_options();
+
+		return;
+	}
 	
+	String name=p_loader->get_string("driver_name");
+	
+	int driver_idx=-1;
+	for (int i=0;i<SoundDriverList::get_singleton()->get_driver_count();i++) {
+		
+		if ( SoundDriverList::get_singleton()->get_driver_name(i)==name ) {
+			
+			driver_idx=i;
+			break;
+		}
+	}
+	
+	if (driver_idx==-1) {
+		
+		SoundDriverList::get_singleton()->init_driver(0,false);
+		select_engine->setCurrentIndex(0);
+		check_driver_status();
+		update_driver_options();
+		
+		return;
+	}
+	
+	SoundDriverList::get_singleton()->init_driver(driver_idx,false); //init but dont activate
+	
+	SoundDriver *d=SoundDriverList::get_singleton()->get_driver();
+	
+	for (int i=0;i<d->get_settings_count();i++) {
+		
+		String var_name="driver_setting__"+d->get_setting(i)->get_name();
+		if (!p_loader->is_var(var_name))
+			continue;
+		
+		d->get_setting(i)->set( p_loader->get_float(var_name) );
+	}
+	
+	bool init_active=p_loader->get_int( "driver_active" );
+	
+	if (init_active)
+		SoundDriverList::get_singleton()->init_driver(driver_idx,true); //init but dont activate
+	
+	select_engine->setCurrentIndex(driver_idx);
+	check_driver_status();
+	update_driver_options();
+	
+
 }
+
 void SettingsSound::save(TreeSaver *p_saver) {
 	
 	
+	SoundDriver *d=SoundDriverList::get_singleton()->get_driver();
+	
+	ERR_FAIL_COND( d==NULL );
+	
+	p_saver->add_string( "driver_name" , SoundDriverList::get_singleton()->get_driver()->get_name() );
+	p_saver->add_int( "driver_active" , SoundDriverList::get_singleton()->get_driver()->get_status()==SoundDriver::STATUS_ACTIVE );
+	for (int i=0;i<d->get_settings_count();i++) {
+		
+		p_saver->add_float("driver_setting__"+d->get_setting(i)->get_name(),d->get_setting(i)->get());
+	}
 	
 }
 

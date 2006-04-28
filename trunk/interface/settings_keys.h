@@ -46,6 +46,7 @@ class SettingsKeys : public CVBox {
 	
 	int selected_idx;
 	
+	void rebuild();
 	
 public slots:	
 	

@@ -36,7 +36,7 @@ T test_string() {
 
 
 int main() {
-
+	/*
   ReShaked::String own=test_string<ReShaked::String>();
   wprintf(L"Own:\n");
   own+="\n";
@@ -56,12 +56,20 @@ int main() {
   string_vec.erase(string_vec.begin()+2);
   string_vec.insert(string_vec.begin()+1,"toadd!");
   
+  */
+  ReShaked::String merk="Las chicas del gato me dan una mamada";
+  printf("before: %lls\n",merk.c_str());
+  merk.replace("g","p");
+  merk.replace("mamada","naranja");
+  merk.replace("chicas","verduledas");
   
+  printf("after: %lls\n",merk.c_str());
+  /*
   for (int i=0;i<string_vec.size();i++) {
 	  
 	  wprintf(L"%i: %lls\n",i,string_vec[i].c_str());	  
   }
-  
+  */
   
   return 0;  
 }

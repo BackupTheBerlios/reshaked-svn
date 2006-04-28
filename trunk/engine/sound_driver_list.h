@@ -38,7 +38,7 @@ public:
 
 	int get_driver_count();
 	String get_driver_name(int p_driver);
-	SoundDriver *get_driver(int p_index);
+	SoundDriver *get_driver(int p_index=-1);
 	int get_current_driver();
 	bool is_current_driver_active();
 	

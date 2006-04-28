@@ -131,6 +131,8 @@ void SoundDriverList::set_midi_input_handler(MidiInputHandlerBase *p_midi_input_
 
 SoundDriver *SoundDriverList::get_driver(int p_index) {
 	
+	if (p_index==-1)
+		p_index=current;
 	ERR_FAIL_INDEX_V(p_index,driver_list.size(),NULL);
 	return driver_list[p_index];	
 	

@@ -36,10 +36,130 @@ namespace ReShaked {
 
 void SettingsMidi::load(TreeLoader *p_loader) {
 	
+	if (!p_loader->is_var("driver_name")) {
+		
+		MidiDriverList::get_singleton()->init_driver(0,false);
+		select_engine->setCurrentIndex(0);
+		check_driver_status();
+		update_driver_options();
+
+		return;
+	}
+	
+	String name=p_loader->get_string("driver_name");
+	
+	int driver_idx=-1;
+	for (int i=0;i<MidiDriverList::get_singleton()->get_driver_count();i++) {
+		
+		if ( MidiDriverList::get_singleton()->get_driver_name(i)==name ) {
+			
+			driver_idx=i;
+			break;
+		}
+	}
+	
+	if (driver_idx==-1) {
+		
+		MidiDriverList::get_singleton()->init_driver(0,false);
+		select_engine->setCurrentIndex(0);
+		check_driver_status();
+		update_driver_options();
+		
+		return;
+	}
+	
+	MidiDriverList::get_singleton()->init_driver(driver_idx,false); //init but dont activate
+	
+	MidiDriver *d=MidiDriverList::get_singleton()->get_driver();
+	
+	for (int i=0;i<d->get_settings_count();i++) {
+		
+		String var_name="driver_setting__"+d->get_setting(i)->get_name();
+		if (!p_loader->is_var(var_name))
+			continue;
+		
+		d->get_setting(i)->set( p_loader->get_float(var_name) );
+	}
+	
+	bool init_active=p_loader->get_int( "driver_active" );
+	
+	
+	if (init_active)
+		MidiDriverList::get_singleton()->init_driver(driver_idx,true); //init but dont activate
+	
+	p_loader->enter("outputs");
+	
+	for (int i=0;i<d->get_output_count();i++) {
+		
+		if (!p_loader->is_var("device_"+String::num(i)))
+			continue;
+		
+		p_loader->enter("device_"+String::num(i));
+		
+		String id=p_loader->get_string( "identifier" );
+		
+		if (init_active)
+			d->connect_output(i,id);
+		
+		
+		p_loader->enter("description");
+		
+		MidiDeviceDescription *dd=d->get_output_device_description(i);
+		
+		
+		dd->load(p_loader);
+		
+		p_loader->exit(); //description
+		
+		p_loader->exit(); //device
+	}
+	
+	
+	p_loader->exit();
+	
+	
+	select_engine->setCurrentIndex(driver_idx);
+	check_driver_status();
+	update_driver_options();
 	
 }
 void SettingsMidi::save(TreeSaver *p_saver) {
 	
+
+	MidiDriver *d=MidiDriverList::get_singleton()->get_driver();
+	
+	ERR_FAIL_COND( d==NULL );
+	
+	p_saver->add_string( "driver_name" , MidiDriverList::get_singleton()->get_driver()->get_name() );
+	p_saver->add_int( "driver_active" , d->is_active() );
+	for (int i=0;i<d->get_settings_count();i++) {
+		
+		p_saver->add_float("driver_setting__"+d->get_setting(i)->get_name(),d->get_setting(i)->get());
+	}
+		
+	
+	p_saver->enter("outputs");
+	
+	for (int i=0;i<d->get_output_count();i++) {
+		
+		p_saver->enter("device_"+String::num(i));
+		
+		p_saver->add_string( "identifier",d->get_output_identifier( i ) );
+		
+		p_saver->enter("description");
+		
+		MidiDeviceDescription *dd=d->get_output_device_description(i);
+		
+		
+		dd->save(p_saver);
+		
+		p_saver->exit(); //description
+		
+		p_saver->exit(); //device
+	}
+	
+	
+	p_saver->exit();
 	
 }
 

@@ -31,9 +31,10 @@ class ConfigHandler {
 
 	String header_check;
 	
-	
-	void remove_trailing_space(String *p_String);
+	void remove_trailing_space(std::string*);
 	void save_subtree(String p_path,FILE *f, TreeLoader *p_loader);
+	
+	void add_item(TreeSaver *p_saver,String p_section,String p_key,String p_value);
 public:
 	void set_header_check(String p_header_check);
 

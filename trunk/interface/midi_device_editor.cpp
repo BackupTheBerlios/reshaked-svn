@@ -24,6 +24,9 @@
 #include <Qt/qmessagebox.h>
 #include <Qt/qinputdialog.h>
 
+#include "tree_container.h"
+#include "config_handler.h"
+
 namespace ReShaked {
 
 
@@ -165,7 +168,8 @@ void MidiDeviceEditor::check_bank_names_changed_horrible_qt4_hack() {
 
 void MidiDeviceEditor::load_device_slot() {
 	
-	QString file=QFileDialog::getOpenFileName ( this, "Open Bank",".", "Bank Files (*.bnk *.ins)");
+	QString file=QFileDialog::getOpenFileName ( this, "Open Bank",".", "Bank Files (*.bnk *.ins);;Reshaked Banks (*.bnk);;Cakewalk/Sonar Banks (*.ins)");
+			
 			
 	if (file=="")
 		return;
@@ -219,7 +223,26 @@ void MidiDeviceEditor::load_device_slot() {
 }
 void MidiDeviceEditor::save_device_slot() {
 	
+	QString file=QFileDialog::getSaveFileName ( this, "Save Bank",".", "Reshaked Bank (*.bnk)");
 	
+	if (file=="")
+		return;
+	
+	if (file.toLower().indexOf(".bnk")<0) 
+		file+=".bnk";
+	
+	TreeContainer tc;
+	desc->save(&tc);
+	
+	ConfigHandler ch;
+	ch.set_header_check("Reshaked Bank");
+	
+	if (ch.save( DeQStrify(file),&tc )) {
+		
+		QMessageBox::critical ( this, "Error", "Unable to save file!" , QMessageBox::Ok,QMessageBox::NoButton );
+		
+	}
+
 }
 
 void MidiDeviceEditor::bank_select_method_changed(int p_method) {

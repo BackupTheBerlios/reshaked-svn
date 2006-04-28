@@ -80,7 +80,7 @@ private:
 	 */
 	
 	void copy_from(const char *p_cstr);
-	void copy_from(const CharType *p_cstr);
+	void copy_from(const CharType *p_cstr,int p_clip_to_len=-1);
 	void copy_from(const CharType& p_char);
 	
 	/**
@@ -132,9 +132,14 @@ public:
 	int size() const;
 	bool empty() const;
 	
+	/* complex helpers */
+	String substr(int p_from,int p_chars);
+	int find(String p_str,int p_from=0); ///< return <0 if failed
+	void replace(String p_key,String p_with);
 	static String num(double p_num,int p_digits=-1);
 	
 	String left(int p_chars);
+
 	
 	CharString ascii(bool p_allow_extended=false) const;
 	CharString utf8() const;
@@ -144,7 +149,7 @@ public:
 	String();
 	String(CharType p_char);
 	String(const char *p_str);
-	String(const CharType *p_str);
+	String(const CharType *p_str,int p_clip_to_len=-1);
 	String(const String &p_string);
 	~String();
 

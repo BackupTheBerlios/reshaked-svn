@@ -23,6 +23,9 @@ namespace ReShaked {
 
 void CharString::free_shared() {
 	
+	if (shared==NULL)
+		return;
+	
 	if (shared->refcount==1) {
 		
 		free(shared->data);
@@ -168,7 +171,7 @@ void String::copy_from(const char *p_cstr) {
 	shared->len=len;
 	
 }
-void String::copy_from(const CharType *p_cstr) {
+void String::copy_from(const CharType *p_cstr,int p_clip_to_len) {
 	
 	
 	int len=0;
@@ -176,6 +179,10 @@ void String::copy_from(const CharType *p_cstr) {
 	while (*(ptr++)!=0) 
 		len++;
 	
+	if (p_clip_to_len>=0 && p_clip_to_len<len) {
+		
+		len=p_clip_to_len;
+	}
 	if (shared!=NULL)
 		free_shared();
 
@@ -548,6 +555,7 @@ CharString String::ascii(bool p_allow_extended) const {
 
 	
 }
+
 CharString String::utf8() const {
 	
 	if (!length())
@@ -617,10 +625,10 @@ String::String(const char *p_str) {
 	shared=NULL;
 	copy_from(p_str);
 }
-String::String(const CharType *p_str) {
+String::String(const CharType *p_str,int p_clip_to_len) {
 	
 	shared=NULL;
-	copy_from(p_str);
+	copy_from(p_str,p_clip_to_len);
 }
 
 String::String() {
@@ -653,22 +661,76 @@ String operator+(String::CharType p_chr, const String& p_str) {
 	
 }
 
+String String::substr(int p_from,int p_chars) {
+	
+	if (p_from<0 || p_from>=length() || p_chars<=0)
+		return "";
+	
+	if ( (p_from+p_chars)>length()) {
+		
+		p_chars=length()-p_from;
+	}
+	
+	return String(&shared->data[p_from],p_chars);
+	
+}
+int String::find(String p_str,int p_from) {
+	
+	if (p_from<0)
+		return -1;
+	
+	int src_len=p_str.length();
+	
+	if(src_len==0 || length()==0)
+		return -1; //wont find anything!
+	
+	for (int i=p_from;i<=(length()-src_len);i++) {
+		
+		bool found=true;
+		for (int j=0;j<src_len;j++) {
+			
+			int read_pos=i+j;
+			ERR_FAIL_COND_V(read_pos>=length(),-1);	//test in case i made a mistake!			
+			if (shared->data[read_pos]!=p_str[j]) {
+				found=false;
+				break;
+			}
+		}
+		
+		if (found)
+			return i;
+	}
+	
+	return -1;
+}
+
+void String::replace(String p_key,String p_with) {
+	
+	String new_string;
+	int search_from=0;
+	int result=0;
+	
+	while( (result=find(p_key,search_from))>=0 ) {
+		
+		new_string+=substr(search_from,result-search_from);
+		new_string+=p_with;
+		search_from=result+p_key.length();
+	}
+	
+	new_string+=substr(search_from,length()-search_from);
+	
+	*this=new_string;
+}
 
 String String::left(int p_chars) {
 	
 	if (p_chars<=0)
 		return *this;
 	
-	String new_str;
+	if (p_chars>=length())
+		return *this;
 	
-	int new_str_chars=length()-p_chars;
-	if (new_str_chars<=0)
-		return new_str;
-	
-	for (int i=0;i<new_str_chars;i++)
-		new_str+=(*this)[i];
-	
-	return new_str;
+	return substr(0,p_chars);
 }
 
 

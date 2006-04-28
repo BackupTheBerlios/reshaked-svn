@@ -96,6 +96,8 @@ class MainWindow : public QMainWindow {
 
 	QString last_saved_file;
 	
+	QString settings_dir;
+	QString settings_file;
 
 	struct Data {
 
@@ -143,6 +145,9 @@ class MainWindow : public QMainWindow {
 	void update_titlebar();
 	
 	void closeEvent ( QCloseEvent * e );
+	
+	void save_settings();
+	
 public slots:
 	
 	void ui_update_interval_changed(int p_to_value);
@@ -161,7 +166,9 @@ public slots:
 	void toggle_rack_visibility_slot(bool p_visible);
 public:
 
-	MainWindow();
+	bool load_settings();
+	
+	MainWindow(QString p_settings_dir,QString p_settings_file);
 	~MainWindow();
 
 };

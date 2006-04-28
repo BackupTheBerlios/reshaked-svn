@@ -36,11 +36,21 @@ void SettingsInterface::save_template_request() {
 
 void SettingsInterface::load(TreeLoader *p_loader) {
 	
+	ui_update_interval->setValue( p_loader->get_int("ui_update_interval") );
+	ui_update_interval_changed( ui_update_interval->value() );	
+	 
+	ui_max_undo->setValue(p_loader->get_int("ui_max_undo"));
+	UndoStream::set_max_undo_steps( ui_max_undo->value() );
+	
+	debug_theme->setChecked( p_loader->get_int("ui_debug_theme") );
 	
 }
 
 void SettingsInterface::save(TreeSaver *p_saver) {
 	
+	p_saver->add_int("ui_update_interval",ui_update_interval->value());
+	p_saver->add_int("ui_max_undo",ui_max_undo->value());
+	p_saver->add_int("ui_debug_theme",debug_theme->isChecked());
 	
 	
 }

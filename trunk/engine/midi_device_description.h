@@ -15,6 +15,9 @@
 #include "typedefs.h"
 #include "value_stream.h"
 
+#include "tree_loader.h"
+#include "tree_saver.h"
+
 
 namespace ReShaked {
 
@@ -93,6 +96,8 @@ public:
 	
 	void clear();
 	
+	void save(TreeSaver *p_save);
+	void load(TreeLoader *p_load);
 	
 	MidiDeviceDescription();
 	

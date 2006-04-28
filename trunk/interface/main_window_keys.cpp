@@ -156,7 +156,7 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("note_entry/cursor_step_6","Set Cursor Step to 6",Qt::ALT+Qt::Key_6);
 	data.keyboard_codes.add_key_bind("note_entry/cursor_step_7","Set Cursor Step to 7",Qt::ALT+Qt::Key_7);
 	data.keyboard_codes.add_key_bind("note_entry/cursor_step_8","Set Cursor Step to 8",Qt::ALT+Qt::Key_8);
-	data.keyboard_codes.add_key_bind("note_entry/cursor_step_8","Set Cursor Step to 8",Qt::ALT+Qt::Key_8);
+	data.keyboard_codes.add_key_bind("note_entry/cursor_step_9","Set Cursor Step to 9",Qt::ALT+Qt::Key_9);
 	
 	data.keyboard_codes.add_key_bind("editor/window_snap_1","Set Window Snap to 1",Qt::CTRL+Qt::SHIFT+Qt::Key_0);
 	data.keyboard_codes.add_key_bind("editor/window_snap_2","Set Window Snap to 2",Qt::CTRL+Qt::SHIFT+Qt::Key_1);

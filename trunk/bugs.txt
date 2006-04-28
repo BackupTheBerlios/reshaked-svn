@@ -1,2 +1,6 @@
--decimal computation is ok, BUT conversion is shit, it goes minus one (??) I
+hmm*decimal computation is ok, BUT conversion is shit, it goes minus one (??) I
 need to clean up/abstract that
+
+-deregistrar cosas activadas en reshaked.cpp que son parte de la gui, desde
+el constructor de la gui
+-padding adelante y detras para los samples

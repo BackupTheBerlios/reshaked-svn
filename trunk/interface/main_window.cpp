@@ -525,8 +525,48 @@ void MainWindow::ui_update_interval_changed(int p_to_value) {
 	ui_updater->setInterval(p_to_value);
 }
 
-MainWindow::MainWindow() {
+void MainWindow::save_settings() {
 
+	
+	QString settings_path=settings_dir+"/"+settings_file;
+	
+	printf("Saving settings to %s\n",settings_path.toAscii().data());
+	TreeContainer tc;
+	settings->save( &tc );
+	
+	ConfigHandler ch;
+	ch.set_header_check( "ReShaked Configuration" );
+	ch.save( DeQStrify(settings_path), &tc );
+
+}
+
+bool MainWindow::load_settings() {
+	
+	QString settings_path=settings_dir+"/"+settings_file;
+	
+	printf("Loading settings to %s\n",settings_path.toAscii().data());
+	TreeContainer tc;
+
+	ConfigHandler ch;
+	ch.set_header_check( "ReShaked Configuration" );
+	if (ch.load( DeQStrify(settings_path), &tc )) {
+		return true;
+	}
+	
+	settings->load( &tc );	
+	
+	
+	ch.save(DeQStrify(settings_path+".test"),&tc);
+	
+	return false;
+}
+
+
+MainWindow::MainWindow(QString p_settings_dir,QString p_settings_file) {
+
+	settings_dir=p_settings_dir;
+	settings_file=p_settings_file;
+	
 	SoundDriverList::get_singleton()->set_song(&data.song);
 	MidiDriverList::get_singleton()->set_song_playback(&data.song.get_song_playback());
 	update_notify = new Qt_UpdateNotify(this);
@@ -657,8 +697,11 @@ MainWindow::MainWindow() {
 	update_titlebar();
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
+
+	/* Save settings */
+	printf("mywindow\n");
+	save_settings();
 }
 
 

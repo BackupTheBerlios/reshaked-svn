@@ -97,11 +97,31 @@ static void test_config_dir() {
 	if (!config_dir.cd("presets")) {
 		
 		ERR_FAIL_COND( !config_dir.mkdir("presets") );
-		
-		
 		/* copy all default presets */
-	}
+	} else
+		config_dir.cd("..");
 	
+	if (!config_dir.cd("themes")) {
+		
+		ERR_FAIL_COND( !config_dir.mkdir("themes") );
+		/* copy all default presets */
+	} else
+		config_dir.cd("..");
+	
+	if (!config_dir.cd("insdefs")) {
+		
+		ERR_FAIL_COND( !config_dir.mkdir("insdefs") );
+		/* copy all default presets */
+	} else
+		config_dir.cd("..");
+	
+	if (!config_dir.cd("demos")) {
+	
+		ERR_FAIL_COND( !config_dir.mkdir("demos") );
+		/* copy all default presets */
+	} else
+		config_dir.cd("..");
+		
 }
 
 
@@ -181,7 +201,7 @@ int main(int argc, char *argv[]) {
 		
 	ReShaked::LADSPA_SoundPluginSource ladspa_plugin_source;
 	
-#endif;
+#endif
 	init_sound_plugin_UI_list();
 	
 	ReShaked::AudioControl::init();
@@ -200,16 +220,20 @@ int main(int argc, char *argv[]) {
 #endif
 	
 	
-	ReShaked::MainWindow *w = new ReShaked::MainWindow;
+	ReShaked::MainWindow *w = new ReShaked::MainWindow(CONFIG_DIR_PATH+"/"+CONFIG_DIR,"settings.cfg");
 	
-	driver_list.init_driver(0);
-	midi_driver_list.init_driver(0);
+	if (w->load_settings()) { //if failed loading settings, init the default drivers
+		WARN_PRINT("Loading settings failed");
+		driver_list.init_driver(0);
+		midi_driver_list.init_driver(0);
+	}
 	
 	//q.setMainWidget(&w);
 	w->show();
 	
 	int res=q->exec();
 	
+	delete w;
 #ifdef DRIVER_PORTAUDIO_ENABLED
 	
 	ReShaked::SoundDriver_PortAudio::finalize_portaudio();

@@ -22,12 +22,67 @@ namespace ReShaked {
 
 void SettingsKeys::load(TreeLoader *p_loader) {
 	
+	for (int i=0;i<Keyboard_Input::get_singleton_instance()->get_key_bind_count();i++) {
+		
+		Keyboard_Input::Bind bind=Keyboard_Input::get_singleton_instance()->get_key_bind(i);
+		
+		if (!p_loader->is_var(bind.name)) {
+			
+			printf("var %s not found\n",bind.name.ascii().get_data());
+			
+			continue;
+		}
+		
+		String bind_text=p_loader->get_string( bind.name );
+		
+		if (bind_text=="") {
+			
+			Keyboard_Input::get_singleton_instance()->set_key_bind_key( i, Keyboard_Input::NO_KEY );
+		}
+		
+
+						
+		QKeySequence ks = QKeySequence::fromString(QStrify(bind_text));
+			
+		if (ks.count()==0) {
+			
+			Keyboard_Input::get_singleton_instance()->set_key_bind_key( i, Keyboard_Input::NO_KEY );
+			
+		} else {
+			
+			printf("loaded bind %s , as %i\n",bind.name.ascii().get_data(),ks[0]);
+			Keyboard_Input::get_singleton_instance()->set_key_bind_key( i, ks[0] );
+			
+		}
+
+
+	}	
+
+	rebuild();
+} 
 	
-}
+
 
 void SettingsKeys::save(TreeSaver *p_saver) {
 	
+	for (int i=0;i<Keyboard_Input::get_singleton_instance()->get_key_bind_count();i++) {
 		
+		Keyboard_Input::Bind bind=Keyboard_Input::get_singleton_instance()->get_key_bind(i);
+		
+		QString sequence;
+		if (bind.key<0)
+			sequence="";
+		else {
+			
+			QKeySequence ks = QKeySequence(bind.key);
+			sequence=ks.toString();
+			
+		}
+				
+		
+		p_saver->add_string(bind.name,DeQStrify(sequence));
+	
+	}
 	
 }
 
@@ -238,8 +293,7 @@ void SettingsKeys::set_item() {
 }
 
 
-SettingsKeys::SettingsKeys(QWidget *p_parent) : CVBox(p_parent) {
-	
+void SettingsKeys::rebuild() {
 	
 	QMap<QString,QString> path_translation;
 	path_translation["cursor"]="Cursor";
@@ -248,10 +302,7 @@ SettingsKeys::SettingsKeys(QWidget *p_parent) : CVBox(p_parent) {
 	path_translation["note_entry"]="Note Entry";
 	path_translation["actions"]="Actions";
 	
-	layout()->setMargin(10);
-	layout()->setSpacing(4);
-	
-	tree = new QTreeWidget(this);
+	tree->clear();
 	
 	tree->setColumnCount(2);
 	QStringList strlist;
@@ -261,6 +312,7 @@ SettingsKeys::SettingsKeys(QWidget *p_parent) : CVBox(p_parent) {
 	tree->header()->setResizeMode(0,QHeaderView::Stretch);
 	
 	QMap<QString,QTreeWidgetItem*> section_map;
+	
 	
 	for (int i=0;i<Keyboard_Input::get_singleton_instance()->get_key_bind_count();i++) {
 		
@@ -274,7 +326,7 @@ SettingsKeys::SettingsKeys(QWidget *p_parent) : CVBox(p_parent) {
 		else
 			path="cursor";
 		
-		printf("item %s - path %s\n",name.toAscii().data(),path.toAscii().data());
+//		printf("item %s - path %s\n",name.toAscii().data(),path.toAscii().data());
 		QMap<QString,QTreeWidgetItem*>::iterator I = section_map.find(path);
 		if (I==section_map.end()) {
 			
@@ -289,6 +341,22 @@ SettingsKeys::SettingsKeys(QWidget *p_parent) : CVBox(p_parent) {
 	
 	}
 	
+	selected_idx=-1;
+	
+	set_bind->setEnabled(false);
+	clear_bind->setEnabled(false);
+	
+}
+
+SettingsKeys::SettingsKeys(QWidget *p_parent) : CVBox(p_parent) {
+	
+	
+	
+	layout()->setMargin(10);
+	layout()->setSpacing(4);
+	
+	tree = new QTreeWidget(this);
+	
 	
 	CHBox *hb = new CHBox(this);
 	hb->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
@@ -299,8 +367,8 @@ SettingsKeys::SettingsKeys(QWidget *p_parent) : CVBox(p_parent) {
 	clear_bind = new QPushButton("Clear Keybind",hb);
 	clear_bind->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 	
-	set_bind->setEnabled(false);
-	clear_bind->setEnabled(false);
+	rebuild();
+
 	
 	QObject::connect(set_bind,SIGNAL(clicked()),this,SLOT(set_item()));
 	QObject::connect(clear_bind,SIGNAL(clicked()),this,SLOT(clear_item()));
