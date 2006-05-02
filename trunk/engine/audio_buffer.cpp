@@ -133,9 +133,8 @@ void AudioBuffer::add_from(AudioBuffer *p_src,int p_frames) {
 	
 }
 
-AudioBuffer::AudioBuffer(int p_channels,int p_size) {
-
-
+void AudioBuffer::setup(int p_channels,int p_size) {
+	
 	size=0;
 
 	ERR_FAIL_COND(p_channels==0);
@@ -146,8 +145,24 @@ AudioBuffer::AudioBuffer(int p_channels,int p_size) {
 	
 	data.resize(p_channels);
 	
-	for (int i=0;i<(int)data.size();i++) 
+	for (int i=0;i<(int)data.size();i++) {
+		
 		data[i].resize(size);
+		
+		for (int j=0;j<size;j++)
+			data[i][j]=0;
+	}
+	
+	
+}
+
+AudioBuffer::AudioBuffer() {
+	
+	
+}
+AudioBuffer::AudioBuffer(int p_channels,int p_size) {
+
+	setup(p_channels,p_size);
 
 }
 

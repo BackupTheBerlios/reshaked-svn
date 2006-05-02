@@ -31,6 +31,22 @@
 #include "pixmaps/default_skin/bottom__vpiano_white_key_pressed.xpm"
 #include "pixmaps/default_skin/bottom_left__corner.xpm"
 #include "pixmaps/default_skin/bottom_right__corner.xpm"
+#include "pixmaps/default_skin/chorus__bottom.xpm"
+#include "pixmaps/default_skin/chorus__knob.xpm"
+#include "pixmaps/default_skin/chorus__knob_pos.xpm"
+#include "pixmaps/default_skin/chorus__lfo_end.xpm"
+#include "pixmaps/default_skin/chorus__lfo_random_base.xpm"
+#include "pixmaps/default_skin/chorus__lfo_random_grabber.xpm"
+#include "pixmaps/default_skin/chorus__top.xpm"
+#include "pixmaps/default_skin/chorus__voice_1.xpm"
+#include "pixmaps/default_skin/chorus__voice_1_active.xpm"
+#include "pixmaps/default_skin/chorus__voice_2.xpm"
+#include "pixmaps/default_skin/chorus__voice_2_active.xpm"
+#include "pixmaps/default_skin/chorus__voice_3.xpm"
+#include "pixmaps/default_skin/chorus__voice_3_active.xpm"
+#include "pixmaps/default_skin/chorus__voice_4.xpm"
+#include "pixmaps/default_skin/chorus__voice_4_active.xpm"
+#include "pixmaps/default_skin/chorus__voice_lfo_separator.xpm"
 #include "pixmaps/default_skin/edit_toolbar__automation_mode_envelope.xpm"
 #include "pixmaps/default_skin/edit_toolbar__automation_mode_envelope_active.xpm"
 #include "pixmaps/default_skin/edit_toolbar__automation_mode_stream.xpm"
@@ -303,6 +319,38 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["bottom_left__corner"]=THEME_BOTTOM_LEFT__CORNER;
     pixmap_map[THEME_BOTTOM_RIGHT__CORNER]=QPixmap( (const char**) bottom_right__corner_xpm); 
     pixmap_map_skin["bottom_right__corner"]=THEME_BOTTOM_RIGHT__CORNER;
+    pixmap_map[THEME_CHORUS__BOTTOM]=QPixmap( (const char**) chorus__bottom_xpm); 
+    pixmap_map_skin["chorus__bottom"]=THEME_CHORUS__BOTTOM;
+    pixmap_map[THEME_CHORUS__KNOB]=QPixmap( (const char**) chorus__knob_xpm); 
+    pixmap_map_skin["chorus__knob"]=THEME_CHORUS__KNOB;
+    pixmap_map[THEME_CHORUS__KNOB_POS]=QPixmap( (const char**) chorus__knob_pos_xpm); 
+    pixmap_map_skin["chorus__knob_pos"]=THEME_CHORUS__KNOB_POS;
+    pixmap_map[THEME_CHORUS__LFO_END]=QPixmap( (const char**) chorus__lfo_end_xpm); 
+    pixmap_map_skin["chorus__lfo_end"]=THEME_CHORUS__LFO_END;
+    pixmap_map[THEME_CHORUS__LFO_RANDOM_BASE]=QPixmap( (const char**) chorus__lfo_random_base_xpm); 
+    pixmap_map_skin["chorus__lfo_random_base"]=THEME_CHORUS__LFO_RANDOM_BASE;
+    pixmap_map[THEME_CHORUS__LFO_RANDOM_GRABBER]=QPixmap( (const char**) chorus__lfo_random_grabber_xpm); 
+    pixmap_map_skin["chorus__lfo_random_grabber"]=THEME_CHORUS__LFO_RANDOM_GRABBER;
+    pixmap_map[THEME_CHORUS__TOP]=QPixmap( (const char**) chorus__top_xpm); 
+    pixmap_map_skin["chorus__top"]=THEME_CHORUS__TOP;
+    pixmap_map[THEME_CHORUS__VOICE_1]=QPixmap( (const char**) chorus__voice_1_xpm); 
+    pixmap_map_skin["chorus__voice_1"]=THEME_CHORUS__VOICE_1;
+    pixmap_map[THEME_CHORUS__VOICE_1_ACTIVE]=QPixmap( (const char**) chorus__voice_1_active_xpm); 
+    pixmap_map_skin["chorus__voice_1_active"]=THEME_CHORUS__VOICE_1_ACTIVE;
+    pixmap_map[THEME_CHORUS__VOICE_2]=QPixmap( (const char**) chorus__voice_2_xpm); 
+    pixmap_map_skin["chorus__voice_2"]=THEME_CHORUS__VOICE_2;
+    pixmap_map[THEME_CHORUS__VOICE_2_ACTIVE]=QPixmap( (const char**) chorus__voice_2_active_xpm); 
+    pixmap_map_skin["chorus__voice_2_active"]=THEME_CHORUS__VOICE_2_ACTIVE;
+    pixmap_map[THEME_CHORUS__VOICE_3]=QPixmap( (const char**) chorus__voice_3_xpm); 
+    pixmap_map_skin["chorus__voice_3"]=THEME_CHORUS__VOICE_3;
+    pixmap_map[THEME_CHORUS__VOICE_3_ACTIVE]=QPixmap( (const char**) chorus__voice_3_active_xpm); 
+    pixmap_map_skin["chorus__voice_3_active"]=THEME_CHORUS__VOICE_3_ACTIVE;
+    pixmap_map[THEME_CHORUS__VOICE_4]=QPixmap( (const char**) chorus__voice_4_xpm); 
+    pixmap_map_skin["chorus__voice_4"]=THEME_CHORUS__VOICE_4;
+    pixmap_map[THEME_CHORUS__VOICE_4_ACTIVE]=QPixmap( (const char**) chorus__voice_4_active_xpm); 
+    pixmap_map_skin["chorus__voice_4_active"]=THEME_CHORUS__VOICE_4_ACTIVE;
+    pixmap_map[THEME_CHORUS__VOICE_LFO_SEPARATOR]=QPixmap( (const char**) chorus__voice_lfo_separator_xpm); 
+    pixmap_map_skin["chorus__voice_lfo_separator"]=THEME_CHORUS__VOICE_LFO_SEPARATOR;
     pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE]=QPixmap( (const char**) edit_toolbar__automation_mode_envelope_xpm); 
     pixmap_map_skin["edit_toolbar__automation_mode_envelope"]=THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE;
     pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE_ACTIVE]=QPixmap( (const char**) edit_toolbar__automation_mode_envelope_active_xpm); 

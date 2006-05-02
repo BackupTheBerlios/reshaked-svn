@@ -27,6 +27,7 @@ namespace ReShaked {
     
 class Property {
 			    
+	bool quad_coeff; //quadratic coeff
 public:
 	
 	enum DisplayMode {
@@ -49,7 +50,8 @@ public:
 	virtual String get_name()=0;
 	virtual String get_caption()=0;
 	virtual String get_postfix();
-	
+	virtual bool is_quad_coeff();
+	void set_quad_coeff(bool p_quad);
 	virtual String get_text_value(double p_for_value,bool p_no_postfix=false)=0; //useful for precomputnig ranges
 	virtual bool has_text_value()=0;
 	
@@ -61,7 +63,7 @@ public:
 	void set_coeff_value(double p_coeff); ///< return value in range 0 .. 1
 	double get_value_from_coeff(double p_coeff);
 	 
-	
+	Property();
 	virtual ~Property(){};
 
 };

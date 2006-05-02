@@ -33,3 +33,23 @@ bugs:
 -plugins
 *LADSPA support
 *plugin browser, has incremental search
+
+
+effects:
+
+*amplifier(ratio and db)
+-chorus
+-reverb
+-filterbank
+-echo
+-Eq: 6, 10, 21 ,31 bands
+-Distortion
+-Compressor
+
+
+
+
+
+
+
+

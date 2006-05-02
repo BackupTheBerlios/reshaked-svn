@@ -30,7 +30,19 @@ String Property::get_text_value(bool p_no_postfix) {
 
 double Property::get_coeff_value() {
 	
-	return (get()-get_min())/(get_max()-get_min());
+	double coeff_val;
+	
+	double range=get_max()-get_min();
+	double val=(get()-get_min());
+	
+	if (quad_coeff) {
+		
+		coeff_val=sqrt(val)/sqrt(range);
+	} else {
+		
+		coeff_val=val/range;
+	}
+	return coeff_val;
 }
 
 void Property::set_coeff_value(double p_coeff) {
@@ -38,12 +50,24 @@ void Property::set_coeff_value(double p_coeff) {
 	set(get_value_from_coeff(p_coeff));
 }
 
+bool Property::is_quad_coeff() { return quad_coeff; }
+void Property::set_quad_coeff(bool p_quad) { quad_coeff=p_quad; }
+
 double Property::get_value_from_coeff(double p_coeff) {
 	
 	if (p_coeff==1)
 		return get_max(); //avoid precision issues
 	
-	p_coeff*=get_max()-get_min();		
+	double range=get_max()-get_min();
+	
+	if (quad_coeff) {
+		
+		p_coeff*=sqrt(range);
+		p_coeff*=p_coeff;
+	} else {
+		p_coeff*=range;		
+	}
+	
 	p_coeff+=get_min();
 	
 	if (get_stepping()!=0) {
@@ -54,6 +78,8 @@ double Property::get_value_from_coeff(double p_coeff) {
 	return p_coeff;
 	
 }
+
+Property::Property() { quad_coeff=false; }
 
 void LocalProperty::set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String p_postfix,String p_min_label, String p_max_label) {
 	
