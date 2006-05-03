@@ -37,7 +37,7 @@ void PropertyEditKnob::value_changed(float p_new_value) {
 	
 	set( get_property()->get_value_from_coeff( p_new_value) );
 	setToolTip( QStrify( get_property()->get_text_value() ) );
-	QToolTip::showText( mapToGlobal( QPoint( 0, height() ) ), QStrify( get_property()->get_text_value() ), this );
+	//QToolTip::showText( mapToGlobal( QPoint( 0, height() ) ), QStrify( get_property()->get_text_value() ), this );
 }
 
 void PropertyEditKnob::mousePressEvent(QMouseEvent *e) {

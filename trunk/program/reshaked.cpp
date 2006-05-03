@@ -12,6 +12,7 @@
 #include "plugins/sine_synth.h"
 #include "plugins/simpler.h"
 #include "plugins/chionic.h"
+#include "plugin_UIs/chorus_plugin_ui.h"
 #include "plugins/chorus_plugin.h"
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 #include "plugin_UIs/chionic_interface.h"
@@ -82,6 +83,7 @@ static void init_sound_plugin_UI_list() {
 		
 	sound_plugin_UI_list.add_creator(    ReShaked::ChionicInterface::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::SimplerUI::create_this );
+	sound_plugin_UI_list.add_creator(    ReShaked::ChorusPluginUI::create_this );
 	/* this one must go last, since it's the last resort */
 	sound_plugin_UI_list.add_creator(    ReShaked::SoundPluginUI_Generic::create_this );
 	

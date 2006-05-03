@@ -4,3 +4,6 @@ need to clean up/abstract that
 -deregistrar cosas activadas en reshaked.cpp que son parte de la gui, desde
 el constructor de la gui
 -padding adelante y detras para los samples
+
+-pan/depth en chorus no es automatizable porque panner editor no se
+automatiza.. 

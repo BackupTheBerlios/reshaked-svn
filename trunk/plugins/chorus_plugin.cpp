@@ -30,6 +30,7 @@ const SoundPluginInfo *ChorusPlugin::create_info() {
 	info.unique_ID="INTERNAL_chorus"; 
 	info.category="Internal"; 
 	info.can_custom_channels=true;
+	info.custom_channels.push_back(1);
 	info.custom_channels.push_back(2);
 	info.custom_channels.push_back(4);
 	info.has_internal_UI=false; 
@@ -82,7 +83,7 @@ void ChorusPlugin::reset() { //sort of useless
 
 	float ring_buffer_max_size=MAX_DELAY_MS+MAX_DEPTH_MS+MAX_WIDTH_MS*get_channels_created();
 	ring_buffer_max_size*=2; //just to avoid complications
-	ring_buffer_max_size/=1000.0;
+	ring_buffer_max_size/=1000.0;//convert to seconds
 	ring_buffer_max_size*=mix_rate;
 	
 	int ringbuff_size=ring_buffer_max_size;
@@ -116,9 +117,12 @@ void ChorusPlugin::set_mixing_rate(float p_mixing_rate) { //sort of useless
 
 /* Processing */
 
-void ChorusPlugin::process_stereo(int p_frames) {
+void ChorusPlugin::process(int p_frames) {
 	
+	if (get_channels_created()>MAX_CHANNELS)
+		return;
 	
+
 	float dry_send=dry.get();
 	
 	/* Enter data into ringbuffer */
@@ -146,6 +150,7 @@ void ChorusPlugin::process_stereo(int p_frames) {
 		double time_to_mix=(float)p_frames/mix_rate;
 		double cycles_to_mix=time_to_mix*v.rate.get();
 		
+		
 		for (int c=0;c<ring_buffer.get_channels();c++) {
 			
 			unsigned int local_rb_pos=buffer_pos;
@@ -166,8 +171,6 @@ void ChorusPlugin::process_stereo(int p_frames) {
 				
 			}
 			
-			//vol modifier
-			float vol_modifier=wet.get();
 			
 			
 			//low pass filter
@@ -179,6 +182,50 @@ void ChorusPlugin::process_stereo(int p_frames) {
 			float h=v.filter_h[c];
 			if (v.cutoff.get()==v.cutoff.get_max()) {
 				c1=1.0; c2=0.0;
+			}
+			
+			//vol modifier
+			float vol_modifier=wet.get();
+			
+			
+			//pan - for 2 and 4 channels only.. for mono there's no change
+			
+			if (get_channels_created()==2) {
+				
+				if (c==0) {
+					
+					vol_modifier*=1.0-v.pan.get();
+				} else if (c==1) {
+					
+					vol_modifier*=v.pan.get();			
+				}
+				
+
+				
+			} else if (get_channels_created()==4) {
+				
+				float pan=v.pan.get();
+				float depth=v.depth.get();
+				
+				float l=1.0-pan;
+				float r=pan;
+				
+				
+				if (c==0) {
+					
+					vol_modifier*=(1.0-depth)*l;
+					
+				} else if (c==1) {
+					
+					vol_modifier*=(1.0-depth)*r;
+				} else if (c==2) {
+					
+					vol_modifier*=depth*l;
+				} else if (c==3) {
+					
+					vol_modifier*=depth*r;
+				}
+				
 			}
 			
 			for (int i=0;i<p_frames;i++) {
@@ -228,25 +275,6 @@ void ChorusPlugin::process_stereo(int p_frames) {
 	//in*dry_send;
 }
 
-void ChorusPlugin::process_quad(int p_frames) {
-	
-	
-	
-}
-
-
-void ChorusPlugin::process(int p_frames) {
-	
-	if (get_channels_created()!=2 && get_channels_created()!=4)
-		return;
-		
-
-	if (get_channels_created()==2)
-		process_stereo(p_frames);
-	else
-		process_quad(p_frames);
-	
-}
 
 
 ChorusPlugin::ChorusPlugin(const SoundPluginInfo *p_info,int p_channels) : SoundPlugin(p_info,p_channels) {
@@ -259,22 +287,22 @@ ChorusPlugin::ChorusPlugin(const SoundPluginInfo *p_info,int p_channels) : Sound
 	
 	for (int i=0;i<MAX_VOICES;i++) {
 		
-		String name_suffix="_"+String::num(i+1);
-		String caption_suffix=" "+String::num(i+1);
-		voice[i].delay.set_all( 12, 0, MAX_DELAY_MS, 0, 1, Property::DISPLAY_SLIDER, "delay"+name_suffix,"Delay"+caption_suffix,"ms");
+		String name_prefix=String("voice_")+String::num(i+1)+"_";
+		String caption_prefix=String("Voice ")+String::num(i+1)+"/";
+		voice[i].delay.set_all( 12, 0, MAX_DELAY_MS, 0, 1, Property::DISPLAY_SLIDER, name_prefix+"delay",caption_prefix+"Delay","ms");
 		voice[i].delay.set_quad_coeff(true);
-		voice[i].rate.set_all( 1, 0.1, 20, 1, 0.1, Property::DISPLAY_SLIDER, "rate"+name_suffix,"Rate"+caption_suffix,"hz");
+		voice[i].rate.set_all( 1, 0.1, 20, 1, 0.1, Property::DISPLAY_SLIDER, name_prefix+"rate",caption_prefix+"Rate","hz");
 		voice[i].rate.set_quad_coeff(true);
-		voice[i].depth.set_all( 0, 0, MAX_DEPTH_MS, 0, 0.1, Property::DISPLAY_SLIDER, "depth"+name_suffix,"Depth"+caption_suffix,"ms");
+		voice[i].depth.set_all( 0, 0, MAX_DEPTH_MS, 0, 0.1, Property::DISPLAY_SLIDER, name_prefix+"depth",caption_prefix+"Depth","ms");
 		voice[i].depth.set_quad_coeff(true);
-		voice[i].level.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "level"+name_suffix,"Level"+caption_suffix,"","Off");
-		voice[i].width.set_all( 0, 0, MAX_WIDTH_MS, 0, 1, Property::DISPLAY_SLIDER, "width"+name_suffix,"Width"+caption_suffix,"ms");
+		voice[i].level.set_all( 0, 0, 4, 0, 0.01, Property::DISPLAY_SLIDER, name_prefix+"level",caption_prefix+"Level","","Off");
+		voice[i].width.set_all( 0, 0, MAX_WIDTH_MS, 0, 1, Property::DISPLAY_SLIDER, name_prefix+"width",caption_prefix+"Width","ms");
 		voice[i].width.set_quad_coeff(true);
-		voice[i].cutoff.set_all( 16000, 1, 16000, 0, 1, Property::DISPLAY_SLIDER, "cutoff"+name_suffix,"Cutoff"+caption_suffix,"hz","","Off");
+		voice[i].cutoff.set_all( 16000, 1, 16000, 0, 1, Property::DISPLAY_SLIDER, name_prefix+"cutoff",caption_prefix+"Cutoff","hz","","Off");
 		voice[i].cutoff.set_quad_coeff(true);
 		
-		voice[i].pan.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "pan"+name_suffix,"Pan"+caption_suffix);
-		voice[i].pan_depth.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "pan_depth"+name_suffix,"Pan Depth"+caption_suffix);
+		voice[i].pan.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, name_prefix+"pan",caption_prefix+"Pan");
+		voice[i].pan_depth.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, name_prefix+"pan_depth",caption_prefix+"Pan Depth");
 		
 		properties.push_back( &voice[i].delay );		
 		properties.push_back( &voice[i].rate );		

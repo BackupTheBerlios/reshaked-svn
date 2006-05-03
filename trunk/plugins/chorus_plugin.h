@@ -27,9 +27,10 @@ class ChorusPlugin : public SoundPlugin {
 		MAX_DELAY_MS=50,
 		MAX_DEPTH_MS=20,
 		MAX_WIDTH_MS=50,
-		MAX_VOICES=1,
+		MAX_VOICES=4,
 		CYCLES_FRAC=16,
-		CYCLES_MASK=(1<<CYCLES_FRAC)-1
+		CYCLES_MASK=(1<<CYCLES_FRAC)-1,
+		MAX_CHANNELS=4
 	};
 	
 	
@@ -64,8 +65,6 @@ class ChorusPlugin : public SoundPlugin {
 	
 	float mix_rate;
 	
-	void process_stereo(int p_frames);
-	void process_quad(int p_frames);
 	
 public:
 	
