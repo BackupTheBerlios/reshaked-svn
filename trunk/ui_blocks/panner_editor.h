@@ -22,8 +22,10 @@ namespace ReShaked {
 	@author red <red@killy>
  */
 class PannerEditor : public QWidget {
-public:	
 
+
+	Q_OBJECT
+public:	
 	struct Skin {
 	
 		QPixmap	bg;

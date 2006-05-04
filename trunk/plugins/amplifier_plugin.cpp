@@ -128,7 +128,7 @@ AmplifierPlugin::AmplifierPlugin(const SoundPluginInfo *p_info,int p_channels) :
 	output_plug = new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
 	
 	gain.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "gain","Gain","dB");
-	signal_energy.set_all( 0, -60, 24, 0, 0.01, Property::DISPLAY_VU, "energy","Energy","dB");
+	signal_energy.set_all( 0, -60, 24, 0, 0.01, Property::DISPLAY_VU, "energy","Energy","dB","-oo");
 }
 
 
