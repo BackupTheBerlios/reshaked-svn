@@ -54,9 +54,11 @@ void PannerEditor::mousePressEvent(QMouseEvent *e) {
 	float x=(float)e->x()/(float)width();
 	float y=(float)e->y()/(float)height();
 	
-	pos->set(x);
+	//must set using editor
+	set(PROP_PAN,x);
 	if (quad_mode)
-		depth->set( y );
+		set(PROP_DEPTH,y);
+
 	
 	update();
 
@@ -73,9 +75,10 @@ void PannerEditor::mouseMoveEvent(QMouseEvent *e) {
 	float x=(float)e->x()/(float)width();
 	float y=(float)e->y()/(float)height();
 	
-	pos->set(x);
+	//must set using editor
+	set(PROP_PAN,x);
 	if (quad_mode)
-		depth->set( y );
+		set(PROP_DEPTH,y);
 	
 	update();
 	
@@ -89,15 +92,24 @@ void PannerEditor::mouseReleaseEvent(QMouseEvent *e) {
 	click.drag=false;
 }
 
+void PannerEditor::changed(int p_which) {
+	
+	update(); //update wathever it happens	
+}
 
 void PannerEditor::set_properties(Property *p_pos,Property *p_depth) {
 	
 	pos=p_pos;
 	depth=p_depth;
 	
+	set_property(0,p_pos);
+	set_property(1,p_depth);
+	
+	update();
+	
 }
 
-PannerEditor::PannerEditor(QWidget *p_parent,bool p_quad,const Skin &p_skin) : QWidget(p_parent) {
+PannerEditor::PannerEditor(QWidget *p_parent,bool p_quad,const Skin &p_skin) : QWidget(p_parent), MultiPropertyEditor(2) {
 	
 	pos=NULL;
 	depth=NULL;

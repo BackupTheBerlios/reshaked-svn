@@ -336,7 +336,7 @@ void PropertyEditor::set(double p_val) {
 		group->locked=false;
 	}	
 	if (changed_by_editor)
-		changed_by_editor(changed_by_editor_userdata,this,old_val);
+		changed_by_editor(changed_by_editor_userdata,property,old_val);
 		
 }
 
@@ -361,7 +361,7 @@ void PropertyEditor::set_property(Property *p_property) {
 
 }
 
-void PropertyEditor::set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,PropertyEditor*,double)) {
+void PropertyEditor::set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,Property*,double)) {
 	
 	changed_by_editor_userdata=p_userdata;
 	changed_by_editor=p_callback;
@@ -424,5 +424,79 @@ PropertyEditor::~PropertyEditor() {
 	release_group();
 	
 }
+
+
+/************** Multi property editor ****************/
+
+
+void MultiPropertyEditor::set(int p_property,double p_val) {
+	
+	ERR_FAIL_INDEX(p_property,property_list.size());
+	ERR_FAIL_COND(property_list[p_property].property==NULL);
+	
+	double old_value=property_list[p_property].property->get();
+	property_list[p_property].property->set(p_val);
+	property_list[p_property].last_value=p_val;
+	
+	if (changed_by_editor)
+		changed_by_editor(changed_by_editor_userdata,property_list[p_property].property,old_value);
+}
+
+double MultiPropertyEditor::get(int p_property) {
+	
+	ERR_FAIL_INDEX_V(p_property,property_list.size(),0);
+	ERR_FAIL_COND_V(property_list[p_property].property==NULL,NULL);
+	
+	return property_list[p_property].property->get();
+	
+}
+
+void MultiPropertyEditor::set_property(int p_which,Property *p_property) {
+	
+	ERR_FAIL_INDEX(p_which,property_list.size());
+	
+	property_list[p_which].property=p_property;
+	property_list[p_which].last_value=p_property->get();
+	
+}
+Property * MultiPropertyEditor::get_property(int p_which) {
+	
+	ERR_FAIL_INDEX_V(p_which,property_list.size(),NULL);
+	
+	return property_list[p_which].property;
+	
+}
+
+MultiPropertyEditor::MultiPropertyEditor(int p_property_count) {
+	
+	property_list.resize(p_property_count);
+	for (int i=0;i<p_property_count;i++) {
+		
+		property_list[i].last_value=-12304128; //random stuff
+		property_list[i].property=NULL;
+	}
+	
+	changed_by_editor_userdata=NULL;
+	changed_by_editor=NULL;
+}
+
+void MultiPropertyEditor::set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,Property*,double)) {
+	
+	changed_by_editor_userdata=p_userdata;
+	changed_by_editor=p_callback;
+}
+
+void MultiPropertyEditor::check_if_changed() {
+	
+	for (int i=0;i<property_list.size();i++) {
+			
+		if (!property_list[i].property)
+			continue;
+		
+		if (property_list[i].property->get()!=property_list[i].last_value)
+			changed(i);
+	}
+}
+
 
 }

@@ -13,7 +13,7 @@
 #include <math.h>
 #include "dsp/resample.h"
 #include "dsp/tree_helpers_dsp.h"
-//#include "pixmaps/synth_sine.xpm"
+#include "pixmaps/icon_simpler.xpm"
 
 #define DEFAULT_AMP 0.1
 #define C5_FREQ 261.6255653006
@@ -40,7 +40,7 @@ const SoundPluginInfo *Simpler::create_info() {
 	info.custom_channels.push_back(4);
 	info.has_internal_UI=false; 
 	info.is_synth=true;
-	info.xpm_preview=NULL;
+	info.xpm_preview=(const char**)icon_simpler_xpm;
 	info.creation_func=&create_simpler;
 	info.version=1;
 	

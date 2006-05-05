@@ -69,7 +69,7 @@ private:
 	
 	void add_label(QString p_text,QColor p_color,QWidget *p_parent);
 	
-	static void changed_by_editor(void *p_userdata,PropertyEditor*,double);
+	static void changed_by_editor(void *p_userdata,Property*,double);
 	
 protected slots:	
 	

@@ -40,6 +40,8 @@ void Filter::prepare_coefficients(Coeffs *p_coeffs) {
 
 	
 	double final_cutoff=(cutoff>=(sampling_rate/2))?(sampling_rate/2-1):cutoff;
+	if (final_cutoff==0) //avoid crapness
+		final_cutoff=0.0001;
 	
 		
 	double omega=2.0*M_PI*final_cutoff/sampling_rate;
@@ -111,6 +113,13 @@ void Filter::prepare_coefficients(Coeffs *p_coeffs) {
     p_coeffs->b2/=a0;
     p_coeffs->a1/=0.0-a0;
     p_coeffs->a2/=0.0-a0;
+    
+    //undenormalise
+    p_coeffs->b0=undenormalise(p_coeffs->b0);
+    p_coeffs->b1=undenormalise(p_coeffs->b1);
+    p_coeffs->b2=undenormalise(p_coeffs->b2);
+    p_coeffs->a1=undenormalise(p_coeffs->a1);
+    p_coeffs->a2=undenormalise(p_coeffs->a2);
     
 }
 

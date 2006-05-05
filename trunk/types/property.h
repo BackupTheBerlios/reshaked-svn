@@ -269,7 +269,18 @@ public:
 
 };
 
-class PropertyEditor {
+class PropertyEditorBase {
+protected:	
+	
+public:	
+	
+	virtual void check_if_changed()=0;	
+	virtual void set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,Property*,double))=0;
+	virtual ~PropertyEditorBase() {}
+	
+};
+
+class PropertyEditor : public PropertyEditorBase {
 	
 	
 	double last_value;	
@@ -293,7 +304,7 @@ protected:
 	virtual void config();	
 	void release_group();
 	
-	void (*changed_by_editor)(void*,PropertyEditor*,double);
+	void (*changed_by_editor)(void*,Property*,double);
 	void* changed_by_editor_userdata;
 public:	
 	
@@ -304,10 +315,44 @@ public:
 	void check_if_changed();
 	void set_property(Property *p_property);
 	
-	void set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,PropertyEditor*,double));
+	void set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,Property*,double));
 
 	PropertyEditor();
 	virtual ~PropertyEditor();
+	
+};
+
+
+class MultiPropertyEditor : public PropertyEditorBase {
+	
+	struct PropertyPtr {
+		
+		Property *property;
+		double last_value;
+	};
+	
+	std::vector<PropertyPtr> property_list;
+	
+	void (*changed_by_editor)(void*,Property*,double);
+	void* changed_by_editor_userdata;
+	
+protected:	
+	
+	virtual void changed(int p_which)=0;
+	
+	void set(int p_property,double p_val);
+	double get(int p_property);
+	
+	void set_property(int p_which,Property *p_property);
+	Property * get_property(int p_which);
+	
+	MultiPropertyEditor(int p_property_count);
+	
+	
+public:		
+	
+	void set_changed_by_editor_callback(void *p_userdata,void (*p_callback)(void*,Property*,double));
+	void check_if_changed();
 	
 };
 

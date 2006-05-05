@@ -77,7 +77,7 @@ private:
 	
 	PixmapButtonGroup *lfo_mode_group;
 	
-	static void changed_by_editor(void *p_userdata,PropertyEditor*,double);
+	static void changed_by_editor(void *p_userdata,Property*,double);
 	
 	
 public slots:	

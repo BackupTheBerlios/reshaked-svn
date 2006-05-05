@@ -16,15 +16,15 @@ namespace ReShaked {
 
 
 
-void SoundPluginUI::property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val) {
+void SoundPluginUI::property_editor_property_edited_callback(void *_this,Property* p_property,double p_old_val) {
 	
 
 	SoundPluginUI *instance=(SoundPluginUI*)_this;
-	instance->property_edited_signal(p_editor->get_property(), p_old_val); 
+	instance->property_edited_signal(p_property, p_old_val); 
 	
 }
 
-void SoundPluginUI::register_property_editor(PropertyEditor* p_editor) {
+void SoundPluginUI::register_property_editor(PropertyEditorBase* p_editor) {
 	
 	for (int i=0;i<property_editors.size();i++) {
 		
@@ -46,7 +46,7 @@ void SoundPluginUI::register_property_editor(PropertyEditor* p_editor) {
 	
 }
 
-void SoundPluginUI::unregister_property_editor(PropertyEditor* p_editor) {
+void SoundPluginUI::unregister_property_editor(PropertyEditorBase* p_editor) {
 	
 	
 	

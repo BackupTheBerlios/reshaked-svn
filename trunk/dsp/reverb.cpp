@@ -57,7 +57,7 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 		while (read_pos<0)
 			read_pos+=echo_buffer_size;
 		
-		float in=echo_buffer[read_pos]*params.predelay_fb+p_src[i];
+		float in=undenormalise(echo_buffer[read_pos]*params.predelay_fb+p_src[i]);
 		
 		echo_buffer[echo_buffer_pos]=in;
 		
@@ -67,16 +67,32 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 		echo_buffer_pos++;
 	}
 	
+	if (params.hpf>0) {
+		float hpaux=expf(-2.0*M_PI*params.hpf*16000/params.mix_rate);
+		float hp_a1=(1.0+hpaux)/2.0;
+		float hp_a2=-(1.0+hpaux)/2.0;
+		float hp_b1=hpaux;
+		
+		for (int i=0;i<p_frames;i++) {
+			
+			float in=input_buffer[i];
+			input_buffer[i]=in*hp_a1+hpf_h1*hp_a2+hpf_h2*hp_b1;
+			hpf_h2=input_buffer[i];
+			hpf_h1=in;	
+		}
+	}
+		
 	for (int i=0;i<MAX_COMBS;i++) {
 		
 		Comb &c=comb[i];
 		
+		int size_limit=c.size-lrintf((float)c.extra_spread_frames*(1.0-params.extra_spread));
 		for (int j=0;j<p_frames;j++) {
 			
-			if (c.pos>=c.size) //reset this now just in case
+			if (c.pos>=size_limit) //reset this now just in case
 				c.pos=0;
 			
-			float out=c.buffer[c.pos]*c.feedback;
+			float out=undenormalise(c.buffer[c.pos]*c.feedback);
 			out=out*(1.0-c.damp)+c.damp_h*c.damp; //lowpass
 			c.damp_h=out;
 			c.buffer[c.pos]=input_buffer[j]+out;
@@ -92,23 +108,27 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 	for (int i=0;i<MAX_ALLPASS;i++) {
 		
 		AllPass &a=allpass[i];
+		int size_limit=a.size-lrintf((float)a.extra_spread_frames*(1.0-params.extra_spread));
 		
 		for (int j=0;j<p_frames;j++) {
 		
-			if (a.pos>=a.size)
+			if (a.pos>=size_limit)
 				a.pos=0;
 			
 			float aux=a.buffer[a.pos];
-			a.buffer[a.pos]=allpass_feedback*aux+p_dst[j];
+			a.buffer[a.pos]=undenormalise(allpass_feedback*aux+p_dst[j]);
 			p_dst[j]=aux-allpass_feedback*a.buffer[a.pos];
 			a.pos++;
 			
 		}
 	}
 	
+	static const float wet_scale=0.6;
+	
 	for (int i=0;i<p_frames;i++) {
 		
-		p_dst[i]=p_dst[i]*params.wet+p_src[i]*params.dry;
+		
+		p_dst[i]=p_dst[i]*params.wet*wet_scale+p_src[i]*params.dry;
 	}
 	
 }
@@ -148,6 +168,21 @@ void Reverb::set_predelay_feedback(float p_predelay_fb) {
 	
 }
 
+void Reverb::set_highpass(float p_frq) {
+	
+	if (p_frq>1)
+		p_frq=1;
+	if (p_frq<0)
+		p_frq=0;
+	params.hpf=p_frq;	
+}
+
+void Reverb::set_extra_spread(float p_spread) {
+	
+	params.extra_spread=p_spread;
+	
+}
+
 
 void Reverb::set_mix_rate(float p_mix_rate) {
 	
@@ -155,9 +190,9 @@ void Reverb::set_mix_rate(float p_mix_rate) {
 	configure_buffers();
 }
 
-void Reverb::set_extra_spread(float p_sec) {
+void Reverb::set_extra_spread_base(float p_sec) {
 	
-	params.extra_spread=p_sec;
+	params.extra_spread_base=p_sec;
 	configure_buffers();
 }
 
@@ -170,7 +205,10 @@ void Reverb::configure_buffers() {
 		
 		Comb &c=comb[i];
 		
-		int len=lrint((comb_tunings[i]+params.extra_spread)*params.mix_rate);
+		
+		c.extra_spread_frames=lrint(params.extra_spread_base*params.mix_rate);
+		
+		int len=lrint(comb_tunings[i]*params.mix_rate)+c.extra_spread_frames;
 		if (len<5)
 			len=5; //may this happen?
 		
@@ -179,13 +217,16 @@ void Reverb::configure_buffers() {
 		for (int j=0;j<len;j++)
 			c.buffer[j]=0;
 		c.size=len;
+		
 	}
 	
 	for (int i=0;i<MAX_ALLPASS;i++) {
 		
 		AllPass &a=allpass[i];
 		
-		int len=lrint((allpass_tunings[i]+params.extra_spread)*params.mix_rate);
+		a.extra_spread_frames=lrint(params.extra_spread_base*params.mix_rate);
+
+		int len=lrint(allpass_tunings[i]*params.mix_rate)+a.extra_spread_frames;
 		if (len<5)
 			len=5; //may this happen?
 		
@@ -222,7 +263,9 @@ void Reverb::update_parameters() {
 		else if (c.feedback>(room_offset+room_scale))
 			c.feedback=(room_offset+room_scale);
 		
-		float auxdmp=params.damp*params.damp;
+		float auxdmp=params.damp/2.0+0.5; //only half the range (0.5 .. 1.0  is enough)
+		auxdmp*=auxdmp;
+		
 		c.damp=expf(-2.0*M_PI*auxdmp*10000/params.mix_rate); // 0 .. 10khz
 	}
 	
@@ -259,9 +302,14 @@ Reverb::Reverb() {
 	params.dry=1.0;
 	params.wet=0.0;
 	params.mix_rate=44100;
-	params.extra_spread=0;	
+	params.extra_spread_base=0;	
+	params.extra_spread=1.0;	
 	params.predelay=150;
 	params.predelay_fb=0.4;
+	params.hpf=0;
+	hpf_h1=0;
+	hpf_h2=0;
+	
 	
 	input_buffer=new float[INPUT_BUFFER_SIZE];
 	echo_buffer=0;

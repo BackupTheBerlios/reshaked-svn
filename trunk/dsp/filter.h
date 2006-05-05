@@ -17,6 +17,8 @@
 
 */
 
+#include "typedefs.h"
+
 namespace ReShaked {
 
 class Filter {
@@ -59,7 +61,7 @@ private:
 	float sampling_rate;
 	Mode mode;
 
-	void prepare_coefficients_new(Coeffs *p_coeffs);
+
 
 public:
 

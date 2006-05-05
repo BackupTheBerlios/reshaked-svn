@@ -25,13 +25,13 @@ class SoundPluginUI : public QWidget {
 Q_OBJECT
 					    
 	PropertyEditUpdater * editor_updater;
-	std::vector<PropertyEditor*> property_editors;
+	std::vector<PropertyEditorBase*> property_editors;
 	
-	static void property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val);
+	static void property_editor_property_edited_callback(void *_this,Property* p_property,double p_old_val);
 protected:			    
 			    
-	void register_property_editor(PropertyEditor* p_property_editor);
-	void unregister_property_editor(PropertyEditor* p_property_editor);
+	void register_property_editor(PropertyEditorBase* p_property_editor);
+	void unregister_property_editor(PropertyEditorBase* p_property_editor);
 	
 signals:	
 	

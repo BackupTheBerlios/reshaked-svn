@@ -22,11 +22,11 @@ namespace ReShaked {
 */
 class PropertyEditUpdater{
 				       
-	std::vector<PropertyEditor*> editor_list;
+	std::vector<PropertyEditorBase*> editor_list;
 public:
 	
-	void add_editor(PropertyEditor* p_editor);
-	void remove_editor(PropertyEditor* p_editor);
+	void add_editor(PropertyEditorBase* p_editor);
+	void remove_editor(PropertyEditorBase* p_editor);
 	void clear();
 	
 	void update_editors();

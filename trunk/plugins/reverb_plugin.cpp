@@ -10,7 +10,7 @@
 //
 //
 #include "reverb_plugin.h"
-
+#include "pixmaps/icon_reverb.xpm"
 
 namespace ReShaked {
 
@@ -32,7 +32,7 @@ const SoundPluginInfo *ReverbPlugin::create_info() {
 	info.can_custom_channels=true;
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;
+	info.xpm_preview=(const char**)icon_reverb_xpm;
 	info.creation_func=&create_reverb;
 	info.version=1;	
 	return &info;
@@ -89,14 +89,23 @@ void ReverbPlugin::set_mixing_rate(float p_mixing_rate) { //sort of useless
 /* Processing */
 void ReverbPlugin::process(int p_frames) {
 	
+	if (skips_processing()) {
+	
+		output_plug->get_buffer()->copy_from( input_plug->get_buffer(), p_frames ); 
+		return;
+	}
+	
+	
 	for (int i=0;i<get_channels_created();i++) {
 		
 		Reverb &r=reverb[i];
 		
 		r.set_predelay( predelay.get() );
 		r.set_predelay_feedback( predelay_fb.get() );
+		r.set_highpass( hpf.get() );
 		r.set_room_size( room_size.get() );
 		r.set_damp( damping.get() );
+		r.set_extra_spread( spread.get() );
 		r.set_wet( wet.get() );
 		r.set_dry( dry.get() );
 		
@@ -120,21 +129,25 @@ ReverbPlugin::ReverbPlugin(const SoundPluginInfo *p_info,int p_channels) : Sound
 	for (int i=0;i<p_channels;i++) {
 		
 		reverb[i].set_mix_rate( 44100.0 ); //some default
-		reverb[i].set_extra_spread( (float)i*0.000521 ); //gives stereoysh effect
+		reverb[i].set_extra_spread_base( (float)i*0.000521 ); //gives stereoysh effect
 
 	}
 	
-	predelay.set_all( 100, 20, 250, 100, 1, Property::DISPLAY_SLIDER, "predelay","Predelay");
+	predelay.set_all( 100, 20, 500, 100, 1, Property::DISPLAY_SLIDER, "predelay","Predelay");
 	predelay_fb.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "predelay_fb","Pre-Feedback");
+	hpf.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "hpf","HP Filter","Off");
 	room_size.set_all( 0.7, 0, 1, 0.7, 0.01, Property::DISPLAY_SLIDER, "room_size","Room Size");
 	damping.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "damping","LoFrq Damp");
+	spread.set_all( 1, 0, 1, 1, 0.01, Property::DISPLAY_SLIDER, "spread","Stereo Spread");
 	wet.set_all( 0, 0, 1, 1, 0.01, Property::DISPLAY_SLIDER, "wet","Wet");
 	dry.set_all( 1, 0, 1, 1, 0.01, Property::DISPLAY_SLIDER, "dry","Dry");
 	
 	property_list.push_back(&predelay);
 	property_list.push_back(&predelay_fb);
+	property_list.push_back(&hpf);
 	property_list.push_back(&room_size);
 	property_list.push_back(&damping);
+	property_list.push_back(&spread);
 	property_list.push_back(&wet);
 	property_list.push_back(&dry);
 }

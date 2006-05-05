@@ -38,7 +38,7 @@ class TrackRack : public QScrollArea {
 	
 	void add_editor(PropertyEditor *p_editor);
 	
-	static void property_changed(void *instance,PropertyEditor *p_prop,double p_old_val);
+	static void property_changed(void *instance,Property *p_prop,double p_old_val);
 
 	std::vector< std::vector<PixmapVU*> > vu_list;
 	

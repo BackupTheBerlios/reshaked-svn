@@ -28,8 +28,10 @@ class ReverbPlugin : public SoundPlugin {
 	
 	LocalProperty predelay;   
 	LocalProperty predelay_fb;   
+	LocalProperty hpf;
 	LocalProperty room_size;   
 	LocalProperty damping;
+	LocalProperty spread;
 	LocalProperty dry;   
 	LocalProperty wet;
 	

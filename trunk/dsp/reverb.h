@@ -12,6 +12,8 @@
 #ifndef RESHAKEDREVERB_H
 #define RESHAKEDREVERB_H
 
+#include "typedefs.h"
+
 namespace ReShaked {
 
 /**
@@ -24,7 +26,7 @@ class Reverb {
 		MAX_COMBS=8,
 		MAX_ALLPASS=4,
 		INPUT_BUFFER_SIZE=1024,
-		MAX_ECHO_MS=300
+		MAX_ECHO_MS=500
 		
 	};
 	
@@ -39,6 +41,7 @@ class Reverb {
 		float damp; //lowpass
 		float damp_h; //history
 		int pos;
+		int extra_spread_frames;
 		
 		Comb() { size=0; buffer=0; feedback=0; damp_h=0; pos=0; }
 	};
@@ -48,7 +51,7 @@ class Reverb {
 		int size;
 		float *buffer;
 		int pos;
-		
+		int extra_spread_frames;
 		AllPass() { size=0; buffer=0; pos=0; }
 	};
 	
@@ -59,6 +62,8 @@ class Reverb {
 	int echo_buffer_size;
 	int echo_buffer_pos;
 	
+	float hpf_h1,hpf_h2;
+	
 	
 	struct Parameters {
 		
@@ -67,9 +72,11 @@ class Reverb {
 		float wet;
 		float dry;
 		float mix_rate;
-		float extra_spread;	
+		float extra_spread_base;	
+		float extra_spread;
 		float predelay;
 		float predelay_fb;
+		float hpf;
 	} params;
 	
 	void configure_buffers();
@@ -83,9 +90,10 @@ public:
 	void set_dry(float p_dry);
 	void set_predelay(float p_predelay); // in ms
 	void set_predelay_feedback(float p_predelay_fb); // in ms
+	void set_highpass(float p_frq);
 	void set_mix_rate(float p_mix_rate);
-	
-	void set_extra_spread(float p_sec);
+	void set_extra_spread(float p_spread);
+	void set_extra_spread_base(float p_sec);
 	
 	void process(float *p_src,float *p_dst,int p_frames);
 	

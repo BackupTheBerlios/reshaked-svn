@@ -15,7 +15,7 @@
 namespace ReShaked {
 
 
-void EnvelopeParamsEditor::changed_by_editor(void *p_userdata,PropertyEditor*,double) {
+void EnvelopeParamsEditor::changed_by_editor(void *p_userdata,Property*,double) {
 	
 	EnvelopeParamsEditor *_this = (EnvelopeParamsEditor*)p_userdata;
 	

@@ -21,7 +21,7 @@ namespace ReShaked {
 /**
 	@author red <red@killy>
  */
-class PannerEditor : public QWidget {
+class PannerEditor : public QWidget, public MultiPropertyEditor {
 
 
 	Q_OBJECT
@@ -36,6 +36,11 @@ public:
 	};
 private:	
 	
+	enum {
+		PROP_PAN,
+		PROP_DEPTH
+	};
+	
 	bool quad_mode;
 	
 	struct Click {
@@ -49,6 +54,8 @@ private:
 	void mouseMoveEvent(QMouseEvent *e);
 	void mouseReleaseEvent(QMouseEvent *e);
 
+	void changed(int p_which);
+	
 	Property *pos;
 	Property *depth;
 public:

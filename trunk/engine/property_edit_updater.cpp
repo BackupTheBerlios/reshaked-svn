@@ -13,7 +13,7 @@
 
 namespace ReShaked {
 
-void PropertyEditUpdater::add_editor(PropertyEditor* p_editor) {
+void PropertyEditUpdater::add_editor(PropertyEditorBase* p_editor) {
 	
 	for (int i=0;i<editor_list.size();i++) {
 		
@@ -22,7 +22,7 @@ void PropertyEditUpdater::add_editor(PropertyEditor* p_editor) {
 	
 	editor_list.push_back(p_editor);
 }
-void PropertyEditUpdater::remove_editor(PropertyEditor* p_editor) {
+void PropertyEditUpdater::remove_editor(PropertyEditorBase* p_editor) {
 	
 	for (int i=0;i<editor_list.size();i++) {
 		

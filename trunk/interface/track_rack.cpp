@@ -199,7 +199,7 @@ void TrackRack::add_track(Track *p_track) {
 }
 
 
-void TrackRack::property_changed(void *instance,PropertyEditor *p_prop,double p_old_val) {
+void TrackRack::property_changed(void *instance,Property *p_prop,double p_old_val) {
 	TrackRack *_this = (TrackRack *)instance;
 	
 	Track *hint=NULL;
@@ -209,7 +209,7 @@ void TrackRack::property_changed(void *instance,PropertyEditor *p_prop,double p_
 		Track *t=_this->editor->get_song()->get_track(i);
 		for (int j=0;j<t->get_property_count();j++) {
 			
-			if (t->get_property(j)==p_prop->get_property()) {
+			if (t->get_property(j)==p_prop) {
 				hint=t;
 				break;
 			}
@@ -220,7 +220,7 @@ void TrackRack::property_changed(void *instance,PropertyEditor *p_prop,double p_
 	if (!hint)
 		return;
 	
-	_this->editor->property_changed(p_prop->get_property(), p_old_val,hint );
+	_this->editor->property_changed(p_prop, p_old_val,hint );
 	
 }
 

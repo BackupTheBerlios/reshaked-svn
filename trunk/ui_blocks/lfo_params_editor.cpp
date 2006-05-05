@@ -15,7 +15,7 @@
 
 namespace ReShaked {
 
-void LFO_ParamsEditor::changed_by_editor(void *p_userdata,PropertyEditor*,double) {
+void LFO_ParamsEditor::changed_by_editor(void *p_userdata,Property*,double) {
 	
 	LFO_ParamsEditor* _this= (LFO_ParamsEditor*)p_userdata;
 	

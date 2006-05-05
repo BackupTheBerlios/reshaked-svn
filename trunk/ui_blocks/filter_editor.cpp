@@ -71,13 +71,12 @@ void FilterEditor::paintEvent(QPaintEvent *e) {
 	f.set_cutoff( cutoff->get() );
 	f.set_resonance( resonance->get() );
 	
+
 	Filter::Coeffs fc;
 	f.prepare_coefficients(&fc);
 
-
 	
 	for (int i=0;i<width();i++) {
-	
 		
 		
 		float freq= float_2_freq(  (float)i/(float)width()  ,MIN_FREQ,cutoff->get_max() );

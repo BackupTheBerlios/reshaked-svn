@@ -11,6 +11,7 @@
 //
 #include "chorus_plugin.h"
 #include <math.h>
+#include "pixmaps/icon_chorus.xpm"
 
 namespace ReShaked {
 
@@ -35,7 +36,7 @@ const SoundPluginInfo *ChorusPlugin::create_info() {
 	info.custom_channels.push_back(4);
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;
+	info.xpm_preview=(const char**)icon_chorus_xpm;
 	info.creation_func=&create_amplifier;
 	info.version=1;	
 	return &info;
@@ -121,6 +122,12 @@ void ChorusPlugin::process(int p_frames) {
 	
 	if (get_channels_created()>MAX_CHANNELS)
 		return;
+	
+	if (skips_processing()) {
+	
+		output_plug->get_buffer()->copy_from( input_plug->get_buffer(), p_frames ); 
+		return;
+	}
 	
 
 	float dry_send=dry.get();

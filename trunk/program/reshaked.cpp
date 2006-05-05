@@ -13,6 +13,7 @@
 #include "plugins/simpler.h"
 #include "plugins/chionic.h"
 #include "plugins/reverb_plugin.h"
+#include "plugins/filter_bank_plugin.h"
 #include "plugin_UIs/chorus_plugin_ui.h"
 #include "plugins/chorus_plugin.h"
 #include "plugin_UIs/sound_plugin_ui_generic.h"
@@ -72,6 +73,7 @@ static void init_sound_plugin_list() {
 	sound_plugin_list.add_info( ReShaked::AmplifierPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::ChorusPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::SineSynth::create_info() );
+	sound_plugin_list.add_info( ReShaked::FilterBankPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::Chionic::create_info() );
 	sound_plugin_list.add_info( ReShaked::ReverbPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::Simpler::create_info() );
