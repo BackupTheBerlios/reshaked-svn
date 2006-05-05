@@ -25,16 +25,22 @@ void PixmapList::paintEvent(QPaintEvent *e) {
 	
 	int row_height=skin.font_height+skin.separator;
 	
-	int visible_rows=height()/row_height;
+	int visible_rows=(height()-skin.margin*2)/row_height;
 	
 	QFont font;
 	font.setPixelSize(skin.font_height);
+	font.setBold(skin.bold);
 	QFontMetrics fm(font);
+	p.setFont(font);
+	
+	int fontofs=skin.separator/2+skin.margin;
 	
 	if (skin.skin_bg)
 		skin.skin_bg->paint_into(p,0,0,width(),height());
 	else
 		p.fillRect(0,0,width(),height(),QColor(0,0,0));
+	
+	p.setClipRect( QRect(skin.margin,skin.margin,width()-skin.margin*2,height()-skin.margin*2) );
 	
 	for (int i=0;i<visible_rows;i++) {
 		
@@ -45,12 +51,12 @@ void PixmapList::paintEvent(QPaintEvent *e) {
 		
 		
 		if (row==selected)
-			p.fillRect(0,i*row_height,width(),row_height,skin.selected_bg_color);
+			p.fillRect(0,skin.margin+i*row_height,width(),row_height,skin.selected_bg_color);
 		
 		p.setPen(skin.separator_color);
-		p.drawLine(0,row_height*(i+1),width(),row_height*(i+1));
+		p.drawLine(0,skin.margin+row_height*(i+1),width(),skin.margin+row_height*(i+1));
 		p.setPen( (row==selected)?skin.selected_font_color:skin.font_color );
-		p.drawText(skin.row_margin,row_height*(i+1)-fm.descent(),strings[row]);
+		p.drawText(skin.margin,fontofs+row_height*(i+1)-fm.descent(),strings[row]);
 	
 	}
 	
@@ -60,7 +66,7 @@ void PixmapList::mousePressEvent(QMouseEvent *e) {
 	
 	int row_height=skin.font_height+skin.separator;
 	
-	int row=e->y()/row_height;
+	int row=(e->y()-skin.margin)/row_height;
 	row+=view_offset;
 	
 	if (row<0 || row>=strings.size())
@@ -73,7 +79,12 @@ void PixmapList::mousePressEvent(QMouseEvent *e) {
 	update();
 }
 	
-	
+void PixmapList::set_item_text(int p_item,QString p_text) {
+		
+	ERR_FAIL_INDEX(p_item,strings.size());
+	strings[p_item]=p_text;
+	update();
+}
 void PixmapList::resizeEvent ( QResizeEvent * ) {
 	
 	
@@ -87,7 +98,7 @@ void PixmapList::update_scrollbar() {
 	
 	int row_height=skin.font_height+skin.separator;
 	
-	int visible_rows=height()/row_height;
+	int visible_rows=(height()-skin.margin*2)/row_height;
 	
 	int scrollable_rows=strings.size()-visible_rows;
 	
@@ -97,7 +108,10 @@ void PixmapList::update_scrollbar() {
 		scroll_bar->show();
 	
 	scroll_bar->set_max(scrollable_rows);
-	scroll_bar->set_pagesize( visible_rows );
+	//scroll_bar->set_pagesize( visible_rows );
+	if (visible_rows>0)
+		scroll_bar->set_pagesize(strings.size() * scrollable_rows / visible_rows);
+	
 	scroll_bar->set_value( view_offset );
 	
 }

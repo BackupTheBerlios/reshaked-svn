@@ -37,7 +37,10 @@ public:
 		QColor separator_color;
 		int separator;
 		int font_height;
-		int row_margin;
+		int margin;
+		bool bold;
+		
+		Skin() { bold=true; margin=5; font_height=15; separator=4; skin_bg=NULL; }
 	};
 	
 private:	
@@ -71,6 +74,7 @@ public:
 	int get_selected();
 	
 	void select_item(int p_index);
+	void set_item_text(int p_item,QString p_text);
 	
 	void set_scrollbar(PixmapScrollBar *p_scroll_bar);
 	PixmapList(QWidget *p_parent,const Skin& p_skin);

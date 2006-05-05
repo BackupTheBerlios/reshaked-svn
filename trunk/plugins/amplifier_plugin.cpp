@@ -132,7 +132,7 @@ AmplifierPlugin::AmplifierPlugin(const SoundPluginInfo *p_info,int p_channels) :
 }
 
 
-AmplifierPlugin::~AmplifierPlugin(){ 
+AmplifierPlugin::~AmplifierPlugin() { 
 	
 	delete input_plug;
 	delete output_plug;

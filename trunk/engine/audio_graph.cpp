@@ -167,6 +167,9 @@ void AudioGraph::add_node(AudioNode *p_node,std::list<Connection> *p_node_connec
 		
 	}
 	
+	recompute_process_order();
+	recompute_graph();
+	
 	AudioControl::mutex_unlock();
 	
 }
@@ -236,6 +239,7 @@ void AudioGraph::erase_node(int p_index,std::list<Connection> *p_connections_los
 	
 	recompute_process_order();
 	recompute_graph();
+	
 	
 	AudioControl::mutex_unlock();
 	

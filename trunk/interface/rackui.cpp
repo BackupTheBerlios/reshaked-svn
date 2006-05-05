@@ -78,7 +78,7 @@ void RackUI::update_rack_combo_names_slot() {
 	
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
 		
-		rack_choose->set_item_text(i+1,QStrify(editor->get_song()->get_track(i)->get_name()));
+		rack_choose->set_item_text(i+1,QString("   >") +QStrify(editor->get_song()->get_track(i)->get_name()));
 		
 	}	
 }
@@ -86,10 +86,10 @@ void RackUI::update_rack_combo_names_slot() {
 void RackUI::update_rack_combo_slot() {
 	
 	rack_choose->clear();
-	rack_choose->add_item("-Track Rack");
+	rack_choose->add_item(">Track Rack");
 	for (int i=0;i<editor->get_song()->get_track_count();i++) {
 		
-		rack_choose->add_item(QString("  -") +QStrify(editor->get_song()->get_track(i)->get_name()));
+		rack_choose->add_item(QString("   >") +QStrify(editor->get_song()->get_track(i)->get_name()));
 		
 	}
 	
@@ -310,12 +310,13 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	new PixmapLabel(hbox_main,GET_QPIXMAP(THEME_RACK_TOOLBAR__BEGIN));
 	
 
+	/*
 	CVBox *rack_choose_vb = new CVBox(hbox_main);
 	new PixmapLabel(rack_choose_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__TRACK_DROPDOWN_TOP));
 	rack_choose = new PixmapCombo(rack_choose_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__TRACK_DROPDOWN));
 	new PixmapLabel(rack_choose_vb,GET_QPIXMAP(THEME_RACK_TOOLBAR__TRACK_DROPDOWN_BOTTOM));
 	rack_choose_vb->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-
+	*/
 	
 	rack_front = new PixmapButton(hbox_main,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT),GET_QPIXMAP(THEME_RACK_TOOLBAR__SHOW_FRONT_ACTIVE)),PixmapButton::TYPE_TOGGLE);
 	rack_front->setToolTip("Show Rack Front (Controls)");
@@ -361,9 +362,27 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	
 	new PixmapLabel(hbox_options,GET_QPIXMAP(THEME_RACK_TOOLBAR__END));
 	
+	CHBox *hbox_rack = new CHBox(this); 
 	
+	PixmapList::Skin list_skin;
 	
-	stack = new QStackedWidget(this);
+	list_skin.font_color=QColor(200,200,200);
+	list_skin.font_height=11;
+	list_skin.margin=10;
+	list_skin.selected_bg_color=QColor(0xc1,0xef,0xec);
+	list_skin.selected_font_color=QColor(0,0,0);
+	list_skin.separator=3;
+	list_skin.separator_color=QColor(50,50,50);
+	list_skin.skin_bg=GET_SKIN( SKINBOX_RACK_LIST );
+	
+	rack_choose = new PixmapList(hbox_rack,list_skin);
+	rack_choose->setMinimumWidth(150);
+	
+	rack_scrollbar = new PixmapScrollBar(hbox_rack,PixmapScrollBar::Skin(GET_SKIN(SKINBOX_THEME_SCROLLBAR_V_BG),GET_SKIN(SKINBOX_THEME_SCROLLBAR_GRABBER)),PixmapScrollBar::TYPE_VERTICAL);
+	
+	rack_choose->set_scrollbar( rack_scrollbar );
+	
+	stack = new QStackedWidget(hbox_rack);
 	
 	connections = new ConnectionRack(stack,editor);
 	stack->addWidget(connections);

@@ -79,8 +79,13 @@ float SoundDriver_PortAudio::get_mix_rate() {
 void SoundDriver_PortAudio::callback(float *in_buffer,float*out_buffer, int p_bufferSize) {
 	
 
-	if (AudioControl::mutex_try_lock())
+	if (AudioControl::mutex_try_lock()) {
+		
+		for (int i=0;i<p_bufferSize*current_outputs;i++) //silence the output when locked to avoid noise
+			out_buffer[i]=0;
+		
 		return;
+	}
 	
 	process_offset=0;
 	current_input=in_buffer;
@@ -106,11 +111,17 @@ void SoundDriver_PortAudio::write_to_inputs(int p_frames) {
 void SoundDriver_PortAudio::read_from_outputs(int p_frames) {
 	
 
-	if (!get_output_count())
+	if (!get_output_count() || current_outputs==0) { //cant copy
+		
+		for (int i=0;i<p_frames*current_outputs;i++) {
+			
+			current_output[process_offset*current_outputs+i]=0;
+		}
+		process_offset+=p_frames;
 		return;
-	if (current_outputs==0)
-		return;
-
+	}
+		
+	
 	get_output_plug(0)->get_buffer()->copy_to_interleaved(&current_output[process_offset*current_outputs],p_frames);
 	
 	process_offset+=p_frames;

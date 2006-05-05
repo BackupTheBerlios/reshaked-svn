@@ -21,8 +21,9 @@
 #include <Qt/qpushbutton.h>
 #include <Qt/qcombobox.h>
 #include <Qt/qstackedwidget.h>
-#include "ui_blocks/pixmap_combo.h"
+#include "ui_blocks/pixmap_list.h"
 #include "ui_blocks/pixmap_button.h"
+#include "ui_blocks/pixmap_scrollbar.h"
 
 
 namespace ReShaked {
@@ -38,7 +39,8 @@ class RackUI : public CVBox {
 	Editor *editor;
 	PixmapButton *follow_cursor;
 	PixmapButton *add_plugin;
-	PixmapCombo *rack_choose;
+	PixmapList *rack_choose;
+	PixmapScrollBar *rack_scrollbar;
 	PixmapButton *rack_front;
 	PixmapButton *rack_back;
 	

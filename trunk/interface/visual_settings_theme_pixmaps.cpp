@@ -123,6 +123,7 @@
 #include "pixmaps/default_skin/middle__separator_center.xpm"
 #include "pixmaps/default_skin/middle__separator_end.xpm"
 #include "pixmaps/default_skin/middle_separator_end.xpm"
+#include "pixmaps/default_skin/rack__list.xpm"
 #include "pixmaps/default_skin/rack_panel__jack_forbidden.xpm"
 #include "pixmaps/default_skin/rack_panel__jack_in.xpm"
 #include "pixmaps/default_skin/rack_panel__jack_out.xpm"
@@ -504,6 +505,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["middle__separator_end"]=THEME_MIDDLE__SEPARATOR_END;
     pixmap_map[THEME_MIDDLE_SEPARATOR_END]=QPixmap( (const char**) middle_separator_end_xpm); 
     pixmap_map_skin["middle_separator_end"]=THEME_MIDDLE_SEPARATOR_END;
+    pixmap_map[THEME_RACK__LIST]=QPixmap( (const char**) rack__list_xpm); 
+    pixmap_map_skin["rack__list"]=THEME_RACK__LIST;
     pixmap_map[THEME_RACK_PANEL__JACK_FORBIDDEN]=QPixmap( (const char**) rack_panel__jack_forbidden_xpm); 
     pixmap_map_skin["rack_panel__jack_forbidden"]=THEME_RACK_PANEL__JACK_FORBIDDEN;
     pixmap_map[THEME_RACK_PANEL__JACK_IN]=QPixmap( (const char**) rack_panel__jack_in_xpm); 

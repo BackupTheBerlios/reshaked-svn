@@ -272,7 +272,7 @@ void ChionicWindow::init_sources_page() {
 	skin.skin_bg=&settings.list_bg;
 	skin.font_height=16;
 	skin.separator=4;
-	skin.row_margin=5;
+	skin.margin=5;
 	skin.selected_bg_color=QColor(180,180,180);
 	skin.font_color=QColor(230,240,250);
 	skin.selected_font_color=QColor(0,0,0);
@@ -1035,7 +1035,7 @@ void ChionicWindow::init_regions_page() {
 	src_skin.skin_bg=&settings.list_bg;
 	src_skin.font_height=12;
 	src_skin.separator=4;
-	src_skin.row_margin=5;
+	src_skin.margin=5;
 	src_skin.selected_bg_color=QColor(180,180,180);
 	src_skin.font_color=QColor(230,240,250);
 	src_skin.selected_font_color=QColor(0,0,0);
