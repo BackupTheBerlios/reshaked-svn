@@ -484,7 +484,7 @@ String String::num(double p_num,int p_digits) {
 		}
 		dec*=10;
 		int last=(int)dec%10;
-		printf("last %i, dec_int %i, dec max %i - val %lg\n",last,dec_int,dec_max,p_num);
+	//	printf("last %i, dec_int %i, dec max %i - val %lg\n",last,dec_int,dec_max,p_num);
 		if (last>5) {
 			if (dec_int==dec_max) {
 				

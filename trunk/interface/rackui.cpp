@@ -369,7 +369,7 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	list_skin.font_color=QColor(200,200,200);
 	list_skin.font_height=11;
 	list_skin.margin=10;
-	list_skin.selected_bg_color=QColor(0xc1,0xef,0xec);
+	list_skin.selected_bg_color=QColor(0xca,0xf3,0xfb);
 	list_skin.selected_font_color=QColor(0,0,0);
 	list_skin.separator=3;
 	list_skin.separator_color=QColor(50,50,50);

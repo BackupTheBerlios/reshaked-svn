@@ -110,7 +110,7 @@ void PixmapList::update_scrollbar() {
 	scroll_bar->set_max(scrollable_rows);
 	//scroll_bar->set_pagesize( visible_rows );
 	if (visible_rows>0)
-		scroll_bar->set_pagesize(strings.size() * scrollable_rows / visible_rows);
+		scroll_bar->set_pagesize(visible_rows);
 	
 	scroll_bar->set_value( view_offset );
 	
