@@ -150,6 +150,13 @@ class PropertyEditCombo : public PixmapCombo, public PropertyEditor {
 
 	virtual void changed();
 	virtual void item_selected(int p_to_item);
+	
+	void mousePressEvent(QMouseEvent *e);
+	
+signals:	
+
+	void external_edit_signal(Property *p_property);
+	
 public:
 
 	PropertyEditCombo(QWidget *p_parent,QPixmap p_bg);
@@ -163,6 +170,13 @@ class PropertyEditButton : public PixmapButton, public PropertyEditor {
 
 	virtual void changed();
 	virtual void mouse_toggled(bool p_new_status);	
+	
+	
+	void mousePressEvent(QMouseEvent *e);
+	
+signals:	
+
+	void external_edit_signal(Property *p_property);
 
 public:
 

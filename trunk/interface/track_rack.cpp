@@ -15,8 +15,10 @@
 #include "ui_blocks/pixmap_label.h"
 #include "ui_blocks/pixmap_slider.h"
 #include "ui_blocks/property_editors.h"
-
+#include <Qt/qscrollbar.h>
+#include <Qt/qaction.h>
 #include "dsp/formulas.h"
+#include <Qt/qmenu.h>
 
 namespace ReShaked {
 
@@ -230,13 +232,19 @@ void TrackRack::add_editor(PropertyEditor *p_editor) {
 	updater->add_editor( p_editor );
 	p_editor->set_changed_by_editor_callback(this,&TrackRack::property_changed);
 	
+	QWidget *w=dynamic_cast<QWidget*>(p_editor);
+	if (w) {
+		QObject::connect(w,SIGNAL(external_edit_signal(Property *)),this,SLOT(property_options_requested( Property* )),Qt::QueuedConnection); //queuing is necesary to avoid crashes
+	}
+	
+	
 }
 		
 void TrackRack::rebuild_track_rack() {
 	
 	
 	
-	
+	spacer=NULL;
 	for (int i=0;i<editor_list.size();i++) {
 		
 		updater->remove_editor( editor_list[i] );
@@ -269,12 +277,115 @@ void TrackRack::rebuild_track_rack() {
 		add_track(editor->get_song()->get_track(i));
 	}
 	
-	QFrame *spacer = new QFrame(rack_box);
+	spacer = new QFrame(rack_box);
 	spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	
 	rack_box->layout()->setMargin(0);
 	rack_box->layout()->setSpacing(0);
+	rack_box->adjustSize();
 	rack_box->show();
+	
+	update_scrollbar();
+	
+}
+void TrackRack::h_qscrollbar_range_changed( int,int ) {
+	
+	update_scrollbar();
+}
+
+void TrackRack::scrollbar_changed_slot(int p_val) {
+	
+	horizontalScrollBar()->setValue(p_val);
+	
+}
+
+void TrackRack::resizeEvent(QResizeEvent * event) {
+	
+	QAbstractScrollArea::resizeEvent(event);
+	update_scrollbar();
+}
+
+
+void TrackRack::update_scrollbar() {
+	
+	if (!spacer)
+		return;
+	if (!scrollbar)
+		return;
+	
+	int tracklist_width=spacer->x();
+	
+	scrollbar->set_max( tracklist_width );
+	
+	scrollbar->set_pagesize( width() );
+	
+	if (tracklist_width<width())
+		scrollbar->hide();
+	else
+		scrollbar->show();
+	
+	scrollbar->set_value( horizontalScrollBar()->value() );
+}
+
+void TrackRack::set_scrollbar(PixmapScrollBar *p_scroll) {
+	
+	scrollbar=p_scroll;
+	update_scrollbar();
+	
+	QObject::connect(p_scroll,SIGNAL(value_changed_signal( int )),this,SLOT(scrollbar_changed_slot(int)));
+	QObject::connect(horizontalScrollBar(),SIGNAL(valueChanged(int)),scrollbar,SLOT(set_value( int )));
+	
+}
+
+
+void TrackRack::property_options_requested(Property *p_property) {
+	
+	
+	Track *track=NULL;
+	int prop_idx=-1;
+	
+	for (int i=-1;i<editor->get_song()->get_track_count();i++) {
+		
+		Track *t;
+		if (i==-1)
+			t=&editor->get_song()->get_global_track();
+		else
+			t=editor->get_song()->get_track(i);
+		
+		for (int j=0;j<t->get_property_count();j++) {
+			
+			if (t->get_property(j)==p_property) {
+				
+				prop_idx=j;
+				track=t;
+				break;
+			}
+		}
+		
+		if (track)
+			break;
+	}
+	
+	ERR_FAIL_COND(!track || prop_idx==-1);
+	
+	bool is_automated=track->has_property_visible_automation(prop_idx);
+	
+	QList<QAction*> ac_list;
+	QAction *op_auto = new QAction(GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS),is_automated?"Hide Automation":"Show Automation",this);
+	ac_list.push_back(op_auto);
+	QAction *res = QMenu::exec(ac_list,QCursor::pos());
+	
+	if (res==op_auto) {
+		
+		if (is_automated)
+			editor->hide_automation( prop_idx, track );
+		else
+			editor->show_automation( prop_idx, track );
+	}
+	
+	foreach(I,ac_list) {
+		delete *I;
+	}
 	
 }
 
@@ -295,13 +406,16 @@ TrackRack::TrackRack(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_u
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	
-	setMinimumHeight(GET_CONSTANT(CONSTANT_RACK_MINIMUM_HEIGHT));
+	setFixedHeight(GET_CONSTANT(CONSTANT_RACK_MINIMUM_HEIGHT)-GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__BEGIN).height());
 
 	setBackgroundRole(QPalette::NoRole);
 	p=palette();
 	p.setColor(QPalette::Background,QColor(0,0,0));
 	setPalette(p);
 	
+	scrollbar=NULL;
+	spacer=NULL;
+	QObject::connect(horizontalScrollBar(),SIGNAL(rangeChanged( int,int )),this,SLOT(h_qscrollbar_range_changed( int,int )));	
 	rack_box=NULL;
 	rebuild_track_rack();
 	

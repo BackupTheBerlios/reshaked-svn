@@ -216,14 +216,17 @@ void BlockListUIList::update_track_list() {
 
 	//setUpdatesEnabled(false);
 	
+	
 	for (int i=0;i<property_editors.size();i++) {
 		property_ui_updater->remove_editor(property_editors[i]);
 	}
 	property_editors.clear();
 	slider_vus.clear();
 	
+	spacer=NULL;
 	
 	if (hbox) {
+		
 		hbox->hide();
 		delete hbox; //all widgets die!
 	}
@@ -318,7 +321,7 @@ void BlockListUIList::update_track_list() {
 		}
 	}
 
-	BlackWidget *spacer = new BlackWidget(hbox);
+	spacer = new BlackWidget(hbox);
 	hbox_layout->addWidget( spacer );
 	spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
@@ -328,9 +331,10 @@ void BlockListUIList::update_track_list() {
 
 	update_h_scroll();
 	//setUpdatesEnabled(true);
-	hbox->show();
 	hbox->adjustSize();
-	
+	hbox->show();
+	//hbox->adjustSize();
+	update_hscrollbar_range();
 	
 }
 
@@ -347,10 +351,9 @@ void BlockListUIList::snap_changed_slot(int p_to_idx) {
 void BlockListUIList::update_h_scroll() {
 	
 	int max_len=editor->get_cursor().ticks_to_snap( editor->get_song_max_len() );
-	max_len-=editor->get_cursor().get_window_size();
-	printf("max len is %i\n",max_len);
 	v_scroll->set_max(max_len);
 	v_scroll->set_pagesize(editor->get_cursor().get_window_size());
+	
 }
 
 void BlockListUIList::v_scrollbar_changed(int p_scroll) {
@@ -669,17 +672,29 @@ void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 	
 }
 
-void BlockListUIList::h_qscrollbar_range_changed(int p_min,int p_max) {
+void BlockListUIList::update_hscrollbar_range() {
 	
-	//printf("range_changed %i - %i\n",p_min,p_max);
-	h_scroll->set_max( p_max-p_min );
+	if (!spacer)
+		return;
+	
+	int tracklist_width=spacer->x();
+	
+	h_scroll->set_max( tracklist_width );
 	//printf("vpw %i, hbw %i\n",scrollarea->viewport()->width(),hbox->width());
 	if (hbox && hbox->width())
-		h_scroll->set_pagesize( scrollarea->viewport()->width()*p_max/hbox->width() );
-	if (p_max==0)
+		h_scroll->set_pagesize( scrollarea->viewport()->width() );
+	
+	if (tracklist_width<scrollarea->width())
 		h_scroll->hide();
 	else
 		h_scroll->show();
+	
+}
+
+void BlockListUIList::h_qscrollbar_range_changed(int p_min,int p_max) {
+	
+	printf("range_changed %i - %i\n",p_min,p_max);
+	update_hscrollbar_range();
 }
 void BlockListUIList::h_qscrollbar_changed(int p_val) {
 	
@@ -784,6 +799,7 @@ BlockListUIList::BlockListUIList(QWidget *p_parent,Editor *p_editor,PropertyEdit
 	
 	setLineWidth(0);
 	scrolling=false;
+	spacer=NULL;
 	
 }
 

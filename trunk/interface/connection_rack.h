@@ -18,6 +18,7 @@
 #include <Qt/qmenu.h>
 
 #include "editor/editor.h"
+#include "ui_blocks/pixmap_scrollbar.h"
 
 namespace ReShaked {
 
@@ -30,9 +31,11 @@ namespace ReShaked {
 					       
 class ConnectionRack : public QWidget {
 
+	Q_OBJECT
+	
 				       
 	enum {
-		STEPS_DIVISOR=8,
+		STEPS_DISTANCE=20,
 		BOTTOM_DIVISOR=80,
 		BOTTOM_BASE_OFFSET=20	
 		
@@ -58,9 +61,11 @@ class ConnectionRack : public QWidget {
 	} connecting;
 	
 	
+	PixmapScrollBar *scrollbar;
+	
 	static bool fast_draw;
 	
-	int offset;
+	int view_offset;
 	SkinBox *skin(bool p_system=false);
 	QPixmap jack_hole(AudioPlug::Type p_type=AudioPlug::TYPE_INPUT);
 	int get_plugs_for_height();
@@ -87,8 +92,15 @@ class ConnectionRack : public QWidget {
 	void mouseReleaseEvent ( QMouseEvent * e );
 	
 	
-//change depending on what we implement
+	void update_scrollbar();
 	
+//change depending on what we implement
+	int get_total_width();
+	
+protected slots:	
+	
+	void scrollbar_changed_slot(int p_ofs);
+	void set_view_offset(int p_ofs);
 protected:
 	
 	Editor *editor;
@@ -98,6 +110,9 @@ protected:
 	
 public:
 	
+	void update_rack();
+	
+	void set_scrollbar(PixmapScrollBar *p_bar);
 	void set_audio_graph(AudioGraph *p_graph);
 	ConnectionRack(QWidget *p_parent,Editor *p_editor);
 	~ConnectionRack();

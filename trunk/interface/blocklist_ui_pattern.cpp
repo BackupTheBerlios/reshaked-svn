@@ -470,6 +470,8 @@ bool BlockListUI_Pattern::can_scroll() {
 
 void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 
+	editor->get_cursor().set_window_size( height() / VisualSettings::get_singleton()->get_editing_row_height() );
+		
 	QPainter p(this);
 
 	p.setClipping(true);

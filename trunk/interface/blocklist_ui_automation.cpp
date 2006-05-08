@@ -386,6 +386,7 @@ void BlockListUI_Automation::fix_pre_scroll(int p_scroll) {
 
 void BlockListUI_Automation::paintEvent(QPaintEvent *pe) {
 	
+	editor->get_cursor().set_window_size( height() / VisualSettings::get_singleton()->get_editing_row_height() );
 	
 	/*  check if we moved */
 	

@@ -54,8 +54,11 @@ class RackUI : public CVBox {
 	QStackedWidget *stack;
 	
 	ConnectionRack *connections;
+	CVBox *connections_vbox;
 	SoundPluginRack *plugins;
+	CVBox *plugins_vbox;
 	TrackRack *tracks;
+	CVBox *tracks_vbox;
 	
 	
 	void update_rack_file_label();
@@ -85,6 +88,7 @@ public slots:
 	void test_note_off(int p_note_off);
 	
 	void ui_update_callback();
+	
 public:
 	
 	void select_track(int p_track);

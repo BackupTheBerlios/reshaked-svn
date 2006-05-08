@@ -287,6 +287,14 @@ void PropertyEditCombo::item_selected(int p_to_item) {
 	
 }
 
+void PropertyEditCombo::mousePressEvent(QMouseEvent *e) {
+	
+	if (e->button()==Qt::RightButton)
+		external_edit_signal( get_property() );
+	else	
+		PixmapCombo::mousePressEvent(e);
+}
+
 PropertyEditCombo::PropertyEditCombo(QWidget *p_parent,QPixmap p_bg) : PixmapCombo(p_parent,p_bg) { }
 PropertyEditCombo::~PropertyEditCombo() {}
 
@@ -307,6 +315,14 @@ void PropertyEditButton::mouse_toggled(bool p_new_status) {
 	
 	set( p_new_status? get_property()->get_max() : get_property()->get_min() );
 	
+}
+
+void PropertyEditButton::mousePressEvent(QMouseEvent *e) {
+	
+	if (e->button()==Qt::RightButton)
+		external_edit_signal( get_property() );
+	else	
+		PixmapButton::mousePressEvent(e);
 }
 
 PropertyEditButton::PropertyEditButton(QWidget *p_parent,const Skin& p_skin) : PixmapButton(p_parent,p_skin,PixmapButton::TYPE_TOGGLE) {

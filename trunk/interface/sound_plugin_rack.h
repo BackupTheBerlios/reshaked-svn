@@ -19,7 +19,7 @@
 #include "interface/sound_plugin_ui.h"
 #include "ui_blocks/pixmap_label.h"
 #include "ui_blocks/pixmap_button.h"
-
+#include "ui_blocks/pixmap_scrollbar.h"
 
 namespace ReShaked {
 
@@ -49,7 +49,8 @@ private:
 	int plugin;
 	PixmapButton *skip;
 	PixmapButton *file;
-	private slots:
+	
+private slots:
 	
 	void info_pressed();
 	void file_pressed();
@@ -86,9 +87,19 @@ Q_OBJECT
 	};
 	std::vector<RackElement> rack_elements;
 	PropertyEditUpdater *property_edit_updater;
+	PixmapScrollBar *scrollbar;
 	
+	QWidget *spacer;
 	
+	void update_scrollbar();
+	
+
+	void resizeEvent(QResizeEvent * event);
 public slots:
+	
+	void h_qscrollbar_range_changed( int,int );
+	
+	void scrollbar_changed_slot(int p_val);
 	
 	void property_options_requested(Property *p_property);
 	
@@ -100,7 +111,7 @@ public slots:
 	void repaint();
 public:
 	void set_track(Track *p_track);
-	
+	void set_scrollbar(PixmapScrollBar *p_scroll);
 	SoundPluginRack(QWidget *p_parent,PropertyEditUpdater *p_updater,Editor *p_editor);
 	~SoundPluginRack();
 };

@@ -72,9 +72,12 @@ protected:
 signals:	
 
 	void value_changed_signal(int p_new_val);
+public slots:
+			
+	void set_value(int p_value);
+	
 public:	
 
-	void set_value(int p_value);
 	void set_max(int p_max);
 	void set_pagesize(int p_pagesize);
 	void set_stepsize(int p_stepsize);

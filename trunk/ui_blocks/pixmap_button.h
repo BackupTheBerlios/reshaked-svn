@@ -54,7 +54,6 @@ private:
 	} status;
 	
 	void paintEvent(QPaintEvent *e);
-	void mousePressEvent(QMouseEvent *e);
 	void mouseReleaseEvent(QMouseEvent *e);
 	void enterEvent ( QEvent * event );
 	void leaveEvent ( QEvent * event );
@@ -64,6 +63,7 @@ private:
 	
 	bool ignore_actions;
 protected:
+	void mousePressEvent(QMouseEvent *e);
 			
 	virtual void mouse_press_event_override();
 	virtual void mouse_toggled(bool p_new_status);

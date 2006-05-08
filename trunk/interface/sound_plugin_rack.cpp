@@ -17,7 +17,7 @@
 #include <Qt/qcursor.h>
 #include "interface/plugin_preset_browser.h"
 #include "editor/plugin_preset_manager.h"
-
+#include <Qt/qscrollbar.h>
 namespace ReShaked {
 
 void PluginTop::set_skipping_state(bool p_state) {
@@ -238,14 +238,15 @@ void SoundPluginRack::set_track(Track *p_track) {
 
 void SoundPluginRack::rack_height_chanegd_slot(int p_to_height) {
 	
-	if (p_to_height>20) //for safety
-		setMinimumHeight(p_to_height);
+	//if (p_to_height>20) //for safety
+	//	setMinimumHeight(p_to_height);
 }
 
 
 void SoundPluginRack::update_rack() {
 	
 	
+	spacer=NULL;
 	
 	if (rack_box) {
 		rack_box->hide();
@@ -284,18 +285,23 @@ void SoundPluginRack::update_rack() {
 		rack_elements.push_back(e);
 		QObject::connect(ui,SIGNAL(property_edited_signal( Property*, double )),this,SLOT(property_edited_slot( Property*, double )));
 		QObject::connect(e.top,SIGNAL(action_signal( int,int )),this,SLOT(plugin_action_signal( int,int )),Qt::QueuedConnection);
-		QObject::connect(ui,SIGNAL(property_options_requested( Property* )),this,SLOT(property_options_requested( Property* )));
+		QObject::connect(ui,SIGNAL(property_options_requested( Property* )),this,SLOT(property_options_requested( Property* )),Qt::QueuedConnection); //queue is necesary to avoid crashes
 		
 		
 		
 	}	
-	
-	QFrame *spacer = new QFrame(rack_box);
+	 
+	spacer = new QFrame(rack_box);
 	spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	
 	rack_box->layout()->setMargin(0);
 	rack_box->layout()->setSpacing(0);
+	rack_box->adjustSize();
 	rack_box->show();
+	
+	
+	
+	update_scrollbar();
 }
 
 void SoundPluginRack::repaint() {
@@ -308,6 +314,53 @@ void SoundPluginRack::repaint() {
 			
 		rack_elements[i].top->set_skipping_state( track->get_plugin( i)->skips_processing() );
 	}
+}
+
+void SoundPluginRack::h_qscrollbar_range_changed( int,int ) {
+	
+	update_scrollbar();
+}
+
+void SoundPluginRack::scrollbar_changed_slot(int p_val) {
+	
+	horizontalScrollBar()->setValue(p_val);
+	
+}
+
+void SoundPluginRack::resizeEvent(QResizeEvent * event) {
+	
+	QAbstractScrollArea::resizeEvent(event);
+	update_scrollbar();
+}
+
+
+void SoundPluginRack::update_scrollbar() {
+	
+	if (!spacer)
+		return;
+	
+	int tracklist_width=spacer->x();
+	
+	scrollbar->set_max( tracklist_width );
+	
+	scrollbar->set_pagesize( width() );
+	
+	if (tracklist_width<width())
+		scrollbar->hide();
+	else
+		scrollbar->show();
+	
+	scrollbar->set_value( horizontalScrollBar()->value() );
+}
+
+void SoundPluginRack::set_scrollbar(PixmapScrollBar *p_scroll) {
+	
+	scrollbar=p_scroll;
+	update_scrollbar();
+	QObject::connect(p_scroll,SIGNAL(value_changed_signal( int )),this,SLOT(scrollbar_changed_slot(int)));
+
+	QObject::connect(horizontalScrollBar(),SIGNAL(valueChanged(int)),scrollbar,SLOT(set_value( int )));
+	
 }
 
 SoundPluginRack::SoundPluginRack(QWidget *p_parent,PropertyEditUpdater *p_updater,Editor *p_editor) : QScrollArea(p_parent) {
@@ -324,16 +377,19 @@ SoundPluginRack::SoundPluginRack(QWidget *p_parent,PropertyEditUpdater *p_update
 	setFrameStyle(QFrame::NoFrame);
 	viewport()->setContentsMargins(0,0,0,0);
 	setContentsMargins(0,0,0,0);
-
+	scrollbar=NULL;
+	spacer=NULL;
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	
-	setMinimumHeight(GET_CONSTANT(CONSTANT_RACK_MINIMUM_HEIGHT));
+	setFixedHeight(GET_CONSTANT(CONSTANT_RACK_MINIMUM_HEIGHT));
 
 	setBackgroundRole(QPalette::NoRole);
 	p=palette();
 	p.setColor(QPalette::Background,QColor(0,0,0));
 	setPalette(p);
+	
+	QObject::connect(horizontalScrollBar(),SIGNAL(rangeChanged( int,int )),this,SLOT(h_qscrollbar_range_changed( int,int )));
 	
 }
 

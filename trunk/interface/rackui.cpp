@@ -58,7 +58,7 @@ void RackUI::add_plugin_slot() {
 
 void RackUI::repaint_rack() {
 	
-	connections->update();
+	connections->update_rack();
 	plugins->repaint();
 }
 
@@ -66,7 +66,7 @@ void RackUI::update_rack() {
 	
 	update_rack_combo_slot();
 	update_selected_rack_slot();
-	connections->update();
+	connections->update_rack();
 	plugins->update_rack();
 }
 
@@ -166,9 +166,9 @@ void RackUI::update_selected_rack_slot() {
 void RackUI::rack_front_selected() {
 	
 	if (selected_rack==0)
-		stack->setCurrentWidget(tracks);
+		stack->setCurrentWidget(tracks_vbox);
 	else
-		stack->setCurrentWidget(plugins);
+		stack->setCurrentWidget(plugins_vbox);
 	
 	rack_back->set_pressed(false);	
 	rack_front->set_pressed(true);	
@@ -177,7 +177,8 @@ void RackUI::rack_back_selected() {
 	
 	rack_back->set_pressed(true);	
 	rack_front->set_pressed(false);	
-	stack->setCurrentWidget(connections);
+	stack->setCurrentWidget(connections_vbox);
+	connections->update_rack();
 	
 }
 
@@ -384,18 +385,29 @@ RackUI::RackUI(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater
 	
 	stack = new QStackedWidget(hbox_rack);
 	
-	connections = new ConnectionRack(stack,editor);
-	stack->addWidget(connections);
+	connections_vbox = new CVBox(stack);
 	
-	plugins = new SoundPluginRack(stack,p_updater,editor);
-	stack->addWidget(plugins);
+	connections = new ConnectionRack(connections_vbox,editor);
+	connections->set_scrollbar( new PixmapScrollBar(connections_vbox,PixmapScrollBar::Skin(GET_SKIN(SKINBOX_THEME_SCROLLBAR_H_BG),GET_SKIN(SKINBOX_THEME_SCROLLBAR_GRABBER)),PixmapScrollBar::TYPE_HORIZONTAL) );
+	connections->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	
-	stack->setCurrentWidget(plugins);
+	stack->addWidget(connections_vbox);
+	
+	plugins_vbox = new CVBox(stack);
+	plugins = new SoundPluginRack(plugins_vbox,p_updater,editor);
+	plugins->set_scrollbar( new PixmapScrollBar(plugins_vbox,PixmapScrollBar::Skin(GET_SKIN(SKINBOX_THEME_SCROLLBAR_H_BG),GET_SKIN(SKINBOX_THEME_SCROLLBAR_GRABBER)),PixmapScrollBar::TYPE_HORIZONTAL) );
+	
+	stack->addWidget(plugins_vbox);
+	
+	stack->setCurrentWidget(plugins_vbox);
 	stack->setMinimumHeight(GET_CONSTANT(CONSTANT_RACK_MINIMUM_HEIGHT));	
 	QObject::connect(rack_choose,SIGNAL(item_selected_signal( int )),this,SLOT(rack_selected_slot( int )));
 	
-	tracks = new TrackRack(stack,editor,p_updater);
-	stack->addWidget(tracks);
+	tracks_vbox = new CVBox(stack);
+	tracks = new TrackRack(tracks_vbox,editor,p_updater);
+	tracks->set_scrollbar( new PixmapScrollBar(tracks_vbox,PixmapScrollBar::Skin(GET_SKIN(SKINBOX_THEME_SCROLLBAR_H_BG),GET_SKIN(SKINBOX_THEME_SCROLLBAR_GRABBER)),PixmapScrollBar::TYPE_HORIZONTAL) );
+	
+	stack->addWidget(tracks_vbox);
 	
 	hbox_options->layout()->setSpacing(0);
 	hbox_options->layout()->setMargin(0);

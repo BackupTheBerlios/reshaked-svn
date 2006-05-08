@@ -36,10 +36,14 @@ namespace ReShaked {
 /**
 	@author red <red@killy>
 */
+
+class BlackWidget;
+
 class BlockListUIList : public QFrame {
 
 	Q_OBJECT
 
+			
 friend class MainWindow;			
 	std::vector<BlockListUI_Base*> block_list_ui_list;
 	std::vector<TrackTop*> track_tops;
@@ -69,6 +73,8 @@ friend class MainWindow;
 	PixmapButton *midi_in_edit;;
 	PixmapButton *poly_input;
 	PixmapCombo *snap_config;
+
+	BlackWidget *spacer;
 
 	QMenu *edit_menu;
 	
@@ -108,6 +114,7 @@ friend class MainWindow;
 	};
 
 	
+	void update_hscrollbar_range();
 	void property_editor_property_edited(PropertyEditor* p_editor,double p_old_val);
 public:	
 	static void property_editor_property_edited_callback(void *_this,PropertyEditor* p_editor,double p_old_val);

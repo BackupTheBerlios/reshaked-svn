@@ -39,6 +39,7 @@ int PixmapScrollBar::get_grabber_size() {
 	if (grabber_size<minsize)
 		grabber_size=minsize;
 	
+	//printf("grabber size is %i out of %i - pagesize %i, max %i\n",grabber_size,area,pagesize,max);
 	return grabber_size;
 	
 }
@@ -52,7 +53,8 @@ int PixmapScrollBar::get_grabber_offset() {
 	if (area<=0)
 		return 0;
 	
-	float range=(float)value/(float)max;
+	
+	float range=(max-pagesize)?(float)value/(float)(max-pagesize):0;
 	return (int)(range*area);
 }
 
@@ -96,7 +98,9 @@ int PixmapScrollBar::get_click_pos(QPoint p_mouse_pos) {
 	range-=grabber;
 	if (range==0)
 		return 0;
-	return int(((float)pos/(float)range)*(float)max); 
+	if (max==pagesize)
+		return 0;
+	return int(((float)pos/(float)range)*(float)(max-pagesize)); 
 	
 }
 
@@ -127,8 +131,8 @@ void PixmapScrollBar::mouseMoveEvent(QMouseEvent *e) {
 	int value_ofs=drag.value_at_click+(get_click_pos(e->pos())-drag.pos_at_click);
 	if (value_ofs<0)
 		value_ofs=0;
-	if (value_ofs>max)
-		value_ofs=max;
+	if (value_ofs>(max-pagesize))
+		value_ofs=(max-pagesize);
 	if (value==value_ofs)
 		return; //dont bother if the value is the same
 	value=value_ofs;
@@ -160,8 +164,8 @@ void PixmapScrollBar::set_value(int p_value) {
 	
 	if (p_value<0)
 		p_value=0;
-	if (p_value>max)
-		p_value=max;
+	if (p_value>=(max-pagesize))
+		p_value=(max-pagesize);
 	
 	value=p_value;
 	if (!drag.active)
@@ -172,8 +176,8 @@ void PixmapScrollBar::set_value(int p_value) {
 void PixmapScrollBar::set_max(int p_max) {
 	if (p_max<0)
 		p_max=0;
-	if (value>p_max)
-		value=p_max;
+	if (value>(p_max-pagesize))
+		value=(p_max-pagesize);
 	if (pagesize>p_max)
 		pagesize=p_max;
 	max=p_max;

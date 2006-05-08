@@ -39,11 +39,11 @@ void GlobalViewFrame::block_list_changed_slot() {
 		
 		
 	} else  {
-		int h_scroll_max=global_view->get_total_pixel_width()-global_view->width();
-		h_scroll->set_max(h_scroll_max);
+		h_scroll->set_max(global_view->get_total_pixel_width());
+		
+		h_scroll->set_pagesize(global_view->width());
 		h_scroll->set_value( global_view->get_pixel_h_offset() );
 		
-		h_scroll->set_pagesize(global_view->width() * h_scroll_max / global_view->get_total_pixel_width());
 		h_scroll->show();
 		h_scroll->set_stepsize(global_view->width()/20);
 	}
@@ -53,7 +53,7 @@ void GlobalViewFrame::block_list_changed_slot() {
 		
 //		h_scroll->hide();
 //	} else {
-		int v_range=(global_view->get_total_pixel_height()*2)-global_view->height();
+		int v_range=(global_view->get_total_pixel_height()*2);
 		if (v_range<(global_view->height()*2))
 			v_range=global_view->height()*2; //hack so there is always space to work with
 		

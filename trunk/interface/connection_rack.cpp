@@ -14,6 +14,7 @@
 #include "ui_blocks/helpers.h"
 #include <Qt/qmessagebox.h>
 #include <Qt/qevent.h>
+#include <Qt/qcursor.h>
 
 namespace ReShaked {
 
@@ -116,7 +117,7 @@ int ConnectionRack::get_node_width(AudioNode *p_node) {
 QPoint ConnectionRack::get_input_plug_pos(int p_node,int p_plug) {
 	
 	ERR_FAIL_INDEX_V(p_node,graph->get_node_count(),QPoint(-1,-1));
-	int ofs=0;
+	int ofs=view_offset;
 	for (int i=0;i<graph->get_node_count();i++) {
 		if (graph->get_node(p_node)==get_node_at_pos(i))
 			break;
@@ -143,7 +144,7 @@ QPoint ConnectionRack::get_input_plug_pos(int p_node,int p_plug) {
 QPoint ConnectionRack::get_output_plug_pos(int p_node,int p_plug) {
 	
 	ERR_FAIL_INDEX_V(p_node,graph->get_node_count(),QPoint(-1,-1));
-	int ofs=0;
+	int ofs=view_offset;
 	
 	for (int i=0;i<graph->get_node_count();i++) {
 		
@@ -177,8 +178,10 @@ QPoint ConnectionRack::get_output_plug_pos(int p_node,int p_plug) {
 
 void ConnectionRack::paint_curve(QPainter &p,int p_src_x,int p_src_y,int p_dst_x,int p_dst_y,int p_bottom) {
 
-	int dist=(POW2(p_src_x-p_dst_x) + POW2(p_src_y-p_dst_y));
-	int steps=dist/POW2(STEPS_DIVISOR); //squared stuff :)
+	int dist=sqrt(POW2(p_src_x-p_dst_x) + POW2(p_src_y-p_dst_y));
+	int steps=dist/STEPS_DISTANCE; //squared stuff :)
+	
+	//printf("distance %i, steps %i\n",dist,steps);
 	if (steps<0)
 		steps=3;
 
@@ -354,9 +357,27 @@ void ConnectionRack::mouseMoveEvent ( QMouseEvent * e ) {
 	
 	if (connecting.enabled) {
 		
-		connecting.to=QPoint(e->pos().x()+offset,e->pos().y());
+		if (e->x()<0) {
+			
+			
+		}
+		
+		connecting.to=QPoint(e->pos().x(),e->pos().y());
 		update();
+		if (e->pos().x()<0) {
+			
+			set_view_offset( view_offset-e->pos().x() );
+			QCursor::setPos( mapToGlobal( QPoint( 0, e->pos().y()) ) );
+			update_scrollbar();
+		} else if (e->pos().x()>width()) {
+			
+			set_view_offset( view_offset - ( e->pos().x() - width() ) );
+			QCursor::setPos( mapToGlobal( QPoint( width(), e->pos().y()) ) );
+			update_scrollbar();
+		}
 	}
+	
+	
 	
 }
 void ConnectionRack::mousePressEvent ( QMouseEvent * e ) {
@@ -526,7 +547,84 @@ void ConnectionRack::mouseReleaseEvent ( QMouseEvent * e ) {
 	
 }
 
+int ConnectionRack::get_total_width() {
+	
+	int total_width=0;
+	
+	
+	for (int i=0;i<graph->get_node_count();i++) {
+			
+		AudioNode *node=get_node_at_pos( i );
+		total_width+=get_node_width( node );
+	}
+	
+	
+	return total_width;
+}
 
+void ConnectionRack::update_scrollbar() {
+	
+	if (!scrollbar)
+		return;
+	if (!graph) {
+		
+		scrollbar->hide();
+		return;
+	}
+	int total_width=get_total_width();
+	
+	int scroll_area=total_width-width();
+	
+	
+	if (scroll_area<=0) {
+		scrollbar->hide();
+		return;
+	}
+	
+	scrollbar->set_max( total_width );
+	scrollbar->set_pagesize( width() );
+	scrollbar->set_value( -view_offset );
+	scrollbar->show();
+	
+}
+
+
+void ConnectionRack::set_scrollbar(PixmapScrollBar *p_bar) {
+	
+	scrollbar=p_bar;
+	update_scrollbar();
+	QObject::connect(scrollbar,SIGNAL(value_changed_signal( int )),this,SLOT(scrollbar_changed_slot( int )));
+	
+}
+
+void ConnectionRack::scrollbar_changed_slot(int p_ofs) {
+	
+	set_view_offset( -p_ofs );
+	
+	
+}
+
+void ConnectionRack::set_view_offset(int p_ofs) {
+	
+	if (p_ofs>0)
+		p_ofs=0;
+	
+	if (get_total_width()>width()) {
+		
+		if (p_ofs<-(get_total_width()-width())) 
+			p_ofs=-(get_total_width()-width());
+	} else {
+		
+		if (p_ofs<0)
+			p_ofs=0;
+	}
+	
+	int diff=p_ofs-view_offset;
+	view_offset=p_ofs;
+	//scroll(diff,0);
+	printf("scrolling %i\n",diff);
+	scroll(diff,0);
+}
 
 void ConnectionRack::paintEvent(QPaintEvent *pe) {
 	
@@ -534,19 +632,30 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 		return;
 	
 	QPainter p(this);
-	p.fillRect(0,0,width(),height(),QColor(0,0,0));
 	
+	p.setClipping(true);
+	p.setClipRect(pe->rect());
+	
+	p.fillRect(0,0,width(),height(),QColor(0,0,0));
+	printf("BEG RECT: %i,%i - %i %i\n",pe->rect().x(),pe->rect().y(),pe->rect().width(),pe->rect().height());
 	int ofs=0;
 	//printf("nodes %i\n",graph->get_connection_count());
 	for (int i=0;i<graph->get_node_count();i++) {
 			
 		AudioNode *node=get_node_at_pos( i );
 		int paint_width=get_node_width( node );
+		
+		if ((ofs+view_offset)>(pe->rect().x()+pe->rect().width()) || (ofs+view_offset+paint_width)<pe->rect().x() ) {
+			
+			ofs+=paint_width;
+			continue;
+		}
+		
 		if (node->is_system())
-			skin(true)->paint_into( p, ofs, 0, paint_width, height() );
+			skin(true)->paint_into( p, ofs+view_offset, 0, paint_width, height() );
 		else
-			skin()->paint_into( p, ofs, 0, paint_width, height() );
-		paint_node( p, ofs, node);
+			skin()->paint_into( p, ofs+view_offset, 0, paint_width, height() );
+		paint_node( p, ofs+view_offset, node);
 				
 		ofs+=paint_width;
 		
@@ -561,6 +670,10 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 		paint_cable(p,from.x(),from.y(),to.x(),to.y());
 		
 	}
+	
+	p.setClipping(false);
+	
+	printf("END RECT: %i,%i - %i %i\n",pe->rect().x(),pe->rect().y(),pe->rect().width(),pe->rect().height());
 	
 	if (connecting.enabled) {
 		
@@ -580,10 +693,15 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 void ConnectionRack::set_audio_graph(AudioGraph *p_graph) {
 	
 	graph=p_graph;
-	update();
+	update_rack();
 	
 }
 
+void ConnectionRack::update_rack() {
+	
+	update();
+	update_scrollbar();
+}
 
 ConnectionRack::ConnectionRack(QWidget *p_parent,Editor *p_editor) : QWidget(p_parent) {
 	
@@ -594,11 +712,12 @@ ConnectionRack::ConnectionRack(QWidget *p_parent,Editor *p_editor) : QWidget(p_p
 	
 	connecting.enabled=false;
 	
-	offset=0;
-	
+	view_offset=0;
+	scrollbar=NULL;	
 	setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 	
 }
+
 
 AudioNode *ConnectionRack::get_node_at_pos(int p_node) {
 	
@@ -622,6 +741,8 @@ AudioNode *ConnectionRackTracks::get_node_at_pos(int p_node) {
 		return editor->get_song()->get_output_node();
 	else 
 		return editor->get_song()->get_track( p_node-1 );
+	
+
 }
 
 ConnectionRackTracks::ConnectionRackTracks(QWidget *p_parent,Editor *p_editor) : ConnectionRack(p_parent,p_editor) {

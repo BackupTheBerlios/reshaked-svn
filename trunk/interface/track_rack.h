@@ -17,7 +17,7 @@
 #include "ui_blocks/helpers.h"
 #include "ui_blocks/pixmap_vu.h"
 #include "engine/property_edit_updater.h"
-
+#include "ui_blocks/pixmap_scrollbar.h"
 namespace ReShaked {
 
 /**
@@ -41,15 +41,31 @@ class TrackRack : public QScrollArea {
 	static void property_changed(void *instance,Property *p_prop,double p_old_val);
 
 	std::vector< std::vector<PixmapVU*> > vu_list;
+	PixmapScrollBar *scrollbar;
 	
+	QWidget *spacer;
+	
+	void update_scrollbar();
+	
+
+	void resizeEvent(QResizeEvent * event);	
 	
 public slots:	
+	
+	void h_qscrollbar_range_changed( int,int );
+	
+	void scrollbar_changed_slot(int p_val);
+	
+	void property_options_requested(Property *p_property);
+
+	
 	void rebuild_track_rack();
 	void rack_height_chanegd_slot( int );
 	
+	
 	void update_VUs();
 public:
-	
+	void set_scrollbar(PixmapScrollBar *p_scroll);	
 	TrackRack(QWidget *p_parent,Editor *p_editor,PropertyEditUpdater *p_updater);
 	~TrackRack();
 
