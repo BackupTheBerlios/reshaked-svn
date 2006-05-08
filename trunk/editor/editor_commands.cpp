@@ -506,7 +506,23 @@ CommandFunc* EditorCommands::plugin_set_skip(bool p_no_undo,SoundPlugin *p_plugi
 	
 }
 
+CommandFunc* EditorCommands::plugin_set_name(bool p_no_undo,SoundPlugin *p_plugin,String p_name) {
+	
+	CommandFunc *ret=NULL;
+		
+	if (!p_no_undo) {
+		
 
+		ret=Command2(this,&EditorCommands::plugin_set_name,p_plugin,p_plugin->get_current_preset_name());
+		
+	}
+	
+	p_plugin->set_current_preset_name( p_name );
+	d->ui_update_notify->rack_repaint();
+	
+	return ret;
+	
+}
 CommandFunc* EditorCommands::track_plugin_add(bool p_no_undo,Track *p_track,Track::PluginInsertData p_data) {
 	
 	

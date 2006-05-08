@@ -136,6 +136,7 @@ public:
 	
 	void set_plugin_skips_processing(SoundPlugin *p_plugin, bool p_skips);
 	void property_changed(Property * p_property,double p_old_value,Track *p_hint_track=NULL);
+	void set_plugin_preset_name(SoundPlugin *p_plugin,String p_name);
 	
 	void track_move_plugin_left(Track *p_track,int p_plugin);
 	void track_move_plugin_right(Track *p_track,int p_plugin);
@@ -246,7 +247,7 @@ public:
 	
 	/** PRESETS */
 	
-	TreeLoaderDisk::ErrorReading load_plugin_preset(SoundPlugin *p_plugin,String p_filename,Track *p_track);
+	TreeLoaderDisk::ErrorReading load_plugin_preset(SoundPlugin *p_plugin,String p_filename,Track *p_track,String p_set_preset_name="");
 	TreeLoaderDisk::ErrorReading load_track_preset(Track *p_track,String p_filename);
 	
 	

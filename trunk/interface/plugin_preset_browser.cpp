@@ -111,8 +111,9 @@ void PluginPresetBrowser::save_as_slot() {
 	QString temptative_file=working_path+"/"+filename;
 	
 	
-	if (QFile::exists(selected_file)) {
+	if (QFile::exists(temptative_file)) {
 		
+		printf("%s exists?\n",selected_file.toAscii().data());
 		int action=QMessageBox::warning ( this, "Warning", "File Exists, Overwrite??" , QMessageBox::Yes, QMessageBox::No);
 		
 		if (action==QMessageBox::No)
@@ -431,7 +432,10 @@ void PluginPresetBrowser::init(QString p_dir,QString p_current) {
 
 PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin) : QDialog(p_parent) {
 	
-	init(QStrify(p_plugin->get_info()->unique_ID),QStrify(p_plugin->get_current_file()));
+	QString cfile_dir=get_dir_from_path(QStrify(p_plugin->get_current_file()));
+	QString cfile_file=QStrify(p_plugin->get_current_preset_name());
+	
+	init(QStrify(p_plugin->get_info()->unique_ID),cfile_dir+"/"+cfile_file);
 	
 	if (p_plugin->get_info()->xpm_preview) {
 		

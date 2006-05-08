@@ -302,6 +302,14 @@ void Editor::set_plugin_skips_processing(SoundPlugin *p_plugin, bool p_skips) {
 	
 }
 
+void Editor::set_plugin_preset_name(SoundPlugin *p_plugin,String p_name) {
+	
+	d->undo_stream.begin(p_plugin->get_info()->caption+" Renamed");
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::plugin_set_name,p_plugin,p_name));
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
+}
 void Editor::set_track_mute(Track *p_track,bool p_mute) {
 	
 	if (p_track->is_mute()==p_mute)

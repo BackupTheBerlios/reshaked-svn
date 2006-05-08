@@ -64,6 +64,7 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 		input_buffer[i]=in;
 	
 		p_dst[i]=0; //take the chance and clear this
+		
 		echo_buffer_pos++;
 	}
 	

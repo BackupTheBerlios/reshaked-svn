@@ -41,6 +41,7 @@ public:
 		ACTION_SKIP_OFF,
 		ACTION_MOVE_LEFT,
 		ACTION_MOVE_RIGHT,
+		ACTION_RENAME,
 		ACTION_REMOVE,
 	};
 	
@@ -49,9 +50,10 @@ private:
 	int plugin;
 	PixmapButton *skip;
 	PixmapButton *file;
-	
+	PixmapLabel *preset_name;
 private slots:
 	
+	void label_pressed();
 	void info_pressed();
 	void file_pressed();
 	void skip_toggled(bool p_toggle);
@@ -63,6 +65,7 @@ signals:
 	
 	void action_signal(int p_action,int p_plugin);
 public:	
+	void set_preset_name(QString p_name);
 	void set_skipping_state(bool p_state);
 	
 	PluginTop(QWidget *p_parent,QString p_name,int p_plugin_index,bool p_skipping,int p_total_plugins);

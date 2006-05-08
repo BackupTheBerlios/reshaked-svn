@@ -23,7 +23,7 @@ namespace ReShaked {
 
 
 
-TreeLoaderDisk::ErrorReading Editor::load_plugin_preset(SoundPlugin *p_plugin,String p_filename,Track *p_track) {
+TreeLoaderDisk::ErrorReading Editor::load_plugin_preset(SoundPlugin *p_plugin,String p_filename,Track *p_track,String p_set_preset_name) {
 	
 	
 	TreeLoaderDisk tld("RESHAKED_PLUGIN_"+p_plugin->get_info()->unique_ID,0,0);
@@ -51,6 +51,10 @@ TreeLoaderDisk::ErrorReading Editor::load_plugin_preset(SoundPlugin *p_plugin,St
 	d->undo_stream.begin("Load Preset for "+p_plugin->get_info()->caption,true);
 	d->undo_stream.add_command(Command4(&commands,&EditorCommands::plugin_load_preset,p_plugin,(TreeLoader*)current,(TreeLoader*)_new,p_track));
 	
+	if (p_set_preset_name!="")
+		d->undo_stream.add_command(Command2(&commands,&EditorCommands::plugin_set_name,p_plugin,p_set_preset_name));
+
+		
 	
 	d->undo_stream.end();
 	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );

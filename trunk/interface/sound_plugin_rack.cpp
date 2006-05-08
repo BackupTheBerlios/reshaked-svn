@@ -13,6 +13,7 @@
 #include "interface/sound_plugin_ui_list.h"
 #include "interface/visual_settings.h"
 #include <Qt/qmessagebox.h>
+#include <Qt/qinputdialog.h>
 #include <Qt/qmenu.h>
 #include <Qt/qcursor.h>
 #include "interface/plugin_preset_browser.h"
@@ -39,6 +40,11 @@ void PluginTop::file_pressed() {
 	action_signal(ACTION_FILE,plugin);
 	
 }
+void PluginTop::label_pressed() {
+	
+	action_signal(ACTION_RENAME,plugin);
+	
+}
 void PluginTop::skip_toggled(bool p_toggle) {
 	
 	action_signal(p_toggle?ACTION_SKIP_ON:ACTION_SKIP_OFF,plugin);
@@ -60,6 +66,11 @@ void PluginTop::remove_pressed() {
 	
 }
 	
+void PluginTop::set_preset_name(QString p_name) {
+	
+	preset_name->set_text( p_name );
+}
+	
 PluginTop::PluginTop(QWidget *p_parent,QString p_name,int p_plugin,bool p_skipping,int p_total_plugins) :CHBox(p_parent) {
 	
 	plugin=p_plugin;
@@ -69,10 +80,11 @@ PluginTop::PluginTop(QWidget *p_parent,QString p_name,int p_plugin,bool p_skippi
 	PixmapButton *info = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__INFO),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__INFO_PUSHED)));
 	QObject::connect(info,SIGNAL(mouse_pressed_signal()),this,SLOT(info_pressed()));
 	
-	PixmapLabel *preset_name=
+	preset_name=
 	new PixmapLabel(this,GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET_NAME),PixmapLabel::EXPAND_TILE_H);	
 	
 	preset_name->set_text( p_name );
+	QObject::connect(preset_name,SIGNAL(clicked_signal()),this,SLOT(label_pressed()));
 	
 	file = new PixmapButton(this,PixmapButton::Skin(GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET),GET_QPIXMAP(THEME_RACK_PLUGIN_TOP__PRESET_PUSHED)));
 	QObject::connect(file,SIGNAL(mouse_pressed_signal()),this,SLOT(file_pressed()));
@@ -147,6 +159,19 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 			editor->set_plugin_skips_processing(plugin, false);
 			
 		} break;
+		case PluginTop::ACTION_RENAME: {
+		
+			QString current=QStrify(plugin->get_current_preset_name());
+			bool ok;
+			QString text = QInputDialog::getText(this, "Rename Plugin",
+					"Name:", QLineEdit::Normal,
+					current, &ok);
+			
+			if (ok)
+				editor->set_plugin_preset_name(plugin,DeQStrify(text));
+
+			//editor->track_move_plugin_left(track,plugin_index);
+		} break;		
 		
 		case PluginTop::ACTION_FILE: {
 			
@@ -157,9 +182,8 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 				
 				case PluginPresetBrowser::ACTION_OPEN: {
 					
-					editor->load_plugin_preset(plugin,DeQStrify( ppb->get_file() ),track);
+					editor->load_plugin_preset(plugin,DeQStrify( ppb->get_file() ),track,DeQStrify( get_file_from_path( ppb->get_file()) ));
 					
-					plugin->set_current_preset_name( DeQStrify( get_file_from_path( ppb->get_file()) ));
 				} break;
 				case PluginPresetBrowser::ACTION_SAVE: {
 					
@@ -169,7 +193,7 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 					} else {
 						
 						plugin->set_current_file( DeQStrify( ppb->get_file() ) );
-						plugin->set_current_preset_name( DeQStrify( get_file_from_path( ppb->get_file()) ));
+						editor->set_plugin_preset_name(plugin,DeQStrify( get_file_from_path( ppb->get_file()) ));
 						
 					}
 					
@@ -313,6 +337,7 @@ void SoundPluginRack::repaint() {
 	for (int i=0;i<rack_elements.size();i++) {
 			
 		rack_elements[i].top->set_skipping_state( track->get_plugin( i)->skips_processing() );
+		rack_elements[i].top->set_preset_name( QStrify( track->get_plugin( i)->get_current_preset_name() ));
 	}
 }
 
