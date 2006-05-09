@@ -35,7 +35,9 @@ namespace ReShaked {
 
 
 void SettingsMidi::load(TreeLoader *p_loader) {
-	
+
+    ERR_FAIL_COND(MidiDriverList::get_singleton()->get_driver_count()==0);
+
 	if (!p_loader->is_var("driver_name")) {
 		
 		MidiDriverList::get_singleton()->init_driver(0,false);
@@ -126,6 +128,8 @@ void SettingsMidi::load(TreeLoader *p_loader) {
 void SettingsMidi::save(TreeSaver *p_saver) {
 	
 
+    ERR_FAIL_COND(MidiDriverList::get_singleton()->get_driver_count()==0);
+
 	MidiDriver *d=MidiDriverList::get_singleton()->get_driver();
 	
 	ERR_FAIL_COND( d==NULL );
@@ -165,13 +169,17 @@ void SettingsMidi::save(TreeSaver *p_saver) {
 
 
 void SettingsMidi::restart() {
-	
+
+    ERR_FAIL_COND(MidiDriverList::get_singleton()->get_driver_count()==0);
+
 	MidiDriverList::get_singleton()->init_driver();
 	check_driver_status();
 	
 }
 void SettingsMidi::toggle_active(bool p_active) {
-	
+
+    ERR_FAIL_COND(MidiDriverList::get_singleton()->get_driver_count()==0);
+
 	if (p_active)
 		MidiDriverList::get_singleton()->init_driver();
 	else
@@ -183,6 +191,9 @@ void SettingsMidi::toggle_active(bool p_active) {
 
 
 void SettingsMidi::check_driver_status() {
+
+    ERR_FAIL_COND(MidiDriverList::get_singleton()->get_driver_count()==0);
+
 	int current_driver=MidiDriverList::get_singleton()->get_current_driver();
 	
 	driver_enabled->setChecked( MidiDriverList::get_singleton()->is_current_driver_active() );
@@ -231,14 +242,18 @@ void SettingsMidi::check_driver_status() {
 }
 
 void SettingsMidi::driver_changed(int p_to_which) {
-	
+
+    ERR_FAIL_COND(MidiDriverList::get_singleton()->get_driver_count()==0);
+
 	MidiDriverList::get_singleton()->init_driver(p_to_which,MidiDriverList::get_singleton()->is_current_driver_active());
 	check_driver_status();
 	update_driver_options();
 }
 
 void SettingsMidi::update_driver_options() {
-	
+
+    ERR_FAIL_COND(MidiDriverList::get_singleton()->get_driver_count()==0);
+
 	if (driver_options!=NULL)
 		delete driver_options;
 	

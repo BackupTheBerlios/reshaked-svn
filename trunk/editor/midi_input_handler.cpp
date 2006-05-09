@@ -52,7 +52,7 @@ MidiInputHandler * MidiInputHandler::singleton=NULL;
 */
 void MidiInputHandler::sound_thread_callback() {
 	
-	if (!midi_driver->is_current_driver_active())
+	if (midi_driver->get_driver_count()==0 || !midi_driver->is_current_driver_active())
 		return;
 	
 	MidiDriver *driver=midi_driver->get_driver();

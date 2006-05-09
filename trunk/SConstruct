@@ -11,7 +11,7 @@ import version
 # PRE-detect Qt3 QTDIR
 
 QT_VERSION_MAJOR_NEEDED = 4
-QT_VERSION_MINOR_NEEDED = 0
+QT_VERSION_MINOR_NEEDED = 1
 
 qtdir=detect.check_qtdir(QT_VERSION_MAJOR_NEEDED,QT_VERSION_MINOR_NEEDED);
 os.environ["QTDIR"]=qtdir;
