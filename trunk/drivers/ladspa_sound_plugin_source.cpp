@@ -35,7 +35,7 @@ SoundPlugin* LADSPA_SoundPluginSource::create_ladspa_plugin(const SoundPluginInf
 		if (&singleton->plugin_list[i]->plugin_info!=p_info) 
 			continue;
 		
-		return new SoundPlugin_LADSPA(	p_info, singleton->plugin_list[i]->path, singleton->plugin_list[i]->index, p_channels);
+		return new SoundPlugin_LADSPAz(	p_info, singleton->plugin_list[i]->path, singleton->plugin_list[i]->index, p_channels);
 			
 		
 	}

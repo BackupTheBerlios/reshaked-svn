@@ -22,10 +22,15 @@ env.use_asio=False;
 
 print env['TOOLS']
 
+do_detect=True;
+
 if (os.name=='nt'): #WINDOWS
 
 	env.Append(LIBS=['QtGui4','QtCore4','dsound','winmm','ole32']);
 	version.enables+=['WIN32_ENABLED'];
+	version.enables+=['VST_ENABLED'];
+	do_detect=False;
+	env.Append(CPPPATH=['#drivers/vst']);
 
 else: #POSIX
 	env.Append(LIBS=['QtGui','QtCore']);
@@ -49,16 +54,18 @@ env.build_dir = None
 
 env.__class__.find_source_files = detect.find_source_files
 
-#detect.check_pkg(env,"qt-mt","3.2");
-if (detect.check_pkg(env,"sndfile","1.0.10")):
-	version.enables+=['SNDFILE_ENABLED'];
-
-if (detect.check_pkg(env,"jack","0.100.0")):
-	version.enables+=['DRIVER_JACK_ENABLED'];
-
-if (detect.check_pkg(env,"alsa","1.0.0")):
-	version.enables+=['DRIVER_ALSA_ENABLED'];
-
+if (do_detect):
+	#detect.check_pkg(env,"qt-mt","3.2");
+	if (detect.check_pkg(env,"sndfile","1.0.10")):
+		version.enables+=['SNDFILE_ENABLED'];
+	
+	if (detect.check_pkg(env,"jack","0.100.0")):
+		version.enables+=['DRIVER_JACK_ENABLED'];
+	
+	if (detect.check_pkg(env,"alsa","1.0.0")):
+		version.enables+=['DRIVER_ALSA_ENABLED'];
+#else, asume everything is at include dirs (windows)
+	
 Export('env');
 
 version.save();

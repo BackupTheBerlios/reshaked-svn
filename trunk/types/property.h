@@ -58,7 +58,7 @@ public:
 	virtual DisplayMode get_display_mode()=0;
 	
 	/* helpers */	
-	String get_text_value(bool p_no_postfix=false); 
+	virtual String get_text_value(bool p_no_postfix=false); 
 	double get_coeff_value(); ///< return value in range 0 .. 1
 	void set_coeff_value(double p_coeff); ///< return value in range 0 .. 1
 	double get_value_from_coeff(double p_coeff);

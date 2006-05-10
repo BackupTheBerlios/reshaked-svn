@@ -7,6 +7,7 @@
 #include "engine/midi_driver_list.h"
 #include "engine/audio_control.h"
 #include "drivers/sound_driver_jack.h"
+#include "drivers/vst_sound_plugin_source.h"
 #include "engine/sound_plugin_list.h"
 #include "plugins/amplifier_plugin.h"
 #include "plugins/sine_synth.h"
@@ -210,6 +211,11 @@ int main(int argc, char *argv[]) {
 	ReShaked::LADSPA_SoundPluginSource ladspa_plugin_source;
 	
 #endif
+#ifdef VST_ENABLED
+		
+	ReShaked::VST_SoundPluginSource vst_plugin_source;
+	
+#endif
 	init_sound_plugin_UI_list();
 	
 	ReShaked::AudioControl::init();
@@ -236,6 +242,11 @@ int main(int argc, char *argv[]) {
 		midi_driver_list.init_driver(0);
 	}
 	
+#ifdef VST_ENABLED
+//settings (paths) were loaded, so scan VST plugins	
+	
+	vst_plugin_source.scan_plugins();
+#endif	
 	//q.setMainWidget(&w);
 	w->show();
 	
