@@ -257,6 +257,29 @@
 #include "pixmaps/default_skin/track_panel__swing_local_off.xpm"
 #include "pixmaps/default_skin/track_panel__swing_local_on.xpm"
 #include "pixmaps/default_skin/track_panel__swing_value.xpm"
+#include "pixmaps/default_skin/vst__amp_label.xpm"
+#include "pixmaps/default_skin/vst__amp_label_begin.xpm"
+#include "pixmaps/default_skin/vst__amp_label_end.xpm"
+#include "pixmaps/default_skin/vst__amp_slider.xpm"
+#include "pixmaps/default_skin/vst__amp_slider_begin.xpm"
+#include "pixmaps/default_skin/vst__bottom.xpm"
+#include "pixmaps/default_skin/vst__button_gui.xpm"
+#include "pixmaps/default_skin/vst__button_gui_active.xpm"
+#include "pixmaps/default_skin/vst__button_gui_inactive.xpm"
+#include "pixmaps/default_skin/vst__button_midi.xpm"
+#include "pixmaps/default_skin/vst__button_midi_active.xpm"
+#include "pixmaps/default_skin/vst__button_midi_inactive.xpm"
+#include "pixmaps/default_skin/vst__button_params.xpm"
+#include "pixmaps/default_skin/vst__button_params_active.xpm"
+#include "pixmaps/default_skin/vst__button_params_inactive.xpm"
+#include "pixmaps/default_skin/vst__button_presets.xpm"
+#include "pixmaps/default_skin/vst__button_presets_active.xpm"
+#include "pixmaps/default_skin/vst__button_presets_inactive.xpm"
+#include "pixmaps/default_skin/vst__middle.xpm"
+#include "pixmaps/default_skin/vst__right.xpm"
+#include "pixmaps/default_skin/vst__slider_grabber.xpm"
+#include "pixmaps/default_skin/vst__top_vst.xpm"
+#include "pixmaps/default_skin/vst__top_vsti.xpm"
 
 namespace ReShaked {
 void VisualSettings::load_default_theme_pixmaps() {
@@ -773,6 +796,52 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["track_panel__swing_local_on"]=THEME_TRACK_PANEL__SWING_LOCAL_ON;
     pixmap_map[THEME_TRACK_PANEL__SWING_VALUE]=QPixmap( (const char**) track_panel__swing_value_xpm); 
     pixmap_map_skin["track_panel__swing_value"]=THEME_TRACK_PANEL__SWING_VALUE;
+    pixmap_map[THEME_VST__AMP_LABEL]=QPixmap( (const char**) vst__amp_label_xpm); 
+    pixmap_map_skin["vst__amp_label"]=THEME_VST__AMP_LABEL;
+    pixmap_map[THEME_VST__AMP_LABEL_BEGIN]=QPixmap( (const char**) vst__amp_label_begin_xpm); 
+    pixmap_map_skin["vst__amp_label_begin"]=THEME_VST__AMP_LABEL_BEGIN;
+    pixmap_map[THEME_VST__AMP_LABEL_END]=QPixmap( (const char**) vst__amp_label_end_xpm); 
+    pixmap_map_skin["vst__amp_label_end"]=THEME_VST__AMP_LABEL_END;
+    pixmap_map[THEME_VST__AMP_SLIDER]=QPixmap( (const char**) vst__amp_slider_xpm); 
+    pixmap_map_skin["vst__amp_slider"]=THEME_VST__AMP_SLIDER;
+    pixmap_map[THEME_VST__AMP_SLIDER_BEGIN]=QPixmap( (const char**) vst__amp_slider_begin_xpm); 
+    pixmap_map_skin["vst__amp_slider_begin"]=THEME_VST__AMP_SLIDER_BEGIN;
+    pixmap_map[THEME_VST__BOTTOM]=QPixmap( (const char**) vst__bottom_xpm); 
+    pixmap_map_skin["vst__bottom"]=THEME_VST__BOTTOM;
+    pixmap_map[THEME_VST__BUTTON_GUI]=QPixmap( (const char**) vst__button_gui_xpm); 
+    pixmap_map_skin["vst__button_gui"]=THEME_VST__BUTTON_GUI;
+    pixmap_map[THEME_VST__BUTTON_GUI_ACTIVE]=QPixmap( (const char**) vst__button_gui_active_xpm); 
+    pixmap_map_skin["vst__button_gui_active"]=THEME_VST__BUTTON_GUI_ACTIVE;
+    pixmap_map[THEME_VST__BUTTON_GUI_INACTIVE]=QPixmap( (const char**) vst__button_gui_inactive_xpm); 
+    pixmap_map_skin["vst__button_gui_inactive"]=THEME_VST__BUTTON_GUI_INACTIVE;
+    pixmap_map[THEME_VST__BUTTON_MIDI]=QPixmap( (const char**) vst__button_midi_xpm); 
+    pixmap_map_skin["vst__button_midi"]=THEME_VST__BUTTON_MIDI;
+    pixmap_map[THEME_VST__BUTTON_MIDI_ACTIVE]=QPixmap( (const char**) vst__button_midi_active_xpm); 
+    pixmap_map_skin["vst__button_midi_active"]=THEME_VST__BUTTON_MIDI_ACTIVE;
+    pixmap_map[THEME_VST__BUTTON_MIDI_INACTIVE]=QPixmap( (const char**) vst__button_midi_inactive_xpm); 
+    pixmap_map_skin["vst__button_midi_inactive"]=THEME_VST__BUTTON_MIDI_INACTIVE;
+    pixmap_map[THEME_VST__BUTTON_PARAMS]=QPixmap( (const char**) vst__button_params_xpm); 
+    pixmap_map_skin["vst__button_params"]=THEME_VST__BUTTON_PARAMS;
+    pixmap_map[THEME_VST__BUTTON_PARAMS_ACTIVE]=QPixmap( (const char**) vst__button_params_active_xpm); 
+    pixmap_map_skin["vst__button_params_active"]=THEME_VST__BUTTON_PARAMS_ACTIVE;
+    pixmap_map[THEME_VST__BUTTON_PARAMS_INACTIVE]=QPixmap( (const char**) vst__button_params_inactive_xpm); 
+    pixmap_map_skin["vst__button_params_inactive"]=THEME_VST__BUTTON_PARAMS_INACTIVE;
+    pixmap_map[THEME_VST__BUTTON_PRESETS]=QPixmap( (const char**) vst__button_presets_xpm); 
+    pixmap_map_skin["vst__button_presets"]=THEME_VST__BUTTON_PRESETS;
+    pixmap_map[THEME_VST__BUTTON_PRESETS_ACTIVE]=QPixmap( (const char**) vst__button_presets_active_xpm); 
+    pixmap_map_skin["vst__button_presets_active"]=THEME_VST__BUTTON_PRESETS_ACTIVE;
+    pixmap_map[THEME_VST__BUTTON_PRESETS_INACTIVE]=QPixmap( (const char**) vst__button_presets_inactive_xpm); 
+    pixmap_map_skin["vst__button_presets_inactive"]=THEME_VST__BUTTON_PRESETS_INACTIVE;
+    pixmap_map[THEME_VST__MIDDLE]=QPixmap( (const char**) vst__middle_xpm); 
+    pixmap_map_skin["vst__middle"]=THEME_VST__MIDDLE;
+    pixmap_map[THEME_VST__RIGHT]=QPixmap( (const char**) vst__right_xpm); 
+    pixmap_map_skin["vst__right"]=THEME_VST__RIGHT;
+    pixmap_map[THEME_VST__SLIDER_GRABBER]=QPixmap( (const char**) vst__slider_grabber_xpm); 
+    pixmap_map_skin["vst__slider_grabber"]=THEME_VST__SLIDER_GRABBER;
+    pixmap_map[THEME_VST__TOP_VST]=QPixmap( (const char**) vst__top_vst_xpm); 
+    pixmap_map_skin["vst__top_vst"]=THEME_VST__TOP_VST;
+    pixmap_map[THEME_VST__TOP_VSTI]=QPixmap( (const char**) vst__top_vsti_xpm); 
+    pixmap_map_skin["vst__top_vsti"]=THEME_VST__TOP_VSTI;
 
 }
 
