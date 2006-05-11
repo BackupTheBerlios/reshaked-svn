@@ -31,6 +31,12 @@ namespace ReShaked {
 class VST_Plugin : public SoundPlugin {
 			    
 	
+	enum {
+		
+		MAX_INPUT_EVENTS=1024
+	};
+	
+	
 	class Parameter: public Property {
 	public:		
 		
@@ -73,6 +79,12 @@ class VST_Plugin : public SoundPlugin {
 	static VstIntPtr VSTCALLBACK host(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt);	
 	
 	float mix_rate;
+	
+	/* input events stuff */
+	
+	VstMidiEvent *event_array;
+	VstEvents *event_pointers;
+	
 	
 public:
 

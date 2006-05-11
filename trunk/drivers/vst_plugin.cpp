@@ -154,6 +154,73 @@ void VST_Plugin::process(int p_frames) {
 		return;
 	/* Configure Input Buffers */
 
+	if (get_info()->is_synth) {
+		
+		const EventBuffer *ebuff=get_event_buffer();
+		int event_idx=0;
+		
+		for (int i=0;i<ebuff->get_event_count();i++) {
+		
+			const Event *e=ebuff->get_event(i);
+				
+			
+			if (e->type==Event::TYPE_MIDI) {
+			
+				if (event_idx==MAX_INPUT_EVENTS)
+					continue;
+				
+				const EventMidi &em=e->param.midi;
+				VstMidiEvent &vstem=event_array[event_idx];
+				switch (em.midi_type) {
+					case EventMidi::MIDI_NOTE_ON: {
+					
+						vstem.deltaFrames=e->frame_offset;
+						vstem.midiData[0]=0x90;	//channel 0?
+						vstem.midiData[1]=em.data.note.note;
+						vstem.midiData[2]=em.data.note.velocity;
+						vstem.midiData[3]=0;
+						event_idx++;
+					} break;
+					case EventMidi::MIDI_NOTE_OFF: {
+					
+						vstem.deltaFrames=e->frame_offset;
+						vstem.midiData[0]=0x80;	//channel 0?
+						vstem.midiData[1]=em.data.note.note;
+						vstem.midiData[2]=em.data.note.velocity;
+						vstem.midiData[3]=0;
+						event_idx++;
+					} break;
+					case EventMidi::MIDI_CONTROLLER: {
+					
+						vstem.deltaFrames=e->frame_offset;
+						vstem.midiData[0]=0xB0;	//channel 0?
+						vstem.midiData[1]=em.data.control.index;
+						vstem.midiData[2]=em.data.control.parameter;
+						vstem.midiData[3]=0;
+						event_idx++;
+						
+					} break;
+					case EventMidi::MIDI_PITCH_BEND: {
+					
+						vstem.deltaFrames=e->frame_offset;
+						vstem.midiData[0]=0xE0;	//channel 0?
+						vstem.midiData[1]=em.data.pitch_bend.bend&0x7F;
+						vstem.midiData[2]=em.data.pitch_bend.bend>>7;
+						vstem.midiData[3]=0;
+						event_idx++;
+					} break;
+					default: {} //dont annoy, gcc
+				}
+			}
+		}
+		
+		event_pointers->numEvents=event_idx; //set how many events
+		
+		//eat all of it, fucker, I dont care if you dont want any more
+		ptrPlug->dispatcher(ptrPlug,effProcessEvents,0,0,event_pointers,0.0f);
+		
+	}
+	
 	int abuff_idx=0;
 	for (int i=0;i<input_plugs.size();i++) {
 		
@@ -613,6 +680,32 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channel
 	//switch the plugin back on (calls Resume)
 	ptrPlug->dispatcher(ptrPlug,effMainsChanged,0,1,NULL,0.0f);
 	
+	/* HANDLE EVENTS ARRAY */
+	event_array = new VstMidiEvent[MAX_INPUT_EVENTS];
+	int array_size=sizeof(VstInt32)+sizeof(VstIntPtr)+sizeof(VstEvent*)*MAX_INPUT_EVENTS;
+	event_pointers = (VstEvents*) new char[array_size];
+	event_pointers->numEvents=0;
+	event_pointers->reserved=0;
+	
+	for (int i=0;i<MAX_INPUT_EVENTS;i++) {
+		
+		event_array[i].type=kVstMidiType;
+		event_array[i].byteSize=24;
+		event_array[i].deltaFrames=0;
+		event_array[i].flags=0;			///< @see VstMidiEventFlags
+		event_array[i].noteLength=0;	///< (in sample frames) of entire note, if available, 
+		event_array[i].noteOffset=0;	///< offset (in sample frames) into note from note 
+		event_array[i].midiData[0]=0;
+		event_array[i].midiData[1]=0;
+		event_array[i].midiData[2]=0;
+		event_array[i].midiData[3]=0;
+		event_array[i].detune=0;
+		event_array[i].noteOffVelocity=0;
+		event_array[i].reserved1=0;
+		event_pointers->events[i]=(VstEvent*)&event_array[i];
+	}
+	
+
 	
 }
 
@@ -647,6 +740,8 @@ VST_Plugin::~VST_Plugin() {
 	if (output_buffers)
 		delete[] output_buffers;
 	
+	delete[] event_array;
+	delete[] (char*)event_pointers; //since i had to custom-instance for custom-eventcount
 }
 
 
