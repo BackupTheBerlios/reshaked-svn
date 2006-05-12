@@ -575,8 +575,10 @@ MainWindow::MainWindow(QString p_settings_dir,QString p_settings_file) {
 
 	MidiInputHandler::get_singleton()->set_editor( data.editor );
 
+	setLayout(new QVBoxLayout(this));
 	CVBox *main_vbox = new CVBox(this);
-	setCentralWidget(main_vbox);
+	layout()->addWidget(main_vbox);
+	
 	top_bar = new TopBarControls(main_vbox,data.editor,&data.property_edit_updater);
 	
 	CHBox *stack_hbox = new CHBox(main_vbox);

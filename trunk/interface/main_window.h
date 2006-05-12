@@ -43,7 +43,7 @@ namespace ReShaked {
 @author Juan Linietsky
 */
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QWidget {
 
 	Q_OBJECT
 
