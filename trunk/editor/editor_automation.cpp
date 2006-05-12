@@ -169,8 +169,9 @@ bool Editor::automation_edit_key_press(int p_key_value) {
 				handled=false;
 	
 		
-			END_SWITCH;			
-			return handled;	
+	END_SWITCH;			
+	
+	return handled;	
 }
 
 

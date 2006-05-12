@@ -614,6 +614,7 @@ bool BlockListUI_Pattern::event ( QEvent * ev )  {
 		if (editor->pattern_edit_key_press(key_value)) {
 			
 			update();
+			e->accept();
 			return true;
 		}
 		

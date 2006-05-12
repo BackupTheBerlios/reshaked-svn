@@ -863,6 +863,7 @@ bool BlockListUI_Automation::event( QEvent * ev ) {
 		if (editor->automation_edit_key_press(key_value)) {
 			
 			update();
+			e->accept();
 			return true;
 		}
 		

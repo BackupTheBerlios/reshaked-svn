@@ -61,11 +61,11 @@ bool Editor::pattern_edit_key_press(int p_event) {
 	Track_Pattern *pattern_track=dynamic_cast<Track_Pattern*>(get_blocklist( get_current_blocklist() ) );
 	ERR_FAIL_COND_V(pattern_track==NULL,false);
 
-	bool repaint=false;
+	bool handled=false;
 	
 	if (handle_navigation_key_press( pattern_track, p_event))
 		return true;
-	repaint=true;
+	handled=true;
 	SWITCH(p_event)
 			
 		CASE( KEYBIND("left") ) {
@@ -339,7 +339,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 		}
 		DEFAULT
 		
-			repaint=false;
+			handled=false;
 
 	END_SWITCH;
 
@@ -368,14 +368,14 @@ bool Editor::pattern_edit_key_press(int p_event) {
 				pattern_track->offline_process_automations( d->cursor.get_tick_pos() );
 				d->cursor.set_pos( d->cursor.get_pos() + d->global_edit.cursor_step );
 			}		
-			repaint=true;	
+			handled=true;	
 		} else if (IS_KEYBIND("note_entry/play_note_at_cursor",p_event) && d->pattern_edit.note_edit_mode==EditorData::MODE_NOTE) {
 			if (d->pattern_edit.field==0) {
 					
 				play_note_at_cursor();
 				d->cursor.set_pos( d->cursor.get_pos() +1 );
 			}
-			repaint=true;	
+			handled=true;	
 		} else if (pattern_track->is_pos_editable( d->cursor.get_tick_pos() ) ) {
 	
 
@@ -456,7 +456,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 
 	}	
 	
-	return repaint;
+	return handled;
 }
 
 

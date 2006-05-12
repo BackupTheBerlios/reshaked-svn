@@ -8,6 +8,7 @@
 #include "engine/audio_control.h"
 #include "drivers/sound_driver_jack.h"
 #include "drivers/vst_sound_plugin_source.h"
+#include "plugin_UIs/vst_plugin_ui.h"
 #include "engine/sound_plugin_list.h"
 #include "plugins/amplifier_plugin.h"
 #include "plugins/sine_synth.h"
@@ -89,6 +90,9 @@ static void init_sound_plugin_UI_list() {
 	sound_plugin_UI_list.add_creator(    ReShaked::ChionicInterface::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::SimplerUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::ChorusPluginUI::create_this );
+#ifdef VST_ENABLED
+	sound_plugin_UI_list.add_creator(    ReShaked::VST_PluginUI::create_this );
+#endif
 	/* this one must go last, since it's the last resort */
 	sound_plugin_UI_list.add_creator(    ReShaked::SoundPluginUI_Generic::create_this );
 	

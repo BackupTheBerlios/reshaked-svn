@@ -23,6 +23,8 @@ env.use_asio=False;
 print env['TOOLS']
 
 do_detect=True;
+env['QT_MOC']=env['QT_MOC'] + ' -I. '; # add . to the search path, so version.h is found!
+print "Using moc: " +env['QT_MOC'];
 
 if (os.name=='nt'): #WINDOWS
 
@@ -31,6 +33,7 @@ if (os.name=='nt'): #WINDOWS
 	version.enables+=['VST_ENABLED'];
 	do_detect=False;
 	env.Append(CPPPATH=['#drivers/vst']);
+
 
 else: #POSIX
 	env.Append(LIBS=['QtGui','QtCore']);

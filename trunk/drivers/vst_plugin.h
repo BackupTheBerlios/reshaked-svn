@@ -16,6 +16,8 @@
 #ifdef VST_ENABLED
 
 #include "engine/sound_plugin.h"
+#include "engine/midi_parameters.h"
+
 #include "typedefs.h"
 #include "aeffectx.h"
 #define WIN32_LEAN_AND_MEAN
@@ -70,6 +72,7 @@ class VST_Plugin : public SoundPlugin {
 	float **input_buffers;
 	float **output_buffers;
 	
+	std::vector<Property*> param_list;
 	std::vector<Property*> property_list;
 	
 	bool enabled;
@@ -79,16 +82,23 @@ class VST_Plugin : public SoundPlugin {
 	static VstIntPtr VSTCALLBACK host(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt);	
 	
 	float mix_rate;
-	
+	LocalProperty gain;
 	/* input events stuff */
 	
 	VstMidiEvent *event_array;
 	VstEvents *event_pointers;
 	
+	MidiParameters *midi_parameters; //midi parameters
+	
+	/* UI Edited notification */
+	
+	void *userdata;
+	void (*property_changed)(void*,int);
+
 	
 public:
 
-
+	AEffect* get_ptrPlug() { return ptrPlug; }
 	static const SoundPluginInfo *create_info();
 
 	/* Plugs */	
@@ -104,6 +114,7 @@ public:
 	Property& get_port(int p_index);
 	PortType get_port_type(int p_index);
 	
+	void set_property_changed_callback(void *p_userdata,void (*property_changed)(void*,int));
 
 	/* Setting up */
 	void set_mixing_rate(float p_mixing_rate);

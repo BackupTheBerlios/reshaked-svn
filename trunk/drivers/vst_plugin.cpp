@@ -159,6 +159,45 @@ void VST_Plugin::process(int p_frames) {
 		const EventBuffer *ebuff=get_event_buffer();
 		int event_idx=0;
 		
+		/* First try the midi events that come from our MidiParams */
+		const MidiParameters::Changes::Change *changes=midi_parameters->get_changes();
+		for (int i=0;i<midi_parameters->get_changes_count();i++) {
+			
+			if (event_idx==MAX_INPUT_EVENTS)
+				break;
+			VstMidiEvent &vstem=event_array[event_idx];
+			
+			if (changes[i].control<128) {
+				
+				vstem.deltaFrames=0;
+				vstem.midiData[0]=0xB0;	//channel 0?
+				vstem.midiData[1]=changes[i].control;
+				vstem.midiData[2]=changes[i].value;
+				vstem.midiData[3]=0;
+				event_idx++;
+								
+			} else 	if (changes[i].control==MidiParameters::CONTROL_AFTERTOUCH) {
+
+				vstem.deltaFrames=0;
+				vstem.midiData[0]=0xD0;	//channel 0?
+				vstem.midiData[1]=changes[i].value;
+				vstem.midiData[2]=0;
+				vstem.midiData[3]=0;
+				event_idx++;
+				
+			} else 	if (changes[i].control==MidiParameters::CONTROL_PITCH_BEND) {
+				
+				vstem.deltaFrames=0;
+				vstem.midiData[0]=0xE0;	//channel 0?
+				vstem.midiData[1]=changes[i].value&0x7F;
+				vstem.midiData[2]=changes[i].value>>7;
+				vstem.midiData[3]=0;
+				event_idx++;
+			}
+		}
+		
+		midi_parameters->clear_changes();
+		/* Then do the input midi events */
 		for (int i=0;i<ebuff->get_event_count();i++) {
 		
 			const Event *e=ebuff->get_event(i);
@@ -167,7 +206,7 @@ void VST_Plugin::process(int p_frames) {
 			if (e->type==Event::TYPE_MIDI) {
 			
 				if (event_idx==MAX_INPUT_EVENTS)
-					continue;
+					break;
 				
 				const EventMidi &em=e->param.midi;
 				VstMidiEvent &vstem=event_array[event_idx];
@@ -259,7 +298,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 		_this=FromVstPtr<VST_Plugin>(effect->resvd1);
 		printf("convert ok\n");
 	}
-	
+	printf("from thread %i\n",GetCurrentThreadId());;
 	switch (opcode)
 	{
 		case audioMasterVersion:
@@ -276,7 +315,18 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 
 			//NB - this is called when the plug calls
 			//setParameterAutomated
-
+			if (_this && _this->property_changed) {
+				if (index<0 || index>=_this->param_list.size())
+					return 0;
+				for (int i=0;i<_this->property_list.size();i++) {
+					
+					if (_this->property_list[i]==_this->param_list[index]) {
+						_this->property_changed(_this->userdata,i);
+						
+					}
+				}
+			}
+					
 			break;
 
 		case audioMasterCurrentId:
@@ -583,8 +633,16 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 	return retval;
 }
 
+void VST_Plugin::set_property_changed_callback(void *p_userdata,void (*p_property_changed)(void*,int)) {
+	
+	property_changed=p_property_changed;
+	userdata=p_userdata;
+}
 
 VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channels) : SoundPlugin(p_info,p_channels) {
+	
+	userdata=NULL;
+	property_changed=NULL;
 	
 	mix_rate=44100;
 	enabled=true;
@@ -673,38 +731,54 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channel
 	//create parameters
 	for (int i=0;i<ptrPlug->numParams;i++) {
 		
-		property_list.push_back( new Parameter(ptrPlug,i));
+		Parameter *p=new Parameter(ptrPlug,i);
+		property_list.push_back( p );
+		param_list.push_back(p);
 	}
 			
 	
-	//switch the plugin back on (calls Resume)
-	ptrPlug->dispatcher(ptrPlug,effMainsChanged,0,1,NULL,0.0f);
 	
 	/* HANDLE EVENTS ARRAY */
-	event_array = new VstMidiEvent[MAX_INPUT_EVENTS];
-	int array_size=sizeof(VstInt32)+sizeof(VstIntPtr)+sizeof(VstEvent*)*MAX_INPUT_EVENTS;
-	event_pointers = (VstEvents*) new char[array_size];
-	event_pointers->numEvents=0;
-	event_pointers->reserved=0;
+	if (get_info()->is_synth) {
 	
-	for (int i=0;i<MAX_INPUT_EVENTS;i++) {
+		event_array = new VstMidiEvent[MAX_INPUT_EVENTS];
+		int array_size=sizeof(VstInt32)+sizeof(VstIntPtr)+sizeof(VstEvent*)*MAX_INPUT_EVENTS;
+		event_pointers = (VstEvents*) new char[array_size];
+		event_pointers->numEvents=0;
+		event_pointers->reserved=0;
 		
-		event_array[i].type=kVstMidiType;
-		event_array[i].byteSize=24;
-		event_array[i].deltaFrames=0;
-		event_array[i].flags=0;			///< @see VstMidiEventFlags
-		event_array[i].noteLength=0;	///< (in sample frames) of entire note, if available, 
-		event_array[i].noteOffset=0;	///< offset (in sample frames) into note from note 
-		event_array[i].midiData[0]=0;
-		event_array[i].midiData[1]=0;
-		event_array[i].midiData[2]=0;
-		event_array[i].midiData[3]=0;
-		event_array[i].detune=0;
-		event_array[i].noteOffVelocity=0;
-		event_array[i].reserved1=0;
-		event_pointers->events[i]=(VstEvent*)&event_array[i];
+		for (int i=0;i<MAX_INPUT_EVENTS;i++) {
+			
+			event_array[i].type=kVstMidiType;
+			event_array[i].byteSize=24;
+			event_array[i].deltaFrames=0;
+			event_array[i].flags=0;			///< @see VstMidiEventFlags
+			event_array[i].noteLength=0;	///< (in sample frames) of entire note, if available, 
+			event_array[i].noteOffset=0;	///< offset (in sample frames) into note from note 
+			event_array[i].midiData[0]=0;
+			event_array[i].midiData[1]=0;
+			event_array[i].midiData[2]=0;
+			event_array[i].midiData[3]=0;
+			event_array[i].detune=0;
+			event_array[i].noteOffVelocity=0;
+			event_array[i].reserved1=0;
+			event_pointers->events[i]=(VstEvent*)&event_array[i];
+		}
+		
+		midi_parameters = new MidiParameters;
+		for (int i=0;i<midi_parameters->get_parameter_count();i++)
+			property_list.insert(property_list.begin(), midi_parameters->get_parameter(i) );
+	} else {
+		
+		event_array=NULL;
+		event_pointers=NULL;
+		midi_parameters=NULL;
 	}
 	
+	gain.set_all( get_info()->is_synth?-20:0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "vst_plugin_gain","Gain","dB");
+	property_list.push_back(&gain);
+	//switch the plugin back on (calls Resume)
+	ptrPlug->dispatcher(ptrPlug,effMainsChanged,0,1,NULL,0.0f);
 
 	
 }
@@ -730,8 +804,8 @@ VST_Plugin::~VST_Plugin() {
 		delete output_plugs[i];
 	
 	/* free property parameters */
-	for (int i=0;i<property_list.size();i++) 
-		delete property_list[i];
+	for (int i=0;i<param_list.size();i++) 
+		delete param_list[i];
 	
 	/* free Buffers */
 	if (input_buffers)
@@ -740,8 +814,12 @@ VST_Plugin::~VST_Plugin() {
 	if (output_buffers)
 		delete[] output_buffers;
 	
-	delete[] event_array;
-	delete[] (char*)event_pointers; //since i had to custom-instance for custom-eventcount
+	if (get_info()->is_synth) {
+		
+		delete[] event_array;
+		delete[] (char*)event_pointers; //since i had to custom-instance for custom-eventcount
+		delete midi_parameters;
+	}
 }
 
 

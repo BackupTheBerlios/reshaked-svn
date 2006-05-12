@@ -127,6 +127,7 @@ void VST_SoundPluginSource::scan_path(String p_path) {
 		info.can_custom_channels=true;
 		info.custom_channels.push_back(vstchans);			
 		info.has_internal_UI=(ptrPlug->flags & effFlagsHasEditor);
+		printf("internal UI: %i\n",ptrPlug->flags & effFlagsHasEditor);
 		info.is_synth=(ptrPlug->dispatcher(ptrPlug,effGetVstVersion,0,0,NULL,0.0f)==2 && ptrPlug->flags & effFlagsIsSynth);
 		info.xpm_preview=(const char**)vst_xpm;
 		info.creation_func=&VST_SoundPluginSource::create_vst_plugin;
@@ -223,6 +224,7 @@ VstIntPtr VSTCALLBACK VST_SoundPluginSource::host(AEffect *effect, VstInt32 opco
 			
 			retval=kVstLangEnglish;
 			break;			
+			
 			
 	}
 	return retval; //stupid plugin, i'm just reading stuff, dont annoy me with questions!
