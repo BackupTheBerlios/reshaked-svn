@@ -1,6 +1,6 @@
 /* XPM */
 static char * vst__right_xpm[] = {
-"8 102 62 1",
+"8 95 58 1",
 " 	c None",
 ".	c #808EA3",
 "+	c #808DA3",
@@ -59,10 +59,6 @@ static char * vst__right_xpm[] = {
 "q	c #667287",
 "r	c #667286",
 "s	c #667186",
-"t	c #656F83",
-"u	c #646F83",
-"v	c #646E83",
-"w	c #656E83",
 "........",
 "++++++++",
 "@@@@@@@@",
@@ -157,11 +153,4 @@ static char * vst__right_xpm[] = {
 "ssssssss",
 "ssssssss",
 "ssssssss",
-"ssssssss",
-"tttttttt",
-"uuuuuuuu",
-"vvvvvvvv",
-"vvvvvvvv",
-"wwwwwwww",
-"tttttttt",
-"tttttttt"};
+"ssssssss"};
