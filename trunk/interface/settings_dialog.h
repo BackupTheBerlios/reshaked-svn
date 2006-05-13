@@ -15,10 +15,13 @@
 
 #include <Qt/qdialog.h>
 #include <Qt/qtabwidget.h>
+
+#include "version.h"
 #include "interface/settings_sound.h"
 #include "interface/settings_keys.h"
 #include "interface/settings_midi.h"
 #include "interface/settings_interface.h"
+#include "interface/settings_vst.h"
 
 #include "tree_loader.h"
 #include "tree_saver.h"
@@ -36,6 +39,9 @@ class SettingsDialog : public QDialog {
 	SettingsKeys *key_settings;
 	SettingsMidi *settings_midi;
 	SettingsInterface *settings_interface;
+#ifdef VST_ENABLED
+	SettingsVST *settings_vst;	
+#endif	
 	
 public:
 	

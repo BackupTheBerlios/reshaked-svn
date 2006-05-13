@@ -94,6 +94,14 @@ SoundPluginUI::SoundPluginUI(QWidget *p_parent,SoundPlugin *p_plugin) : QWidget(
 
 SoundPluginUI::~SoundPluginUI() {
 	
+	for (int i=0;i<property_editors.size();i++) {
+		//make disable callback to this
+		property_editors[i]->set_changed_by_editor_callback(NULL,NULL);
+			
+	}
+	
+	
+	
 	if (editor_updater) {
 		for (int i=0;i<property_editors.size();i++) {
 		

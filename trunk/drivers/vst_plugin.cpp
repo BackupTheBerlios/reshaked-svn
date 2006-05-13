@@ -639,6 +639,98 @@ void VST_Plugin::set_property_changed_callback(void *p_userdata,void (*p_propert
 	userdata=p_userdata;
 }
 
+void VST_Plugin::reset() {
+	
+	/* People at #musicdsp says this is the semi-standard way to clear up the stuff */
+	
+	//Suspend Plugin
+	ptrPlug->dispatcher(ptrPlug,effMainsChanged,0,0,NULL,0.0f);	
+	//switch the plugin back on (calls Resume)
+	ptrPlug->dispatcher(ptrPlug,effMainsChanged,0,1,NULL,0.0f);
+
+}
+
+void VST_Plugin::save(TreeSaver *p_saver) {
+	
+	if ( !(ptrPlug->flags & effFlagsProgramChunks)) {
+		//if chunks are not handled, then save/load the usual way
+		SoundPlugin::save(p_saver);
+		return;
+	}
+		
+	/* Save chunk */
+
+	void *data;
+	int data_size=ptrPlug->dispatcher (ptrPlug, effGetChunk, 0, 0, &data, 0.0f);
+	//I think i should just save the preset, but in every example I saw, they save the whole
+	//thing as a preset.. so.. I just do it too!
+		
+	p_saver->add_raw("vst_chunk",(const unsigned char*)data,data_size);
+	
+	/* Save Gain */
+	p_saver->add_float("vst_gain",gain.get());
+	
+	if (!midi_parameters)
+		return;
+	/* Save midi parameters, if used */
+	p_saver->enter("midi_params");
+	
+	for (int i=0;i<midi_parameters->get_parameter_count();i++) {
+		
+		Property *p=midi_parameters->get_parameter(i);
+		p_saver->add_float(p->get_name(),p->get());
+	}
+	
+	p_saver->exit();
+	
+		
+}
+void VST_Plugin::load(TreeLoader *p_saver) {
+	
+	if ( !(ptrPlug->flags & effFlagsProgramChunks)) {
+		//if chunks are not handled, then save/load the usual way
+		SoundPlugin::load(p_saver);
+		return;
+	}
+	
+	/* Load chunk */
+	
+	if (p_saver->is_var("vst_chunk")) {
+		
+		int len=p_saver->get_raw_len("vst_chunk");
+		ERR_FAIL_COND(len<=0);
+		
+		unsigned char *data = new unsigned char[len];
+
+		p_saver->get_raw("vst_chunk",data);
+		
+		ptrPlug->dispatcher (ptrPlug, effSetChunk, 0, len, data, 0.0f);
+		
+		delete[] data;
+	}
+		
+	
+	/* Load Gain */
+	gain.set( p_saver->get_float("vst_gain") );
+	
+	if (!midi_parameters)
+		return;
+	/* Save midi parameters, if used */
+	p_saver->enter("midi_params");
+	
+	for (int i=0;i<midi_parameters->get_parameter_count();i++) {
+		
+		Property *p=midi_parameters->get_parameter(i);
+		if (p_saver->is_var(p->get_name()))
+			p->set( p_saver->get_float( p->get_name() ) );
+
+	}
+	
+	p_saver->exit();
+	
+}
+
+
 VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channels) : SoundPlugin(p_info,p_channels) {
 	
 	userdata=NULL;

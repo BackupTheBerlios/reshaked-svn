@@ -47,8 +47,8 @@ class PropertyEditSpinBox : public QDoubleSpinBox, public PropertyEditor {
 	Q_OBJECT	
 	virtual void config();
 	virtual void changed();
-	
-	
+	bool updating;
+	QString textFromValue ( double v );	
 private slots:
 			
 	void value_changed_slot(double p_val);

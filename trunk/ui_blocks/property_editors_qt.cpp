@@ -50,11 +50,17 @@ PropertyEditComboBox::PropertyEditComboBox(QWidget *p_widget) :QComboBox(p_widge
 
 
 /*******************/
-
+QString PropertyEditSpinBox::textFromValue ( double v ) {
+	
+	if (!get_property())
+		return "";
+	
+	return QStrify(get_property()->get_text_value(v));
+}
 void PropertyEditSpinBox::config() {
 	
 	/* calculate digits */
-	int digits=-1;
+	int digits=0;
 	double interval=get_property()->get_stepping();
 	
 	if (interval!=0 || interval!=floorf(interval)) {
@@ -70,35 +76,43 @@ void PropertyEditSpinBox::config() {
 			
 		
 		} while (true);
-	} 
-	
-	if (digits<0)
-		digits=4;
+	}  
+	if (digits>6)
+		digits=6;
 	
 	setSuffix( QStrify(get_property()->get_postfix()) );
 	setDecimals(digits);
 	setMaximum( get_property()->get_max() );
 	setMinimum( get_property()->get_min() );
 	setSingleStep(get_property()->get_stepping() );
-
+	setSpecialValueText( QStrify( get_property()->get_text_value(get_property()->get_min()) ) );
+	setValue( get_property()->get() );
 }
 
 
 void PropertyEditSpinBox::value_changed_slot(double p_val) {
-	
-//	set( p_val );
+	if (updating)
+		return;
+	updating=true;
+	set( p_val );
+	updating=false;
 
 }
 
 void PropertyEditSpinBox::changed() {
 	
 	
+	if (updating)
+		return;
+	updating=true;
 	setValue( get_property()->get() );
+	updating=false;
 }
 
 PropertyEditSpinBox::PropertyEditSpinBox(QWidget *p_widget) : QDoubleSpinBox(p_widget) {
 
 	QObject::connect(this,SIGNAL(valueChanged(double)),this,SLOT(value_changed_slot( double )));
+	updating=false;
 
 }
 

@@ -57,10 +57,7 @@ class VST_SoundPluginSource{
 public:
 
 	/* Path to VSTs */
-	int get_path_count();
-	void erase_path(int p_index);
-	String get_path(int p_index);
-	void add_path(String p_path);
+	static void add_path(String p_path);
 
 	void scan_plugins();
 	

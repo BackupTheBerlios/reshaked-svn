@@ -98,6 +98,7 @@ class VST_Plugin : public SoundPlugin {
 	
 public:
 
+	MidiParameters *get_midi_parameters() { return midi_parameters; }
 	AEffect* get_ptrPlug() { return ptrPlug; }
 	static const SoundPluginInfo *create_info();
 
@@ -118,9 +119,12 @@ public:
 
 	/* Setting up */
 	void set_mixing_rate(float p_mixing_rate);
-
+	void save(TreeSaver *p_saver);	
+	void load(TreeLoader *p_saver);	
 	/* Processing */
 	void process(int p_frames);
+	
+	void reset();
 
 	VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channels);
 	~VST_Plugin();

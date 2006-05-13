@@ -59,6 +59,21 @@ void LADSPA_SoundPluginSource::scan_plugins(String p_dir) {
 		void *library = NULL;
 		char lib_name[PATH_MAX];
 		snprintf(lib_name, PATH_MAX, "%s/%s", p_dir.utf8().get_data(), dirent->d_name);
+		
+		//check that we have this, since the user may have added a patht 
+		bool already_have_it=false;
+		
+		for (int i=0;i<plugin_list.size();i++) {
+				   
+			if (plugin_list[i]->path==String(lib_name)) {
+				already_have_it=true;
+				break;
+			}	   
+		}
+		
+		if (already_have_it)
+			continue;
+		
 		library = dlopen(lib_name, RTLD_LAZY);
 		if (library == NULL)
 			continue;

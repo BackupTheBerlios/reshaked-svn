@@ -11,6 +11,7 @@
 #include "ui_blocks/pixmap_label.h"
 #include "ui_blocks/pixmap_slider.h"
 #include "ui_blocks/property_editors.h"
+#include "ui_blocks/midi_params_editor.h"
 #include "interface/visual_settings.h"
 #include "engine/audio_control.h"
 #include <Qt/qdialog.h>
@@ -61,6 +62,7 @@ void VST_PluginUI::gui_show_slot() {
 	QSize size(rect->right-rect->left,rect->bottom-rect->top);
 
 	nw->setFixedSize(rect->right-rect->left,rect->bottom-rect->top);
+	nw->setWindowTitle(QStrify(vst->get_info()->caption));
 	nw->exec();
 	
 	vst->get_ptrPlug()->dispatcher(vst->get_ptrPlug(),effEditClose,0,0,NULL,0.0f);
@@ -71,6 +73,11 @@ void VST_PluginUI::gui_show_slot() {
 }
 void VST_PluginUI::midi_props_edit_slot() {
 	
+	if (!pdata->midi_params_editor)
+		return;
+	
+	pdata->midi_params_editor->exec();
+	pdata->midi_params_editor->hide();
 	
 }
 void VST_PluginUI::params_show_slot(bool p_show) {
@@ -88,8 +95,9 @@ void VST_PluginUI::presets_choose_slot() {
 	
 	for (int i=0;i<vst->get_ptrPlug()->numPrograms;i++) {
 		
+		progbuff[0]=0;
 		vst->get_ptrPlug()->dispatcher(vst->get_ptrPlug(),effGetProgramNameIndexed,i,0,progbuff,0.0f);		
-		sl << QString(progbuff);
+		sl << (QString::number(i+1)+" "+QString(progbuff));
 		
 	}
 	
@@ -102,21 +110,23 @@ void VST_PluginUI::presets_choose_slot() {
 	/* This is soooooooooo cheap! */
 	for (int i=0;i<vst->get_ptrPlug()->numPrograms;i++) {
 		
-		vst->get_ptrPlug()->dispatcher(vst->get_ptrPlug(),effGetProgramName,0,0,progbuff,0.0f);		
-		if (QString(progbuff)==selected_name) {
+		progbuff[0]=0;
+		vst->get_ptrPlug()->dispatcher(vst->get_ptrPlug(),effGetProgramNameIndexed,i,0,progbuff,0.0f);		
+		QString sn=(QString::number(i+1)+" "+QString(progbuff));
+		
+		if (sn==selected_name) {
 			
 			AudioControl::mutex_lock();
 			
-			vst->get_ptrPlug()->dispatcher(vst->get_ptrPlug(),effSetProgram,0,i,NULL,0.0f);			
+			vst->get_ptrPlug()->dispatcher(vst->get_ptrPlug(),effSetProgram,0,i,NULL,0.0f);
+		
 			
 			AudioControl::mutex_unlock();
 			
 			break;
 			
 		}
-		
 	}
-	
 }
 
 void VST_PluginUI::property_changed_by_editor_slot(int p_which) {
@@ -137,7 +147,9 @@ VST_PluginUI::VST_PluginUI(QWidget *p_parent,VST_Plugin *p_plugin) : SoundPlugin
 		pdata= new VST_PersistentData;
 		p_plugin->set_metadata( pdata );
 		p_plugin->set_property_changed_callback(pdata,&VST_PersistentData::plugin_ui_changed_param);
-		
+		if (vst->get_info()->is_synth) {
+			pdata->midi_params_editor = new MidiParamsEditor(topLevelOf(p_parent),vst->get_midi_parameters());
+		} 
 	}
 	
 	QObject::connect(pdata,SIGNAL(property_changed_signal(int)),this,SLOT(property_changed_by_editor_slot(int)));
@@ -221,7 +233,9 @@ VST_PluginUI::VST_PluginUI(QWidget *p_parent,VST_Plugin *p_plugin) : SoundPlugin
 	PropertyEditSlider *pixmap_slider = new PropertyEditSlider(gain_vb,amp_slider_skin);
 	pixmap_slider->set_property(&vst->get_port_by_name("vst_plugin_gain"));
 	amp_value->add_to_group(pixmap_slider);
-	
+	register_property_editor( amp_value );
+	register_property_editor( pixmap_slider );
+		
 	new PixmapLabel(vst_hb,GET_QPIXMAP(THEME_VST__RIGHT));
 	
 	new PixmapLabel(vst_vb,GET_QPIXMAP(THEME_VST__BOTTOM));
@@ -307,6 +321,13 @@ VST_PluginUI::VST_PluginUI(QWidget *p_parent,VST_Plugin *p_plugin) : SoundPlugin
 	if (!pdata->params_visible)
 		hb_params->hide(); 
 	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	
+	if (pdata->midi_params_editor) {
+		for (int i=0;i<pdata->midi_params_editor->get_property_editor_count();i++) {
+			
+			register_property_editor( pdata->midi_params_editor->get_property_editor(i) );
+		}
+	}
 }
 
 
@@ -319,17 +340,6 @@ VST_PluginUI::~VST_PluginUI()
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

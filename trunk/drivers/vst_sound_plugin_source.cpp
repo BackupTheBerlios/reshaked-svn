@@ -64,7 +64,28 @@ void VST_SoundPluginSource::scan_path(String p_path) {
 
 		char lib_name[PATH_MAX];
 		snprintf(lib_name, PATH_MAX, "%s\\%s", p_path.utf8().get_data(), dirent->d_name);
+		
+		
+		//check that we have this, since the user may have added a patht 
+		bool already_have_it=false;
+		
+		for (int i=0;i<plugin_list.size();i++) {
+				   
+			if (plugin_list[i]->path==String(lib_name)) {
+				already_have_it=true;
+				break;
+			}	   
+		}
+		
+		if (already_have_it)
+			continue;
+
+		
 		printf("Scanning %s\n",lib_name);
+		
+		
+		
+		
 		HINSTANCE libhandle=LoadLibrary(lib_name);
 
 		if (libhandle==NULL) {
@@ -231,25 +252,9 @@ VstIntPtr VSTCALLBACK VST_SoundPluginSource::host(AEffect *effect, VstInt32 opco
 };
 
 
-int VST_SoundPluginSource::get_path_count() {
-	
-	return path_list.size();	
-}
-
-void VST_SoundPluginSource::erase_path(int p_index) {
-	
-	ERR_FAIL_INDEX(p_index,path_list.size());
-	path_list.erase( path_list.begin() + p_index );
-}
-String VST_SoundPluginSource::get_path(int p_index) {
-	
-	ERR_FAIL_INDEX_V(p_index,path_list.size(),"");
-	return path_list[p_index];
-	
-}
 void VST_SoundPluginSource::add_path(String p_path) {
-	
-	path_list.push_back(p_path);
+	ERR_FAIL_COND(singleton==NULL);
+	singleton->path_list.push_back(p_path);
 }
 
 void VST_SoundPluginSource::scan_plugins() {
@@ -271,7 +276,7 @@ void VST_SoundPluginSource::scan_plugins() {
 
 VST_SoundPluginSource::VST_SoundPluginSource() {
 	singleton=this;
-	path_list.push_back("C:\\Documents and Settings\\goruka\\Desktop\\VSTS");
+	
 }
 
 

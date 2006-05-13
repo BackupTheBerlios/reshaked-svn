@@ -9,6 +9,7 @@
 #include "drivers/vst_plugin.h"
 #include "interface/sound_plugin_ui.h"
 #include "ui_blocks/pixmap_button.h"
+#include "ui_blocks/midi_params_editor.h"
 
 namespace ReShaked {
 
@@ -30,7 +31,8 @@ private:
 friend class VST_PluginUI;
 	bool ui_visible;
 	bool params_visible;
-	VST_PersistentData() { ui_visible=false; params_visible=false; }
+	MidiParamsEditor *midi_params_editor;
+	VST_PersistentData() { ui_visible=false; params_visible=false; midi_params_editor=NULL; }
 };
 
 class VST_PluginUI : public SoundPluginUI {

@@ -51,6 +51,14 @@ void SettingsDialog::load(TreeLoader *p_loader) {
 	settings_interface->load(p_loader);
 	p_loader->exit();
 	
+#ifdef VST_ENABLED
+	
+	p_loader->enter("vst");
+	settings_vst->load(p_loader);
+	p_loader->exit();
+	
+#endif
+	
 }
 void SettingsDialog::save(TreeSaver *p_saver) {
 	
@@ -70,6 +78,12 @@ void SettingsDialog::save(TreeSaver *p_saver) {
 	p_saver->enter("interface");
 	settings_interface->save(p_saver);
 	p_saver->exit();
+	
+#ifdef VST_ENABLED	
+	p_saver->enter("vst");
+	settings_vst->save(p_saver);
+	p_saver->exit();
+#endif	
 	
 }
 
@@ -91,6 +105,13 @@ SettingsDialog::SettingsDialog(QWidget *p_parent) :QDialog (p_parent)
 	
 	settings_interface = new SettingsInterface(NULL);
 	tabs->addTab(settings_interface,"Interface");
+	
+#ifdef VST_ENABLED
+	
+	settings_vst = new SettingsVST(NULL);
+	tabs->addTab(settings_vst,"VST");
+	
+#endif
 	
 	setMinimumSize(500,400);	
 	setWindowTitle("Reshaked Configuration");
