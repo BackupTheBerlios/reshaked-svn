@@ -42,5 +42,10 @@ Sint64 GetTime::get_time_usec() {
 	return time;
 }
 
+GetTime::GetTime() {
+	
+	singleton=this;
+}
+
 GetTime::~GetTime() {}
 }

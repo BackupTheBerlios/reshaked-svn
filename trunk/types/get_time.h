@@ -27,6 +27,7 @@ public:
 	static unsigned int get_time_msec();	
 	static Sint64 get_time_usec();	
 	
+	GetTime();
 	virtual ~GetTime();
 	
 };

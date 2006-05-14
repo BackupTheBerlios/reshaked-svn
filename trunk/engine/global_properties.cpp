@@ -37,7 +37,7 @@ GlobalProperties::GlobalProperties() {
 	
 	swing.set_all( 0, 0, 100, 0, 1, Property::DISPLAY_KNOB, "global_swing","Global Swing","%","Disabled");
 	volume.set_all( 0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "global_volume","Global Volume","dB");
-	tempo.set_all( 125.0, 32, 300, 125, 1, Property::DISPLAY_KNOB,"tempo","Tempo (BPM)");
+	tempo.set_all( 125.0, 32, 300, 125, 0.1, Property::DISPLAY_KNOB,"tempo","Tempo (BPM)");
 	
 }
 

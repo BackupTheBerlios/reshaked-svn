@@ -81,6 +81,7 @@ static inline int rand_from_seed(unsigned int *seed) {
 }
 
 typedef long long Sint64;
+typedef unsigned long long Uint64;
 
 /* ANSI compliant version of undenormalize */
 

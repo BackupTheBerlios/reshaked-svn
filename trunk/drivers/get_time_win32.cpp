@@ -10,8 +10,9 @@
 //
 //
 #include "get_time_win32.h"
-
+#include "version.h"
 #ifdef WIN32_ENABLED
+#include "typedefs.h"
 
 namespace ReShaked {
 
@@ -20,11 +21,15 @@ void GetTime_Win32::get_time(unsigned int &sec,unsigned int &usec) {
 	
 	LARGE_INTEGER time;
 	QueryPerformanceCounter(&time);
-	time.QuadPart/=freq_divisor.QuadPart;
-	time.QuadPart-=time_begin.QuadPart;
 	
-	usec=(int)( (time.QuadPart%1000)*1000 );
-	sec=time.QuadPart/1000;	
+	time.QuadPart-=time_begin.QuadPart; //difference
+
+	usec=time.QuadPart%freq_divisor.QuadPart;
+	usec = (Uint64)usec * 1000000L / freq_divisor.QuadPart;
+
+	
+	sec=time.QuadPart/freq_divisor.QuadPart;
+
 }
 
 
@@ -32,9 +37,6 @@ GetTime_Win32::GetTime_Win32()
 {
 	QueryPerformanceCounter(&time_begin);
 	QueryPerformanceFrequency(&freq_divisor);
-	freq_divisor.QuadPart/=1000; // this way, further divisions will just return milliseconds
-	
-	time_begin.QuadPart/=freq_divisor.QuadPart; //move to msec
 }
 
 
