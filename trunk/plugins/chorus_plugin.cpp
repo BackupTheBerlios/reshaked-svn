@@ -29,7 +29,7 @@ const SoundPluginInfo *ChorusPlugin::create_info() {
 	info.description="Creates Artificial Ensembles";
 	info.long_description="The chorus effects creates artificial ensembles, up to 4 extra voices, for any given input.";
 	info.unique_ID="INTERNAL_chorus"; 
-	info.category="Internal"; 
+	info.category="Effects"; 
 	info.can_custom_channels=true;
 	info.custom_channels.push_back(1);
 	info.custom_channels.push_back(2);

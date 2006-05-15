@@ -28,7 +28,7 @@ const SoundPluginInfo *ReverbPlugin::create_info() {
 	info.description="Room Reflections Simulator";
 	info.long_description="Simulates the spreading of sound waves and its reflections in a virtual room";
 	info.unique_ID="INTERNAL_reverb"; 
-	info.category="Internal"; 
+	info.category="Effects"; 
 	info.can_custom_channels=true;
 	info.has_internal_UI=false; 
 	info.is_synth=false;

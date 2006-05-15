@@ -40,7 +40,7 @@ class MidiDriver_Alsa : public MidiDriver {
 	snd_seq_t *handle;	/* The snd_seq handle to /dev/snd/seq */
 	
 	int client; /* The client associated with this context */	
-	int port;
+	int read_port; //port to read events */
 	bool active;		/* */
 		
 	SongPlayback *song_playback;

@@ -120,7 +120,7 @@ void LADSPA_SoundPluginSource::scan_plugins(String p_dir) {
 			info.description="LADSPA Plugin";
 			info.long_description="LADSPA Plugin Info:\n Name: "+String(descriptor->Name) +"\n ID: "+ String::num(descriptor->UniqueID) + "\n Author: " + String(descriptor->Maker) + "\n Copyright: " + String(descriptor->Copyright);
 			info.unique_ID="LADSPA_"+String::num(descriptor->UniqueID);
-			info.category="LADSPA"; 
+			info.category="LADSPA Plugins"; 
 		
 			info.can_custom_channels=(in_count<=2 && out_count<=2);
 			if (can_stereo) {

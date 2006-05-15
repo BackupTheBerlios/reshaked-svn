@@ -35,7 +35,7 @@ class SoundPluginChooserItem : public QWidget {
 			
 	int index;
 	bool selected;
-	
+	bool draw_separator;
 	void mousePressEvent(QMouseEvent *e);
 	void paintEvent(QPaintEvent *e);
 	
@@ -56,7 +56,7 @@ public:
 	
 	int get_index();	
 	
-	SoundPluginChooserItem(QWidget *p_parent,QPixmap p_icon, QString p_title, QString p_description,QString p_text,int p_index);
+	SoundPluginChooserItem(QWidget *p_parent,QPixmap p_icon, QString p_title, QString p_description,QString p_text,int p_index,bool p_draw_separator=true);
 	
 };
 

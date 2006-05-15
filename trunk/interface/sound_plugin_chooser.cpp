@@ -19,6 +19,9 @@
 #include <Qt/qevent.h>
 #include "pixmaps/note.xpm"
 
+#include <Qt/qmap.h>
+#include <Qt/qlist.h>
+
 #include <Qt/qpainter.h>
 #include <Qt/qfontmetrics.h>
 #include <Qt/qevent.h>
@@ -27,6 +30,8 @@
 
 
 namespace ReShaked {
+
+
 
 
 void SoundPluginChooserItem::keyPressEvent( QKeyEvent * event ) {
@@ -77,8 +82,10 @@ void SoundPluginChooserItem::paintEvent(QPaintEvent *e) {
 	p.setFont(fd);
 	p.drawText(text_ofs,title_h+(desc_h-fmd.height())/2+fmd.ascent(),description);
 	
-	p.setPen(QColor(150,150,150));
-	p.drawLine(0,height()-1,width(),height()-1);
+	if (draw_separator) {
+		p.setPen(QColor(230,230,230));
+		p.drawLine(0,height()-1,width(),height()-1);
+	}
 	
 }
 
@@ -114,8 +121,9 @@ QString SoundPluginChooserItem::get_title() {
 }
 
 
-SoundPluginChooserItem::SoundPluginChooserItem(QWidget *p_parent,QPixmap p_icon, QString p_title, QString p_description,QString p_text,int p_index) : QWidget(p_parent) {
+SoundPluginChooserItem::SoundPluginChooserItem(QWidget *p_parent,QPixmap p_icon, QString p_title, QString p_description,QString p_text,int p_index,bool p_draw_separator) : QWidget(p_parent) {
 	
+	draw_separator=p_draw_separator;
 	px=p_icon;
 	title=p_title;
 	description=p_description;
@@ -131,8 +139,53 @@ SoundPluginChooserItem::SoundPluginChooserItem(QWidget *p_parent,QPixmap p_icon,
 	setFocusPolicy(Qt::ClickFocus);
 }
 
+/***************************************************/
+/***************************************************/
+/***************************************************/
+
+class SoundPluginChooserSeparator : public QWidget {
+	
+	enum {
+		
+		HEIGHT=24,
+		MARGIN=5
+	};
+	
+	QString text;
+	
+	void paintEvent(QPaintEvent *e) {
+	
+		QPainter p(this);
+		QFont ft;
+	
+		p.fillRect(0,0,width(),height(),QColor(255,255,255));
+		
+		
+		ft.setPixelSize(height()*2/3);
+		ft.setBold(true);
+		QFontMetrics fm(ft);
+		p.setFont(ft);
+		p.setPen(QColor(0,0,0));
+		int fh=(height()-fm.height())/2;
+		p.drawText(MARGIN,fh+fm.ascent(),text);
+	
+		p.drawLine(MARGIN+fm.width(text)+MARGIN,height()/2,width(),height()/2);
+		
+	}
+public:	
+	
+	SoundPluginChooserSeparator(QWidget *p_parent,QString p_text) : QWidget(p_parent) {
+		
+		setFixedHeight(HEIGHT);
+		text=p_text;
+	}
+	
+};
 
 
+/***************************************************/
+/***************************************************/
+/***************************************************/
 
 int SoundPluginChooser::get_selected_plugin_idx() {
 	
@@ -319,6 +372,12 @@ void SoundPluginChooser::char_press_event_slot(QChar p_char) {
 	keyb_search_timeout->start(); //restart timeout
 }
 
+struct PluginCategory {
+	
+	QString category;
+	QList<int> plugins;
+	
+};
 
 SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths,int p_track_channels) : QDialog(p_parent) {
 	
@@ -334,10 +393,80 @@ SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths,int 
 	scroll->setWidgetResizable(true);
 	
 	SoundPluginList *list=SoundPluginList::get_singleton();
+	
+	/* Sort items in sections */
+	QList<PluginCategory*> item_list;
+	
+	/* First place them in their respective places! */
+	
+	for (int i=0;i<list->get_plugin_count();i++) {
+
+		if (list->get_plugin_info(i)->is_synth && !p_show_synths)
+			continue;
+	
+		const SoundPluginInfo *info=list->get_plugin_info(i);
+		QString category=QStrify(info->category);
+		
+		PluginCategory *pc=NULL;
+		
+		foreach(I, item_list) {
+			
+			if ((*I)->category==category) {
+				pc=*I;
+				break;
+			}
+		}
+		
+		if (!pc) {
+			
+			pc = new PluginCategory;
+			pc->category=category;
+			item_list.push_back(pc);
+		}
+			
+		pc->plugins.push_back(i);
+	}
+		
+	foreach(I, item_list) {
+		
+		QList<int> &l=(*I)->plugins;
+		
+		if (l.empty()) {
+			
+			delete *I;
+			continue;
+		}
+		
+		new SoundPluginChooserSeparator( vb, (*I)->category );
+		
+		
+		foreach(J,l) {
+			
+			int plugin_index=*J;
+			const SoundPluginInfo *info=list->get_plugin_info(plugin_index);
+			QPixmap px=info->xpm_preview?QPixmap((const char **)info->xpm_preview):QPixmap();
+			
+			items.push_back( new SoundPluginChooserItem(vb,px,QStrify(info->caption),QStrify(info->description),QStrify(info->long_description),plugin_index,plugin_index!=l.last()));
+		
+			QObject::connect( items[ items.size() -1 ], SIGNAL(selected_signal(SoundPluginChooserItem*)),this,SLOT(selected_slot( SoundPluginChooserItem* )));
+		
+			QObject::connect( items[ items.size() -1 ], SIGNAL(char_press_event_signal(QChar)),this,SLOT(char_press_event_slot( QChar )));
+			
+			
+		}
+		
+		delete *I;
+		
+	}
+	
+	/*
 	for (int i=0;i<list->get_plugin_count();i++) {
 		
 		if (list->get_plugin_info(i)->is_synth && !p_show_synths)
 			continue;
+		
+		if (i==5)
+			
 		
 		const SoundPluginInfo *info=list->get_plugin_info(i);
 		
@@ -350,7 +479,7 @@ SoundPluginChooser::SoundPluginChooser(QWidget *p_parent,bool p_show_synths,int 
 		QObject::connect( items[ items.size() -1 ], SIGNAL(char_press_event_signal(QChar)),this,SLOT(char_press_event_slot( QChar )));
 
 	}
-	
+	*/
 	(new QFrame(vb))->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	vb->show();
 	

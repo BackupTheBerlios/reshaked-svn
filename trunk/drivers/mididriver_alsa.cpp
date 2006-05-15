@@ -106,7 +106,7 @@ void MidiDriver_Alsa::disconnect_output(int p_output) {
 
 	snd_seq_addr_t src;
 	src.client=client;
-	src.port=port;
+	src.port=output.out[p_output].alsa_port;
 	snd_seq_port_subscribe_set_sender(subs, &src);
 	snd_seq_port_subscribe_set_dest(subs, &output.out[p_output].dest_address);
 
@@ -144,7 +144,7 @@ bool MidiDriver_Alsa::connect_output_to_alsa_port(int p_output,int p_which) {
 
 	snd_seq_addr_t src;
 	src.client=client;
-	src.port=port;
+	src.port=output.out[p_output].alsa_port;
 	snd_seq_port_subscribe_set_sender(subs, &src);
 	snd_seq_port_subscribe_set_dest(subs, &output.alsa_ports[p_which].address);
 
@@ -413,15 +413,32 @@ bool MidiDriver_Alsa::init() {
 	//fd = get_file_descriptor();
 	snd_seq_set_client_pool_input(handle, 1000); /* enough? */
 
-	port = snd_seq_create_simple_port(handle, "Input/Output",
+	/* Port for reading */
+	read_port = snd_seq_create_simple_port(handle, "Input",
 				SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
 				SND_SEQ_PORT_TYPE_MIDI_GENERIC);
-	if (port < 0) {
+	if (read_port < 0) {
 		last_error="Can't create input port.";
 		snd_seq_close(handle);
 		return true;
 	}
 
+	for (int i=0;i<MAX_OUTPUTS;i++) {
+		
+		String outname="Output "+String::num(i);
+		
+		output.out[i].alsa_port=snd_seq_create_simple_port(handle, outname.ascii().get_data(),
+				SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_NO_EXPORT,
+				SND_SEQ_PORT_TYPE_APPLICATION);
+		
+		if (output.out[i].alsa_port < 0) {
+			last_error="Can't Create Output Port " + String(i+1);
+			snd_seq_close(handle);
+			return true;
+		}
+		
+	}
+	
 	input.ring.read_ptr=0;
 	input.ring.write_ptr=0; //reset ringbuffer
 
@@ -518,7 +535,7 @@ MidiDriver_Alsa::MidiDriver_Alsa() {
 	active=false;
 	handle=NULL;
 	client=0;
-	port=0;
+	read_port=0;
 	
 	input.ring.read_ptr=0;
 	input.ring.write_ptr=0;

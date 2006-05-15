@@ -29,7 +29,7 @@ const SoundPluginInfo *FilterBankPlugin::create_info() {
 	info.description="Chain up to 4 Filters";
 	info.long_description="Create your own equalization shape by carefully positioning each of the filters";
 	info.unique_ID="INTERNAL_filterbank"; 
-	info.category="Internal"; 
+	info.category="Effects"; 
 	info.can_custom_channels=true;
 	info.has_internal_UI=false; 
 	info.is_synth=false;
