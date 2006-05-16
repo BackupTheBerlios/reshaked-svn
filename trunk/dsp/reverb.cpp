@@ -42,7 +42,7 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 	if (p_frames>INPUT_BUFFER_SIZE)
 		p_frames=INPUT_BUFFER_SIZE;
 	
-	int predelay_frames=(params.predelay/1000.0)*params.mix_rate;
+	int predelay_frames=lrint((params.predelay/1000.0)*params.mix_rate);
 	if (predelay_frames<10)
 		predelay_frames=10;
 	if (predelay_frames>=echo_buffer_size)
@@ -69,7 +69,7 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 	}
 	
 	if (params.hpf>0) {
-		float hpaux=expf(-2.0*M_PI*params.hpf*16000/params.mix_rate);
+		float hpaux=expf(-2.0*M_PI*params.hpf*6000/params.mix_rate);
 		float hp_a1=(1.0+hpaux)/2.0;
 		float hp_a2=-(1.0+hpaux)/2.0;
 		float hp_b1=hpaux;
@@ -104,7 +104,40 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 	}
 
 
-	static const int allpass_feedback=0.7;
+	static const float allpass_feedback=0.7;
+	/*
+	int ap_size_limit[MAX_ALLPASS];
+	
+	for (int i=0;i<MAX_ALLPASS;i++) {
+		
+		AllPass &a=allpass[i];
+		ap_size_limit[i]=a.size-lrintf((float)a.extra_spread_frames*(1.0-params.extra_spread));
+	}
+	
+	for (int i=0;i<p_frames;i++) {
+		
+		float sample=p_dst[i];
+		float aux,in;
+		float AllPass*ap;
+		
+#define PROCESS_ALLPASS(m_ap) 	\
+	ap=&allpass[m_ap];	\
+	if (ap->pos>=ap_size_limit[m_ap])	\
+		ap->pos=0;	\
+	aux=undenormalise(ap->buffer[ap->pos]);	\
+	in=sample;	\
+	sample=-in+aux;	\
+	ap->pos++;
+		
+		
+		PROCESS_ALLPASS(0);
+		PROCESS_ALLPASS(1);
+		PROCESS_ALLPASS(2);
+		PROCESS_ALLPASS(3);
+		
+		p_dst[i]=sample;
+	}
+	*/
 	
 	for (int i=0;i<MAX_ALLPASS;i++) {
 		
@@ -119,7 +152,7 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 			float aux=a.buffer[a.pos];
 			a.buffer[a.pos]=undenormalise(allpass_feedback*aux+p_dst[j]);
 			p_dst[j]=aux-allpass_feedback*a.buffer[a.pos];
-			a.pos++;
+			a.pos++; 
 			
 		}
 	}

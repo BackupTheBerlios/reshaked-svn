@@ -80,7 +80,7 @@ Property::DisplayMode VST_Plugin::Parameter::get_display_mode(){
 }
 
 /* helpers */	
-String VST_Plugin::Parameter::get_text_value(bool p_no_postfix){
+String VST_Plugin::Parameter::get_text_value(bool p_no_postfix) l{
 
 	resbuff[0]=0;
 	ptrPlug->dispatcher (ptrPlug, effGetParamDisplay, index, 0, resbuff, 0);	

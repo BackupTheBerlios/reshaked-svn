@@ -135,12 +135,12 @@ ReverbPlugin::ReverbPlugin(const SoundPluginInfo *p_info,int p_channels) : Sound
 	
 	predelay.set_all( 100, 20, 500, 100, 1, Property::DISPLAY_SLIDER, "predelay","Predelay");
 	predelay_fb.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "predelay_fb","Pre-Feedback");
-	hpf.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "hpf","HP Filter","Off");
+	hpf.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "hpf","HP Filter","","Off");
 	room_size.set_all( 0.7, 0, 1, 0.7, 0.01, Property::DISPLAY_SLIDER, "room_size","Room Size");
 	damping.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "damping","LoFrq Damp");
 	spread.set_all( 1, 0, 1, 1, 0.01, Property::DISPLAY_SLIDER, "spread","Stereo Spread");
-	wet.set_all( 0, 0, 1, 1, 0.01, Property::DISPLAY_SLIDER, "wet","Wet");
-	dry.set_all( 1, 0, 1, 1, 0.01, Property::DISPLAY_SLIDER, "dry","Dry");
+	wet.set_all( 0, 0, 1, 1, 0.01, Property::DISPLAY_SLIDER, "wet_send","Wet");
+	dry.set_all( 1, 0, 1, 1, 0.01, Property::DISPLAY_SLIDER, "dry_send","Dry");
 	
 	property_list.push_back(&predelay);
 	property_list.push_back(&predelay_fb);

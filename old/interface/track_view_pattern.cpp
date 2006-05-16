@@ -218,36 +218,36 @@ void TrackViewPattern::paint_multiple_nonvisible_events( QPainter& p, int p_row,
 	}
 }
 
-void TrackViewPattern::paint_multiple_note_events( QPainter& p, int p_row , const PatternEdit::NoteList& p_list ) {
-
-
-	/* separate in columns */
-	std::vector<PatternEdit::NoteList> notes_in_column( pattern_edit->get_columns() );
-
-
-	PatternEdit::NoteList::const_iterator I=p_list.begin();
-	for (;I!=p_list.end();I++) {
-		int col=I->pos.column;
-		ERR_CONTINUE( col < 0 );
-		ERR_CONTINUE( col >= notes_in_column.size() );
-		notes_in_column[col].push_back(*I);
+	void TrackViewPattern::paint_multiple_note_events( QPainter& p, int p_row , const PatternEdit::NoteList& p_list ) {
+	
+	
+		/* separate in columns */
+		std::vector<PatternEdit::NoteList> notes_in_column( pattern_edit->get_columns() );
+	
+	
+		PatternEdit::NoteList::const_iterator I=p_list.begin();
+		for (;I!=p_list.end();I++) {
+			int col=I->pos.column;
+			ERR_CONTINUE( col < 0 );
+			ERR_CONTINUE( col >= notes_in_column.size() );
+			notes_in_column[col].push_back(*I);
+		}
+	
+		/* now draw columns */
+	
+		for (int i=0;i<notes_in_column.size();i++) {
+	
+			if (notes_in_column[i].empty())
+				continue;
+	
+			if (notes_in_column[i].size()==1)
+				paint_note_event(p,p_row,*notes_in_column[i].begin());
+			else
+				paint_multiple_nonvisible_events(p,p_row,notes_in_column[i]);
+	
+		}
+	
 	}
-
-	/* now draw columns */
-
-	for (int i=0;i<notes_in_column.size();i++) {
-
-		if (notes_in_column[i].empty())
-			continue;
-
-		if (notes_in_column[i].size()==1)
-			paint_note_event(p,p_row,*notes_in_column[i].begin());
-		else
-			paint_multiple_nonvisible_events(p,p_row,notes_in_column[i]);
-
-	}
-
-}
 
 void TrackViewPattern::paint_cursor(QPainter &p,int p_row) {
 

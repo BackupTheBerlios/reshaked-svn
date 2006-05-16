@@ -164,6 +164,12 @@
 #include "pixmaps/default_skin/rack_toolbar__track_dropdown.xpm"
 #include "pixmaps/default_skin/rack_toolbar__track_dropdown_bottom.xpm"
 #include "pixmaps/default_skin/rack_toolbar__track_dropdown_top.xpm"
+#include "pixmaps/default_skin/reverb__bottom.xpm"
+#include "pixmaps/default_skin/reverb__display.xpm"
+#include "pixmaps/default_skin/reverb__ir.xpm"
+#include "pixmaps/default_skin/reverb__knob.xpm"
+#include "pixmaps/default_skin/reverb__labels.xpm"
+#include "pixmaps/default_skin/reverb__top.xpm"
 #include "pixmaps/default_skin/right__margin.xpm"
 #include "pixmaps/default_skin/scrollbar_arrow_down.xpm"
 #include "pixmaps/default_skin/scrollbar_arrow_down_pushed.xpm"
@@ -610,6 +616,18 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["rack_toolbar__track_dropdown_bottom"]=THEME_RACK_TOOLBAR__TRACK_DROPDOWN_BOTTOM;
     pixmap_map[THEME_RACK_TOOLBAR__TRACK_DROPDOWN_TOP]=QPixmap( (const char**) rack_toolbar__track_dropdown_top_xpm); 
     pixmap_map_skin["rack_toolbar__track_dropdown_top"]=THEME_RACK_TOOLBAR__TRACK_DROPDOWN_TOP;
+    pixmap_map[THEME_REVERB__BOTTOM]=QPixmap( (const char**) reverb__bottom_xpm); 
+    pixmap_map_skin["reverb__bottom"]=THEME_REVERB__BOTTOM;
+    pixmap_map[THEME_REVERB__DISPLAY]=QPixmap( (const char**) reverb__display_xpm); 
+    pixmap_map_skin["reverb__display"]=THEME_REVERB__DISPLAY;
+    pixmap_map[THEME_REVERB__IR]=QPixmap( (const char**) reverb__ir_xpm); 
+    pixmap_map_skin["reverb__ir"]=THEME_REVERB__IR;
+    pixmap_map[THEME_REVERB__KNOB]=QPixmap( (const char**) reverb__knob_xpm); 
+    pixmap_map_skin["reverb__knob"]=THEME_REVERB__KNOB;
+    pixmap_map[THEME_REVERB__LABELS]=QPixmap( (const char**) reverb__labels_xpm); 
+    pixmap_map_skin["reverb__labels"]=THEME_REVERB__LABELS;
+    pixmap_map[THEME_REVERB__TOP]=QPixmap( (const char**) reverb__top_xpm); 
+    pixmap_map_skin["reverb__top"]=THEME_REVERB__TOP;
     pixmap_map[THEME_RIGHT__MARGIN]=QPixmap( (const char**) right__margin_xpm); 
     pixmap_map_skin["right__margin"]=THEME_RIGHT__MARGIN;
     pixmap_map[THEME_SCROLLBAR_ARROW_DOWN]=QPixmap( (const char**) scrollbar_arrow_down_xpm); 

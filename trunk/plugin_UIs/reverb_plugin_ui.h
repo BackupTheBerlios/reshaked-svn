@@ -12,16 +12,22 @@
 #ifndef RESHAKEDREVERB_PLUGIN_UI_H
 #define RESHAKEDREVERB_PLUGIN_UI_H
 
+#include "interface/sound_plugin_ui.h"
+#include "plugins/reverb_plugin.h"
+
 namespace ReShaked {
+
 
 /**
 	@author red <red@killy>
 */
-class ReverbPluginUI{
+class ReverbPluginUI : public SoundPluginUI {
+	
 public:
-    ReverbPluginUI();
-
-    ~ReverbPluginUI();
+		
+	static SoundPluginUI* create_this(SoundPlugin *p_plugin,QWidget *p_parent);
+	ReverbPluginUI(QWidget *p_parent,ReverbPlugin *p_chorus);
+	~ReverbPluginUI();
 
 };
 
