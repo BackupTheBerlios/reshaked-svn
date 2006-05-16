@@ -53,6 +53,7 @@ public:
 	virtual bool is_quad_coeff();
 	void set_quad_coeff(bool p_quad);
 	virtual String get_text_value(double p_for_value,bool p_no_postfix=false)=0; //useful for precomputnig ranges
+	virtual bool is_write_only();
 	virtual bool has_text_value()=0;
 	
 	virtual DisplayMode get_display_mode()=0;

@@ -102,8 +102,8 @@ void VST_PluginUI::presets_choose_slot() {
 	}
 	
 	bool ok;
-	
-	QString selected_name=QInputDialog::getItem( topLevelOf(this), "Preset","Select:",sl,0,false,&ok);
+	int current=vst->get_ptrPlug()->dispatcher(vst->get_ptrPlug(),effGetProgram,0,0,0,0.0f);
+	QString selected_name=QInputDialog::getItem( topLevelOf(this), "Preset","Select:",sl,current,false,&ok);
 	
 	if (!ok)
 		return;
@@ -203,10 +203,15 @@ VST_PluginUI::VST_PluginUI(QWidget *p_parent,VST_Plugin *p_plugin) : SoundPlugin
 		new PixmapLabel(buttons_vb,GET_QPIXMAP(THEME_VST__BUTTON_MIDI_INACTIVE));
 	}
 	
-	params_button = new PixmapButton( buttons_vb, PixmapButton::Skin( GET_QPIXMAP(THEME_VST__BUTTON_PARAMS),GET_QPIXMAP(THEME_VST__BUTTON_PARAMS_ACTIVE)),PixmapButton::TYPE_TOGGLE);
-	QObject::connect(params_button,SIGNAL(mouse_toggled_signal(bool)),this,SLOT(params_show_slot(bool)));
-	params_button->set_pressed(pdata->params_visible);
-	
+	if (!vst->get_info()->has_internal_UI) {
+			
+		params_button = new PixmapButton( buttons_vb, PixmapButton::Skin( GET_QPIXMAP(THEME_VST__BUTTON_PARAMS),GET_QPIXMAP(THEME_VST__BUTTON_PARAMS_ACTIVE)),PixmapButton::TYPE_TOGGLE);
+		QObject::connect(params_button,SIGNAL(mouse_toggled_signal(bool)),this,SLOT(params_show_slot(bool)));
+		params_button->set_pressed(pdata->params_visible);
+	} else {
+		
+		new PixmapLabel(buttons_vb,GET_QPIXMAP(THEME_VST__BUTTON_PARAMS_INACTIVE));
+	}
 	QObject::connect( new PixmapButton(buttons_vb,PixmapButton::Skin(GET_QPIXMAP(THEME_VST__BUTTON_PRESETS),GET_QPIXMAP(THEME_VST__BUTTON_PRESETS_ACTIVE))),SIGNAL(mouse_pressed_signal()),this,SLOT(presets_choose_slot()));
 			
 	new PixmapLabel(buttons_vb,GET_QPIXMAP(THEME_VST__MIDDLE));
@@ -250,60 +255,63 @@ VST_PluginUI::VST_PluginUI(QWidget *p_parent,VST_Plugin *p_plugin) : SoundPlugin
 	
 	hb_params = new CHBox(hb);
 	
-	for (int i=0;i<p_plugin->get_port_count();i++) {
+	if (!vst->get_info()->has_internal_UI) {
 		
-		if (QStrify(p_plugin->get_port(i).get_caption()).indexOf("/")>=0)
-			continue;
-		
-		CVBox *vb_port = new CVBox(hb_params);
-		
-		CHBox *hb_port = new CHBox(vb_port);
-		
-		/* LABEL */
-		PixmapLabel * name = new PixmapLabel(hb_port,label_pixmap);
-		
-		name->set_pos(QPoint(6,label_pixmap.height()-8));
-		name->get_font().setPixelSize(10);
-		QString name_str=QStrify(p_plugin->get_port(i).get_caption());
-		if (p_plugin->get_port(i).get_postfix()!="") {
+		//create standard controls
+		for (int i=0;i<p_plugin->get_port_count();i++) {
 			
-			name_str+=" (" +QStrify(p_plugin->get_port(i).get_postfix()).toLower() +")";
+			if (QStrify(p_plugin->get_port(i).get_caption()).indexOf("/")>=0)
+				continue;
+			
+			CVBox *vb_port = new CVBox(hb_params);
+			
+			CHBox *hb_port = new CHBox(vb_port);
+			
+			/* LABEL */
+			PixmapLabel * name = new PixmapLabel(hb_port,label_pixmap);
+			
+			name->set_pos(QPoint(6,label_pixmap.height()-8));
+			name->get_font().setPixelSize(10);
+			QString name_str=QStrify(p_plugin->get_port(i).get_caption());
+			if (p_plugin->get_port(i).get_postfix()!="") {
+				
+				name_str+=" (" +QStrify(p_plugin->get_port(i).get_postfix()).toLower() +")";
+			}
+			name->set_text( name_str );
+			name->set_angle( -90 );
+			name->set_color(QColor(0,0,22));
+			
+			
+			/* SLIDER/VU */
+			PropertyEditor *editor;
+			if (p_plugin->get_port_type(i)==SoundPlugin::TYPE_WRITE) {
+				PropertyEditSlider * slider = new PropertyEditSlider(hb_port,slider_skin);
+				slider->set_property(&p_plugin->get_port(i));
+				editor=slider;
+			} else {
+				PropertyEditVU * vu = new PropertyEditVU(hb_port,vu_skin);
+				vu->set_property(&p_plugin->get_port(i));
+				editor=vu;
+			}
+			
+			register_property_editor( editor );
+			
+			/* VALUE */
+			PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
+			value->set_property(&p_plugin->get_port(i));
+			value->set_postfix_visible( false );
+			value->set_color(QColor(240,240,255));
+			value->add_to_group(editor); //share group
+			
+			register_property_editor( value );
+			
+			vb_port->layout()->setMargin(0);
+			vb_port->layout()->setSpacing(0);
+			hb_port->layout()->setMargin(0);
+			hb_port->layout()->setSpacing(0);
+			
 		}
-		name->set_text( name_str );
-		name->set_angle( -90 );
-		name->set_color(QColor(0,0,22));
-		
-		
-		/* SLIDER/VU */
-		PropertyEditor *editor;
-		if (p_plugin->get_port_type(i)==SoundPlugin::TYPE_WRITE) {
-			PropertyEditSlider * slider = new PropertyEditSlider(hb_port,slider_skin);
-			slider->set_property(&p_plugin->get_port(i));
-			editor=slider;
-		} else {
-			PropertyEditVU * vu = new PropertyEditVU(hb_port,vu_skin);
-			vu->set_property(&p_plugin->get_port(i));
-			editor=vu;
-		}
-		
-		register_property_editor( editor );
-		
-		/* VALUE */
-		PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
-		value->set_property(&p_plugin->get_port(i));
-		value->set_postfix_visible( false );
-		value->set_color(QColor(240,240,255));
-		value->add_to_group(editor); //share group
-		
-		register_property_editor( value );
-		
-		vb_port->layout()->setMargin(0);
-		vb_port->layout()->setSpacing(0);
-		hb_port->layout()->setMargin(0);
-		hb_port->layout()->setSpacing(0);
-		
-	}
-	
+	}	
 	new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_RIGHT));
 	
 	CHBox *hb_bottom = new CHBox(this);

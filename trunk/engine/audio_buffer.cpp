@@ -133,6 +133,20 @@ void AudioBuffer::add_from(AudioBuffer *p_src,int p_frames) {
 	
 }
 
+void AudioBuffer::multiply_by(float p_val,int p_frames) {
+	
+	ERR_FAIL_COND(p_frames>size);///< check if frames are valid
+	
+	for (int i=0;i<data.size();i++) {
+		
+		float *buff=&data[i][0];
+		
+		for (int j=0;j<p_frames;j++)
+			buff[j]*=p_val;
+		
+	}
+	
+}
 void AudioBuffer::setup(int p_channels,int p_size) {
 	
 	size=0;

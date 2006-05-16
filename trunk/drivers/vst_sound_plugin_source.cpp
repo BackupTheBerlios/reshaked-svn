@@ -41,7 +41,7 @@ SoundPlugin* VST_SoundPluginSource::create_vst_plugin(const SoundPluginInfo *p_i
 			continue;
 		}
 		printf("instancing plugin.. info: %p , path %s, chans %i\n",p_info,singleton->plugin_list[i]->path.ascii().get_data(),p_channels);
-		return new VST_Plugin(	p_info, singleton->plugin_list[i]->path, p_channels);
+		return new VST_Plugin(	p_info, singleton->plugin_list[i]->path, singleton->plugin_list[i]->dir, singleton->plugin_list[i]->write_only,p_channels);
 
 		
 	}
@@ -118,24 +118,9 @@ void VST_SoundPluginSource::scan_path(String p_path) {
 		}
 		ptrPlug->dispatcher(ptrPlug,effOpen,0,0,NULL,0.0f);
 		
-		int vstchans=1;
-		
-		//printf("VSTPLUG: IN %i, OUT %i\n",ptrPlug->numInputs,ptrPlug->numOutputs);
-		/* Hackish thing to determine port grouping */
-		if (ptrPlug->numInputs%4==0 &&  ptrPlug->numOutputs%4==0) {
-			
-			vstchans=4;
-			
-		} else if (ptrPlug->numInputs%2==0 &&  ptrPlug->numOutputs%2==0) {
-			
-			vstchans=2;
-		} else {
-			
-			vstchans=1;
-		}
-		
 		VST_Struct *plugin_data= new VST_Struct;
 		plugin_data->path=lib_name;
+		plugin_data->dir=p_path;
 		SoundPluginInfo &info=plugin_data->plugin_info;
 
 		String name=dirent->d_name;
@@ -144,17 +129,37 @@ void VST_SoundPluginSource::scan_path(String p_path) {
 		info.description="VST Plugin";
 		info.long_description="VST Info:\n Name: "+info.caption +"\n ID: "+ String::num(ptrPlug->uniqueID) + "\n Version: " + String(ptrPlug->version);
 		info.unique_ID="VST_"+String::num(ptrPlug->uniqueID);
-		info.is_synth=(ptrPlug->dispatcher(ptrPlug,effGetVstVersion,0,0,NULL,0.0f)==2 && ptrPlug->flags & effFlagsIsSynth);		
+		info.is_synth=/*(ptrPlug->dispatcher(ptrPlug,effGetVstVersion,0,0,NULL,0.0f)==2  */ptrPlug->flags & effFlagsIsSynth;		
 		info.category=info.is_synth?"VST Instruments":"VST Effects"; 
 		info.can_custom_channels=true;
-		info.custom_channels.push_back(vstchans);			
+		info.custom_channels.push_back(1);			
+		info.custom_channels.push_back(2);			
+		info.custom_channels.push_back(4);			
 		info.has_internal_UI=(ptrPlug->flags & effFlagsHasEditor);
-		printf("internal UI: %i\n",ptrPlug->flags & effFlagsHasEditor);
 		
 		info.xpm_preview=(const char**)vst_xpm;
 		info.creation_func=&VST_SoundPluginSource::create_vst_plugin;
 		info.version=ptrPlug->version;		
 
+		if (ptrPlug->flags & effFlagsProgramChunks) {
+			
+			info.description+=" (CS)";
+		}
+		
+		/* Perform the "write only" test */
+	
+		plugin_data->write_only=true;	//i cant really be certain of anything with VST plugins, so this is always true
+		/*
+		if (ptrPlug->numParams) {
+			
+			ptrPlug->setParameter(ptrPlug,0,1.0); //set 1.0
+			float res=ptrPlug->getParameter(ptrPlug,0);
+			if (res<0.8) { //try if it's not near 1.0, with some threshold, then no reading (far most of the ones that dont support this will just return 0)
+				
+
+			}
+	} */
+		
 		plugin_list.push_back(plugin_data);
 		
 		ptrPlug->dispatcher(ptrPlug,effClose,0,0,NULL,0.0f);

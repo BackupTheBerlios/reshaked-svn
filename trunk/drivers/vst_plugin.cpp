@@ -159,6 +159,29 @@ void VST_Plugin::process(int p_frames) {
 		const EventBuffer *ebuff=get_event_buffer();
 		int event_idx=0;
 		
+		if (off_all_notes) {
+			/* The only reliable way to silence all notes in a VST */
+			
+			for (int i=0;i<128;i++) {
+			
+				if (event_idx==MAX_INPUT_EVENTS)
+					break;
+				VstMidiEvent &vstem=event_array[event_idx];
+				
+				vstem.deltaFrames=0;
+				vstem.midiData[0]=0x80;	//channel 0?
+				vstem.midiData[1]=i;
+				vstem.midiData[2]=0;
+				vstem.midiData[3]=0;
+				event_idx++;
+								
+				
+			}
+			
+			off_all_notes=false;
+		}
+		
+		
 		/* First try the midi events that come from our MidiParams */
 		const MidiParameters::Changes::Change *changes=midi_parameters->get_changes();
 		for (int i=0;i<midi_parameters->get_changes_count();i++) {
@@ -284,6 +307,13 @@ void VST_Plugin::process(int p_frames) {
 		
 	ptrPlug->processReplacing(ptrPlug,input_buffers,output_buffers,p_frames);
 
+	if (gain.get()!=0.0) {
+		//apply gain
+		float linear_gain=powf(10.0,gain.get()/20.0); //convert db -> linear
+		
+		for (int i=0;i<output_plugs.size();i++) 
+			output_plugs[i]->get_buffer()->multiply_by(linear_gain,p_frames);
+	}
 	
 }
 
@@ -291,14 +321,14 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 	
 	long retval=0;
 
-	printf("call to host, effect is %p\n",effect);
+
 	VST_Plugin *_this=NULL;
 	if (effect && effect->resvd1!=0) {
-		printf("try to convert from resvd1\n");
+		//try to convert from resvd1
 		_this=FromVstPtr<VST_Plugin>(effect->resvd1);
-		printf("convert ok\n");
+
 	}
-	printf("from thread %i\n",GetCurrentThreadId());;
+	//printf("from thread %i\n",GetCurrentThreadId());;
 	switch (opcode)
 	{
 		case audioMasterVersion:
@@ -315,19 +345,6 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 
 			//NB - this is called when the plug calls
 			//setParameterAutomated
-			if (_this && _this->property_changed) {
-				if (index<0 || index>=_this->param_list.size())
-					return 0;
-				for (int i=0;i<_this->property_list.size();i++) {
-					
-					if (_this->property_list[i]==_this->param_list[index]) {
-						_this->property_changed(_this->userdata,i);
-						
-					}
-				}
-			}
-					
-			break;
 
 		case audioMasterCurrentId:
 			//Input values:
@@ -345,6 +362,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 
 			//Return Value
 			//not tested, always return 0
+			
 			Sleep(1);
 			//NB - idle routine should also call effEditIdle for all open editors
 			break;
@@ -356,7 +374,8 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 
 			//Return values:
 			//0=true, non-zero=false
-//			cout << "plug called audioMasterPinConnected" << endl;
+//			std::cout << "plug called audioMasterPinConnected" << std::endl;
+			
 			break;
 
 		//VST 2.0 opcodes
@@ -379,7 +398,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 
 			//NB - this structure will have to be held in memory for long enough
 			//for the plug to safely make use of it
-			//cout << "plug called audioMasterGetTime" << endl;
+			//std::cout << "plug called audioMasterGetTime" << std::endl;
 			break;
 
 		case audioMasterProcessEvents:
@@ -389,7 +408,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//Return value:
 			//0 if error
 			//1 if OK
-//			cout << "plug called audioMasterProcessEvents" << endl;
+//			std::cout << "plug called audioMasterProcessEvents" << std::endl;
 			break;
 
 	
@@ -401,7 +420,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//Return Value:
 			//0 if error
 			//non-zero value if OK
-//			cout << "plug called audioMasterIOChanged" << endl;
+//			std::cout << "plug called audioMasterIOChanged" << std::endl;
 			break;
 
 	
@@ -413,7 +432,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//Return Value:
 			//0 if error
 			//non-zero value if OK
-//			cout << "plug called audioMasterSizeWindow" << endl;
+//			std::cout << "plug called audioMasterSizeWindow" << std::endl;
 			break;
 
 		case audioMasterGetSampleRate:
@@ -426,7 +445,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//NB - Host must despatch effSetSampleRate to the plug in response
 			//to this call
 			//Check despatcher notes for any return codes from effSetSampleRate
-			//cout << "plug called audioMasterGetSampleRate" << endl;
+			//std::cout << "plug called audioMasterGetSampleRate" << std::endl;
 			
 			if (_this)
 				effect->dispatcher (effect, effSetSampleRate, 0, 0, 0, _this->mix_rate);
@@ -442,7 +461,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//NB - Host must despatch effSetBlockSize to the plug in response
 			//to this call
 			//Check despatcher notes for any return codes from effSetBlockSize
-			//cout << "plug called audioMasterGetBlockSize" << endl;
+			//std::cout << "plug called audioMasterGetBlockSize" << std::endl;
 			effect->dispatcher(effect,effSetBlockSize,0,128,NULL,0.0f);
 
 			break;
@@ -453,7 +472,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 
 			//Return Value:
 			//input latency (in sampleframes?)
-			//cout << "plug called audioMasterGetInputLatency" << endl;
+			//std::cout << "plug called audioMasterGetInputLatency" << std::endl;
 			break;
 
 		case audioMasterGetOutputLatency:
@@ -462,7 +481,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 
 			//Return Value:
 			//output latency (in sampleframes?)
-			//cout << "plug called audioMasterGetOutputLatency" << endl;
+			//std::cout << "plug called audioMasterGetOutputLatency" << std::endl;
 			break;
 		case audioMasterGetCurrentProcessLevel:
 			//Input Values:
@@ -476,7 +495,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//4: currently offline processing and thus in user thread
 			//other: not defined, but probably pre-empting user thread.
 			retval=2;
-			//cout << "plug called audioMasterGetCurrentProcessLevel" << endl;
+			//std::cout << "plug called audioMasterGetCurrentProcessLevel" << std::endl;
 			break;
 
 		case audioMasterGetAutomationState:
@@ -489,36 +508,64 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//2:read
 			//3:write
 			//4:read/write
-			//cout << "plug called audioMasterGetAutomationState" << endl;
+			//std::cout << "plug called audioMasterGetAutomationState" << std::endl;
 			break;
 
-		case audioMasterGetVendorString:
+		case audioMasterGetVendorString: {
+			
+			static const char* vendor="Juan Linietsky";
+			char *dst=(char*)ptr;
+			const char *src=vendor;
+			
+			while ( *src!=0 ) {
+				
+				*dst=*src;
+				src++;
+				dst++;
+			};
+			
+			*dst=0;
+				
 			//Input Values:
 			//<ptr> string (max 64 chars) to be populated
 
 			//Return Value:
 			//0 if error
 			//non-zero value if OK
-			//cout << "plug called audioMasterGetVendorString" << endl;
-			break;
+			//std::cout << "plug called audioMasterGetVendorString" << std::endl;
+		} break;
 
-		case audioMasterGetProductString:
+		case audioMasterGetProductString: {
+			
+			static const char* product="ReShaked";
+			char *dst=(char*)ptr;
+			const char *src=product;
+			
+			while ( *src!=0 ) {
+				
+				*dst=*src;
+				src++;
+				dst++;
+			};
+			
+			*dst=0;
+			
 			//Input Values:
 			//<ptr> string (max 64 chars) to be populated
 
 			//Return Value:
 			//0 if error
 			//non-zero value if OK
-			//cout << "plug called audioMasterGetProductString" << endl;
-			break;
+			//std::cout << "plug called audioMasterGetProductString" << std::endl;
+		}	break;
 
-		case audioMasterGetVendorVersion:
+		 case audioMasterGetVendorVersion:
 			//Input Values:
 			//None
 
 			//Return Value:
 			//Vendor specific host version as integer
-			//cout << "plug called audioMasterGetVendorVersion" << endl;
+			//std::cout << "plug called audioMasterGetVendorVersion" << std::endl;
 			break;
 
 		case audioMasterVendorSpecific:
@@ -530,7 +577,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 
 			//Return Values:
 			//Vendor specific response as integer
-			//cout << "plug called audioMasterVendorSpecific" << endl;
+			//std::cout << "plug called audioMasterVendorSpecific" << std::endl;
 			break;
 
 	
@@ -556,7 +603,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//"offline",
 			//"supplyIdle",
 			//"supportShell"
-			//cout << "plug called audioMasterCanDo" << endl;
+			//std::cout << "plug called audioMasterCanDo: "<< (char*)ptr << std::endl;
 
 			if (strcmp((char*)ptr,"sendVstEvents")==0 ||
 						 strcmp((char*)ptr,"sendVstMidiEvent")==0 ||
@@ -582,8 +629,8 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//kVstLangItalian
 			//kVstLangSpanish
 			//kVstLangJapanese
-			//cout << "plug called audioMasterGetLanguage" << endl;
-			retval=1;
+			//std::cout << "plug called audioMasterGetLanguage" << std::endl;
+			retval=kVstLangEnglish;
 			break;
 /*
 			MAC SPECIFIC?
@@ -595,7 +642,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//Return Value:
 			//0 if error
 			//else platform specific ptr
-			cout << "plug called audioMasterOpenWindow" << endl;
+			std::cout << "plug called audioMasterOpenWindow" << std::endl;
 			break;
 
 		case audioMasterCloseWindow:
@@ -605,10 +652,22 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//Return Value:
 			//0 if error
 			//Non-zero value if OK
-			cout << "plug called audioMasterCloseWindow" << endl;
+			std::cout << "plug called audioMasterCloseWindow" << std::endl;
 			break;
 */
-		case audioMasterGetDirectory:
+		case audioMasterGetDirectory: {
+			
+			//std::cout << "plug called audioMasterGetDirectory" << std::endl;
+			ERR_FAIL_COND_V(_this==NULL,0);
+			char *dir = new char[_this->plugin_dir.length()+1];
+			for (int i=0;i<_this->plugin_dir.size();i++) {
+				
+				dir[i]=(char)_this->plugin_dir[i]; //not perfect but..
+			}
+			
+			dir[_this->plugin_dir.length()]=0;
+			return ToVstPtr<char>(dir); // I guess the host will handle it?
+			
 			//Input Values:
 			//None
 
@@ -617,8 +676,8 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//FSSpec on MAC, else char* as integer
 
 			//NB Refers to which directory, exactly?
-			//cout << "plug called audioMasterGetDirectory" << endl;
-			break;
+			
+		} break;
 
 		case audioMasterUpdateDisplay:
 			//Input Values:
@@ -626,7 +685,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 
 			//Return Value:
 			//Unknown
-			//cout << "plug called audioMasterUpdateDisplay" << endl;
+			//std::cout << "plug called audioMasterUpdateDisplay" << std::endl;
 			break;
 	}
 	
@@ -643,10 +702,20 @@ void VST_Plugin::reset() {
 	
 	/* People at #musicdsp says this is the semi-standard way to clear up the stuff */
 	
+	
 	//Suspend Plugin
 	ptrPlug->dispatcher(ptrPlug,effMainsChanged,0,0,NULL,0.0f);	
+
+	//reset preset.. this maybe helps..
+	int current_preset=ptrPlug->dispatcher(ptrPlug,effGetProgram,0,0,0,0.0f);
+	ptrPlug->dispatcher(ptrPlug,effSetProgram,0,current_preset,NULL,0.0f);
 	//switch the plugin back on (calls Resume)
 	ptrPlug->dispatcher(ptrPlug,effMainsChanged,0,1,NULL,0.0f);
+	
+	if (midi_parameters)
+		midi_parameters->send_sound_off();
+	
+	off_all_notes=true;
 
 }
 
@@ -655,6 +724,22 @@ void VST_Plugin::save(TreeSaver *p_saver) {
 	if ( !(ptrPlug->flags & effFlagsProgramChunks)) {
 		//if chunks are not handled, then save/load the usual way
 		SoundPlugin::save(p_saver);
+		int current_preset=ptrPlug->dispatcher(ptrPlug,effGetProgram,0,0,0,0.0f);
+		p_saver->add_int("__vst_preset",current_preset); //silently add the current preset
+		
+		/*
+		MidiProgramName midi_program;
+		memset(&midi_program,0,sizeof(MidiProgramName)); //zero this
+		
+		int current_prog=ptrPlug->dispatcher(ptrPlug,effGetCurrentMidiProgram,0,0,&midi_program,0.0f);
+		printf("current prog is %i\n",current_prog);
+		
+		memset(&midi_program,0,sizeof(MidiProgramName)); //zero this
+		midi_program.thisProgramIndex=current_prog;
+		
+		int program_is_valid=ptrPlug->dispatcher(ptrPlug,effGetMidiProgramName,0,0,&midi_program,0.0f);
+		printf("data - midi program: %i, bank MSB: %i, bank LSB: %i, name is %s - valid is %i \n",midi_program.midiProgram,midi_program.midiBankMsb,midi_program.midiBankLsb,midi_program.name,program_is_valid);
+		*/
 		return;
 	}
 		
@@ -666,6 +751,9 @@ void VST_Plugin::save(TreeSaver *p_saver) {
 	//thing as a preset.. so.. I just do it too!
 		
 	p_saver->add_raw("vst_chunk",(const unsigned char*)data,data_size);
+	
+	int current_preset=ptrPlug->dispatcher(ptrPlug,effGetProgram,0,0,0,0.0f);
+	p_saver->add_int("vst_preset",current_preset);
 	
 	/* Save Gain */
 	p_saver->add_float("vst_gain",gain.get());
@@ -689,6 +777,9 @@ void VST_Plugin::load(TreeLoader *p_saver) {
 	
 	if ( !(ptrPlug->flags & effFlagsProgramChunks)) {
 		//if chunks are not handled, then save/load the usual way
+		//also, make sure to set the previous preset so loading is simply overriden
+						
+		ptrPlug->dispatcher(ptrPlug,effSetProgram,0,p_saver->get_int("__vst_preset"),NULL,0.0f);
 		SoundPlugin::load(p_saver);
 		return;
 	}
@@ -709,6 +800,7 @@ void VST_Plugin::load(TreeLoader *p_saver) {
 		delete[] data;
 	}
 		
+	ptrPlug->dispatcher(ptrPlug,effSetProgram,0,p_saver->get_int("vst_preset"),NULL,0.0f);
 	
 	/* Load Gain */
 	gain.set( p_saver->get_float("vst_gain") );
@@ -731,8 +823,9 @@ void VST_Plugin::load(TreeLoader *p_saver) {
 }
 
 
-VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channels) : SoundPlugin(p_info,p_channels) {
+VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,String p_dir,bool p_ports_write_only,int p_channels) : SoundPlugin(p_info,p_channels) {
 	
+	plugin_dir=p_dir;
 	userdata=NULL;
 	property_changed=NULL;
 	
@@ -790,28 +883,50 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channel
 	
 	ptrPlug->resvd1=ToVstPtr<VST_Plugin>(this);
 	
-	int in_port_count=ptrPlug->numInputs/p_channels;
-	int out_port_count=ptrPlug->numOutputs/p_channels;
-	printf("inputs: %i, outputs:%i\n",in_port_count,out_port_count);
+	int in_port_count=ptrPlug->numInputs;
+	int out_port_count=ptrPlug->numOutputs;
+
+	/* Create buffers for channels */
+	
 	if (in_port_count)
-		input_buffers = new float*[p_channels*in_port_count];
+		input_buffers = new float*[ptrPlug->numInputs];
 	else
 		input_buffers=NULL;
 	
 	if (out_port_count)
-		output_buffers = new float*[p_channels*out_port_count];
+		output_buffers = new float*[ptrPlug->numOutputs];
 	else
 		output_buffers=NULL;
 	
-
-	for (int i=0;i<in_port_count;i++) {
-		
-		input_plugs.push_back( new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this) );
-	}
+	/* Depending on channel amount selected, assign plugs accordingly */
 	
-	for (int i=0;i<out_port_count;i++) {
-		
-		output_plugs.push_back( new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this) );
+	while(in_port_count) {
+
+		if (in_port_count>=p_channels) {
+			
+			input_plugs.push_back( new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this) );
+			in_port_count-=p_channels;
+		} else {
+			
+			input_plugs.push_back( new AudioPlug(in_port_count,AudioPlug::TYPE_INPUT,this) );
+			in_port_count=0;
+			
+		}
+	}
+
+
+	while(out_port_count) {
+
+		if (out_port_count>=p_channels) {
+			
+			output_plugs.push_back( new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this) );
+			out_port_count-=p_channels;
+		} else {
+			
+			output_plugs.push_back( new AudioPlug(out_port_count,AudioPlug::TYPE_OUTPUT,this) );
+			out_port_count=0;
+			
+		}
 	}
 	
 	mix_rate=44100;
@@ -822,8 +937,9 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channel
 	
 	//create parameters
 	for (int i=0;i<ptrPlug->numParams;i++) {
-		
-		Parameter *p=new Parameter(ptrPlug,i);
+		if (i>200) //I'm sorry but some plugins (FM7) can go mad with declaring unused params!
+			break; 		
+		Parameter *p=new Parameter(ptrPlug,i,p_ports_write_only);
 		property_list.push_back( p );
 		param_list.push_back(p);
 	}
@@ -866,12 +982,13 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channel
 		event_pointers=NULL;
 		midi_parameters=NULL;
 	}
-	
+	off_all_notes=false;
 	gain.set_all( get_info()->is_synth?-20:0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "vst_plugin_gain","Gain","dB");
 	property_list.push_back(&gain);
 	//switch the plugin back on (calls Resume)
 	ptrPlug->dispatcher(ptrPlug,effMainsChanged,0,1,NULL,0.0f);
 
+	
 	
 }
 
@@ -912,6 +1029,7 @@ VST_Plugin::~VST_Plugin() {
 		delete[] (char*)event_pointers; //since i had to custom-instance for custom-eventcount
 		delete midi_parameters;
 	}
+	
 }
 
 

@@ -145,10 +145,7 @@ int Saver::index_pattern_block(Track_Pattern::PatternBlock *p_block) {
 void Saver::save_track_pattern(Track_Pattern *p_pattern_track,TreeSaver *p_saver) {
 	
 	p_saver->enter("track_pattern");
-	
-	
-	p_saver->add_float( "swing", p_pattern_track->swing().get() );
-	p_saver->add_float( "volume", p_pattern_track->volume().get() );
+	p_saver->add_int("visible_columns",p_pattern_track->get_visible_columns());
 	
 	{
 		p_saver->enter("blocks");
@@ -177,6 +174,11 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 	p_saver->add_int( "channels ", p_track->get_channels() );
 	p_saver->add_string("type",p_track->get_type_name());
 	p_saver->add_int("mute",p_track->is_mute());
+	
+	p_saver->add_float("swing",p_track->swing().get());
+	p_saver->add_float("swing_base",p_track->swing_base().get());
+	p_saver->add_float("swing_local",p_track->swing_local().get());
+	p_saver->add_float("volume",p_track->volume().get());
 	
 	/** SAVE RACK */
 	p_saver->enter("rack");

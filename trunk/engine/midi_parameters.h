@@ -90,6 +90,7 @@ public:
 	const Changes::Change* get_changes();
 	void clear_changes();
 
+	void send_sound_off();
 	MidiParameters();
 };
 

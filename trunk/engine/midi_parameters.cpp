@@ -127,6 +127,25 @@ void MidiParameters::clear_changes(){
 	changes.count=0;
 }
 
+void MidiParameters::send_sound_off() {
+	
+	if (changes.count>=MAX_CHANGED_LIST)
+		return;
+	
+	changes.list[ changes.count ].control=120;
+	changes.list[ changes.count ].value=127;
+	changes.count++;
+	if (changes.count>=MAX_CHANGED_LIST)
+		return;
+	
+	changes.list[ changes.count ].control=123;
+	changes.list[ changes.count ].value=127;
+	changes.count++;
+	if (changes.count>=MAX_CHANGED_LIST)
+		return;
+	
+}
+
 MidiParameters::MidiParameters(){
 	
 	for (int i=0;i<MAX_MIDI_CONTROLS;i++) {
@@ -220,6 +239,7 @@ MidiParameters::MidiParameters(){
 	parameters[69].display="MIDI Controls/69 Hold 2 Pedal";
 	parameters[69].val=parameters[69].default_val=0;
 	
+	changes.count=0;
 }
 
 

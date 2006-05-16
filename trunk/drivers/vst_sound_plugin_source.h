@@ -33,6 +33,8 @@ class VST_SoundPluginSource{
 		
 		SoundPluginInfo plugin_info;
 		String path;
+		String dir;
+		bool write_only;
 
 	};
 	

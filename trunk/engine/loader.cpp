@@ -218,9 +218,7 @@ void Loader::load_track_pattern(Track_Pattern *p_pattern_track,TreeLoader *p_loa
 	
 	p_loader->enter("track_pattern");
 	
-	
-	p_pattern_track->swing().set( p_loader->get_float( "swing" ) );
-	p_pattern_track->volume().set( p_loader->get_float( "volume" ) );
+	p_pattern_track->set_visible_columns(  p_loader->get_int("visible_columns" ));
 	
 	{
 		p_loader->enter("blocks");
@@ -269,6 +267,11 @@ void Loader::load_track(Track *p_track, TreeLoader *p_loader) {
 	p_track->set_name( p_loader->get_string( "name"));
 	p_track->set_mute( p_loader->get_int("mute"));
 
+	p_track->swing().set(p_loader->get_float("swing"));
+	p_track->swing_base().set(p_loader->get_float("swing_base"));
+	p_track->swing_local().set(p_loader->get_float("swing_local"));
+	p_track->volume().set(p_loader->get_float("volume"));
+	
 	/** Track Type specific */
 
 	if (dynamic_cast<Track_Pattern*>(p_track)) 

@@ -44,7 +44,10 @@ double Property::get_coeff_value() {
 	}
 	return coeff_val;
 }
-
+bool Property::is_write_only() {
+	
+	return false;
+}
 void Property::set_coeff_value(double p_coeff) {
 	
 	set(get_value_from_coeff(p_coeff));

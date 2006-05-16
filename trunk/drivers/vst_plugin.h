@@ -45,6 +45,7 @@ class VST_Plugin : public SoundPlugin {
 		char resbuff[256];
 		AEffect* ptrPlug; //plugin
 		int index; //parameter index
+		bool write_only;
 		
 		double get();
 		void set(double p_val);
@@ -57,13 +58,14 @@ class VST_Plugin : public SoundPlugin {
 		String get_postfix();
 		String get_text_value(double p_for_value,bool p_no_postfix=false);
 		bool has_text_value();
+		bool is_write_only() { return write_only; }
 	
 		DisplayMode get_display_mode();
 	
 		/* helpers */	
 		String get_text_value(bool p_no_postfix=false); 
 	 
-		Parameter(AEffect *p_ptrPlug,int p_index) { ptrPlug=p_ptrPlug; index=p_index; }
+		Parameter(AEffect *p_ptrPlug,int p_index,bool p_write_only=false) { ptrPlug=p_ptrPlug; index=p_index; write_only=p_write_only; }
 	};
 	
 	std::vector<AudioPlug*> input_plugs;
@@ -79,6 +81,7 @@ class VST_Plugin : public SoundPlugin {
 	HINSTANCE libhandle;
 	AEffect* ptrPlug;
 	
+	bool off_all_notes;
 	static VstIntPtr VSTCALLBACK host(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt);	
 	
 	float mix_rate;
@@ -96,6 +99,7 @@ class VST_Plugin : public SoundPlugin {
 	void (*property_changed)(void*,int);
 
 	
+	String plugin_dir;
 public:
 
 	MidiParameters *get_midi_parameters() { return midi_parameters; }
@@ -126,7 +130,7 @@ public:
 	
 	void reset();
 
-	VST_Plugin(const SoundPluginInfo *p_info,String p_path,int p_channels);
+	VST_Plugin(const SoundPluginInfo *p_info,String p_path,String p_dir,bool p_ports_write_only,int p_channels);
 	~VST_Plugin();
 
 };

@@ -642,6 +642,9 @@ void Track::reset_automations() {
 	for (int i=0;i<get_property_count();i++) {
 		
 		Automation *a=get_property_automation(i);
+		if (a->get_property()->is_write_only())
+			continue; //some properties of some plugins (VST in this case) dont allow writing,
+		//so automating is primitive in them
 		a->get_property()->set( a->get_initial_value() );
 	}
 }

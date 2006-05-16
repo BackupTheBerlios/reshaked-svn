@@ -21,6 +21,7 @@ public:
 	void copy_from_interleaved(float *p_src,int p_frames);
 	void copy_to_interleaved(float *p_dst,int p_frames);
 	void setup(int p_channels,int p_size);
+	void multiply_by(float p_val,int p_frames);
 	AudioBuffer(int p_channels,int p_size);
 	AudioBuffer();
 	/* helpers */
