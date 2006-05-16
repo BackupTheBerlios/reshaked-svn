@@ -35,11 +35,9 @@ class FilterBankPlugin : public SoundPlugin {
 	
 	struct FilterData {
 
-		LocalProperty active;   
-
 		LocalProperty cutoff;   
 		LocalProperty resonance;   
-		OptionsProperty type;
+		OptionsProperty mode;
 		OptionsProperty stages;
 	
 		Filter::Coeffs prev_coeffs;

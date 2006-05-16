@@ -96,6 +96,24 @@
 #include "pixmaps/default_skin/effect_panel_generic_value.xpm"
 #include "pixmaps/default_skin/effect_panel_generic_vu_empty.xpm"
 #include "pixmaps/default_skin/effect_panel_generic_vu_fill.xpm"
+#include "pixmaps/default_skin/filterbank__bottom.xpm"
+#include "pixmaps/default_skin/filterbank__combo.xpm"
+#include "pixmaps/default_skin/filterbank__combo_str_separator.xpm"
+#include "pixmaps/default_skin/filterbank__controls_display_separator.xpm"
+#include "pixmaps/default_skin/filterbank__controls_top.xpm"
+#include "pixmaps/default_skin/filterbank__display.xpm"
+#include "pixmaps/default_skin/filterbank__display_octave_separator.xpm"
+#include "pixmaps/default_skin/filterbank__left.xpm"
+#include "pixmaps/default_skin/filterbank__octave_display.xpm"
+#include "pixmaps/default_skin/filterbank__octave_separator.xpm"
+#include "pixmaps/default_skin/filterbank__octave_slider.xpm"
+#include "pixmaps/default_skin/filterbank__right.xpm"
+#include "pixmaps/default_skin/filterbank__separator_1.xpm"
+#include "pixmaps/default_skin/filterbank__separator_2.xpm"
+#include "pixmaps/default_skin/filterbank__separator_3.xpm"
+#include "pixmaps/default_skin/filterbank__str_display.xpm"
+#include "pixmaps/default_skin/filterbank__str_updown.xpm"
+#include "pixmaps/default_skin/filterbank__top.xpm"
 #include "pixmaps/default_skin/global_toolbar__add.xpm"
 #include "pixmaps/default_skin/global_toolbar__add_active.xpm"
 #include "pixmaps/default_skin/global_toolbar__bottom_right_pixmap.xpm"
@@ -480,6 +498,42 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["effect_panel_generic_vu_empty"]=THEME_EFFECT_PANEL_GENERIC_VU_EMPTY;
     pixmap_map[THEME_EFFECT_PANEL_GENERIC_VU_FILL]=QPixmap( (const char**) effect_panel_generic_vu_fill_xpm); 
     pixmap_map_skin["effect_panel_generic_vu_fill"]=THEME_EFFECT_PANEL_GENERIC_VU_FILL;
+    pixmap_map[THEME_FILTERBANK__BOTTOM]=QPixmap( (const char**) filterbank__bottom_xpm); 
+    pixmap_map_skin["filterbank__bottom"]=THEME_FILTERBANK__BOTTOM;
+    pixmap_map[THEME_FILTERBANK__COMBO]=QPixmap( (const char**) filterbank__combo_xpm); 
+    pixmap_map_skin["filterbank__combo"]=THEME_FILTERBANK__COMBO;
+    pixmap_map[THEME_FILTERBANK__COMBO_STR_SEPARATOR]=QPixmap( (const char**) filterbank__combo_str_separator_xpm); 
+    pixmap_map_skin["filterbank__combo_str_separator"]=THEME_FILTERBANK__COMBO_STR_SEPARATOR;
+    pixmap_map[THEME_FILTERBANK__CONTROLS_DISPLAY_SEPARATOR]=QPixmap( (const char**) filterbank__controls_display_separator_xpm); 
+    pixmap_map_skin["filterbank__controls_display_separator"]=THEME_FILTERBANK__CONTROLS_DISPLAY_SEPARATOR;
+    pixmap_map[THEME_FILTERBANK__CONTROLS_TOP]=QPixmap( (const char**) filterbank__controls_top_xpm); 
+    pixmap_map_skin["filterbank__controls_top"]=THEME_FILTERBANK__CONTROLS_TOP;
+    pixmap_map[THEME_FILTERBANK__DISPLAY]=QPixmap( (const char**) filterbank__display_xpm); 
+    pixmap_map_skin["filterbank__display"]=THEME_FILTERBANK__DISPLAY;
+    pixmap_map[THEME_FILTERBANK__DISPLAY_OCTAVE_SEPARATOR]=QPixmap( (const char**) filterbank__display_octave_separator_xpm); 
+    pixmap_map_skin["filterbank__display_octave_separator"]=THEME_FILTERBANK__DISPLAY_OCTAVE_SEPARATOR;
+    pixmap_map[THEME_FILTERBANK__LEFT]=QPixmap( (const char**) filterbank__left_xpm); 
+    pixmap_map_skin["filterbank__left"]=THEME_FILTERBANK__LEFT;
+    pixmap_map[THEME_FILTERBANK__OCTAVE_DISPLAY]=QPixmap( (const char**) filterbank__octave_display_xpm); 
+    pixmap_map_skin["filterbank__octave_display"]=THEME_FILTERBANK__OCTAVE_DISPLAY;
+    pixmap_map[THEME_FILTERBANK__OCTAVE_SEPARATOR]=QPixmap( (const char**) filterbank__octave_separator_xpm); 
+    pixmap_map_skin["filterbank__octave_separator"]=THEME_FILTERBANK__OCTAVE_SEPARATOR;
+    pixmap_map[THEME_FILTERBANK__OCTAVE_SLIDER]=QPixmap( (const char**) filterbank__octave_slider_xpm); 
+    pixmap_map_skin["filterbank__octave_slider"]=THEME_FILTERBANK__OCTAVE_SLIDER;
+    pixmap_map[THEME_FILTERBANK__RIGHT]=QPixmap( (const char**) filterbank__right_xpm); 
+    pixmap_map_skin["filterbank__right"]=THEME_FILTERBANK__RIGHT;
+    pixmap_map[THEME_FILTERBANK__SEPARATOR_1]=QPixmap( (const char**) filterbank__separator_1_xpm); 
+    pixmap_map_skin["filterbank__separator_1"]=THEME_FILTERBANK__SEPARATOR_1;
+    pixmap_map[THEME_FILTERBANK__SEPARATOR_2]=QPixmap( (const char**) filterbank__separator_2_xpm); 
+    pixmap_map_skin["filterbank__separator_2"]=THEME_FILTERBANK__SEPARATOR_2;
+    pixmap_map[THEME_FILTERBANK__SEPARATOR_3]=QPixmap( (const char**) filterbank__separator_3_xpm); 
+    pixmap_map_skin["filterbank__separator_3"]=THEME_FILTERBANK__SEPARATOR_3;
+    pixmap_map[THEME_FILTERBANK__STR_DISPLAY]=QPixmap( (const char**) filterbank__str_display_xpm); 
+    pixmap_map_skin["filterbank__str_display"]=THEME_FILTERBANK__STR_DISPLAY;
+    pixmap_map[THEME_FILTERBANK__STR_UPDOWN]=QPixmap( (const char**) filterbank__str_updown_xpm); 
+    pixmap_map_skin["filterbank__str_updown"]=THEME_FILTERBANK__STR_UPDOWN;
+    pixmap_map[THEME_FILTERBANK__TOP]=QPixmap( (const char**) filterbank__top_xpm); 
+    pixmap_map_skin["filterbank__top"]=THEME_FILTERBANK__TOP;
     pixmap_map[THEME_GLOBAL_TOOLBAR__ADD]=QPixmap( (const char**) global_toolbar__add_xpm); 
     pixmap_map_skin["global_toolbar__add"]=THEME_GLOBAL_TOOLBAR__ADD;
     pixmap_map[THEME_GLOBAL_TOOLBAR__ADD_ACTIVE]=QPixmap( (const char**) global_toolbar__add_active_xpm); 

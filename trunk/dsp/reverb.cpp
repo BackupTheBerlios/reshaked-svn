@@ -105,7 +105,7 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 
 
 	static const float allpass_feedback=0.7;
-	/*
+	/* this one works, but the other version is just nicer....
 	int ap_size_limit[MAX_ALLPASS];
 	
 	for (int i=0;i<MAX_ALLPASS;i++) {

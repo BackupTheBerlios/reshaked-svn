@@ -134,23 +134,24 @@ void FilterBankPlugin::process(int p_frames) {
 		
 		FilterData &f=filter[i];
 		
-		if (!f.active.get())
-			continue;
-		
 		Filter::Mode current_mode;
 		
 		bool interpolate_coeffs=true;
-		
+		bool disabled=false;
 		/* Determine Mode */
-		switch (f.type.get_current()) {
+		switch (f.mode.get_current()) {
 			
-			case 0: current_mode=Filter::LOWPASS; break;
-			case 1: current_mode=Filter::BANDPASS; break;
-			case 2: current_mode=Filter::HIGHPASS; break;
-			case 3: current_mode=Filter::NOTCH; break;
+			case 0: disabled=true; break;
+			case 1: current_mode=Filter::LOWPASS; break;
+			case 2: current_mode=Filter::BANDPASS; break;
+			case 3: current_mode=Filter::HIGHPASS; break;
+			case 4: current_mode=Filter::NOTCH; break;
 			default: current_mode=Filter::LOWPASS; break;
 	
 		}
+		
+		if(disabled)
+			continue;
 		
 		/* Create filter */
 		Filter filter;
@@ -293,17 +294,17 @@ FilterBankPlugin::FilterBankPlugin(const SoundPluginInfo *p_info,int p_channels)
 		
 		FilterData &f=filter[i];
 		
-		f.active.set_all( 0, 0, 1, 0, 1, Property::DISPLAY_SLIDER, n_prefix+"active",c_prefix+"Active","","Off","On");
 		f.cutoff.set_all( filter_defaults[i],0,16000,0, 0.1, Property::DISPLAY_SLIDER, n_prefix+"cutoff",c_prefix+"Cutoff","hz");
 		f.resonance.set_all( 1,0,3, 1, 0.01, Property::DISPLAY_SLIDER, n_prefix+"resonance",c_prefix+"Resonance");
 		
-		std::vector<String> filter_type;
-		filter_type.push_back("LowPass");
-		filter_type.push_back("BandPass");
-		filter_type.push_back("HighPass");
-		filter_type.push_back("Notch");
+		std::vector<String> filter_mode;
+		filter_mode.push_back("OFF");
+		filter_mode.push_back("Low");
+		filter_mode.push_back("Band");
+		filter_mode.push_back("High");
+		filter_mode.push_back("Notch");
 		
-		f.type.set_all(n_prefix+"mode",c_prefix+"Mode",filter_type,1);
+		f.mode.set_all(n_prefix+"mode",c_prefix+"Mode",filter_mode,0);
 		
 		std::vector<String> filter_stages;
 		filter_stages.push_back("1");
@@ -315,10 +316,9 @@ FilterBankPlugin::FilterBankPlugin(const SoundPluginInfo *p_info,int p_channels)
 		
 		f.history.resize(p_channels);
 		
-		property_list.push_back(&f.active);
+		property_list.push_back(&f.mode);		
 		property_list.push_back(&f.cutoff);
 		property_list.push_back(&f.resonance);
-		property_list.push_back(&f.type);
 		property_list.push_back(&f.stages);
 		
 		f.prev_stages=-1;
