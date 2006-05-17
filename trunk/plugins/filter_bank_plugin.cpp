@@ -165,6 +165,7 @@ void FilterBankPlugin::process(int p_frames) {
 		filter.set_mode( current_mode );
 		filter.set_sampling_rate( mix_rate );
 		filter.set_resonance( f.resonance.get() );
+		filter.set_stages( f.stages.get() + 1 );
 		
 		filter.prepare_coefficients( &c );
 		

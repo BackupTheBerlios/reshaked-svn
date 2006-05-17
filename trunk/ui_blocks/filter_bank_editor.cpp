@@ -385,7 +385,7 @@ FilterBankEditor::FilterBankEditor(QWidget *p_parent,int p_filters,const Skin& p
 	cutoff_offset=NULL;	
 	updater->start(100);
 	drag.index=-1;
-	drag.over=2;
+	drag.over=-1;
 	setMouseTracking(true);
 	need_update=true;
 	
