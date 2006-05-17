@@ -22,6 +22,7 @@
 #include "plugin_UIs/chionic_interface.h"
 #include "plugin_UIs/simpler_ui.h"
 #include "plugin_UIs/reverb_plugin_ui.h"
+#include "plugin_UIs/filter_bank_plugin_ui.h"
 #include "drivers/get_time_posix.h"
 #include "dsp/sample_file.h"
 #include "editor/midi_input_handler.h"
@@ -95,6 +96,7 @@ static void init_sound_plugin_UI_list() {
 	sound_plugin_UI_list.add_creator(    ReShaked::SimplerUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::ChorusPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::ReverbPluginUI::create_this );
+	sound_plugin_UI_list.add_creator(    ReShaked::FilterBankPluginUI::create_this );
 #ifdef VST_ENABLED
 	sound_plugin_UI_list.add_creator(    ReShaked::VST_PluginUI::create_this );
 #endif

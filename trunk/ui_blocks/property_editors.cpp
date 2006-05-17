@@ -260,7 +260,7 @@ void PropertyEditCombo::changed() {
 		return;
 	
 	clear();
-	int opcount=lrint( (get_property()->get_max()-get_property()->get_min() )/get_property()->get_stepping() );
+	int opcount=lrint( (get_property()->get_max()-get_property()->get_min() )/get_property()->get_stepping() )+1;
 	
 	ERR_FAIL_COND( opcount>100 ); //wtf?
 	

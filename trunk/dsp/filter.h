@@ -59,6 +59,7 @@ private:
 	float cutoff;
 	float resonance;
 	float sampling_rate;
+	int stages;
 	Mode mode;
 
 
@@ -71,6 +72,7 @@ public:
 	void set_cutoff(float p_cutoff);
 	void set_resonance(float p_resonance);
 	void set_sampling_rate(float p_srate);
+	void set_stages(int p_stages); //adjust for multiple stages
 
 	void prepare_coefficients(Coeffs *p_coeffs);
 

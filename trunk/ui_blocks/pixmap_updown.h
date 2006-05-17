@@ -32,7 +32,8 @@ public:
 		QPixmap up;
 		QPixmap down;
 		
-		Skin(QPixmap p_normal=QPixmap(),QPixmap p_up=QPixmap(),QPixmap p_down=QPixmap()) { normal=p_normal; up=p_up; down=p_down; }
+		Skin(QPixmap p_unique=QPixmap()) { normal=p_unique; up=p_unique; down=p_unique; }
+		Skin(QPixmap p_normal,QPixmap p_up,QPixmap p_down) { normal=p_normal; up=p_up; down=p_down; }
 	};
 	
 	

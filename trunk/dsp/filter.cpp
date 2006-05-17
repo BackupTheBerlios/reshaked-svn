@@ -54,14 +54,15 @@ void Filter::prepare_coefficients(Coeffs *p_coeffs) {
 		Q=0.0001;
 	}
 	
-	if (Q>=1.0) {
-		Q=1;
-	}
 
-        Q*=3.0;
 	if (mode==BANDPASS) //I want more of this for bandpass :P
 		Q*=2.0;
 	
+	if (stages>1) {
+		
+		Q=(Q>1.0 ? pow(Q,1.0/stages) : Q);
+		
+	}
 	double alpha = sin_v/(2*Q);
 	
 	double a0 = 1.0 + alpha;
@@ -123,6 +124,11 @@ void Filter::prepare_coefficients(Coeffs *p_coeffs) {
     
 }
 
+void Filter::set_stages(int p_stages) { //adjust for multiple stages
+
+	stages=p_stages;
+}
+
 /* Fouriertransform kernel to obtain response */
 
 float Filter::get_response(float p_freq,Coeffs *p_coeffs) {
@@ -160,6 +166,7 @@ Filter::Filter() {
 	resonance=0.5;
 	cutoff=5000;
 	mode=LOWPASS;
+	stages=1;
 }
 
 Filter::Processor::Processor() {
@@ -193,6 +200,8 @@ void Filter::Processor::process(float *p_samples,int p_amount, int p_stride) {
 		process_one(*p_samples);
 		p_samples+=p_stride;
 	}
+	
+	
 }
 
 }

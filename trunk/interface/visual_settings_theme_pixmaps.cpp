@@ -107,6 +107,7 @@
 #include "pixmaps/default_skin/filterbank__octave_display.xpm"
 #include "pixmaps/default_skin/filterbank__octave_separator.xpm"
 #include "pixmaps/default_skin/filterbank__octave_slider.xpm"
+#include "pixmaps/default_skin/filterbank__octave_slider_grabber.xpm"
 #include "pixmaps/default_skin/filterbank__right.xpm"
 #include "pixmaps/default_skin/filterbank__separator_1.xpm"
 #include "pixmaps/default_skin/filterbank__separator_2.xpm"
@@ -520,6 +521,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["filterbank__octave_separator"]=THEME_FILTERBANK__OCTAVE_SEPARATOR;
     pixmap_map[THEME_FILTERBANK__OCTAVE_SLIDER]=QPixmap( (const char**) filterbank__octave_slider_xpm); 
     pixmap_map_skin["filterbank__octave_slider"]=THEME_FILTERBANK__OCTAVE_SLIDER;
+    pixmap_map[THEME_FILTERBANK__OCTAVE_SLIDER_GRABBER]=QPixmap( (const char**) filterbank__octave_slider_grabber_xpm); 
+    pixmap_map_skin["filterbank__octave_slider_grabber"]=THEME_FILTERBANK__OCTAVE_SLIDER_GRABBER;
     pixmap_map[THEME_FILTERBANK__RIGHT]=QPixmap( (const char**) filterbank__right_xpm); 
     pixmap_map_skin["filterbank__right"]=THEME_FILTERBANK__RIGHT;
     pixmap_map[THEME_FILTERBANK__SEPARATOR_1]=QPixmap( (const char**) filterbank__separator_1_xpm); 
