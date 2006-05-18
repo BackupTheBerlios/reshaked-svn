@@ -29,6 +29,12 @@ void PixmapLabel::mousePressEvent(QMouseEvent *e) {
 	clicked_signal();
 }
 
+void PixmapLabel::set_bg(QPixmap p_bg) {
+	
+	pixmap=p_bg;
+	update();
+}
+
 void PixmapLabel::paintEvent(QPaintEvent *e) {
 	
 	QPainter p(this);

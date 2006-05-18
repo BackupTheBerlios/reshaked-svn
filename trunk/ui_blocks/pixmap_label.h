@@ -52,6 +52,8 @@ signals:
 			
 	void clicked_signal();
 public:
+	void set_bg(QPixmap p_bg);
+	
 	void set_pos(QPoint p_pos,bool p_centered=false);
 	void set_color(QColor p_col);
 	void set_angle(int p_phi);
