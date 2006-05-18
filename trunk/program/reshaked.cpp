@@ -11,16 +11,19 @@
 #include "plugin_UIs/vst_plugin_ui.h"
 #include "engine/sound_plugin_list.h"
 #include "plugins/amplifier_plugin.h"
+#include "plugins/tool_plugins.h"
 #include "plugins/sine_synth.h"
 #include "plugins/simpler.h"
 #include "plugins/chionic.h"
 #include "plugins/reverb_plugin.h"
 #include "plugins/filter_bank_plugin.h"
 #include "plugin_UIs/chorus_plugin_ui.h"
+#include "plugin_UIs/limiter_plugin_ui.h"
 #include "plugins/chorus_plugin.h"
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 #include "plugin_UIs/chionic_interface.h"
 #include "plugin_UIs/simpler_ui.h"
+#include "plugins/limiter_plugin.h"
 #include "plugin_UIs/reverb_plugin_ui.h"
 #include "plugin_UIs/filter_bank_plugin_ui.h"
 #include "drivers/get_time_posix.h"
@@ -84,7 +87,11 @@ static void init_sound_plugin_list() {
 	sound_plugin_list.add_info( ReShaked::FilterBankPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::ChorusPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::ReverbPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::LimiterPlugin::create_info() );
 	
+	/* Tools */
+	sound_plugin_list.add_info( ReShaked::SplitterPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::MergerPlugin::create_info() );
 }
 
 
@@ -94,9 +101,11 @@ static void init_sound_plugin_UI_list() {
 		
 	sound_plugin_UI_list.add_creator(    ReShaked::ChionicInterface::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::SimplerUI::create_this );
+	
 	sound_plugin_UI_list.add_creator(    ReShaked::ChorusPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::ReverbPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::FilterBankPluginUI::create_this );
+	sound_plugin_UI_list.add_creator(    ReShaked::LimiterPluginUI::create_this );
 #ifdef VST_ENABLED
 	sound_plugin_UI_list.add_creator(    ReShaked::VST_PluginUI::create_this );
 #endif
