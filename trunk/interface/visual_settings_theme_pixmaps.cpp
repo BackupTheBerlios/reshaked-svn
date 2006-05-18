@@ -142,6 +142,12 @@
 #include "pixmaps/default_skin/middle__separator_center.xpm"
 #include "pixmaps/default_skin/middle__separator_end.xpm"
 #include "pixmaps/default_skin/middle_separator_end.xpm"
+#include "pixmaps/default_skin/peakmon__bottom.xpm"
+#include "pixmaps/default_skin/peakmon__button_clear.xpm"
+#include "pixmaps/default_skin/peakmon__button_clear_pushed.xpm"
+#include "pixmaps/default_skin/peakmon__nopeak.xpm"
+#include "pixmaps/default_skin/peakmon__peak.xpm"
+#include "pixmaps/default_skin/peakmon__top.xpm"
 #include "pixmaps/default_skin/rack__list.xpm"
 #include "pixmaps/default_skin/rack_panel__jack_forbidden.xpm"
 #include "pixmaps/default_skin/rack_panel__jack_in.xpm"
@@ -591,6 +597,18 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["middle__separator_end"]=THEME_MIDDLE__SEPARATOR_END;
     pixmap_map[THEME_MIDDLE_SEPARATOR_END]=QPixmap( (const char**) middle_separator_end_xpm); 
     pixmap_map_skin["middle_separator_end"]=THEME_MIDDLE_SEPARATOR_END;
+    pixmap_map[THEME_PEAKMON__BOTTOM]=QPixmap( (const char**) peakmon__bottom_xpm); 
+    pixmap_map_skin["peakmon__bottom"]=THEME_PEAKMON__BOTTOM;
+    pixmap_map[THEME_PEAKMON__BUTTON_CLEAR]=QPixmap( (const char**) peakmon__button_clear_xpm); 
+    pixmap_map_skin["peakmon__button_clear"]=THEME_PEAKMON__BUTTON_CLEAR;
+    pixmap_map[THEME_PEAKMON__BUTTON_CLEAR_PUSHED]=QPixmap( (const char**) peakmon__button_clear_pushed_xpm); 
+    pixmap_map_skin["peakmon__button_clear_pushed"]=THEME_PEAKMON__BUTTON_CLEAR_PUSHED;
+    pixmap_map[THEME_PEAKMON__NOPEAK]=QPixmap( (const char**) peakmon__nopeak_xpm); 
+    pixmap_map_skin["peakmon__nopeak"]=THEME_PEAKMON__NOPEAK;
+    pixmap_map[THEME_PEAKMON__PEAK]=QPixmap( (const char**) peakmon__peak_xpm); 
+    pixmap_map_skin["peakmon__peak"]=THEME_PEAKMON__PEAK;
+    pixmap_map[THEME_PEAKMON__TOP]=QPixmap( (const char**) peakmon__top_xpm); 
+    pixmap_map_skin["peakmon__top"]=THEME_PEAKMON__TOP;
     pixmap_map[THEME_RACK__LIST]=QPixmap( (const char**) rack__list_xpm); 
     pixmap_map_skin["rack__list"]=THEME_RACK__LIST;
     pixmap_map[THEME_RACK_PANEL__JACK_FORBIDDEN]=QPixmap( (const char**) rack_panel__jack_forbidden_xpm); 

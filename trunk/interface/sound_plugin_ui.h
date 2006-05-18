@@ -15,6 +15,7 @@
 #include <Qt/qwidget.h>
 #include "engine/sound_plugin.h"
 #include "engine/property_edit_updater.h"
+#include "ui_blocks/helpers.h"
 
 namespace ReShaked {
 
@@ -24,6 +25,9 @@ namespace ReShaked {
 class SoundPluginUI : public QWidget {
 Q_OBJECT
 					    
+		
+	SoundPlugin *_plugin;		
+		
 	PropertyEditUpdater * editor_updater;
 	std::vector<PropertyEditorBase*> property_editors;
 	
@@ -32,6 +36,8 @@ protected:
 			    
 	void register_property_editor(PropertyEditorBase* p_property_editor);
 	void unregister_property_editor(PropertyEditorBase* p_property_editor);
+	
+	CHBox* generate_default_layout(bool p_generate_controls=false);
 	
 signals:	
 	
