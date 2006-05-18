@@ -53,6 +53,11 @@ static inline double energy_to_db(double p_nrg) {
 	return 20.0*(log(p_nrg)/log(10.0));
 }
 
+static inline double db_to_energy(double p_db) {
+	
+	return pow(10.0,p_db/20.0);
+}
+
 static inline double vel_sens_function(double p_velocity,double p_velocity_sens) {
 
 	double x;
