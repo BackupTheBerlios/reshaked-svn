@@ -83,22 +83,7 @@ SimplerUI::SimplerUI(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_p
 	simpler = dynamic_cast<Simpler*>(p_plugin);
 	ERR_FAIL_COND(!simpler);
 	
-	setLayout(new QVBoxLayout(this));
-	CHBox *hb_top = new CHBox(this);
-	layout()->addWidget(hb_top);
-	new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP_LEFT));
-	PixmapLabel *title = new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP) ,PixmapLabel::EXPAND_TILE_H);
-	title->set_text( QStrify(p_plugin->get_caption())) ;
-	title->setToolTip( QStrify(p_plugin->get_caption())) ;
-	new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP_RIGHT));
-	
-	
-	
-	CHBox *hb = new CHBox(this);
-	layout()->addWidget(hb);
-	
-	PixmapLabel *label_name = new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_LEFT));
-	label_name->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+	CHBox *hb = generate_default_layout();
 	
 	/*****/
 	
@@ -176,23 +161,6 @@ SimplerUI::SimplerUI(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_p
 	new PixmapLabel(vb_simpler,GET_QPIXMAP(THEME_SIMPLER__BOTTOM ) );
 	
 	/* ***/
-	
-	
-	new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_RIGHT));
-	
-	CHBox *hb_bottom = new CHBox(this);
-	layout()->addWidget(hb_bottom);
-	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_LEFT));
-	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM),PixmapLabel::EXPAND_TILE_H);
-	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_RIGHT));
-	
-	layout()->setMargin(0);
-	layout()->setSpacing(0);
-	
-	hb->layout()->setMargin(0);
-	hb->layout()->setSpacing(0);	
-	
-	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 }
 
 

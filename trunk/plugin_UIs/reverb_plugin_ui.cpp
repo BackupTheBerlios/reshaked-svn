@@ -29,23 +29,9 @@ SoundPluginUI* ReverbPluginUI::create_this(SoundPlugin *p_plugin,QWidget *p_pare
 
 ReverbPluginUI::ReverbPluginUI(QWidget *p_parent,ReverbPlugin *p_reverb) :SoundPluginUI(p_parent,p_reverb) {
 
-	setLayout(new QVBoxLayout(this));
-	CHBox *hb_top = new CHBox(this);
-	layout()->addWidget(hb_top);
-	new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP_LEFT));
-	PixmapLabel *title = new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP) ,PixmapLabel::EXPAND_TILE_H);
-	title->set_text( QStrify(p_reverb->get_caption())) ;
-	title->setToolTip( QStrify(p_reverb->get_caption())) ;
-	new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP_RIGHT));
+	CHBox *hb = generate_default_layout();
 	
-	
-	
-	CHBox *hb = new CHBox(this);
-	layout()->addWidget(hb);
-	
-	PixmapLabel *label_name = new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_LEFT));
-	label_name->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-	
+	 
 	QPixmap value_pixmap(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VALUE));
 	QPixmap label_pixmap(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_LABEL));
 	PixmapSlider::Skin slider_skin(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_BASE),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_LIGHT),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_GRABBER));
@@ -159,25 +145,6 @@ ReverbPluginUI::ReverbPluginUI(QWidget *p_parent,ReverbPlugin *p_reverb) :SoundP
 	value->add_to_group(slider); //share group
 	
 	register_property_editor( value );
-	/** END **/
-	
-	new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_RIGHT));
-	
-	CHBox *hb_bottom = new CHBox(this);
-	layout()->addWidget(hb_bottom);
-	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_LEFT));
-	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM),PixmapLabel::EXPAND_TILE_H);
-	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_RIGHT));
-	
-	
-	layout()->setMargin(0);
-	layout()->setSpacing(0);
-	
-	hb->layout()->setMargin(0);
-	hb->layout()->setSpacing(0);	
-	
-	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-	
 	
 	
 }
