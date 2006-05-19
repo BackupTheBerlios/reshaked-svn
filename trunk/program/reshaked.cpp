@@ -24,6 +24,7 @@
 #include "plugin_UIs/chionic_interface.h"
 #include "plugin_UIs/simpler_ui.h"
 #include "plugins/limiter_plugin.h"
+#include "plugins/sound_plugin_eq.h"
 #include "plugin_UIs/reverb_plugin_ui.h"
 #include "plugin_UIs/filter_bank_plugin_ui.h"
 #include "drivers/get_time_posix.h"
@@ -88,6 +89,8 @@ static void init_sound_plugin_list() {
 	sound_plugin_list.add_info( ReShaked::ChorusPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::ReverbPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::LimiterPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::SoundPluginEQ::create_info_6() );
+	sound_plugin_list.add_info( ReShaked::SoundPluginEQ::create_info_10() );
 	
 	/* Tools */
 	sound_plugin_list.add_info( ReShaked::SplitterPlugin::create_info() );
