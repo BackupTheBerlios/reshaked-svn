@@ -38,13 +38,13 @@ bugs:
 effects:
 
 *amplifier(ratio and db)
--chorus
--reverb
--filterbank
+*chorus
+*reverb
+*filterbank
 -echo
--Eq: 6, 10, 21 ,31 bands
+*Eq: 6, 10, 21 ,31 bands
 -Distortion
--Compressor
+*Compressor
 -phaser
 
 
