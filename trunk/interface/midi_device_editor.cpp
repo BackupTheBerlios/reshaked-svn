@@ -332,7 +332,7 @@ MidiDeviceEditor::MidiDeviceEditor(QWidget *p_parent,MidiDeviceDescription *p_de
 	device_name->setText( QStrify(desc->get_name() ) );
 	QObject::connect(device_name,SIGNAL(textChanged(const QString&)),this,SLOT(device_name_changed( const QString& )));		
 	
-	CVBox *right_vb = new CVBox(main_hb);
+	QWidget *right_vb = new QWidget(main_hb);
 	right_vb->setLayout(new QVBoxLayout(right_vb));
 	main_hb->layout()->addWidget(right_vb);
 	main_hb->layout()->setAlignment(right_vb,Qt::AlignTop);
@@ -394,7 +394,7 @@ MidiDeviceEditor::MidiDeviceEditor(QWidget *p_parent,MidiDeviceDescription *p_de
 	bank_select_LSB->setValue(0);
 	QObject::connect(bank_select_LSB,SIGNAL(valueChanged(int)),this,SLOT(bank_select_LSB_changed(int)));
 	
-	right_vb = new CVBox(banks_hb);
+	right_vb = new QWidget(banks_hb);
 	right_vb->setLayout(new QVBoxLayout(right_vb));
 	banks_hb->layout()->addWidget(right_vb);
 	right_vb->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);

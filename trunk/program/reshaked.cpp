@@ -11,6 +11,7 @@
 #include "plugin_UIs/vst_plugin_ui.h"
 #include "engine/sound_plugin_list.h"
 #include "plugins/amplifier_plugin.h"
+#include "plugins/compressor_plugin.h"
 #include "plugins/tool_plugins.h"
 #include "plugins/sine_synth.h"
 #include "plugins/simpler.h"
@@ -89,6 +90,7 @@ static void init_sound_plugin_list() {
 	sound_plugin_list.add_info( ReShaked::ChorusPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::ReverbPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::LimiterPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::CompressorPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::SoundPluginEQ::create_info_6() );
 	sound_plugin_list.add_info( ReShaked::SoundPluginEQ::create_info_10() );
 	
