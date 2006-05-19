@@ -144,10 +144,10 @@ void CompressorPlugin::process_2(int p_frames) {
 		avg+=(double)frame_nrg;
 		undenormalise(avg);
 		avg_buffer[avg_pos]=frame_nrg;
-		if ( (++avg_pos)>avg_size)
+		if ( (++avg_pos)>current_avg_len)
 			avg_pos=0;
 		
-		float signal_nrg=(float)avg;
+		float signal_nrg=(float)avg/(float)current_avg_len;
 		
 		if (avg==0)
 			avg=0;
@@ -156,6 +156,7 @@ void CompressorPlugin::process_2(int p_frames) {
 		
 		if (threshold_f<signal_nrg) {
 		
+			
 			// ratio between the energy we have and the enrgy we want, this is the hard-compression
 			float signal_to_threshold_ratio=threshold_f/signal_nrg;
 			//the difference between the hard-compression and no-compression
