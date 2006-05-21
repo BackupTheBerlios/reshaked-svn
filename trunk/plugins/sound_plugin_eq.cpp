@@ -12,6 +12,10 @@
 #include "sound_plugin_eq.h"
 
 #include "dsp/formulas.h"
+
+#include "pixmaps/icon_eq_6.xpm"
+#include "pixmaps/icon_eq_10.xpm"
+
 namespace ReShaked {
 
 static SoundPlugin* create_eq_6(const SoundPluginInfo *p_info,int p_channels) {
@@ -37,7 +41,7 @@ const SoundPluginInfo *SoundPluginEQ::create_info_6() {
 	info.can_custom_channels=true;
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;
+	info.xpm_preview=(const char**)icon_eq_6_xpm;
 	info.creation_func=&create_eq_6;
 	info.version=1;	
 	return &info;
@@ -55,7 +59,7 @@ const SoundPluginInfo *SoundPluginEQ::create_info_10() {
 	info.can_custom_channels=true;
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;
+	info.xpm_preview=(const char**)icon_eq_10_xpm;
 	info.creation_func=&create_eq_10;
 	info.version=1;	
 	return &info;

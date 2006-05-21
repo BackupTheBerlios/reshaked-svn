@@ -142,6 +142,7 @@
 #include "pixmaps/default_skin/middle__separator_center.xpm"
 #include "pixmaps/default_skin/middle__separator_end.xpm"
 #include "pixmaps/default_skin/middle_separator_end.xpm"
+#include "pixmaps/default_skin/moog__mode.xpm"
 #include "pixmaps/default_skin/peakmon__bottom.xpm"
 #include "pixmaps/default_skin/peakmon__button_clear.xpm"
 #include "pixmaps/default_skin/peakmon__button_clear_pushed.xpm"
@@ -597,6 +598,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["middle__separator_end"]=THEME_MIDDLE__SEPARATOR_END;
     pixmap_map[THEME_MIDDLE_SEPARATOR_END]=QPixmap( (const char**) middle_separator_end_xpm); 
     pixmap_map_skin["middle_separator_end"]=THEME_MIDDLE_SEPARATOR_END;
+    pixmap_map[THEME_MOOG__MODE]=QPixmap( (const char**) moog__mode_xpm); 
+    pixmap_map_skin["moog__mode"]=THEME_MOOG__MODE;
     pixmap_map[THEME_PEAKMON__BOTTOM]=QPixmap( (const char**) peakmon__bottom_xpm); 
     pixmap_map_skin["peakmon__bottom"]=THEME_PEAKMON__BOTTOM;
     pixmap_map[THEME_PEAKMON__BUTTON_CLEAR]=QPixmap( (const char**) peakmon__button_clear_xpm); 

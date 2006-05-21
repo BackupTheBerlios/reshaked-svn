@@ -25,6 +25,7 @@ private:
 	AudioNode *owner; /* audionodes always own the audioplugs */
 	int channels;
 	Type type;
+	String name;
 	
 public:
 	void set_buffer(AudioBuffer* p_buff);
@@ -32,7 +33,8 @@ public:
 	int get_channels();
 	Type get_type();
 	AudioNode *get_owner();
-	
+	String get_name();
+	void set_name(String p_name);
 	AudioPlug(int p_plug_channels,Type p_type,AudioNode* p_owner);
 };
 

@@ -46,6 +46,10 @@ effects:
 -Distortion
 *Compressor
 -phaser
+*Moog VCF 
+-Stereo Enhancer
+-Frequency Splitter
+-Panner
 
 
 

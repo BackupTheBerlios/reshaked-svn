@@ -5,6 +5,14 @@
 namespace ReShaked {
 
 
+String AudioPlug::get_name() {
+	
+	return name;
+}
+void AudioPlug::set_name(String p_name) {
+	
+	name=p_name;
+}
 
 void AudioPlug::set_buffer(AudioBuffer *p_buff) {
 

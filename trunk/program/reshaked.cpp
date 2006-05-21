@@ -13,6 +13,7 @@
 #include "plugins/amplifier_plugin.h"
 #include "plugins/compressor_plugin.h"
 #include "plugins/tool_plugins.h"
+#include "plugins/moog_filter_plugin.h"
 #include "plugins/sine_synth.h"
 #include "plugins/simpler.h"
 #include "plugins/chionic.h"
@@ -24,7 +25,9 @@
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 #include "plugin_UIs/chionic_interface.h"
 #include "plugin_UIs/simpler_ui.h"
+#include "plugin_UIs/moog_filter_plugin_ui.h"
 #include "plugins/limiter_plugin.h"
+#include "plugins/freq_splitter_plugin.h"
 #include "plugins/sound_plugin_eq.h"
 #include "plugin_UIs/reverb_plugin_ui.h"
 #include "plugin_UIs/filter_bank_plugin_ui.h"
@@ -86,11 +89,13 @@ static void init_sound_plugin_list() {
 	
 	/* Effects */
 	sound_plugin_list.add_info( ReShaked::AmplifierPlugin::create_info() );
-	sound_plugin_list.add_info( ReShaked::FilterBankPlugin::create_info() );
-	sound_plugin_list.add_info( ReShaked::ChorusPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::ReverbPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::ChorusPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::LimiterPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::CompressorPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::FilterBankPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::MoogFilterPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::FreqSplitterPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::SoundPluginEQ::create_info_6() );
 	sound_plugin_list.add_info( ReShaked::SoundPluginEQ::create_info_10() );
 	
@@ -111,6 +116,7 @@ static void init_sound_plugin_UI_list() {
 	sound_plugin_UI_list.add_creator(    ReShaked::ReverbPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::FilterBankPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::LimiterPluginUI::create_this );
+	sound_plugin_UI_list.add_creator(    ReShaked::MoogFilterPluginUI::create_this );
 #ifdef VST_ENABLED
 	sound_plugin_UI_list.add_creator(    ReShaked::VST_PluginUI::create_this );
 #endif

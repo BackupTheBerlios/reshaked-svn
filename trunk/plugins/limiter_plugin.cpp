@@ -14,6 +14,9 @@
 #include <math.h>
 //#include "pixmaps/effect_limiter.xpm"
 #include "dsp/formulas.h"
+
+#include "pixmaps/icon_limiter.xpm"
+
 namespace ReShaked {
 
 static SoundPlugin* create_limiter(const SoundPluginInfo *p_info,int p_channels) {
@@ -37,7 +40,7 @@ const SoundPluginInfo *LimiterPlugin::create_info() {
 	info.custom_channels.push_back(4);
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;
+	info.xpm_preview=(const char**)icon_limiter_xpm;;
 	info.creation_func=&create_limiter;
 	info.version=1;	
 	return &info;

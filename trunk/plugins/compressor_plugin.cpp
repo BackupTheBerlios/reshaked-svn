@@ -14,6 +14,8 @@
 #include <math.h>
 #include "dsp/formulas.h"
 
+#include "pixmaps/icon_compressor.xpm"
+
 namespace ReShaked {
 
 static SoundPlugin* create_compressor(const SoundPluginInfo *p_info,int p_channels) {
@@ -37,7 +39,7 @@ const SoundPluginInfo *CompressorPlugin::create_info() {
 	info.custom_channels.push_back(4);
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;
+	info.xpm_preview=(const char**)icon_compressor_xpm;
 	info.creation_func=&create_compressor;
 	info.version=1;	
 	return &info;
@@ -231,6 +233,7 @@ CompressorPlugin::CompressorPlugin(const SoundPluginInfo *p_info,int p_channels)
 	
 	input_plug = new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	sidechain_plug = new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
+	sidechain_plug->set_name("Side");
 	output_plug = new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
 	
 	std::vector<String> mode_strings;

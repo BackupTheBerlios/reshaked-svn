@@ -278,8 +278,8 @@ void FilterBankEditor::mouseMoveEvent(QMouseEvent *e) {
 		float freq= float_2_freq(  (float)e->pos().x()/(float)width() ,MIN_FREQ,filter[drag.index].cutoff->get_max() );
 				
 		freq/=powf( 2 , cutoff_offset->get() );
-		filter[drag.index].cutoff->set(freq);
-		
+		//filter[drag.index].cutoff->set(freq);
+		set(drag.index,freq);
 		float reso=(float)(height()-e->pos().y())/height();
 		if (reso<0)
 			reso=0;
@@ -287,7 +287,8 @@ void FilterBankEditor::mouseMoveEvent(QMouseEvent *e) {
 			reso=1;
 		
 		reso*=filter[drag.index].resonance->get_max();
-		filter[drag.index].resonance->set(reso);
+		set(drag.index+filters,reso);
+		//filter[drag.index].resonance->set(reso);
 		update();
 	
 	}

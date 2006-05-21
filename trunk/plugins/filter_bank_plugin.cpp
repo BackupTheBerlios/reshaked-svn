@@ -10,7 +10,7 @@
 //
 //
 #include "filter_bank_plugin.h"
-
+#include "pixmaps/icon_filterbank.xpm"
 #include <math.h>
 
 namespace ReShaked {
@@ -33,7 +33,7 @@ const SoundPluginInfo *FilterBankPlugin::create_info() {
 	info.can_custom_channels=true;
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;
+	info.xpm_preview=(const char**)icon_filterbank_xpm;
 	info.creation_func=&create_amplifier;
 	info.version=1;	
 	
