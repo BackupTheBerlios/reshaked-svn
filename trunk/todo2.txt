@@ -48,7 +48,7 @@ effects:
 -phaser
 *Moog VCF 
 -Stereo Enhancer
--Frequency Splitter
+*Frequency Splitter
 -Panner
 
 
