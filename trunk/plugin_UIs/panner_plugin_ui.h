@@ -12,16 +12,22 @@
 #ifndef RESHAKEDPANNER_PLUGIN_UI_H
 #define RESHAKEDPANNER_PLUGIN_UI_H
 
+#include "interface/sound_plugin_ui.h"
+
 namespace ReShaked {
 
 /**
-	@author Juan Linietsky <reshaked@gmail.com>
-*/
-class PannerPluginUI{
+	@author Juan Linietsky <reduzio@gmail.com>
+ */
+class PannerPluginUI : public SoundPluginUI {
+	
 public:
-    PannerPluginUI();
 
-    ~PannerPluginUI();
+
+	static SoundPluginUI* create_this(SoundPlugin *p_plugin,QWidget *p_parent);
+
+	PannerPluginUI(QWidget *p_parent,SoundPlugin *p_plugin);
+	~PannerPluginUI();
 
 };
 

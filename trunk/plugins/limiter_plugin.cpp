@@ -122,6 +122,12 @@ void LimiterPlugin::reset() {
 
 void LimiterPlugin::process(int p_frames) {
 
+	if (skips_processing()) {
+	
+		output_plug->get_buffer()->copy_from( input_plug->get_buffer(), p_frames ); 
+		return;
+	}
+	
 	/* see? this is good use for templates */
 	if (get_channels_created()==1)
 		process_1(p_frames);

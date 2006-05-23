@@ -102,8 +102,8 @@ void PannerEditor::set_properties(Property *p_pos,Property *p_depth) {
 	pos=p_pos;
 	depth=p_depth;
 	
-	set_property(0,p_pos);
-	set_property(1,p_depth);
+	set_property(PROP_PAN,p_pos);
+	set_property(PROP_DEPTH,p_depth);
 	
 	update();
 	

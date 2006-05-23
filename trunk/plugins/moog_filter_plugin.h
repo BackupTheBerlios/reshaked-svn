@@ -33,7 +33,8 @@ class MoogFilterPlugin : public SoundPlugin {
 	struct History  {
 		
 		float b0, b1, b2, b3, b4; //history for each 1pole
-		History() { b0=b1=b2=b3=b4=0; }
+		void clear() { b0=b1=b2=b3=b4=0; }
+		History() { clear(); }
 	};
 	
 	History *h;
@@ -60,6 +61,7 @@ public:
 
 	/* Setting up */
 	void set_mixing_rate(float p_mixing_rate);
+	void reset();
 
 	/* Processing */
 	void process(int p_frames);

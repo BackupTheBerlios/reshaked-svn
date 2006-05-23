@@ -113,6 +113,7 @@ void CompressorPlugin::reset() {
 void CompressorPlugin::process_1(int p_frames) {
 	
 	
+	
 }
 void CompressorPlugin::process_2(int p_frames) {
 	
@@ -196,6 +197,11 @@ void CompressorPlugin::process_4(int p_frames) {
 /* Processing */
 void CompressorPlugin::process(int p_frames) {
 	
+	if (skips_processing()) {
+	
+		output_plug->get_buffer()->copy_from( input_plug->get_buffer(), p_frames ); 
+		return;
+	}
 	
 	int desired_avg_len=lrint((response.get()/1000.0)*mix_rate);
 	

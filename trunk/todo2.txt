@@ -47,9 +47,9 @@ effects:
 *Compressor
 -phaser
 *Moog VCF 
--Stereo Enhancer
+*Stereo Enhancer
 *Frequency Splitter
--Panner
+*Panner
 
 
 

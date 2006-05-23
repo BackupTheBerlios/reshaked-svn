@@ -121,6 +121,12 @@ void SoundPluginEQ::reset() {
 /* Processing */
 void SoundPluginEQ::process(int p_frames) {
 	
+	if (skips_processing()) {
+	
+		output_plug->get_buffer()->copy_from( input_plug->get_buffer(), p_frames ); 
+		return;
+	}
+	
 	output_plug->get_buffer()->clear( p_frames );
 	
 	for (int i=0;i<get_channels_created();i++) {

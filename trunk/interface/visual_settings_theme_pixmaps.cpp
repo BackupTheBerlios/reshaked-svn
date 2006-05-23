@@ -143,6 +143,17 @@
 #include "pixmaps/default_skin/middle__separator_end.xpm"
 #include "pixmaps/default_skin/middle_separator_end.xpm"
 #include "pixmaps/default_skin/moog__mode.xpm"
+#include "pixmaps/default_skin/panner__bottom.xpm"
+#include "pixmaps/default_skin/panner__left.xpm"
+#include "pixmaps/default_skin/panner__mode.xpm"
+#include "pixmaps/default_skin/panner__pos.xpm"
+#include "pixmaps/default_skin/panner__quad_middle.xpm"
+#include "pixmaps/default_skin/panner__quad_panner.xpm"
+#include "pixmaps/default_skin/panner__quad_top.xpm"
+#include "pixmaps/default_skin/panner__right.xpm"
+#include "pixmaps/default_skin/panner__stereo_middle.xpm"
+#include "pixmaps/default_skin/panner__stereo_panner.xpm"
+#include "pixmaps/default_skin/panner__stereo_top.xpm"
 #include "pixmaps/default_skin/peakmon__bottom.xpm"
 #include "pixmaps/default_skin/peakmon__button_clear.xpm"
 #include "pixmaps/default_skin/peakmon__button_clear_pushed.xpm"
@@ -600,6 +611,28 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["middle_separator_end"]=THEME_MIDDLE_SEPARATOR_END;
     pixmap_map[THEME_MOOG__MODE]=QPixmap( (const char**) moog__mode_xpm); 
     pixmap_map_skin["moog__mode"]=THEME_MOOG__MODE;
+    pixmap_map[THEME_PANNER__BOTTOM]=QPixmap( (const char**) panner__bottom_xpm); 
+    pixmap_map_skin["panner__bottom"]=THEME_PANNER__BOTTOM;
+    pixmap_map[THEME_PANNER__LEFT]=QPixmap( (const char**) panner__left_xpm); 
+    pixmap_map_skin["panner__left"]=THEME_PANNER__LEFT;
+    pixmap_map[THEME_PANNER__MODE]=QPixmap( (const char**) panner__mode_xpm); 
+    pixmap_map_skin["panner__mode"]=THEME_PANNER__MODE;
+    pixmap_map[THEME_PANNER__POS]=QPixmap( (const char**) panner__pos_xpm); 
+    pixmap_map_skin["panner__pos"]=THEME_PANNER__POS;
+    pixmap_map[THEME_PANNER__QUAD_MIDDLE]=QPixmap( (const char**) panner__quad_middle_xpm); 
+    pixmap_map_skin["panner__quad_middle"]=THEME_PANNER__QUAD_MIDDLE;
+    pixmap_map[THEME_PANNER__QUAD_PANNER]=QPixmap( (const char**) panner__quad_panner_xpm); 
+    pixmap_map_skin["panner__quad_panner"]=THEME_PANNER__QUAD_PANNER;
+    pixmap_map[THEME_PANNER__QUAD_TOP]=QPixmap( (const char**) panner__quad_top_xpm); 
+    pixmap_map_skin["panner__quad_top"]=THEME_PANNER__QUAD_TOP;
+    pixmap_map[THEME_PANNER__RIGHT]=QPixmap( (const char**) panner__right_xpm); 
+    pixmap_map_skin["panner__right"]=THEME_PANNER__RIGHT;
+    pixmap_map[THEME_PANNER__STEREO_MIDDLE]=QPixmap( (const char**) panner__stereo_middle_xpm); 
+    pixmap_map_skin["panner__stereo_middle"]=THEME_PANNER__STEREO_MIDDLE;
+    pixmap_map[THEME_PANNER__STEREO_PANNER]=QPixmap( (const char**) panner__stereo_panner_xpm); 
+    pixmap_map_skin["panner__stereo_panner"]=THEME_PANNER__STEREO_PANNER;
+    pixmap_map[THEME_PANNER__STEREO_TOP]=QPixmap( (const char**) panner__stereo_top_xpm); 
+    pixmap_map_skin["panner__stereo_top"]=THEME_PANNER__STEREO_TOP;
     pixmap_map[THEME_PEAKMON__BOTTOM]=QPixmap( (const char**) peakmon__bottom_xpm); 
     pixmap_map_skin["peakmon__bottom"]=THEME_PEAKMON__BOTTOM;
     pixmap_map[THEME_PEAKMON__BUTTON_CLEAR]=QPixmap( (const char**) peakmon__button_clear_xpm); 

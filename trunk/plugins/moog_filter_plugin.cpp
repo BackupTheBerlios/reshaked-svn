@@ -84,9 +84,20 @@ void MoogFilterPlugin::set_mixing_rate(float p_mixing_rate) { //sort of useless
 	
 	mix_rate=p_mixing_rate;
 }
+void MoogFilterPlugin::reset() {
+	
+	for (int i=0;i<get_channels_created();i++)
+		h[i].clear();
 
+}
 /* Processing */
 void MoogFilterPlugin::process(int p_frames) {
+	
+	if (skips_processing()) {
+	
+		output_plug->get_buffer()->copy_from( input_plug->get_buffer(), p_frames ); 
+		return;
+	}
 	
 // Moog 24 dB/oct resonant lowpass VCF
 // References: CSound source code, Stilson/Smith CCRMA paper.
@@ -171,7 +182,7 @@ MoogFilterPlugin::MoogFilterPlugin(const SoundPluginInfo *p_info,int p_channels)
 	property_list.push_back(&resonance);
 	property_list.push_back(&type);
 	mix_rate=44100;
-	
+	reset();	
 }
 
 
