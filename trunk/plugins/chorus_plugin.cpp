@@ -15,7 +15,7 @@
 
 namespace ReShaked {
 
-static SoundPlugin* create_amplifier(const SoundPluginInfo *p_info,int p_channels) {
+static SoundPlugin* create_chorus(const SoundPluginInfo *p_info,int p_channels) {
 	
 	return new ChorusPlugin(p_info,p_channels);
 	
@@ -37,7 +37,7 @@ const SoundPluginInfo *ChorusPlugin::create_info() {
 	info.has_internal_UI=false; 
 	info.is_synth=false;
 	info.xpm_preview=(const char**)icon_chorus_xpm;
-	info.creation_func=&create_amplifier;
+	info.creation_func=&create_chorus;
 	info.version=1;	
 	return &info;
 }
