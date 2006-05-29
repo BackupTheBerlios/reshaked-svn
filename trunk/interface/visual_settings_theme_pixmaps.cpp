@@ -48,6 +48,28 @@
 #include "pixmaps/default_skin/chorus__voice_3_active.xpm"
 #include "pixmaps/default_skin/chorus__voice_4.xpm"
 #include "pixmaps/default_skin/chorus__voice_4_active.xpm"
+#include "pixmaps/default_skin/delayline__bottom.xpm"
+#include "pixmaps/default_skin/delayline__bottom_external_separator.xpm"
+#include "pixmaps/default_skin/delayline__bottom_internal_separator.xpm"
+#include "pixmaps/default_skin/delayline__button.xpm"
+#include "pixmaps/default_skin/delayline__button_active.xpm"
+#include "pixmaps/default_skin/delayline__display_lower.xpm"
+#include "pixmaps/default_skin/delayline__display_upper.xpm"
+#include "pixmaps/default_skin/delayline__knob_lower.xpm"
+#include "pixmaps/default_skin/delayline__knob_pos.xpm"
+#include "pixmaps/default_skin/delayline__knob_upper.xpm"
+#include "pixmaps/default_skin/delayline__label_fdbck.xpm"
+#include "pixmaps/default_skin/delayline__label_main.xpm"
+#include "pixmaps/default_skin/delayline__label_tap1.xpm"
+#include "pixmaps/default_skin/delayline__label_tap2.xpm"
+#include "pixmaps/default_skin/delayline__main_noknob.xpm"
+#include "pixmaps/default_skin/delayline__middle_bpm.xpm"
+#include "pixmaps/default_skin/delayline__middle_msec.xpm"
+#include "pixmaps/default_skin/delayline__nopan.xpm"
+#include "pixmaps/default_skin/delayline__quadpan.xpm"
+#include "pixmaps/default_skin/delayline__quadpan_bottom.xpm"
+#include "pixmaps/default_skin/delayline__quadpan_pos.xpm"
+#include "pixmaps/default_skin/delayline__quadpan_top.xpm"
 #include "pixmaps/default_skin/edit_toolbar__automation_mode_envelope.xpm"
 #include "pixmaps/default_skin/edit_toolbar__automation_mode_envelope_active.xpm"
 #include "pixmaps/default_skin/edit_toolbar__automation_mode_stream.xpm"
@@ -205,6 +227,7 @@
 #include "pixmaps/default_skin/reverb__display.xpm"
 #include "pixmaps/default_skin/reverb__ir.xpm"
 #include "pixmaps/default_skin/reverb__knob.xpm"
+#include "pixmaps/default_skin/reverb__knob_pos.xpm"
 #include "pixmaps/default_skin/reverb__labels.xpm"
 #include "pixmaps/default_skin/reverb__top.xpm"
 #include "pixmaps/default_skin/right__margin.xpm"
@@ -234,6 +257,69 @@
 #include "pixmaps/default_skin/simpler__right.xpm"
 #include "pixmaps/default_skin/simpler__top_left.xpm"
 #include "pixmaps/default_skin/simpler__top_right.xpm"
+#include "pixmaps/default_skin/sinth__begin.xpm"
+#include "pixmaps/default_skin/sinth__end.xpm"
+#include "pixmaps/default_skin/sinth__filter_attack_display.xpm"
+#include "pixmaps/default_skin/sinth__filter_display.xpm"
+#include "pixmaps/default_skin/sinth__filter_envelope_attack.xpm"
+#include "pixmaps/default_skin/sinth__filter_envelope_attack_active.xpm"
+#include "pixmaps/default_skin/sinth__filter_envelope_label.xpm"
+#include "pixmaps/default_skin/sinth__filter_envelope_release.xpm"
+#include "pixmaps/default_skin/sinth__filter_envelope_release_active.xpm"
+#include "pixmaps/default_skin/sinth__filter_lfo_bottom.xpm"
+#include "pixmaps/default_skin/sinth__filter_lfo_depth_knob.xpm"
+#include "pixmaps/default_skin/sinth__filter_lfo_depth_label.xpm"
+#include "pixmaps/default_skin/sinth__filter_lfo_speed_knob.xpm"
+#include "pixmaps/default_skin/sinth__filter_lfo_speed_label.xpm"
+#include "pixmaps/default_skin/sinth__filter_mode_bpf.xpm"
+#include "pixmaps/default_skin/sinth__filter_mode_bpf_active.xpm"
+#include "pixmaps/default_skin/sinth__filter_mode_hpf.xpm"
+#include "pixmaps/default_skin/sinth__filter_mode_hpf_active.xpm"
+#include "pixmaps/default_skin/sinth__filter_mode_lpf.xpm"
+#include "pixmaps/default_skin/sinth__filter_mode_lpf_active.xpm"
+#include "pixmaps/default_skin/sinth__filter_mode_off.xpm"
+#include "pixmaps/default_skin/sinth__filter_mode_off_active.xpm"
+#include "pixmaps/default_skin/sinth__filter_release_display.xpm"
+#include "pixmaps/default_skin/sinth__filter_separator.xpm"
+#include "pixmaps/default_skin/sinth__filter_top.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_bottom.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_display.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_middle.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_oscenv_separator.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_top.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_wave_edit.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_wave_edit_pushed.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_wave_saw.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_wave_saw_pushed.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_wave_sine.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_wave_sine_pushed.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_wave_square.xpm"
+#include "pixmaps/default_skin/sinth__oscedit_wave_square_pushed.xpm"
+#include "pixmaps/default_skin/sinth__oscenv_bottom.xpm"
+#include "pixmaps/default_skin/sinth__oscenv_middle.xpm"
+#include "pixmaps/default_skin/sinth__oscenv_osc1_knob.xpm"
+#include "pixmaps/default_skin/sinth__oscenv_osc1_knob_separator.xpm"
+#include "pixmaps/default_skin/sinth__oscenv_osc1_label.xpm"
+#include "pixmaps/default_skin/sinth__oscenv_osc2_knob.xpm"
+#include "pixmaps/default_skin/sinth__oscenv_osc2_knob_separator.xpm"
+#include "pixmaps/default_skin/sinth__oscenv_osc2_label.xpm"
+#include "pixmaps/default_skin/sinth__oscenv_osctune_separator.xpm"
+#include "pixmaps/default_skin/sinth__osctune_bottom.xpm"
+#include "pixmaps/default_skin/sinth__osctune_display.xpm"
+#include "pixmaps/default_skin/sinth__osctune_osc1_coarse_label.xpm"
+#include "pixmaps/default_skin/sinth__osctune_osc1_fine_label.xpm"
+#include "pixmaps/default_skin/sinth__osctune_osc2_coarse_label.xpm"
+#include "pixmaps/default_skin/sinth__osctune_osc2_fine_label.xpm"
+#include "pixmaps/default_skin/sinth__osctune_routing_separator.xpm"
+#include "pixmaps/default_skin/sinth__osctune_updown.xpm"
+#include "pixmaps/default_skin/sinth__routing_bottom.xpm"
+#include "pixmaps/default_skin/sinth__routing_combo.xpm"
+#include "pixmaps/default_skin/sinth__routing_combo_right.xpm"
+#include "pixmaps/default_skin/sinth__routing_filter_separator.xpm"
+#include "pixmaps/default_skin/sinth__routing_middle.xpm"
+#include "pixmaps/default_skin/sinth__routing_strength.xpm"
+#include "pixmaps/default_skin/sinth__routing_strength_left.xpm"
+#include "pixmaps/default_skin/sinth__routing_top.xpm"
 #include "pixmaps/default_skin/top__bpm_bottom.xpm"
 #include "pixmaps/default_skin/top__bpm_display.xpm"
 #include "pixmaps/default_skin/top__bpm_end.xpm"
@@ -421,6 +507,50 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["chorus__voice_4"]=THEME_CHORUS__VOICE_4;
     pixmap_map[THEME_CHORUS__VOICE_4_ACTIVE]=QPixmap( (const char**) chorus__voice_4_active_xpm); 
     pixmap_map_skin["chorus__voice_4_active"]=THEME_CHORUS__VOICE_4_ACTIVE;
+    pixmap_map[THEME_DELAYLINE__BOTTOM]=QPixmap( (const char**) delayline__bottom_xpm); 
+    pixmap_map_skin["delayline__bottom"]=THEME_DELAYLINE__BOTTOM;
+    pixmap_map[THEME_DELAYLINE__BOTTOM_EXTERNAL_SEPARATOR]=QPixmap( (const char**) delayline__bottom_external_separator_xpm); 
+    pixmap_map_skin["delayline__bottom_external_separator"]=THEME_DELAYLINE__BOTTOM_EXTERNAL_SEPARATOR;
+    pixmap_map[THEME_DELAYLINE__BOTTOM_INTERNAL_SEPARATOR]=QPixmap( (const char**) delayline__bottom_internal_separator_xpm); 
+    pixmap_map_skin["delayline__bottom_internal_separator"]=THEME_DELAYLINE__BOTTOM_INTERNAL_SEPARATOR;
+    pixmap_map[THEME_DELAYLINE__BUTTON]=QPixmap( (const char**) delayline__button_xpm); 
+    pixmap_map_skin["delayline__button"]=THEME_DELAYLINE__BUTTON;
+    pixmap_map[THEME_DELAYLINE__BUTTON_ACTIVE]=QPixmap( (const char**) delayline__button_active_xpm); 
+    pixmap_map_skin["delayline__button_active"]=THEME_DELAYLINE__BUTTON_ACTIVE;
+    pixmap_map[THEME_DELAYLINE__DISPLAY_LOWER]=QPixmap( (const char**) delayline__display_lower_xpm); 
+    pixmap_map_skin["delayline__display_lower"]=THEME_DELAYLINE__DISPLAY_LOWER;
+    pixmap_map[THEME_DELAYLINE__DISPLAY_UPPER]=QPixmap( (const char**) delayline__display_upper_xpm); 
+    pixmap_map_skin["delayline__display_upper"]=THEME_DELAYLINE__DISPLAY_UPPER;
+    pixmap_map[THEME_DELAYLINE__KNOB_LOWER]=QPixmap( (const char**) delayline__knob_lower_xpm); 
+    pixmap_map_skin["delayline__knob_lower"]=THEME_DELAYLINE__KNOB_LOWER;
+    pixmap_map[THEME_DELAYLINE__KNOB_POS]=QPixmap( (const char**) delayline__knob_pos_xpm); 
+    pixmap_map_skin["delayline__knob_pos"]=THEME_DELAYLINE__KNOB_POS;
+    pixmap_map[THEME_DELAYLINE__KNOB_UPPER]=QPixmap( (const char**) delayline__knob_upper_xpm); 
+    pixmap_map_skin["delayline__knob_upper"]=THEME_DELAYLINE__KNOB_UPPER;
+    pixmap_map[THEME_DELAYLINE__LABEL_FDBCK]=QPixmap( (const char**) delayline__label_fdbck_xpm); 
+    pixmap_map_skin["delayline__label_fdbck"]=THEME_DELAYLINE__LABEL_FDBCK;
+    pixmap_map[THEME_DELAYLINE__LABEL_MAIN]=QPixmap( (const char**) delayline__label_main_xpm); 
+    pixmap_map_skin["delayline__label_main"]=THEME_DELAYLINE__LABEL_MAIN;
+    pixmap_map[THEME_DELAYLINE__LABEL_TAP1]=QPixmap( (const char**) delayline__label_tap1_xpm); 
+    pixmap_map_skin["delayline__label_tap1"]=THEME_DELAYLINE__LABEL_TAP1;
+    pixmap_map[THEME_DELAYLINE__LABEL_TAP2]=QPixmap( (const char**) delayline__label_tap2_xpm); 
+    pixmap_map_skin["delayline__label_tap2"]=THEME_DELAYLINE__LABEL_TAP2;
+    pixmap_map[THEME_DELAYLINE__MAIN_NOKNOB]=QPixmap( (const char**) delayline__main_noknob_xpm); 
+    pixmap_map_skin["delayline__main_noknob"]=THEME_DELAYLINE__MAIN_NOKNOB;
+    pixmap_map[THEME_DELAYLINE__MIDDLE_BPM]=QPixmap( (const char**) delayline__middle_bpm_xpm); 
+    pixmap_map_skin["delayline__middle_bpm"]=THEME_DELAYLINE__MIDDLE_BPM;
+    pixmap_map[THEME_DELAYLINE__MIDDLE_MSEC]=QPixmap( (const char**) delayline__middle_msec_xpm); 
+    pixmap_map_skin["delayline__middle_msec"]=THEME_DELAYLINE__MIDDLE_MSEC;
+    pixmap_map[THEME_DELAYLINE__NOPAN]=QPixmap( (const char**) delayline__nopan_xpm); 
+    pixmap_map_skin["delayline__nopan"]=THEME_DELAYLINE__NOPAN;
+    pixmap_map[THEME_DELAYLINE__QUADPAN]=QPixmap( (const char**) delayline__quadpan_xpm); 
+    pixmap_map_skin["delayline__quadpan"]=THEME_DELAYLINE__QUADPAN;
+    pixmap_map[THEME_DELAYLINE__QUADPAN_BOTTOM]=QPixmap( (const char**) delayline__quadpan_bottom_xpm); 
+    pixmap_map_skin["delayline__quadpan_bottom"]=THEME_DELAYLINE__QUADPAN_BOTTOM;
+    pixmap_map[THEME_DELAYLINE__QUADPAN_POS]=QPixmap( (const char**) delayline__quadpan_pos_xpm); 
+    pixmap_map_skin["delayline__quadpan_pos"]=THEME_DELAYLINE__QUADPAN_POS;
+    pixmap_map[THEME_DELAYLINE__QUADPAN_TOP]=QPixmap( (const char**) delayline__quadpan_top_xpm); 
+    pixmap_map_skin["delayline__quadpan_top"]=THEME_DELAYLINE__QUADPAN_TOP;
     pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE]=QPixmap( (const char**) edit_toolbar__automation_mode_envelope_xpm); 
     pixmap_map_skin["edit_toolbar__automation_mode_envelope"]=THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE;
     pixmap_map[THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE_ACTIVE]=QPixmap( (const char**) edit_toolbar__automation_mode_envelope_active_xpm); 
@@ -735,6 +865,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["reverb__ir"]=THEME_REVERB__IR;
     pixmap_map[THEME_REVERB__KNOB]=QPixmap( (const char**) reverb__knob_xpm); 
     pixmap_map_skin["reverb__knob"]=THEME_REVERB__KNOB;
+    pixmap_map[THEME_REVERB__KNOB_POS]=QPixmap( (const char**) reverb__knob_pos_xpm); 
+    pixmap_map_skin["reverb__knob_pos"]=THEME_REVERB__KNOB_POS;
     pixmap_map[THEME_REVERB__LABELS]=QPixmap( (const char**) reverb__labels_xpm); 
     pixmap_map_skin["reverb__labels"]=THEME_REVERB__LABELS;
     pixmap_map[THEME_REVERB__TOP]=QPixmap( (const char**) reverb__top_xpm); 
@@ -793,6 +925,132 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["simpler__top_left"]=THEME_SIMPLER__TOP_LEFT;
     pixmap_map[THEME_SIMPLER__TOP_RIGHT]=QPixmap( (const char**) simpler__top_right_xpm); 
     pixmap_map_skin["simpler__top_right"]=THEME_SIMPLER__TOP_RIGHT;
+    pixmap_map[THEME_SINTH__BEGIN]=QPixmap( (const char**) sinth__begin_xpm); 
+    pixmap_map_skin["sinth__begin"]=THEME_SINTH__BEGIN;
+    pixmap_map[THEME_SINTH__END]=QPixmap( (const char**) sinth__end_xpm); 
+    pixmap_map_skin["sinth__end"]=THEME_SINTH__END;
+    pixmap_map[THEME_SINTH__FILTER_ATTACK_DISPLAY]=QPixmap( (const char**) sinth__filter_attack_display_xpm); 
+    pixmap_map_skin["sinth__filter_attack_display"]=THEME_SINTH__FILTER_ATTACK_DISPLAY;
+    pixmap_map[THEME_SINTH__FILTER_DISPLAY]=QPixmap( (const char**) sinth__filter_display_xpm); 
+    pixmap_map_skin["sinth__filter_display"]=THEME_SINTH__FILTER_DISPLAY;
+    pixmap_map[THEME_SINTH__FILTER_ENVELOPE_ATTACK]=QPixmap( (const char**) sinth__filter_envelope_attack_xpm); 
+    pixmap_map_skin["sinth__filter_envelope_attack"]=THEME_SINTH__FILTER_ENVELOPE_ATTACK;
+    pixmap_map[THEME_SINTH__FILTER_ENVELOPE_ATTACK_ACTIVE]=QPixmap( (const char**) sinth__filter_envelope_attack_active_xpm); 
+    pixmap_map_skin["sinth__filter_envelope_attack_active"]=THEME_SINTH__FILTER_ENVELOPE_ATTACK_ACTIVE;
+    pixmap_map[THEME_SINTH__FILTER_ENVELOPE_LABEL]=QPixmap( (const char**) sinth__filter_envelope_label_xpm); 
+    pixmap_map_skin["sinth__filter_envelope_label"]=THEME_SINTH__FILTER_ENVELOPE_LABEL;
+    pixmap_map[THEME_SINTH__FILTER_ENVELOPE_RELEASE]=QPixmap( (const char**) sinth__filter_envelope_release_xpm); 
+    pixmap_map_skin["sinth__filter_envelope_release"]=THEME_SINTH__FILTER_ENVELOPE_RELEASE;
+    pixmap_map[THEME_SINTH__FILTER_ENVELOPE_RELEASE_ACTIVE]=QPixmap( (const char**) sinth__filter_envelope_release_active_xpm); 
+    pixmap_map_skin["sinth__filter_envelope_release_active"]=THEME_SINTH__FILTER_ENVELOPE_RELEASE_ACTIVE;
+    pixmap_map[THEME_SINTH__FILTER_LFO_BOTTOM]=QPixmap( (const char**) sinth__filter_lfo_bottom_xpm); 
+    pixmap_map_skin["sinth__filter_lfo_bottom"]=THEME_SINTH__FILTER_LFO_BOTTOM;
+    pixmap_map[THEME_SINTH__FILTER_LFO_DEPTH_KNOB]=QPixmap( (const char**) sinth__filter_lfo_depth_knob_xpm); 
+    pixmap_map_skin["sinth__filter_lfo_depth_knob"]=THEME_SINTH__FILTER_LFO_DEPTH_KNOB;
+    pixmap_map[THEME_SINTH__FILTER_LFO_DEPTH_LABEL]=QPixmap( (const char**) sinth__filter_lfo_depth_label_xpm); 
+    pixmap_map_skin["sinth__filter_lfo_depth_label"]=THEME_SINTH__FILTER_LFO_DEPTH_LABEL;
+    pixmap_map[THEME_SINTH__FILTER_LFO_SPEED_KNOB]=QPixmap( (const char**) sinth__filter_lfo_speed_knob_xpm); 
+    pixmap_map_skin["sinth__filter_lfo_speed_knob"]=THEME_SINTH__FILTER_LFO_SPEED_KNOB;
+    pixmap_map[THEME_SINTH__FILTER_LFO_SPEED_LABEL]=QPixmap( (const char**) sinth__filter_lfo_speed_label_xpm); 
+    pixmap_map_skin["sinth__filter_lfo_speed_label"]=THEME_SINTH__FILTER_LFO_SPEED_LABEL;
+    pixmap_map[THEME_SINTH__FILTER_MODE_BPF]=QPixmap( (const char**) sinth__filter_mode_bpf_xpm); 
+    pixmap_map_skin["sinth__filter_mode_bpf"]=THEME_SINTH__FILTER_MODE_BPF;
+    pixmap_map[THEME_SINTH__FILTER_MODE_BPF_ACTIVE]=QPixmap( (const char**) sinth__filter_mode_bpf_active_xpm); 
+    pixmap_map_skin["sinth__filter_mode_bpf_active"]=THEME_SINTH__FILTER_MODE_BPF_ACTIVE;
+    pixmap_map[THEME_SINTH__FILTER_MODE_HPF]=QPixmap( (const char**) sinth__filter_mode_hpf_xpm); 
+    pixmap_map_skin["sinth__filter_mode_hpf"]=THEME_SINTH__FILTER_MODE_HPF;
+    pixmap_map[THEME_SINTH__FILTER_MODE_HPF_ACTIVE]=QPixmap( (const char**) sinth__filter_mode_hpf_active_xpm); 
+    pixmap_map_skin["sinth__filter_mode_hpf_active"]=THEME_SINTH__FILTER_MODE_HPF_ACTIVE;
+    pixmap_map[THEME_SINTH__FILTER_MODE_LPF]=QPixmap( (const char**) sinth__filter_mode_lpf_xpm); 
+    pixmap_map_skin["sinth__filter_mode_lpf"]=THEME_SINTH__FILTER_MODE_LPF;
+    pixmap_map[THEME_SINTH__FILTER_MODE_LPF_ACTIVE]=QPixmap( (const char**) sinth__filter_mode_lpf_active_xpm); 
+    pixmap_map_skin["sinth__filter_mode_lpf_active"]=THEME_SINTH__FILTER_MODE_LPF_ACTIVE;
+    pixmap_map[THEME_SINTH__FILTER_MODE_OFF]=QPixmap( (const char**) sinth__filter_mode_off_xpm); 
+    pixmap_map_skin["sinth__filter_mode_off"]=THEME_SINTH__FILTER_MODE_OFF;
+    pixmap_map[THEME_SINTH__FILTER_MODE_OFF_ACTIVE]=QPixmap( (const char**) sinth__filter_mode_off_active_xpm); 
+    pixmap_map_skin["sinth__filter_mode_off_active"]=THEME_SINTH__FILTER_MODE_OFF_ACTIVE;
+    pixmap_map[THEME_SINTH__FILTER_RELEASE_DISPLAY]=QPixmap( (const char**) sinth__filter_release_display_xpm); 
+    pixmap_map_skin["sinth__filter_release_display"]=THEME_SINTH__FILTER_RELEASE_DISPLAY;
+    pixmap_map[THEME_SINTH__FILTER_SEPARATOR]=QPixmap( (const char**) sinth__filter_separator_xpm); 
+    pixmap_map_skin["sinth__filter_separator"]=THEME_SINTH__FILTER_SEPARATOR;
+    pixmap_map[THEME_SINTH__FILTER_TOP]=QPixmap( (const char**) sinth__filter_top_xpm); 
+    pixmap_map_skin["sinth__filter_top"]=THEME_SINTH__FILTER_TOP;
+    pixmap_map[THEME_SINTH__OSCEDIT_BOTTOM]=QPixmap( (const char**) sinth__oscedit_bottom_xpm); 
+    pixmap_map_skin["sinth__oscedit_bottom"]=THEME_SINTH__OSCEDIT_BOTTOM;
+    pixmap_map[THEME_SINTH__OSCEDIT_DISPLAY]=QPixmap( (const char**) sinth__oscedit_display_xpm); 
+    pixmap_map_skin["sinth__oscedit_display"]=THEME_SINTH__OSCEDIT_DISPLAY;
+    pixmap_map[THEME_SINTH__OSCEDIT_MIDDLE]=QPixmap( (const char**) sinth__oscedit_middle_xpm); 
+    pixmap_map_skin["sinth__oscedit_middle"]=THEME_SINTH__OSCEDIT_MIDDLE;
+    pixmap_map[THEME_SINTH__OSCEDIT_OSCENV_SEPARATOR]=QPixmap( (const char**) sinth__oscedit_oscenv_separator_xpm); 
+    pixmap_map_skin["sinth__oscedit_oscenv_separator"]=THEME_SINTH__OSCEDIT_OSCENV_SEPARATOR;
+    pixmap_map[THEME_SINTH__OSCEDIT_TOP]=QPixmap( (const char**) sinth__oscedit_top_xpm); 
+    pixmap_map_skin["sinth__oscedit_top"]=THEME_SINTH__OSCEDIT_TOP;
+    pixmap_map[THEME_SINTH__OSCEDIT_WAVE_EDIT]=QPixmap( (const char**) sinth__oscedit_wave_edit_xpm); 
+    pixmap_map_skin["sinth__oscedit_wave_edit"]=THEME_SINTH__OSCEDIT_WAVE_EDIT;
+    pixmap_map[THEME_SINTH__OSCEDIT_WAVE_EDIT_PUSHED]=QPixmap( (const char**) sinth__oscedit_wave_edit_pushed_xpm); 
+    pixmap_map_skin["sinth__oscedit_wave_edit_pushed"]=THEME_SINTH__OSCEDIT_WAVE_EDIT_PUSHED;
+    pixmap_map[THEME_SINTH__OSCEDIT_WAVE_SAW]=QPixmap( (const char**) sinth__oscedit_wave_saw_xpm); 
+    pixmap_map_skin["sinth__oscedit_wave_saw"]=THEME_SINTH__OSCEDIT_WAVE_SAW;
+    pixmap_map[THEME_SINTH__OSCEDIT_WAVE_SAW_PUSHED]=QPixmap( (const char**) sinth__oscedit_wave_saw_pushed_xpm); 
+    pixmap_map_skin["sinth__oscedit_wave_saw_pushed"]=THEME_SINTH__OSCEDIT_WAVE_SAW_PUSHED;
+    pixmap_map[THEME_SINTH__OSCEDIT_WAVE_SINE]=QPixmap( (const char**) sinth__oscedit_wave_sine_xpm); 
+    pixmap_map_skin["sinth__oscedit_wave_sine"]=THEME_SINTH__OSCEDIT_WAVE_SINE;
+    pixmap_map[THEME_SINTH__OSCEDIT_WAVE_SINE_PUSHED]=QPixmap( (const char**) sinth__oscedit_wave_sine_pushed_xpm); 
+    pixmap_map_skin["sinth__oscedit_wave_sine_pushed"]=THEME_SINTH__OSCEDIT_WAVE_SINE_PUSHED;
+    pixmap_map[THEME_SINTH__OSCEDIT_WAVE_SQUARE]=QPixmap( (const char**) sinth__oscedit_wave_square_xpm); 
+    pixmap_map_skin["sinth__oscedit_wave_square"]=THEME_SINTH__OSCEDIT_WAVE_SQUARE;
+    pixmap_map[THEME_SINTH__OSCEDIT_WAVE_SQUARE_PUSHED]=QPixmap( (const char**) sinth__oscedit_wave_square_pushed_xpm); 
+    pixmap_map_skin["sinth__oscedit_wave_square_pushed"]=THEME_SINTH__OSCEDIT_WAVE_SQUARE_PUSHED;
+    pixmap_map[THEME_SINTH__OSCENV_BOTTOM]=QPixmap( (const char**) sinth__oscenv_bottom_xpm); 
+    pixmap_map_skin["sinth__oscenv_bottom"]=THEME_SINTH__OSCENV_BOTTOM;
+    pixmap_map[THEME_SINTH__OSCENV_MIDDLE]=QPixmap( (const char**) sinth__oscenv_middle_xpm); 
+    pixmap_map_skin["sinth__oscenv_middle"]=THEME_SINTH__OSCENV_MIDDLE;
+    pixmap_map[THEME_SINTH__OSCENV_OSC1_KNOB]=QPixmap( (const char**) sinth__oscenv_osc1_knob_xpm); 
+    pixmap_map_skin["sinth__oscenv_osc1_knob"]=THEME_SINTH__OSCENV_OSC1_KNOB;
+    pixmap_map[THEME_SINTH__OSCENV_OSC1_KNOB_SEPARATOR]=QPixmap( (const char**) sinth__oscenv_osc1_knob_separator_xpm); 
+    pixmap_map_skin["sinth__oscenv_osc1_knob_separator"]=THEME_SINTH__OSCENV_OSC1_KNOB_SEPARATOR;
+    pixmap_map[THEME_SINTH__OSCENV_OSC1_LABEL]=QPixmap( (const char**) sinth__oscenv_osc1_label_xpm); 
+    pixmap_map_skin["sinth__oscenv_osc1_label"]=THEME_SINTH__OSCENV_OSC1_LABEL;
+    pixmap_map[THEME_SINTH__OSCENV_OSC2_KNOB]=QPixmap( (const char**) sinth__oscenv_osc2_knob_xpm); 
+    pixmap_map_skin["sinth__oscenv_osc2_knob"]=THEME_SINTH__OSCENV_OSC2_KNOB;
+    pixmap_map[THEME_SINTH__OSCENV_OSC2_KNOB_SEPARATOR]=QPixmap( (const char**) sinth__oscenv_osc2_knob_separator_xpm); 
+    pixmap_map_skin["sinth__oscenv_osc2_knob_separator"]=THEME_SINTH__OSCENV_OSC2_KNOB_SEPARATOR;
+    pixmap_map[THEME_SINTH__OSCENV_OSC2_LABEL]=QPixmap( (const char**) sinth__oscenv_osc2_label_xpm); 
+    pixmap_map_skin["sinth__oscenv_osc2_label"]=THEME_SINTH__OSCENV_OSC2_LABEL;
+    pixmap_map[THEME_SINTH__OSCENV_OSCTUNE_SEPARATOR]=QPixmap( (const char**) sinth__oscenv_osctune_separator_xpm); 
+    pixmap_map_skin["sinth__oscenv_osctune_separator"]=THEME_SINTH__OSCENV_OSCTUNE_SEPARATOR;
+    pixmap_map[THEME_SINTH__OSCTUNE_BOTTOM]=QPixmap( (const char**) sinth__osctune_bottom_xpm); 
+    pixmap_map_skin["sinth__osctune_bottom"]=THEME_SINTH__OSCTUNE_BOTTOM;
+    pixmap_map[THEME_SINTH__OSCTUNE_DISPLAY]=QPixmap( (const char**) sinth__osctune_display_xpm); 
+    pixmap_map_skin["sinth__osctune_display"]=THEME_SINTH__OSCTUNE_DISPLAY;
+    pixmap_map[THEME_SINTH__OSCTUNE_OSC1_COARSE_LABEL]=QPixmap( (const char**) sinth__osctune_osc1_coarse_label_xpm); 
+    pixmap_map_skin["sinth__osctune_osc1_coarse_label"]=THEME_SINTH__OSCTUNE_OSC1_COARSE_LABEL;
+    pixmap_map[THEME_SINTH__OSCTUNE_OSC1_FINE_LABEL]=QPixmap( (const char**) sinth__osctune_osc1_fine_label_xpm); 
+    pixmap_map_skin["sinth__osctune_osc1_fine_label"]=THEME_SINTH__OSCTUNE_OSC1_FINE_LABEL;
+    pixmap_map[THEME_SINTH__OSCTUNE_OSC2_COARSE_LABEL]=QPixmap( (const char**) sinth__osctune_osc2_coarse_label_xpm); 
+    pixmap_map_skin["sinth__osctune_osc2_coarse_label"]=THEME_SINTH__OSCTUNE_OSC2_COARSE_LABEL;
+    pixmap_map[THEME_SINTH__OSCTUNE_OSC2_FINE_LABEL]=QPixmap( (const char**) sinth__osctune_osc2_fine_label_xpm); 
+    pixmap_map_skin["sinth__osctune_osc2_fine_label"]=THEME_SINTH__OSCTUNE_OSC2_FINE_LABEL;
+    pixmap_map[THEME_SINTH__OSCTUNE_ROUTING_SEPARATOR]=QPixmap( (const char**) sinth__osctune_routing_separator_xpm); 
+    pixmap_map_skin["sinth__osctune_routing_separator"]=THEME_SINTH__OSCTUNE_ROUTING_SEPARATOR;
+    pixmap_map[THEME_SINTH__OSCTUNE_UPDOWN]=QPixmap( (const char**) sinth__osctune_updown_xpm); 
+    pixmap_map_skin["sinth__osctune_updown"]=THEME_SINTH__OSCTUNE_UPDOWN;
+    pixmap_map[THEME_SINTH__ROUTING_BOTTOM]=QPixmap( (const char**) sinth__routing_bottom_xpm); 
+    pixmap_map_skin["sinth__routing_bottom"]=THEME_SINTH__ROUTING_BOTTOM;
+    pixmap_map[THEME_SINTH__ROUTING_COMBO]=QPixmap( (const char**) sinth__routing_combo_xpm); 
+    pixmap_map_skin["sinth__routing_combo"]=THEME_SINTH__ROUTING_COMBO;
+    pixmap_map[THEME_SINTH__ROUTING_COMBO_RIGHT]=QPixmap( (const char**) sinth__routing_combo_right_xpm); 
+    pixmap_map_skin["sinth__routing_combo_right"]=THEME_SINTH__ROUTING_COMBO_RIGHT;
+    pixmap_map[THEME_SINTH__ROUTING_FILTER_SEPARATOR]=QPixmap( (const char**) sinth__routing_filter_separator_xpm); 
+    pixmap_map_skin["sinth__routing_filter_separator"]=THEME_SINTH__ROUTING_FILTER_SEPARATOR;
+    pixmap_map[THEME_SINTH__ROUTING_MIDDLE]=QPixmap( (const char**) sinth__routing_middle_xpm); 
+    pixmap_map_skin["sinth__routing_middle"]=THEME_SINTH__ROUTING_MIDDLE;
+    pixmap_map[THEME_SINTH__ROUTING_STRENGTH]=QPixmap( (const char**) sinth__routing_strength_xpm); 
+    pixmap_map_skin["sinth__routing_strength"]=THEME_SINTH__ROUTING_STRENGTH;
+    pixmap_map[THEME_SINTH__ROUTING_STRENGTH_LEFT]=QPixmap( (const char**) sinth__routing_strength_left_xpm); 
+    pixmap_map_skin["sinth__routing_strength_left"]=THEME_SINTH__ROUTING_STRENGTH_LEFT;
+    pixmap_map[THEME_SINTH__ROUTING_TOP]=QPixmap( (const char**) sinth__routing_top_xpm); 
+    pixmap_map_skin["sinth__routing_top"]=THEME_SINTH__ROUTING_TOP;
     pixmap_map[THEME_TOP__BPM_BOTTOM]=QPixmap( (const char**) top__bpm_bottom_xpm); 
     pixmap_map_skin["top__bpm_bottom"]=THEME_TOP__BPM_BOTTOM;
     pixmap_map[THEME_TOP__BPM_DISPLAY]=QPixmap( (const char**) top__bpm_display_xpm); 

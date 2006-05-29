@@ -1,0 +1,15 @@
+/* XPM */
+static char *delayline__knob_pos[] = {
+/* columns rows colors chars-per-pixel */
+"5 5 4 1",
+"  c black",
+". c #272727272727",
+"X c #565659595E5E",
+"o c None",
+/* pixels */
+"oXXXo",
+"X. .X",
+"X   X",
+"X. .X",
+"oXXXo"
+};

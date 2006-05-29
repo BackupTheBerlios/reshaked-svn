@@ -12,7 +12,8 @@
 #include "delay_line_plugin.h"
 
 #include <math.h>
-#include "pixmaps/icon_chorus.xpm"
+#include "pixmaps/icon_delay.xpm"
+#include "pixmaps/icon_delay_bpm.xpm"
 
 namespace ReShaked {
 
@@ -43,7 +44,7 @@ const SoundPluginInfo *DelayLinePlugin::create_info_msec() {
 	info.custom_channels.push_back(4);
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;//(const char**)icon_chorus_xpm;
+	info.xpm_preview=(const char**)icon_delay_xpm;
 	info.creation_func=&create_delay_line_msec;
 	info.version=1;	
 	return &info;
@@ -64,7 +65,7 @@ const SoundPluginInfo *DelayLinePlugin::create_info_bpm() {
 	info.custom_channels.push_back(4);
 	info.has_internal_UI=false; 
 	info.is_synth=false;
-	info.xpm_preview=NULL;//(const char**)icon_chorus_xpm;
+	info.xpm_preview=(const char**)icon_delay_bpm_xpm;
 	info.creation_func=&create_delay_line_bpm;
 	info.version=1;	
 	return &info;
@@ -123,11 +124,16 @@ void DelayLinePlugin::reset() { //sort of useless
 	}
 	
 	ringbuff_size=1<<bits;
-	buffer_buffer_mask=ringbuff_size-1;
-	buffer_buffer_pos=0;
+	ring_buffer_mask=ringbuff_size-1;
+	ring_buffer_pos=0;
 	
 	ring_buffer.setup(get_channels_created(), ringbuff_size );
 	feedback_buffer.setup(get_channels_created(), ringbuff_size );
+	
+	feedback_buffer_pos=0;	
+	
+	for (int i=0;i<get_channels_created();i++)
+		h[i]=0;
 	
 }
 /* Setting up */
@@ -139,14 +145,182 @@ void DelayLinePlugin::set_mixing_rate(float p_mixing_rate) { //sort of useless
 
 /* Processing */
 
+
+float DelayLinePlugin::get_voice_gain_from_pan(int p_channel,float p_pan,float p_depth) {
+	
+	if (get_channels_created()==1)
+		return 1.0;
+	else if (get_channels_created()==2) {
+		
+		switch (p_channel) {
+			
+			case 0: return (1.0-p_pan)*2.0; //left
+			case 1: return p_pan*2.0; //right
+		}
+		
+	} else if (get_channels_created()==4) {
+		
+		float pan=p_pan;
+		float depth=p_depth;
+		
+		float l=(1.0-pan)*2.0;
+		float r=pan*2.0;;
+		
+		switch (p_channel) {
+			
+			case 0: return (1.0-depth)*l*2.0; //frontleft
+			case 1: return (1.0-depth)*r*2.0; //frontright
+			case 2: return depth*l*2.0; //rearleft
+			case 3: return depth*l*2.0;//rearright
+			
+		}
+		
+	}
+	
+	return 1.0;
+}
+
+
 void DelayLinePlugin::process(int p_frames) {
 	
+	
+	if (get_channels_created()!=1 && get_channels_created()!=2 && get_channels_created()!=4)
+		return;
 	
 	if (skips_processing()) {
 	
 		output_plug->get_buffer()->copy_from( input_plug->get_buffer(), p_frames ); 
 		return;
 	}
+	
+	
+	float main_level_f=(main_active.get()>0)?(main_level.get()/100.0):0.0;
+	
+	/* Tap 1 */
+	
+	float tap_1_level_f=(tap_1_active.get()>0)?(tap_1_level.get()/100.0):0.0;
+	
+	int tap_1_delay_frames=0;
+	
+	if (tap_1_active.get()>0) {
+		
+		if (bpm_based) {
+			
+			float beat_size=(mix_rate*60.0)/bpm;
+			beat_size*=tap_1_delay.get();
+			if (beat_size>(MAX_DELAY_MS/(MAX_TAPS+1)))
+				beat_size=(MAX_DELAY_MS/(MAX_TAPS+1));
+	
+			tap_1_delay_frames=lrintf(beat_size);
+		} else {
+			
+			tap_1_delay_frames=lrintf((tap_1_delay.get()/1000.0)*mix_rate);
+		}
+	}
+	
+	/* Tap 2 */
+	
+	float tap_2_level_f=(tap_2_active.get()>0)?(tap_2_level.get()/100.0):0.0;
+	
+	int tap_2_delay_frames=tap_1_delay_frames;
+	
+	if (tap_2_active.get()>0) {
+		
+		if (bpm_based) {
+			
+			float beat_size=(mix_rate*60.0)/bpm;
+			beat_size*=tap_2_delay.get();
+			if (beat_size>(MAX_DELAY_MS/(MAX_TAPS+1)))
+				beat_size=(MAX_DELAY_MS/(MAX_TAPS+1));
+	
+			tap_2_delay_frames+=lrintf(beat_size);
+		} else {
+			
+			tap_2_delay_frames+=lrintf((tap_2_delay.get()/1000.0)*mix_rate);
+		}
+	}
+	
+	float feedback_level_f=(feedback_active.get()>0)?(feedback_level.get()/100.0):0.0;
+	
+	int feedback_delay_frames=tap_2_delay_frames;
+	
+	
+	if (feedback_active.get()>0) {
+		
+		if (bpm_based) {
+			
+			float beat_size=(mix_rate*60.0)/bpm;
+			beat_size*=feedback_delay.get();
+			if (beat_size>(MAX_DELAY_MS/(MAX_TAPS+1)))
+				beat_size=(MAX_DELAY_MS/(MAX_TAPS+1));
+	
+			feedback_delay_frames+=lrintf(beat_size);
+		} else {
+			
+			feedback_delay_frames+=lrintf((feedback_delay.get()/1000.0)*mix_rate);
+		}
+	}
+	
+	if (feedback_delay_frames>feedback_buffer.get_size())
+		feedback_delay_frames=feedback_buffer.get_size();
+	
+	// feedback lowpass here
+	float lpf_c=expf(-2.0*M_PI*feedback_lowpass.get()/mix_rate); // 0 .. 10khz
+	float lpf_ic=1.0-lpf_c;
+		
+	
+	
+	for (int j=0;j<get_channels_created();j++) {
+		
+		
+		float main_gain=get_voice_gain_from_pan(j,main_pan.get(),main_pan_depth.get())*main_level_f;
+		float tap_1_gain=get_voice_gain_from_pan(j,tap_1_pan.get(),tap_1_pan_depth.get())*tap_1_level_f;
+		float tap_2_gain=get_voice_gain_from_pan(j,tap_2_pan.get(),tap_2_pan_depth.get())*tap_2_level_f;
+		
+		float *src=input_plug->get_buffer()->get_buffer( j );
+		float *dst=output_plug->get_buffer()->get_buffer( j );
+		float *rb_buf=ring_buffer.get_buffer( j ); //ringbuffer
+		float *fb_buf=feedback_buffer.get_buffer( j ); //feedback buffer
+		
+		int aux_ring_buffer_pos=ring_buffer_pos;
+		int aux_feedback_pos=feedback_buffer_pos;
+		
+		for (int i=0;i<p_frames;i++) {
+		
+
+			rb_buf[aux_ring_buffer_pos&ring_buffer_mask]=src[i];
+			
+			float main_val=src[i]*main_gain;
+			float tap_1_val=rb_buf[(aux_ring_buffer_pos-tap_1_delay_frames)&ring_buffer_mask]*tap_1_gain;
+			float tap_2_val=rb_buf[(aux_ring_buffer_pos-tap_2_delay_frames)&ring_buffer_mask]*tap_2_gain;
+			
+			float out=main_val+tap_1_val+tap_2_val;
+			
+			out+=fb_buf[ aux_feedback_pos ];
+			
+			//apply lowpass and feedback gain
+			float fb_in=undenormalise(out*feedback_level_f*lpf_ic+lpf_c*h[j]);
+			fb_buf[ aux_feedback_pos ]=fb_in;
+
+			
+			dst[i]=out;
+			
+			aux_ring_buffer_pos++;
+			
+			if ( (++aux_feedback_pos) >= feedback_delay_frames )
+				aux_feedback_pos=0;
+		
+		}
+		
+	}
+	
+		
+	ring_buffer_pos+=p_frames;
+	if (feedback_delay_frames==0)
+		feedback_buffer_pos=0;
+	else
+		feedback_buffer_pos=(feedback_buffer_pos+p_frames)%feedback_delay_frames;
+	
 	
 
 }
@@ -172,7 +346,7 @@ DelayLinePlugin::DelayLinePlugin(const SoundPluginInfo *p_info,int p_channels,bo
 	if (p_bpm_based) 
 		tap_1_delay.set_all(0.01, 0, 4, 0, 0.1, Property::DISPLAY_SLIDER, "tap_1_delay","Tap 1 Delay");
 	else
-		tap_1_delay.set_all(250, 1, MAX_DELAY_MS/3, 1, 1, Property::DISPLAY_SLIDER, "tap_1_delay","Tap 1 Delay","ms");
+		tap_1_delay.set_all(250, 1, MAX_DELAY_MS/(MAX_TAPS+1), 1, 1, Property::DISPLAY_SLIDER, "tap_1_delay","Tap 1 Delay","ms");
 	
 	tap_1_level.set_all( 100, 0, 100, 100, 1, Property::DISPLAY_SLIDER, "tap_1_level","Tap 1 Level","%");
 	tap_1_pan.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "tap_1_pan","Tap 1 Pan","","Left","Right");
@@ -184,7 +358,7 @@ DelayLinePlugin::DelayLinePlugin(const SoundPluginInfo *p_info,int p_channels,bo
 	if (p_bpm_based) 
 		tap_2_delay.set_all(0.01, 0, 4, 0, 0.1, Property::DISPLAY_SLIDER, "tap_2_delay","Tap 2 Delay");
 	else
-		tap_2_delay.set_all(250, 1, MAX_DELAY_MS/3, 1, 1, Property::DISPLAY_SLIDER, "tap_2_delay","Tap 2 Delay","ms");
+		tap_2_delay.set_all(250, 1, MAX_DELAY_MS/(MAX_TAPS+1), 1, 1, Property::DISPLAY_SLIDER, "tap_2_delay","Tap 2 Delay","ms");
 	
 	tap_2_level.set_all( 100, 0, 100, 100, 1, Property::DISPLAY_SLIDER, "tap_2_level","Tap 2 Level","%");
 	tap_2_pan.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "tap_2_pan","Tap 2 Pan","","Left","Right");
@@ -193,16 +367,40 @@ DelayLinePlugin::DelayLinePlugin(const SoundPluginInfo *p_info,int p_channels,bo
 	
 	/* Feedback */
 	feedback_active.set_all( 1, 0, 1, 0, 1, Property::DISPLAY_CHECKBOX, "feedback_active","Feedback Active");
-	feedback_level.set_all( 100, 0, 100, 100, 1, Property::DISPLAY_SLIDER, "feedback_level","Feedback Level","%");
+	feedback_level.set_all( 0, 0, 99, 99, 1, Property::DISPLAY_SLIDER, "feedback_level","Feedback Level","%");
 	if (p_bpm_based) 
 		feedback_delay.set_all(0.01, 0, 4, 0, 0.1, Property::DISPLAY_SLIDER, "feedback_delay","Feedback Delay");
 	else
-		feedback_delay.set_all(250, 1, MAX_DELAY_MS/3, 1, 1, Property::DISPLAY_SLIDER, "feedback_delay","Feedback Delay","ms");
+		feedback_delay.set_all(250, 1, MAX_DELAY_MS/(MAX_TAPS+1), 1, 1, Property::DISPLAY_SLIDER, "feedback_delay","Feedback Delay","ms");
 	
 	feedback_lowpass.set_all( 4000, 20, 16000, 4000, 1, Property::DISPLAY_SLIDER, "feedback_lowpass","Feedback Lowpass","hz","","Off");
 	
+	properties.push_back(&main_active);
+	properties.push_back(&main_level);
+	properties.push_back(&main_pan);
+	properties.push_back(&main_pan_depth);
 	
+	properties.push_back(&tap_1_active);
+	properties.push_back(&tap_1_delay);
+	properties.push_back(&tap_1_level);
+	properties.push_back(&tap_1_pan);
+	properties.push_back(&tap_1_pan_depth);
+	
+	properties.push_back(&tap_2_active);
+	properties.push_back(&tap_2_delay);
+	properties.push_back(&tap_2_level);
+	properties.push_back(&tap_2_pan);
+	properties.push_back(&tap_2_pan_depth);
+	
+	properties.push_back(&feedback_active);
+	properties.push_back(&feedback_delay);
+	properties.push_back(&feedback_level);
+	properties.push_back(&feedback_lowpass);
+	
+	h = new float[p_channels];
+	bpm_based=p_bpm_based;
 	mix_rate=44100;
+	bpm=125;
 	reset();
 }
 
@@ -211,6 +409,7 @@ DelayLinePlugin::~DelayLinePlugin(){
 	
 	delete input_plug;
 	delete output_plug;
+	delete[] h;
 }
 
 

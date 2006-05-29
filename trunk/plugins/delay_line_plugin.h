@@ -68,15 +68,19 @@ class DelayLinePlugin : public SoundPlugin {
 	/* feedback buffer */
 	AudioBuffer feedback_buffer;
 	
-	unsigned int feedback_buffer_size;
 	unsigned int feedback_buffer_pos;
 	
+	float *h;
 	
 	float mix_rate;
 	bool bpm_based;
+	float bpm;	
 	
+	float get_voice_gain_from_pan(int p_channel,float p_pan,float p_depth);
 public:
 
+	bool is_bpm_based() { return bpm_based; }
+	
 	static const SoundPluginInfo *create_info_bpm();
 	static const SoundPluginInfo *create_info_msec();
 

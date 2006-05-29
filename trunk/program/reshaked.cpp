@@ -18,6 +18,7 @@
 #include "plugins/simpler.h"
 #include "plugins/chionic.h"
 #include "plugins/reverb_plugin.h"
+#include "plugins/delay_line_plugin.h"
 #include "plugins/distortion_plugin.h"
 #include "plugins/stereo_enhancer_plugin.h"
 #include "plugins/filter_bank_plugin.h"
@@ -28,6 +29,7 @@
 #include "plugin_UIs/chionic_interface.h"
 #include "plugin_UIs/simpler_ui.h"
 #include "plugin_UIs/panner_plugin_ui.h"
+#include "plugin_UIs/delay_line_ui.h"
 #include "plugin_UIs/moog_filter_plugin_ui.h"
 #include "plugins/limiter_plugin.h"
 #include "plugins/panner_plugin.h"
@@ -94,8 +96,10 @@ static void init_sound_plugin_list() {
 	/* Effects */
 	sound_plugin_list.add_info( ReShaked::AmplifierPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::PannerPlugin::create_info() );
-	sound_plugin_list.add_info( ReShaked::ReverbPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::ChorusPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::ReverbPlugin::create_info() );
+	sound_plugin_list.add_info( ReShaked::DelayLinePlugin::create_info_msec() );
+	sound_plugin_list.add_info( ReShaked::DelayLinePlugin::create_info_bpm() );
 	sound_plugin_list.add_info( ReShaked::StereoEnhancerPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::LimiterPlugin::create_info() );
 	sound_plugin_list.add_info( ReShaked::CompressorPlugin::create_info() );
@@ -125,6 +129,7 @@ static void init_sound_plugin_UI_list() {
 	sound_plugin_UI_list.add_creator(    ReShaked::LimiterPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::MoogFilterPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::PannerPluginUI::create_this );
+	sound_plugin_UI_list.add_creator(    ReShaked::DelayLinePluginUI::create_this );
 #ifdef VST_ENABLED
 	sound_plugin_UI_list.add_creator(    ReShaked::VST_PluginUI::create_this );
 #endif
