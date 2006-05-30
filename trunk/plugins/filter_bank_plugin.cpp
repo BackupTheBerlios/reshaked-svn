@@ -293,7 +293,7 @@ FilterBankPlugin::FilterBankPlugin(const SoundPluginInfo *p_info,int p_channels)
 		
 		FilterData &f=filter[i];
 		
-		f.cutoff.set_all( filter_defaults[i],0,16000,0, 0.1, Property::DISPLAY_SLIDER, n_prefix+"cutoff",c_prefix+"Cutoff","hz");
+		f.cutoff.set_all( filter_defaults[i],20,16000,0, 0.1, Property::DISPLAY_SLIDER, n_prefix+"cutoff",c_prefix+"Cutoff","hz");
 		f.resonance.set_all( 1,0,4, 1, 0.01, Property::DISPLAY_SLIDER, n_prefix+"resonance",c_prefix+"Resonance");
 		
 		std::vector<String> filter_mode;

@@ -41,9 +41,9 @@ effects:
 *chorus
 *reverb
 *filterbank
--echo
+*echo
 *Eq: 6, 10, 21 ,31 bands
--Distortion
+*Distortion
 *Compressor
 -phaser
 *Moog VCF 

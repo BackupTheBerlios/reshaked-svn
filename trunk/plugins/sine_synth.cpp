@@ -28,7 +28,7 @@ const SoundPluginInfo *SineSynth::create_info() {
 	
 	static SoundPluginInfo info;
 	
-	info.caption="Sinth";
+	info.caption="Sine Synth";
 	info.description="Extremely Simple Sinewave Synthesizer";
 	info.long_description="This plugin serves as an example on how the simplest synth plugin can be built ";
 	info.unique_ID="INTERNAL_sine_synth"; 

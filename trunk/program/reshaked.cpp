@@ -16,6 +16,7 @@
 #include "plugins/moog_filter_plugin.h"
 #include "plugins/sine_synth.h"
 #include "plugins/simpler.h"
+#include "plugins/sinth.h"
 #include "plugins/chionic.h"
 #include "plugins/reverb_plugin.h"
 #include "plugins/delay_line_plugin.h"
@@ -23,6 +24,7 @@
 #include "plugins/stereo_enhancer_plugin.h"
 #include "plugins/filter_bank_plugin.h"
 #include "plugin_UIs/chorus_plugin_ui.h"
+#include "plugin_UIs/sinth_ui.h"
 #include "plugin_UIs/limiter_plugin_ui.h"
 #include "plugins/chorus_plugin.h"
 #include "plugin_UIs/sound_plugin_ui_generic.h"
@@ -90,7 +92,8 @@ static void init_sound_plugin_list() {
 	
 	/* Synths */
 	sound_plugin_list.add_info( ReShaked::Simpler::create_info() );
-	sound_plugin_list.add_info( ReShaked::SineSynth::create_info() );
+	sound_plugin_list.add_info( ReShaked::Sinth::create_info() );
+	//sound_plugin_list.add_info( ReShaked::SineSynth::create_info() );
 	sound_plugin_list.add_info( ReShaked::Chionic::create_info() );
 	
 	/* Effects */
