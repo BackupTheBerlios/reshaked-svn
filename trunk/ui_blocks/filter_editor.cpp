@@ -135,6 +135,12 @@ void FilterEditor::paintEvent(QPaintEvent *e) {
 	
 }
 
+void FilterEditor::changed(int) {
+	
+	update();
+}
+
+
 void FilterEditor::mousePressEvent(QMouseEvent *e) {
 
 	ERR_FAIL_COND( !mode || !cutoff || !resonance);
@@ -147,10 +153,10 @@ void FilterEditor::mousePressEvent(QMouseEvent *e) {
 
 	
 	float freq=float_2_freq(press_x,MIN_FREQ,cutoff->get_max());
-	float reso=press_y;
+	float reso=press_y*resonance->get_max();
 	
-	cutoff->set( freq );
-	resonance->set( reso );
+	set( PROPERTY_CUTOFF , freq );
+	set( PROPERTY_RESONANCE , reso );
 	
 	click.drag=true;
 	
@@ -169,11 +175,11 @@ void FilterEditor::mouseMoveEvent(QMouseEvent *e) {
 	float press_y=(float)(height()-e->y())/(float)height();
 
 	float freq=float_2_freq(press_x,MIN_FREQ,cutoff->get_max());
-	float reso=press_y;
+	float reso=press_y*resonance->get_max();
 	
-	cutoff->set( freq );
-	resonance->set( reso );
-	
+	set( PROPERTY_CUTOFF , freq );
+	set( PROPERTY_RESONANCE , reso );
+
 	update();
 
 }
@@ -194,10 +200,12 @@ void FilterEditor::set_properties(Property *p_mode,Property *p_cutoff,Property *
 	mode=p_mode;
 	cutoff=p_cutoff;
 	resonance=p_resonance;
+	set_property( PROPERTY_CUTOFF , p_cutoff );
+	set_property( PROPERTY_RESONANCE , p_resonance );
 	
 }
 
-FilterEditor::FilterEditor(QWidget *p_parent,const Skin &p_skin) : QWidget(p_parent) {
+FilterEditor::FilterEditor(QWidget *p_parent,const Skin &p_skin) : QWidget(p_parent), MultiPropertyEditor(2) {
 
 	skin=p_skin;
 	click.drag=false;

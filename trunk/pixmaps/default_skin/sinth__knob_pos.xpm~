@@ -1,0 +1,14 @@
+/* XPM */
+static char *sinth__knob_pos[] = {
+/* columns rows colors chars-per-pixel */
+"4 4 4 1",
+"  c black",
+". c gray9",
+"X c gray49",
+"o c #7E7E7E7E7E7E",
+/* pixels */
+"o..o",
+".  .",
+".  .",
+"o..o"
+};

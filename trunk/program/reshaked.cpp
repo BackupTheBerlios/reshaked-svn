@@ -133,6 +133,8 @@ static void init_sound_plugin_UI_list() {
 	sound_plugin_UI_list.add_creator(    ReShaked::MoogFilterPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::PannerPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::DelayLinePluginUI::create_this );
+	sound_plugin_UI_list.add_creator(    ReShaked::SinthUI::create_this );
+
 #ifdef VST_ENABLED
 	sound_plugin_UI_list.add_creator(    ReShaked::VST_PluginUI::create_this );
 #endif

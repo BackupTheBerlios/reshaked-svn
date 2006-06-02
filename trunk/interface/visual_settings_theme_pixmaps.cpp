@@ -259,6 +259,7 @@
 #include "pixmaps/default_skin/simpler__top_right.xpm"
 #include "pixmaps/default_skin/sinth__begin.xpm"
 #include "pixmaps/default_skin/sinth__end.xpm"
+#include "pixmaps/default_skin/sinth__env_pos.xpm"
 #include "pixmaps/default_skin/sinth__filter_attack_display.xpm"
 #include "pixmaps/default_skin/sinth__filter_display.xpm"
 #include "pixmaps/default_skin/sinth__filter_envelope_attack.xpm"
@@ -282,6 +283,7 @@
 #include "pixmaps/default_skin/sinth__filter_release_display.xpm"
 #include "pixmaps/default_skin/sinth__filter_separator.xpm"
 #include "pixmaps/default_skin/sinth__filter_top.xpm"
+#include "pixmaps/default_skin/sinth__knob_pos.xpm"
 #include "pixmaps/default_skin/sinth__oscedit_bottom.xpm"
 #include "pixmaps/default_skin/sinth__oscedit_display.xpm"
 #include "pixmaps/default_skin/sinth__oscedit_middle.xpm"
@@ -929,6 +931,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["sinth__begin"]=THEME_SINTH__BEGIN;
     pixmap_map[THEME_SINTH__END]=QPixmap( (const char**) sinth__end_xpm); 
     pixmap_map_skin["sinth__end"]=THEME_SINTH__END;
+    pixmap_map[THEME_SINTH__ENV_POS]=QPixmap( (const char**) sinth__env_pos_xpm); 
+    pixmap_map_skin["sinth__env_pos"]=THEME_SINTH__ENV_POS;
     pixmap_map[THEME_SINTH__FILTER_ATTACK_DISPLAY]=QPixmap( (const char**) sinth__filter_attack_display_xpm); 
     pixmap_map_skin["sinth__filter_attack_display"]=THEME_SINTH__FILTER_ATTACK_DISPLAY;
     pixmap_map[THEME_SINTH__FILTER_DISPLAY]=QPixmap( (const char**) sinth__filter_display_xpm); 
@@ -975,6 +979,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["sinth__filter_separator"]=THEME_SINTH__FILTER_SEPARATOR;
     pixmap_map[THEME_SINTH__FILTER_TOP]=QPixmap( (const char**) sinth__filter_top_xpm); 
     pixmap_map_skin["sinth__filter_top"]=THEME_SINTH__FILTER_TOP;
+    pixmap_map[THEME_SINTH__KNOB_POS]=QPixmap( (const char**) sinth__knob_pos_xpm); 
+    pixmap_map_skin["sinth__knob_pos"]=THEME_SINTH__KNOB_POS;
     pixmap_map[THEME_SINTH__OSCEDIT_BOTTOM]=QPixmap( (const char**) sinth__oscedit_bottom_xpm); 
     pixmap_map_skin["sinth__oscedit_bottom"]=THEME_SINTH__OSCEDIT_BOTTOM;
     pixmap_map[THEME_SINTH__OSCEDIT_DISPLAY]=QPixmap( (const char**) sinth__oscedit_display_xpm); 

@@ -22,12 +22,17 @@ namespace ReShaked {
 	@author red <red@killy>
 */
 
-class FilterEditor : public QWidget {
+class FilterEditor : public QWidget, public MultiPropertyEditor {
 public:	
 	
 	enum {
 		MIN_FREQ = 20,
 		AMP_STEPS = 3
+	};
+	
+	enum {
+		PROPERTY_CUTOFF,
+		PROPERTY_RESONANCE,
 	};
 	
 	struct Skin {
@@ -55,6 +60,9 @@ private:
 	Property *mode;
 	Property *cutoff;
 	Property *resonance;
+	
+	void changed(int);
+
 public:
 
 	void set_properties(Property *p_mode,Property *p_cutoff,Property *p_resonance);

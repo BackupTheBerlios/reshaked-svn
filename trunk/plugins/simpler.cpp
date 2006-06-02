@@ -391,10 +391,10 @@ void Simpler::process(int p_frames) {
 	
 	/* use the first one to mix */	
 	
+	output_plug->get_buffer()->clear( p_frames );
 	
 	for (int i=0;i<output_plug->get_buffer()->get_channels();i++) {
 		
-		output_plug->get_buffer()->clear( p_frames );
 		midi_synth->set_buffer( i, output_plug->get_buffer()->get_buffer( i ) );
 	}
 	

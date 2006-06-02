@@ -130,3 +130,8 @@ as shared because of the one at the undo buffer!
 -resize block doesnt erase automation poitns!
 -REWRITE THE DAMN GLOBAL VIEW!!
 -mover eventos en la seleccion asi como en una curva, y editar la curva
+
+
+PropertyEditLabel
+-Use mouse wheel to move step
+-Show Proper range on click

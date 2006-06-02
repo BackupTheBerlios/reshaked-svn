@@ -44,9 +44,14 @@ double Property::get_coeff_value() {
 	}
 	return coeff_val;
 }
+
+void Property::set_write_only(bool p_write_only) {
+	
+	write_only=p_write_only;
+}
 bool Property::is_write_only() {
 	
-	return false;
+	return write_only;
 }
 void Property::set_coeff_value(double p_coeff) {
 	
@@ -82,7 +87,7 @@ double Property::get_value_from_coeff(double p_coeff) {
 	
 }
 
-Property::Property() { quad_coeff=false; }
+Property::Property() { quad_coeff=false; write_only=false; }
 
 void LocalProperty::set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String p_postfix,String p_min_label, String p_max_label) {
 	

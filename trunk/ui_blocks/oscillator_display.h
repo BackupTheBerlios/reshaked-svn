@@ -13,6 +13,7 @@
 #define RESHAKEDOSCILLATOR_DISPLAY_H
 #include <Qt/qwidget.h>
 #include "dsp/oscillator.h"
+#include <Qt/qpixmap.h>
 
 namespace ReShaked {
 
@@ -25,10 +26,13 @@ public:
 	
 	struct Skin {
 		
+		QPixmap bg;
 		QColor bg_color;
 		QColor wave_color;
+		int margin;
 		
-		Skin(QColor p_bg=QColor(0,0,0), QColor p_wave=QColor(120,150,190)) { bg_color=p_bg; wave_color=p_wave; }
+		Skin(QColor p_bg=QColor(0,0,0), QColor p_wave=QColor(120,150,190)) { bg_color=p_bg; wave_color=p_wave; margin=5; }
+		Skin(QPixmap p_bg, QColor p_wave=QColor(120,150,190)) { bg=p_bg; wave_color=p_wave; margin=5; }
 	};
 private:
 	
@@ -38,6 +42,9 @@ private:
 	
 	Skin skin;
 	
+	int submap;
+	
+	void wheelEvent ( QWheelEvent * event );
 public:
 	
 	void set_oscillator(Oscillator *p_oscil);

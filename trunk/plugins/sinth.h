@@ -15,6 +15,8 @@
 #include "engine/sound_plugin.h"
 #include "dsp/midi_synth.h"
 #include "dsp/oscillator.h"
+#include "dsp/adsr.h"
+#include "dsp/filter.h"
 
 namespace ReShaked {
 
@@ -25,23 +27,72 @@ class Sinth : public SoundPlugin {
 				       
 	AudioPlug *output_plug;
 	
+	
+	enum {
+		/* Fixed Point */	
+		FRAC_SIZE=20,
+		FRAC_LEN=(1<<20),
+		FRAC_MASK=FRAC_LEN-1
+	};
+public:	//weird gcc template error forced me to this, I think it's a bug
+	enum ModulationMode {
+		MOD_ADD,
+		MOD_RING,
+		MOD_FM
+	};	
+private:
+	class Data;
+	
 	class Voice : public MidiSynth::Voice {
 		
 		
-		float amp,amp_decr;
-		int ofs;
+		bool done;
+		
+		Uint64 cycles_osc_1;
+		Uint64 cycles_osc_2;
+		float prev_gain_osc_1;
+		float prev_gain_osc_2;
+		float prev_gain_global;
+	
+		Data *data;
+		
+		ADSR adsr_osc1;
+		ADSR adsr_osc2;
+		
+		bool first_mix;
 		
 		Property *release;		    
-		public:
+		
+		struct AnalogFilter {		
+		
+			float ha1,ha2,hb1,hb2; //history
+			Filter::Coeffs last_coeffs;
+			bool enabled;
+			Filter::Mode mode;
+			
+			double env_pos;
+			double attack_env_mult;
+			double release_env_mult;
+			double release_end_pos;
+			
+			Uint64 lfo_count;
+			
+		} filter;
+
 		
 		
-			virtual void event(Event p_event);	
-			virtual void process(int p_frames);	
 		
-		
-			virtual float priority(); ///< 1 is max priority, 0 means it finished
-		
-			Voice(Property *p_release);
+		template<ModulationMode t_mode>
+		void process_template(int p_frames);
+	public:
+	
+	
+		virtual void event(Event p_event);	
+		virtual void process(int p_frames);	
+	
+		virtual float priority(); ///< 1 is max priority, 0 means it finished
+	
+		Voice(Data *p_data);
 	};
 	
 	struct Data {
@@ -84,16 +135,17 @@ class Sinth : public SoundPlugin {
 			LocalProperty lfo_rate;
 			LocalProperty lfo_depth;
 			
+			
 		} filter;
 		
 	} data;
 	
 	MidiSynth *midi_synth;
-		
-	LocalProperty release;		    
 	
 	void reset();		
 public:
+	
+	Oscillator* get_osc(int p_osc);
 
 	static const SoundPluginInfo *create_info();
 	/* Plugs */	
