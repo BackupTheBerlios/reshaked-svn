@@ -116,6 +116,8 @@ private:
 	LocalProperty finetune; //ok
 	LocalProperty duplicate_check; //ok
 	
+	LocalProperty gain; //ok
+	
 	/* output internal properties */
 	LocalProperty voice_count;
 	

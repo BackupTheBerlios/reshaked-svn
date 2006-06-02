@@ -983,7 +983,7 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,String p_dir,
 		midi_parameters=NULL;
 	}
 	off_all_notes=false;
-	gain.set_all( get_info()->is_synth?-20:0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "vst_plugin_gain","Gain","dB");
+	gain.set_all( get_info()->is_synth?-24:0, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "vst_plugin_gain","Gain","dB");
 	property_list.push_back(&gain);
 	//switch the plugin back on (calls Resume)
 	ptrPlug->dispatcher(ptrPlug,effMainsChanged,0,1,NULL,0.0f);

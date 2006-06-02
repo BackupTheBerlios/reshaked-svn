@@ -12,7 +12,7 @@
 //
 #include "midi_synth.h"
 #include <math.h>
-
+#include "dsp/formulas.h"
 namespace ReShaked {
 
 
@@ -87,7 +87,7 @@ float *MidiSynth::Voice::get_buffer(int p_buff) {
 void MidiSynth::process_voice_internal(int p_voice,int p_frames) {
 	Voice &v=*voice_pool[p_voice];
 	
-	v.internal.total_amplitude=main_volume.get()*expression.get()*(float)v.internal.velocity/127.0;
+	v.internal.total_amplitude=main_volume.get()*expression.get()*((float)v.internal.velocity/127.0)*db_to_energy( gain.get() );
 	
 	v.internal.current_note=v.internal.note;
 	v.internal.current_note+=pitch_bend.get()*2.0; //should change pbdepth
@@ -181,7 +181,7 @@ void MidiSynth::control_note_on(char p_note,char p_velocity,signed char p_note_f
 	
 	
 
-	printf("decided on voice %i for %i:%i\n",voice_idx,p_note,p_velocity);
+	//printf("decided on voice %i for %i:%i\n",voice_idx,p_note,p_velocity);
 	voice_pool[voice_idx]->reset_internal();
 	voice_pool[voice_idx]->internal.original_note=p_note;
 	voice_pool[voice_idx]->internal.note=(float)p_note+transpose.get();
@@ -361,7 +361,8 @@ MidiSynth::MidiSynth(int p_channels,std::vector<Voice*> p_voice_pool) /*: active
 	duplicate_check.set_all(1,0,1,1,1,Property::DISPLAY_CHECKBOX,"duplicate_check","Switch/Duplicate Check","","Off","On");
 	transpose.set_all(0,-24,24,0,1,Property::DISPLAY_KNOB,"transpose","Control/Transpose","nt","-2 Oct","+2 Oct");
 	finetune.set_all(0,-1,1,0,0.01,Property::DISPLAY_KNOB,"finetune","Control/Finetune","cnt","-st","+st");
-	
+
+	gain.set_all( -24, -60, 24, 0, 0.1, Property::DISPLAY_SLIDER, "global_gain","Gain","dB");	
 	
 	add_input_property(&expression);
 	add_input_property(&main_volume);
@@ -374,6 +375,7 @@ MidiSynth::MidiSynth(int p_channels,std::vector<Voice*> p_voice_pool) /*: active
 	add_input_property(&transpose);
 	add_input_property(&finetune);
 	add_input_property(&duplicate_check);
+	add_input_property(&gain);
 	
 	
 	voice_count.set_all(0,0,p_voice_pool.size(),0,1,Property::DISPLAY_KNOB,"voice_count","Info/Voice Count","","None","Max");

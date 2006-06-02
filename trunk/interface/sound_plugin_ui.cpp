@@ -92,6 +92,76 @@ void SoundPluginUI::set_property_editor_updater(PropertyEditUpdater *p_property_
 }
 
 
+void SoundPluginUI::create_editor_for_property(String p_name,QWidget *p_parent) {
+	
+	int idx=-1;
+	for (int i=0;i<_plugin->get_port_count();i++) {
+		
+		if (_plugin->get_port( i ).get_name()==p_name) {
+			
+			idx=i;
+			break;
+		}
+	}
+	
+	ERR_FAIL_COND(idx==-1);
+	
+	QPixmap value_pixmap(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VALUE));
+	QPixmap label_pixmap(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_LABEL));
+	PixmapSlider::Skin slider_skin(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_BASE),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_LIGHT),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_GRABBER));
+		
+	PixmapVU::Skin vu_skin(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VU_EMPTY),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VU_FILL));
+	
+	
+	CVBox *vb_port = new CVBox(p_parent);
+			
+	CHBox *hb_port = new CHBox(vb_port);
+			
+	/* LABEL */
+	PixmapLabel * name = new PixmapLabel(hb_port,label_pixmap);
+			
+	name->set_pos(QPoint(6,label_pixmap.height()-8));
+	name->get_font().setPixelSize(10);
+	QString name_str=QStrify(_plugin->get_port(idx).get_caption());
+	if (_plugin->get_port(idx).get_postfix()!="") {
+				
+		name_str+=" (" +QStrify(_plugin->get_port(idx).get_postfix()).toLower() +")";
+	}
+	name->set_text( name_str );
+	name->set_angle( -90 );
+	name->set_color(QColor(0,0,22));
+			
+			
+	/* SLIDER/VU */
+	PropertyEditor *editor;
+	if (_plugin->get_port_type(idx)==SoundPlugin::TYPE_WRITE) {
+		PropertyEditSlider * slider = new PropertyEditSlider(hb_port,slider_skin);
+		slider->set_property(&_plugin->get_port(idx));
+		editor=slider;
+	} else {
+		PropertyEditVU * vu = new PropertyEditVU(hb_port,vu_skin);
+		vu->set_property(&_plugin->get_port(idx));
+		editor=vu;
+	}
+			
+	register_property_editor( editor );
+			
+	/* VALUE */
+	PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
+	value->set_property(&_plugin->get_port(idx));
+	value->set_postfix_visible( false );
+	value->set_color(QColor(240,240,255));
+	value->add_to_group(editor); //share group
+			
+	register_property_editor( value );
+			
+	vb_port->layout()->setMargin(0);
+	vb_port->layout()->setSpacing(0);
+	hb_port->layout()->setMargin(0);
+	hb_port->layout()->setSpacing(0);
+	
+}
+
 CHBox* SoundPluginUI::generate_default_layout(bool p_generate_controls) {
 	
 	setLayout(new QVBoxLayout(this));
@@ -104,10 +174,8 @@ CHBox* SoundPluginUI::generate_default_layout(bool p_generate_controls) {
 	new PixmapLabel(hb_top,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_TOP_RIGHT));
 	
 	
-	
 	CHBox *hb = new CHBox(this);
 	layout()->addWidget(hb);
-	
 	
 	new PixmapLabel(hb,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_LEFT));
 	//label_name->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
@@ -115,63 +183,14 @@ CHBox* SoundPluginUI::generate_default_layout(bool p_generate_controls) {
 	CHBox *hb_params = new CHBox(hb);
 	
 	if (p_generate_controls) {
-		QPixmap value_pixmap(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VALUE));
-		QPixmap label_pixmap(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_LABEL));
-		PixmapSlider::Skin slider_skin(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_BASE),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_LIGHT),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_SLIDER_GRABBER));
-		
-		PixmapVU::Skin vu_skin(GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VU_EMPTY),GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VU_FILL));
 		
 		for (int i=0;i<_plugin->get_port_count();i++) {
 			
 			if (QStrify(_plugin->get_port(i).get_caption()).indexOf("/")>=0)
 				continue;
 			
-			CVBox *vb_port = new CVBox(hb_params);
+			create_editor_for_property(_plugin->get_port(i).get_name(),hb_params);
 			
-			CHBox *hb_port = new CHBox(vb_port);
-			
-			/* LABEL */
-			PixmapLabel * name = new PixmapLabel(hb_port,label_pixmap);
-			
-			name->set_pos(QPoint(6,label_pixmap.height()-8));
-			name->get_font().setPixelSize(10);
-			QString name_str=QStrify(_plugin->get_port(i).get_caption());
-			if (_plugin->get_port(i).get_postfix()!="") {
-				
-				name_str+=" (" +QStrify(_plugin->get_port(i).get_postfix()).toLower() +")";
-			}
-			name->set_text( name_str );
-			name->set_angle( -90 );
-			name->set_color(QColor(0,0,22));
-			
-			
-			/* SLIDER/VU */
-			PropertyEditor *editor;
-			if (_plugin->get_port_type(i)==SoundPlugin::TYPE_WRITE) {
-				PropertyEditSlider * slider = new PropertyEditSlider(hb_port,slider_skin);
-				slider->set_property(&_plugin->get_port(i));
-				editor=slider;
-			} else {
-				PropertyEditVU * vu = new PropertyEditVU(hb_port,vu_skin);
-				vu->set_property(&_plugin->get_port(i));
-				editor=vu;
-			}
-			
-			register_property_editor( editor );
-			
-			/* VALUE */
-			PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
-			value->set_property(&_plugin->get_port(i));
-			value->set_postfix_visible( false );
-			value->set_color(QColor(240,240,255));
-			value->add_to_group(editor); //share group
-			
-			register_property_editor( value );
-			
-			vb_port->layout()->setMargin(0);
-			vb_port->layout()->setSpacing(0);
-			hb_port->layout()->setMargin(0);
-			hb_port->layout()->setSpacing(0);
 			
 		}
 	
@@ -184,7 +203,6 @@ CHBox* SoundPluginUI::generate_default_layout(bool p_generate_controls) {
 	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_LEFT));
 	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM),PixmapLabel::EXPAND_TILE_H);
 	new PixmapLabel(hb_bottom,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_BOTTOM_RIGHT));
-	
 	
 	layout()->setMargin(0);
 	layout()->setSpacing(0);

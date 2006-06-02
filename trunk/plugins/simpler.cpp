@@ -15,7 +15,7 @@
 #include "dsp/tree_helpers_dsp.h"
 #include "pixmaps/icon_simpler.xpm"
 
-#define DEFAULT_AMP 0.1
+
 #define C5_FREQ 261.6255653006
 namespace ReShaked {
 
@@ -62,8 +62,8 @@ void Simpler::Voice::set_volumes_from_pan(float *p_to) {
 	else if (out_count==2) {
 		
 		float pan=data->pan.get();
-		p_to[0]=1.0-pan;
-		p_to[1]=pan;
+		p_to[0]=(1.0-pan)*2.0;
+		p_to[1]=pan*2.0;
 	} else if (out_count==4) {
 	
 		float pan=data->pan.get();
@@ -72,17 +72,17 @@ void Simpler::Voice::set_volumes_from_pan(float *p_to) {
 		float l=1.0-pan;
 		float r=pan;
 		
-		p_to[0]=(1.0-depth)*l;
-		p_to[1]=(1.0-depth)*r;
+		p_to[0]=(1.0-depth)*l*4.0;
+		p_to[1]=(1.0-depth)*r*4.0;
 		
-		p_to[2]=depth*l;
-		p_to[3]=depth*r;
+		p_to[2]=depth*l*4.0;
+		p_to[3]=depth*r*4.0;
 	} else {
 		
-		p_to[0]=0.5; // FRONT LEFT
-		p_to[1]=0.5; // FRONT RIGHT
-		p_to[2]=0.5; // REAR LEFT
-		p_to[3]=0.5; //REAR RIGHT
+		p_to[0]=1; // FRONT LEFT
+		p_to[1]=1; // FRONT RIGHT
+		p_to[2]=1; // REAR LEFT
+		p_to[3]=1; //REAR RIGHT
 
 	}
 }

@@ -443,6 +443,8 @@ SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sin
 		
 	}
 	
+	//add gain
+	create_editor_for_property( "global_gain", hb );	
 }
 
 

@@ -32,8 +32,12 @@ Q_OBJECT
 	std::vector<PropertyEditorBase*> property_editors;
 	
 	static void property_editor_property_edited_callback(void *_this,Property* p_property,double p_old_val);
+	
+	
 protected:			    
 			    
+	void create_editor_for_property(String p_name,QWidget *p_parent);
+	
 	void register_property_editor(PropertyEditorBase* p_property_editor);
 	void unregister_property_editor(PropertyEditorBase* p_property_editor);
 	

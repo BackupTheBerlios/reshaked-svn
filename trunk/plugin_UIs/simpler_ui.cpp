@@ -160,6 +160,7 @@ SimplerUI::SimplerUI(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_p
 	
 	new PixmapLabel(vb_simpler,GET_QPIXMAP(THEME_SIMPLER__BOTTOM ) );
 	
+	create_editor_for_property( "global_gain", hb );
 	/* ***/
 }
 

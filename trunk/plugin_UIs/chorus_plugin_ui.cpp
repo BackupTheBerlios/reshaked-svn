@@ -132,66 +132,8 @@ ChorusPluginUI::ChorusPluginUI(QWidget *p_parent,ChorusPlugin *p_chorus) :SoundP
 	
 	new PixmapLabel(chorus_vb,GET_QPIXMAP(THEME_CHORUS__BOTTOM));
 	
-	CVBox *vb_port = new CVBox(hb);
-		
-	CHBox *hb_port = new CHBox(vb_port);
-		
-	/** WET SEND **/
-	
-	/// LABEL /
-	PixmapLabel * name = new PixmapLabel(hb_port,label_pixmap);
-		
-	name->set_pos(QPoint(6,label_pixmap.height()-8));
-	name->get_font().setPixelSize(10);
-	name->set_text( "Wet" );
-	name->set_angle( -90 );
-	name->set_color(QColor(0,0,22));
-	
-	///SLIDER
-	PropertyEditSlider * slider = new PropertyEditSlider(hb_port,slider_skin);
-	slider->set_property(&p_chorus->get_port_by_name("wet_send"));
-	
-		
-	register_property_editor( slider );
-		
-	/// VALUE 
-	PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
-	value->set_property(&p_chorus->get_port_by_name("wet_send"));
-	value->set_postfix_visible( false );
-	value->set_color(QColor(240,240,255));
-	value->add_to_group(slider); //share group
-	
-	register_property_editor( value );
-		
-	/** DRY SEND */
-	
-	vb_port = new CVBox(hb);
-		
-	hb_port = new CHBox(vb_port);
-	
-	/// LABEL /
-	name = new PixmapLabel(hb_port,label_pixmap);
-		
-	name->set_pos(QPoint(6,label_pixmap.height()-8));
-	name->get_font().setPixelSize(10);
-	name->set_text( "Dry" );
-	name->set_angle( -90 );
-	name->set_color(QColor(0,0,22));
-	
-	///SLIDER
-	slider = new PropertyEditSlider(hb_port,slider_skin);
-	slider->set_property(&p_chorus->get_port_by_name("dry_send"));
-			
-	register_property_editor( slider );
-		
-	/// VALUE 
-	value = new PropertyEditLabel( vb_port,value_pixmap );
-	value->set_property(&p_chorus->get_port_by_name("dry_send"));
-	value->set_postfix_visible( false );
-	value->set_color(QColor(240,240,255));
-	value->add_to_group(slider); //share group
-	
-	register_property_editor( value );
+	create_editor_for_property( "wet_send",hb );
+	create_editor_for_property( "dry_send",hb );
 	
 	/* set default props */
 	
