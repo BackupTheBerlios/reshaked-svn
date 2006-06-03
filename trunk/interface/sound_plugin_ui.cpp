@@ -123,9 +123,9 @@ void SoundPluginUI::create_editor_for_property(String p_name,QWidget *p_parent) 
 	name->set_pos(QPoint(6,label_pixmap.height()-8));
 	name->get_font().setPixelSize(10);
 	QString name_str=QStrify(_plugin->get_port(idx).get_caption());
-	if (_plugin->get_port(idx).get_postfix()!="") {
+	if (_plugin->get_port(idx).get_suffix()!="") {
 				
-		name_str+=" (" +QStrify(_plugin->get_port(idx).get_postfix()).toLower() +")";
+		name_str+=" (" +QStrify(_plugin->get_port(idx).get_suffix()).toLower() +")";
 	}
 	name->set_text( name_str );
 	name->set_angle( -90 );
@@ -149,7 +149,7 @@ void SoundPluginUI::create_editor_for_property(String p_name,QWidget *p_parent) 
 	/* VALUE */
 	PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
 	value->set_property(&_plugin->get_port(idx));
-	value->set_postfix_visible( false );
+	value->set_suffix_visible( false );
 	value->set_color(QColor(240,240,255));
 	value->add_to_group(editor); //share group
 			

@@ -36,6 +36,8 @@ class SinthUI : public SoundPluginUI {
 	OscillatorDisplay *oscview_2;
 	
 	FilterEditor *filter_editor;
+	
+	
 private slots:	
 	
 	void filter_mode_selected(int p_mode);

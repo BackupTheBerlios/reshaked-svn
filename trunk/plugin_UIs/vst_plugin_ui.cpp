@@ -223,7 +223,7 @@ VST_PluginUI::VST_PluginUI(QWidget *p_parent,VST_Plugin *p_plugin) : SoundPlugin
 	PropertyEditLabel * amp_value = new PropertyEditLabel( amp_hb, GET_QPIXMAP(THEME_VST__AMP_LABEL) );
 	
 	amp_value->set_property(&vst->get_port_by_name("vst_plugin_gain"));
-	amp_value->set_postfix_visible( false );
+	amp_value->set_suffix_visible( false );
 	amp_value->set_color(QColor(240,240,255));
 	
 	
@@ -273,9 +273,9 @@ VST_PluginUI::VST_PluginUI(QWidget *p_parent,VST_Plugin *p_plugin) : SoundPlugin
 			name->set_pos(QPoint(6,label_pixmap.height()-8));
 			name->get_font().setPixelSize(10);
 			QString name_str=QStrify(p_plugin->get_port(i).get_caption());
-			if (p_plugin->get_port(i).get_postfix()!="") {
+			if (p_plugin->get_port(i).get_suffix()!="") {
 				
-				name_str+=" (" +QStrify(p_plugin->get_port(i).get_postfix()).toLower() +")";
+				name_str+=" (" +QStrify(p_plugin->get_port(i).get_suffix()).toLower() +")";
 			}
 			name->set_text( name_str );
 			name->set_angle( -90 );
@@ -299,7 +299,7 @@ VST_PluginUI::VST_PluginUI(QWidget *p_parent,VST_Plugin *p_plugin) : SoundPlugin
 			/* VALUE */
 			PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
 			value->set_property(&p_plugin->get_port(i));
-			value->set_postfix_visible( false );
+			value->set_suffix_visible( false );
 			value->set_color(QColor(240,240,255));
 			value->add_to_group(editor); //share group
 			

@@ -15,6 +15,7 @@
 #include "plugins/tool_plugins.h"
 #include "plugins/moog_filter_plugin.h"
 #include "plugins/sine_synth.h"
+#include "plugins/sample_trigger.h"
 #include "plugins/simpler.h"
 #include "plugins/sinth.h"
 #include "plugins/chionic.h"
@@ -26,6 +27,7 @@
 #include "plugin_UIs/chorus_plugin_ui.h"
 #include "plugin_UIs/sinth_ui.h"
 #include "plugin_UIs/limiter_plugin_ui.h"
+#include "plugin_UIs/sample_trigger_ui.h"
 #include "plugins/chorus_plugin.h"
 #include "plugin_UIs/sound_plugin_ui_generic.h"
 #include "plugin_UIs/chionic_interface.h"
@@ -93,6 +95,7 @@ static void init_sound_plugin_list() {
 	/* Synths */
 	sound_plugin_list.add_info( ReShaked::Simpler::create_info() );
 	sound_plugin_list.add_info( ReShaked::Sinth::create_info() );
+	sound_plugin_list.add_info( ReShaked::SampleTrigger::create_info() );
 	//sound_plugin_list.add_info( ReShaked::SineSynth::create_info() );
 	sound_plugin_list.add_info( ReShaked::Chionic::create_info() );
 	
@@ -134,6 +137,7 @@ static void init_sound_plugin_UI_list() {
 	sound_plugin_UI_list.add_creator(    ReShaked::PannerPluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::DelayLinePluginUI::create_this );
 	sound_plugin_UI_list.add_creator(    ReShaked::SinthUI::create_this );
+	sound_plugin_UI_list.add_creator(    ReShaked::SampleTriggerUI::create_this );
 
 #ifdef VST_ENABLED
 	sound_plugin_UI_list.add_creator(    ReShaked::VST_PluginUI::create_this );

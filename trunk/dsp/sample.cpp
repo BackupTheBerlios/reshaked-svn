@@ -165,7 +165,8 @@ int Sample::get_channels() const {
 }
 int Sample::get_length(){
 	
-	ERR_FAIL_COND_V(data.size()==0,0);
+	if (data.size()==0)
+		return 0;
 	
 	return data[0].size();
 	

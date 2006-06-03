@@ -59,13 +59,13 @@ String VST_Plugin::Parameter::get_caption(){
 	return resbuff;
 
 }
-String VST_Plugin::Parameter::get_postfix(){
+String VST_Plugin::Parameter::get_suffix(){
 	
 	resbuff[0]=0;
 	ptrPlug->dispatcher (ptrPlug, effGetParamLabel, index, 0, resbuff, 0);	
 	return resbuff;
 }
-String VST_Plugin::Parameter::get_text_value(double p_for_value,bool p_no_postfix){
+String VST_Plugin::Parameter::get_text_value(double p_for_value,bool p_no_suffix){
 	
 	return "";
 }
@@ -80,13 +80,13 @@ Property::DisplayMode VST_Plugin::Parameter::get_display_mode(){
 }
 
 /* helpers */	
-String VST_Plugin::Parameter::get_text_value(bool p_no_postfix) l{
+String VST_Plugin::Parameter::get_text_value(bool p_no_suffix) l{
 
 	resbuff[0]=0;
 	ptrPlug->dispatcher (ptrPlug, effGetParamDisplay, index, 0, resbuff, 0);	
 	String res=resbuff;
-	if (!p_no_postfix)
-		res+=get_postfix();
+	if (!p_no_suffix)
+		res+=get_suffix();
 	return res;
 	
 }

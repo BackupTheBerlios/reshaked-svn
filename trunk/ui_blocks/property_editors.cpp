@@ -63,15 +63,15 @@ PropertyEditKnob::~PropertyEditKnob() {
 /***********************************/
 
 
-void PropertyEditLabel::set_postfix_visible(bool p_visible) {
+void PropertyEditLabel::set_suffix_visible(bool p_visible) {
 	
-	postfix=p_visible;
+	suffix=p_visible;
 	changed();
 }
 void PropertyEditLabel::changed() {
 	
 	
-	set_text(QStrify(get_property()->get_text_value(!postfix)));
+	set_text(QStrify(get_property()->get_text_value(!suffix)));
 	update();
 }
 
@@ -99,7 +99,7 @@ PropertyEditLabel::PropertyEditLabel(QWidget *p_parent,QPixmap p_bg) : PixmapLab
 	
 
 	get_font().setBold(true);
-	postfix=true;
+	suffix=true;
 
 }
 

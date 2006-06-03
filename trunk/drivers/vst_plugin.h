@@ -55,15 +55,15 @@ class VST_Plugin : public SoundPlugin {
 		double get_default();
 		String get_name();
 		String get_caption();
-		String get_postfix();
-		String get_text_value(double p_for_value,bool p_no_postfix=false);
+		String get_suffix();
+		String get_text_value(double p_for_value,bool p_no_suffix=false);
 		bool has_text_value();
 		bool is_write_only() { return write_only; }
 	
 		DisplayMode get_display_mode();
 	
 		/* helpers */	
-		String get_text_value(bool p_no_postfix=false); 
+		String get_text_value(bool p_no_suffix=false); 
 	 
 		Parameter(AEffect *p_ptrPlug,int p_index,bool p_write_only=false) { ptrPlug=p_ptrPlug; index=p_index; write_only=p_write_only; }
 	};

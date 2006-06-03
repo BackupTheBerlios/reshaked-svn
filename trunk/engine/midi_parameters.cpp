@@ -56,12 +56,12 @@ String MidiParameters::Parameter::get_caption() {
 	return display;
 	
 }
-String MidiParameters::Parameter::get_postfix() {
+String MidiParameters::Parameter::get_suffix() {
 	
 	return "";
 	
 }
-String MidiParameters::Parameter::get_text_value(double p_for_value,bool p_no_postfix) {
+String MidiParameters::Parameter::get_text_value(double p_for_value,bool p_no_suffix) {
 	
 	int val=lrint(p_for_value);
 			
@@ -84,7 +84,7 @@ Property::DisplayMode MidiParameters::Parameter::get_display_mode() {
 }
 
 /* helpers */	
-String MidiParameters::Parameter::get_text_value(bool p_no_postfix) {
+String MidiParameters::Parameter::get_text_value(bool p_no_suffix) {
 	
 	return get_text_value((double)val);
 	

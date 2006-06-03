@@ -66,7 +66,7 @@ void DelayLinePluginUI::create_knob_and_display(QWidget *p_parent,String p_prop,
 	knob->set_property( &plugin->get_port_by_name( p_prop ) );
 	label->set_property( &plugin->get_port_by_name( p_prop ) );
 	label->add_to_group( knob );
-	label->set_postfix_visible( false );
+	label->set_suffix_visible( false );
 	register_property_editor( knob );
 	register_property_editor( label );
 	

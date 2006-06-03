@@ -17,14 +17,14 @@ namespace ReShaked {
 
 
 
-String Property::get_postfix() {
+String Property::get_suffix() {
 	
 	return "";
 }
 
-String Property::get_text_value(bool p_no_postfix) {
+String Property::get_text_value(bool p_no_suffix) {
 	
-	return get_text_value(get(),p_no_postfix);
+	return get_text_value(get(),p_no_suffix);
 }
 
 
@@ -89,7 +89,7 @@ double Property::get_value_from_coeff(double p_coeff) {
 
 Property::Property() { quad_coeff=false; write_only=false; }
 
-void LocalProperty::set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String p_postfix,String p_min_label, String p_max_label) {
+void LocalProperty::set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String p_suffix,String p_min_label, String p_max_label) {
 	
 	val=p_val;
 	min=p_begin;
@@ -99,7 +99,7 @@ void LocalProperty::set_all(double p_val,double p_begin,double p_end,double p_de
 	display_mode=p_dmode;
 	name=p_name;
 	caption=p_caption;
-	postfix=p_postfix;
+	suffix=p_suffix;
 		
 	min_label=p_min_label;
 	max_label=p_max_label;
@@ -154,7 +154,7 @@ String LocalProperty::get_caption() {
 	return caption;
 }
 
-String LocalProperty::get_text_value(double p_for_value,bool p_no_postfix) {
+String LocalProperty::get_text_value(double p_for_value,bool p_no_suffix) {
 	
 	if (min_label!="" && p_for_value==min)
 		return min_label;
@@ -164,8 +164,8 @@ String LocalProperty::get_text_value(double p_for_value,bool p_no_postfix) {
 	int digits=(interval!=0)?get_decimal_count(interval):-1;
 	
 	String res=String::num(p_for_value,digits);
-	if (!p_no_postfix)
-		res+=postfix;
+	if (!p_no_suffix)
+		res+=suffix;
 	return res;
 }
 bool LocalProperty::has_text_value() {
@@ -173,9 +173,9 @@ bool LocalProperty::has_text_value() {
 	return true;
 }
 
-String LocalProperty::get_postfix() {
+String LocalProperty::get_suffix() {
 	
-	return postfix;
+	return suffix;
 }
 
 LocalProperty::DisplayMode LocalProperty::get_display_mode() {
@@ -210,7 +210,7 @@ void NoteProperty::config(String p_name,String p_caption) {
 	caption=p_caption;
 }
 
-String NoteProperty::get_text_value(double p_for_value,bool p_no_postfix) {
+String NoteProperty::get_text_value(double p_for_value,bool p_no_suffix) {
 	
 	return get_note_str((int)p_for_value);
 }
@@ -275,20 +275,20 @@ String OptionsProperty::get_caption() {
 	
 	return caption;
 }
-String OptionsProperty::get_postfix() {
+String OptionsProperty::get_suffix() {
 	
-	return postfix;
+	return suffix;
 	
 }
 
 
-String OptionsProperty::get_text_value(double p_for_value,bool p_no_postfix) {
+String OptionsProperty::get_text_value(double p_for_value,bool p_no_suffix) {
 	
 	int which=(int)p_for_value;
 	if (which<0 || which>=options.size())
 		return "";
 	
-	return options[which] + " " + postfix;
+	return options[which] + " " + suffix;
 	
 }
 bool OptionsProperty::has_text_value() {
@@ -303,12 +303,12 @@ Property::DisplayMode OptionsProperty::get_display_mode() {
 	return DISPLAY_OPTIONS;
 }
 
-void OptionsProperty::set_all(String p_name,String p_caption,const std::vector<String>& p_options,int p_default,String p_postfix) {
+void OptionsProperty::set_all(String p_name,String p_caption,const std::vector<String>& p_options,int p_default,String p_suffix) {
 	
 	name=p_name;
 	caption=p_caption;
 	options=p_options;
-	postfix=p_postfix;
+	suffix=p_suffix;
 	set(p_default);
 }
 

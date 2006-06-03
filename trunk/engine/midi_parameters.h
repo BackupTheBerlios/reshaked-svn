@@ -62,14 +62,14 @@ private:
 		double get_default();
 		String get_name();
 		String get_caption();
-		String get_postfix();
-		String get_text_value(double p_for_value,bool p_no_postfix=false);
+		String get_suffix();
+		String get_text_value(double p_for_value,bool p_no_suffix=false);
 		bool has_text_value();
 	
 		DisplayMode get_display_mode();
 	
 		/* helpers */	
-		String get_text_value(bool p_no_postfix=false); 		
+		String get_text_value(bool p_no_suffix=false); 		
 		
 		String display;
 	

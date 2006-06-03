@@ -61,7 +61,7 @@ class PropertyEditLabel : public PixmapLabel, public PropertyEditor {
 	Q_OBJECT
 
 	virtual void changed();
-	bool postfix;
+	bool suffix;
 	void click_override();
 	void mousePressEvent(QMouseEvent *e);		
 signals:	
@@ -69,7 +69,7 @@ signals:
 	void external_edit_signal(Property *p_property);
 	
 public:
-	void set_postfix_visible(bool p_visible);
+	void set_suffix_visible(bool p_visible);
 	PropertyEditLabel(QWidget *p_parent,QPixmap p_bg);
 	~PropertyEditLabel();
 

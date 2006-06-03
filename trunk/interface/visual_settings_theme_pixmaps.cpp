@@ -231,6 +231,13 @@
 #include "pixmaps/default_skin/reverb__labels.xpm"
 #include "pixmaps/default_skin/reverb__top.xpm"
 #include "pixmaps/default_skin/right__margin.xpm"
+#include "pixmaps/default_skin/sample_trigger__bottom.xpm"
+#include "pixmaps/default_skin/sample_trigger__controls_begin.xpm"
+#include "pixmaps/default_skin/sample_trigger__note_bottom.xpm"
+#include "pixmaps/default_skin/sample_trigger__note_display.xpm"
+#include "pixmaps/default_skin/sample_trigger__note_top.xpm"
+#include "pixmaps/default_skin/sample_trigger__note_updown.xpm"
+#include "pixmaps/default_skin/sample_trigger__quad_pan.xpm"
 #include "pixmaps/default_skin/scrollbar_arrow_down.xpm"
 #include "pixmaps/default_skin/scrollbar_arrow_down_pushed.xpm"
 #include "pixmaps/default_skin/scrollbar_arrow_left.xpm"
@@ -875,6 +882,20 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["reverb__top"]=THEME_REVERB__TOP;
     pixmap_map[THEME_RIGHT__MARGIN]=QPixmap( (const char**) right__margin_xpm); 
     pixmap_map_skin["right__margin"]=THEME_RIGHT__MARGIN;
+    pixmap_map[THEME_SAMPLE_TRIGGER__BOTTOM]=QPixmap( (const char**) sample_trigger__bottom_xpm); 
+    pixmap_map_skin["sample_trigger__bottom"]=THEME_SAMPLE_TRIGGER__BOTTOM;
+    pixmap_map[THEME_SAMPLE_TRIGGER__CONTROLS_BEGIN]=QPixmap( (const char**) sample_trigger__controls_begin_xpm); 
+    pixmap_map_skin["sample_trigger__controls_begin"]=THEME_SAMPLE_TRIGGER__CONTROLS_BEGIN;
+    pixmap_map[THEME_SAMPLE_TRIGGER__NOTE_BOTTOM]=QPixmap( (const char**) sample_trigger__note_bottom_xpm); 
+    pixmap_map_skin["sample_trigger__note_bottom"]=THEME_SAMPLE_TRIGGER__NOTE_BOTTOM;
+    pixmap_map[THEME_SAMPLE_TRIGGER__NOTE_DISPLAY]=QPixmap( (const char**) sample_trigger__note_display_xpm); 
+    pixmap_map_skin["sample_trigger__note_display"]=THEME_SAMPLE_TRIGGER__NOTE_DISPLAY;
+    pixmap_map[THEME_SAMPLE_TRIGGER__NOTE_TOP]=QPixmap( (const char**) sample_trigger__note_top_xpm); 
+    pixmap_map_skin["sample_trigger__note_top"]=THEME_SAMPLE_TRIGGER__NOTE_TOP;
+    pixmap_map[THEME_SAMPLE_TRIGGER__NOTE_UPDOWN]=QPixmap( (const char**) sample_trigger__note_updown_xpm); 
+    pixmap_map_skin["sample_trigger__note_updown"]=THEME_SAMPLE_TRIGGER__NOTE_UPDOWN;
+    pixmap_map[THEME_SAMPLE_TRIGGER__QUAD_PAN]=QPixmap( (const char**) sample_trigger__quad_pan_xpm); 
+    pixmap_map_skin["sample_trigger__quad_pan"]=THEME_SAMPLE_TRIGGER__QUAD_PAN;
     pixmap_map[THEME_SCROLLBAR_ARROW_DOWN]=QPixmap( (const char**) scrollbar_arrow_down_xpm); 
     pixmap_map_skin["scrollbar_arrow_down"]=THEME_SCROLLBAR_ARROW_DOWN;
     pixmap_map[THEME_SCROLLBAR_ARROW_DOWN_PUSHED]=QPixmap( (const char**) scrollbar_arrow_down_pushed_xpm); 

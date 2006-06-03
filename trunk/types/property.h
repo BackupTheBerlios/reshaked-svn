@@ -50,10 +50,10 @@ public:
 	virtual double get_default()=0;
 	virtual String get_name()=0;
 	virtual String get_caption()=0;
-	virtual String get_postfix();
+	virtual String get_suffix();
 	virtual bool is_quad_coeff();
 	void set_quad_coeff(bool p_quad);
-	virtual String get_text_value(double p_for_value,bool p_no_postfix=false)=0; //useful for precomputnig ranges
+	virtual String get_text_value(double p_for_value,bool p_no_suffix=false)=0; //useful for precomputnig ranges
 	virtual bool is_write_only();
 	void set_write_only(bool p_write_only);
 	virtual bool has_text_value()=0;
@@ -61,7 +61,7 @@ public:
 	virtual DisplayMode get_display_mode()=0;
 	
 	/* helpers */	
-	virtual String get_text_value(bool p_no_postfix=false); 
+	virtual String get_text_value(bool p_no_suffix=false); 
 	double get_coeff_value(); ///< return value in range 0 .. 1
 	void set_coeff_value(double p_coeff); ///< return value in range 0 .. 1
 	double get_value_from_coeff(double p_coeff);
@@ -84,14 +84,14 @@ protected:
 	DisplayMode display_mode;
 	String name;
 	String caption;
-	String postfix;
+	String suffix;
 	
 	String max_label;
 	String min_label;
 public:
 	
 	
-	void set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String postfix="",String p_min_label="", String p_max_label="");
+	void set_all(double p_val,double p_begin,double p_end,double p_default,double p_interval, DisplayMode p_dmode,String p_name,String p_caption,String suffix="",String p_min_label="", String p_max_label="");
 	
 	
 	double get();
@@ -104,9 +104,9 @@ public:
 	
 	String get_name();
 	String get_caption();
-	String get_postfix();
+	String get_suffix();
 	
-	String get_text_value(double p_for_value,bool p_no_postfix=false);
+	String get_text_value(double p_for_value,bool p_no_suffix=false);
 	bool has_text_value();
 	
 	DisplayMode get_display_mode();
@@ -123,7 +123,7 @@ class NoteProperty : public LocalProperty {
 public:	
 	
 	void config(String p_name,String p_caption);
-	String get_text_value(double p_for_value,bool p_no_postfix=false);
+	String get_text_value(double p_for_value,bool p_no_suffix=false);
 	NoteProperty();
 	
 };
@@ -134,7 +134,7 @@ class OptionsProperty : public Property {
 	std::vector<String> options;
 	String name;
 	String caption;
-	String postfix;
+	String suffix;
 public:	
 	
 	int get_current();
@@ -146,15 +146,15 @@ public:
 	double get_default();
 	String get_name();
 	String get_caption();
-	String get_postfix();
+	String get_suffix();
 	
 	
-	String get_text_value(double p_for_value,bool p_no_postfix=false); //useful for precomputnig ranges
+	String get_text_value(double p_for_value,bool p_no_suffix=false); //useful for precomputnig ranges
 	bool has_text_value();
 	
 	DisplayMode get_display_mode();
 	
-	void set_all(String p_name,String p_caption,const std::vector<String>& p_options,int p_default=0,String p_postfix="");
+	void set_all(String p_name,String p_caption,const std::vector<String>& p_options,int p_default=0,String p_suffix="");
 	OptionsProperty();
 };
 
@@ -181,7 +181,7 @@ class PropertyClassFunc	: public Property {
 	
 	String name;
 	String caption;
-	String postfix;
+	String suffix;
 	
 	DisplayMode dispmode;
 public:	
@@ -194,15 +194,15 @@ public:
 	virtual double get_default() { return default_v; }
 	virtual String get_name() { return name; }
 	virtual String get_caption() { return caption; }
-	virtual String get_postfix() { return postfix; }
+	virtual String get_suffix() { return suffix; }
 	
-	virtual String get_text_value(double p_for_value,bool p_no_postfix=false) { 
+	virtual String get_text_value(double p_for_value,bool p_no_suffix=false) { 
 		
 		int digits=(stepping!=0)?get_decimal_count(stepping):-1;
 	
 		String res=String::num(p_for_value,digits);
-		if (!p_no_postfix)
-			res+=postfix;
+		if (!p_no_suffix)
+			res+=suffix;
 		return res;
 	}
 	
@@ -217,7 +217,7 @@ public:
 	void set_min_func(GetMinFunc p_func) { get_min_func=p_func; }
 	void set_min(Type p_min) { min=p_min; get_min_func=NULL; }
 	void set_max(Type p_max) { max=p_max; get_max_func=NULL; }
-	void config(String p_name,String p_caption,double p_stepping, double p_default,String p_postfix="") { name=p_name; caption=p_caption; stepping=p_stepping; default_v=p_default; postfix=p_postfix; };
+	void config(String p_name,String p_caption,double p_stepping, double p_default,String p_suffix="") { name=p_name; caption=p_caption; stepping=p_stepping; default_v=p_default; suffix=p_suffix; };
 	
 	PropertyClassFunc() { instance=NULL; stepping=0; default_v=0; get_val_func=NULL; set_val_func=NULL; get_max_func=NULL; get_min_func=NULL; dispmode=DISPLAY_SLIDER; }
 
@@ -237,7 +237,7 @@ class PropertyVarPtr : public Property {
 
 	String name;
 	String caption;
-	String postfix;
+	String suffix;
 
 	DisplayMode dispmode;
 public:	
@@ -250,15 +250,15 @@ public:
 	virtual double get_default() { return default_v; }
 	virtual String get_name() { return name; }
 	virtual String get_caption() { return caption; }
-	virtual String get_postfix() { return postfix; }
+	virtual String get_suffix() { return suffix; }
 
-	virtual String get_text_value(double p_for_value,bool p_no_postfix=false) { 
+	virtual String get_text_value(double p_for_value,bool p_no_suffix=false) { 
 
 		int digits=(stepping!=0)?get_decimal_count(stepping):-1;
 		
 		String res=String::num(p_for_value,digits);
-		if (!p_no_postfix)
-			res+=postfix;
+		if (!p_no_suffix)
+			res+=suffix;
 		return res;
 	}
 
@@ -266,7 +266,7 @@ public:
 
 	virtual DisplayMode get_display_mode() { return dispmode; }
 
-	void config(String p_name,String p_caption,T* p_var_ptr, T p_min, T p_max,double p_stepping, double p_default,String p_postfix="") { name=p_name; caption=p_caption; stepping=p_stepping; default_v=p_default; postfix=p_postfix; ptr=p_var_ptr; min=p_min; max=p_max; };
+	void config(String p_name,String p_caption,T* p_var_ptr, T p_min, T p_max,double p_stepping, double p_default,String p_suffix="") { name=p_name; caption=p_caption; stepping=p_stepping; default_v=p_default; suffix=p_suffix; ptr=p_var_ptr; min=p_min; max=p_max; };
 
 	PropertyVarPtr() { ptr=NULL; stepping=0; default_v=0;  min=0; max=0; dispmode=DISPLAY_SLIDER; }
 

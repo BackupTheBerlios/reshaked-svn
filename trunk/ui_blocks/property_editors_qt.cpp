@@ -80,7 +80,7 @@ void PropertyEditSpinBox::config() {
 	if (digits>6)
 		digits=6;
 	
-	setSuffix( QStrify(get_property()->get_postfix()) );
+	setSuffix( QStrify(get_property()->get_suffix()) );
 	setDecimals(digits);
 	setMaximum( get_property()->get_max() );
 	setMinimum( get_property()->get_min() );

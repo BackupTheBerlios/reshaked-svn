@@ -99,7 +99,7 @@ FilterBankPluginUI::FilterBankPluginUI(QWidget *p_parent,FilterBankPlugin *p_fil
 	octave_label->set_property( &p_filterbank->get_port_by_name( "global_cutoff" ) );
 	register_property_editor( octave_label );
 	octave_label->add_to_group(octave_sl);
-	octave_label->set_postfix_visible( false );
+	octave_label->set_suffix_visible( false );
 	
 	new PixmapLabel( fb_hb, GET_QPIXMAP(THEME_FILTERBANK__RIGHT));
 	

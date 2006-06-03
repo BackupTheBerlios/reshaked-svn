@@ -12,7 +12,7 @@
 #include "sinth_ui.h"
 #include "interface/visual_settings.h"
 #include "ui_blocks/panner_editor.h"
-
+#include "ui_blocks/helpers.h"
 
 
 namespace ReShaked {
@@ -83,6 +83,11 @@ void SinthUI::oscedit_make_square_slot(int p_which) {
 }
 void SinthUI::oscedit_edit_slot(int p_which) {
 	
+	OscillatorEditor *oed = new OscillatorEditor(topLevelOf(this));
+	
+	oed->exec();
+	
+	delete oed;
 	
 }
 
@@ -236,7 +241,7 @@ SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sin
 		
 		PropertyEditLabel *label = new PropertyEditLabel(spin_hb, GET_QPIXMAP( THEME_SINTH__OSCTUNE_DISPLAY ) );
 		label->set_property( &sinth->get_port_by_name( "osc_1_tune_coarse" ) );
-		label->set_postfix_visible( false );		
+		label->set_suffix_visible( false );		
 		PropertyEditor *updown = new PropertyEditUpDown(spin_hb,PixmapUpDown::Skin( GET_QPIXMAP( THEME_SINTH__OSCTUNE_UPDOWN ) ) );
 		updown->set_property( label->get_property() );
 		updown->add_to_group( label);
@@ -250,7 +255,7 @@ SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sin
 		
 		label = new PropertyEditLabel(spin_hb, GET_QPIXMAP( THEME_SINTH__OSCTUNE_DISPLAY ) );
 		label->set_property( &sinth->get_port_by_name( "osc_1_tune_fine" ) );
-		label->set_postfix_visible( false );
+		label->set_suffix_visible( false );
 		
 		updown = new PropertyEditUpDown(spin_hb,PixmapUpDown::Skin( GET_QPIXMAP( THEME_SINTH__OSCTUNE_UPDOWN ) ) );
 		updown->set_property( label->get_property() );
@@ -265,7 +270,7 @@ SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sin
 		
 		label = new PropertyEditLabel(spin_hb, GET_QPIXMAP( THEME_SINTH__OSCTUNE_DISPLAY ) );
 		label->set_property( &sinth->get_port_by_name( "osc_2_tune_coarse" ) );
-		label->set_postfix_visible( false );
+		label->set_suffix_visible( false );
 		
 		updown = new PropertyEditUpDown(spin_hb,PixmapUpDown::Skin( GET_QPIXMAP( THEME_SINTH__OSCTUNE_UPDOWN ) ) );
 		updown->set_property( label->get_property() );
@@ -280,7 +285,7 @@ SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sin
 		
 		label = new PropertyEditLabel(spin_hb, GET_QPIXMAP( THEME_SINTH__OSCTUNE_DISPLAY ) );
 		label->set_property( &sinth->get_port_by_name( "osc_2_tune_fine" ) );
-		label->set_postfix_visible( false );
+		label->set_suffix_visible( false );
 		
 		updown = new PropertyEditUpDown(spin_hb,PixmapUpDown::Skin( GET_QPIXMAP( THEME_SINTH__OSCTUNE_UPDOWN ) ) );
 		updown->set_property( label->get_property() );
@@ -445,6 +450,9 @@ SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sin
 	
 	//add gain
 	create_editor_for_property( "global_gain", hb );	
+	
+	
+	
 }
 
 

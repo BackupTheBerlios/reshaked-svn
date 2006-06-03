@@ -153,7 +153,7 @@ void TrackRack::add_track(Track *p_track) {
 
 			PropertyEditLabel * value = new PropertyEditLabel( vb_port,value_pixmap );
 			value->set_property(&tp->volume());
-			value->set_postfix_visible( false );
+			value->set_suffix_visible( false );
 			value->set_color(QColor(240,240,255));
 			value->add_to_group(slider); //share group
 			add_editor(value);

@@ -12,16 +12,35 @@
 #ifndef RESHAKEDSAMPLE_TRIGGER_UI_H
 #define RESHAKEDSAMPLE_TRIGGER_UI_H
 
+#include "interface/sound_plugin_ui.h"
+#include "ui_blocks/sample_viewer.h"
+
+#include "plugins/sample_trigger.h"
+
 namespace ReShaked {
 
 /**
-	@author Juan Linietsky <reshaked@gmail.com>
-*/
-class SampleTriggerUI{
-public:
-    SampleTriggerUI();
+	@author Juan Linietsky <reduzio@gmail.com>
+ */
+class SampleTriggerUI : public SoundPluginUI {
+	
+	Q_OBJECT
+	
+	SampleViewer *viewer;			
 
-    ~SampleTriggerUI();
+	SampleTrigger *sample_trigger;
+
+private slots:			
+
+
+	void load_sample_slot();
+	void edit_sample_slot();
+public:
+	
+	static SoundPluginUI* create_this(SoundPlugin *p_plugin,QWidget *p_parent);
+
+	SampleTriggerUI(QWidget *p_parent,SampleTrigger *p_sample_trigger);
+	~SampleTriggerUI();
 
 };
 
