@@ -40,8 +40,9 @@ class OscillatorEditor : public QDialog {
 		WAVE_TYPE_SINE,
 		WAVE_TYPE_SAW,
 		WAVE_TYPE_TRIANGLE,
+		WAVE_TYPE_SQUARE,
 		WAVE_TYPE_CIRCULAR,
-		
+		WAVE_TYPE_CHIRP,
 		WAVE_TYPE_CUSTOM,
 		WAVE_TYPE_MAX,
 	};
@@ -61,9 +62,15 @@ class OscillatorEditor : public QDialog {
 	
 	std::vector<QSlider*> harmonic_array;
 		
+	
+	float get_wave_value(float p_phase,int p_wave_type);
+	
+	Oscillator osc;
+	
 private slots:	
 	
-	
+	void regenerate_wave();
+	void wave_changed_slot(int);
 public:
 	OscillatorEditor(QWidget *p_parent);
 	~OscillatorEditor();
