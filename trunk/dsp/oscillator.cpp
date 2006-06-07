@@ -32,6 +32,11 @@ const float *Oscillator::get_osc(int p_submap_level) {
 	
 }
 
+float *Oscillator::get_osc_w() {
+	
+	return &oscil_maps[0][0];
+	
+}
 
 int Oscillator::get_osc_bits(int p_submap_level) {
 	

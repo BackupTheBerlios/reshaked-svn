@@ -29,7 +29,7 @@ const SoundPluginInfo *Sinth::create_info() {
 	static SoundPluginInfo info;
 	
 	info.caption="Sinth";
-	info.description="2-Osc Simple Synthesis";
+	info.description="Simple 2-Osc Additive Synthesizer";
 	info.long_description="Generic 2 Oscillators Additive Synthesizer. Meant as an easy way to recreate vintage sounds, as well as a starting point for creating own ones. This synthesizer produces mono sounds (no matter the amount of channels), so adding a Panner is recommended.";
 	info.unique_ID="INTERNAL_sinth"; 
 	info.category="Synthesizers"; 
@@ -598,6 +598,32 @@ Oscillator* Sinth::get_osc(int p_osc) {
 	
 	return &data.osc[p_osc].osc;
 }
+
+void Sinth::save(TreeSaver *p_saver) {
+	
+	p_saver->add_float_array( "osc_1_data", data.osc[0].osc.get_osc(), Oscillator::BASE_SIZE );
+	p_saver->add_float_array( "osc_2_data", data.osc[1].osc.get_osc(), Oscillator::BASE_SIZE );
+	SoundPlugin::save( p_saver ); //save properties normally
+}
+void Sinth::load(TreeLoader *p_loader) {
+	
+	if ( p_loader->get_float_array_len( "osc_1_data" )==Oscillator::BASE_SIZE ) {
+		
+		p_loader->get_float_array( "osc_1_data" , data.osc[0].osc.get_osc_w() );
+		data.osc[0].osc.update_submaps();
+		
+	}
+	
+	if ( p_loader->get_float_array_len( "osc_2_data" )==Oscillator::BASE_SIZE ) {
+		
+		p_loader->get_float_array( "osc_2_data" , data.osc[1].osc.get_osc_w() );
+		data.osc[1].osc.update_submaps();
+	}
+	
+	SoundPlugin::load( p_loader ); //load properties normally
+	
+}
+
 
 Sinth::Sinth(const SoundPluginInfo *p_info,int p_channels) : SoundPlugin(p_info,p_channels) {
 	

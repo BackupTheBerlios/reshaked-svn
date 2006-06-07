@@ -104,6 +104,8 @@ void OscillatorEditor::regenerate_wave() {
 	
 	osc.update_submaps();
 	
+	if (edited_osc)
+		*edited_osc=osc; //copy it!
 	display->update();
 }
 
@@ -156,8 +158,17 @@ float OscillatorEditor::get_wave_value(float p_phase,int p_wave_type) {
 			return v;
 		} break;
 		case WAVE_TYPE_CHIRP: {  
+			
+			//taken from znddsbfx
+			float x=fmodf(p_phase,1.0)*2.0*M_PI;
+			float a=(param-0.5)*4;
+			if (a<0.0) a*=2.0;
+			a=powf(3.0,a);
+			return (sinf(x/2.0)*sinf(a*x*x));
 		} break;
 		case WAVE_TYPE_CUSTOM: {  
+			
+			return custom.get_value( p_phase );
 		} break;
 		case WAVE_TYPE_MAX: {  
 		} break;
@@ -174,14 +185,44 @@ void OscillatorEditor::wave_changed_slot(int) {
 	regenerate_wave();
 }
 
+int OscillatorEditor::exec(Oscillator *p_edited_osc) {
+	
+	edited_osc=p_edited_osc;
+	
+	edited_osc_original=*edited_osc;
+	
+	regenerate_wave();
+	
+	int execcode=QDialog::exec();
+	
+	switch (execcode) {
+		
+		case Accepted: {
+			
+			// nothing?
+		} break;
+		case Rejected: {
+			
+			*edited_osc=edited_osc_original;
+			
+		} break;
+	}
+	
+	edited_osc=NULL;
+	
+	return execcode;
+}
+
+
 OscillatorEditor::OscillatorEditor(QWidget *p_parent) : QDialog(p_parent) {
+	
+	edited_osc=NULL;
 	
 	setLayout( new QVBoxLayout(this) );
 	
 	QBoxLayout *hbl;
 	
 	hbl = add_section("Display",true);
-	
 	
 	OscillatorDisplay::Skin oscd_sk;
 	oscd_sk.bg_color=QColor(0,0,0);
@@ -196,10 +237,13 @@ OscillatorEditor::OscillatorEditor(QWidget *p_parent) : QDialog(p_parent) {
 	
 	hbl->addWidget(display);
 	
-	hbl = add_section("Wave Type");
+	hbl = add_section("Wave Type & Custom Shape");
+	
+	QVBoxLayout *param_vbl = new QVBoxLayout;
+	
+	hbl->addLayout(param_vbl);
 	
 	wave_types = new QComboBox;
-	
 	
 	wave_types->addItem("Sine Wave");
 	wave_types->addItem("Saw Wave");
@@ -207,23 +251,35 @@ OscillatorEditor::OscillatorEditor(QWidget *p_parent) : QDialog(p_parent) {
 	wave_types->addItem("Square Wave");
 	wave_types->addItem("Circular Wave");
 	wave_types->addItem("Chirp Wave");
-	wave_types->addItem("Custom Wave");
+	wave_types->addItem("Custom Shape");
 	
 	QObject::connect(wave_types,SIGNAL(currentIndexChanged(int)),this,SLOT(wave_changed_slot( int )));
 	
-	hbl->addWidget(wave_types);
+	param_vbl->addWidget(wave_types);
 	
-	hbl->addSpacing(20);
-	hbl->addWidget(new QLabel("Width:"));
-	hbl->addSpacing(20);
+	param_vbl->addWidget(new QLabel("Width:"));
 	wave_parameter = new QSlider(Qt::Horizontal);
 	wave_parameter->setRange(0,1000);
 	wave_parameter->setValue(500);
 	
 	QObject::connect(wave_parameter,SIGNAL(valueChanged(int)),this,SLOT(wave_changed_slot( int )));
 	
-	hbl->addWidget(wave_parameter);
+	param_vbl->addWidget(wave_parameter);
 	//std::vector<QSlider*> harmonics;
+	
+	ShapeEditor::Skin se_sk;
+	se_sk.bg_col=QColor(0,0,0);
+	se_sk.line_col=QColor(255,255,255);
+	se_sk.point_col=QColor(255,100,100);
+	se_sk.zero_col=QColor(100,100,100);
+	
+	hbl->addSpacing(20);
+	
+	shape_editor = new ShapeEditor(this,se_sk);
+	shape_editor->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	
+	shape_editor->set_shape( &custom );
+	hbl->addWidget(shape_editor);
 	
 	hbl = add_section("Harmonics");
 	
@@ -275,8 +331,12 @@ OscillatorEditor::OscillatorEditor(QWidget *p_parent) : QDialog(p_parent) {
 			
 	hbl->addStretch(2); // ?
 	
+	custom.set_min(-1);
+	custom.set_max(1);
 	
+	QObject::connect(shape_editor,SIGNAL(shape_changed_signal()),this,SLOT(regenerate_wave()));
 	regenerate_wave();
+	
 }
 
 

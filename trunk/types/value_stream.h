@@ -35,7 +35,7 @@ private:
 	int find_pos(T p_pos,bool &p_exact);
 public:
 
-	void insert(T p_pos,V p_value);
+	int insert(T p_pos,V p_value); /* Insert, and return the position at it was inserted */
 	int get_exact_index(T p_pos); /* return INVALID_STREAM_INDEX if pos is not exact */
 	int get_prev_index(T p_pos); /* get index to pos previous or equal to value, if nothing less than it, return -1 */
 	int get_next_index(T p_pos); /* get index to pos next or equal to value, if greater than last element, then stream_size+1 is returned */
@@ -91,7 +91,7 @@ int ValueStream<T,V>::find_pos(T p_pos,bool &p_exact) {
 
 
 template<class T, class V>
-void ValueStream<T,V>::insert(T p_pos,V p_value) {
+int ValueStream<T,V>::insert(T p_pos,V p_value) {
 
 	
 	value_stream_global_lock();
@@ -103,7 +103,9 @@ void ValueStream<T,V>::insert(T p_pos,V p_value) {
 	bool exact;
 	int pos=find_pos(p_pos,exact);
 	if (pos==INVALID_STREAM_INDEX) { //it's empty!
+		pos=stream.size();
 		stream.push_back(new_v);
+		
 	} else if (!exact) { /* no exact position found, make room */
 		if (pos==stream.size())
 			stream.push_back(new_v); //it's at the end, just pushit back
@@ -115,6 +117,8 @@ void ValueStream<T,V>::insert(T p_pos,V p_value) {
 	}
 
 	value_stream_global_unlock();
+	
+	return pos;
 	
 }
 

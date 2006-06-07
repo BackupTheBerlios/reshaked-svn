@@ -30,7 +30,13 @@ class SinthUI : public SoundPluginUI {
 	
 	Sinth *sinth;
 	
-
+	struct OscEditContain : public SoundPlugin_MetaData {
+		
+		OscillatorEditor *edit_osc[2];	
+		~OscEditContain() { delete edit_osc[0]; delete edit_osc[1]; }
+	};
+	
+	OscEditContain *oscedit_container;
 	
 	OscillatorDisplay *oscview_1;
 	OscillatorDisplay *oscview_2;

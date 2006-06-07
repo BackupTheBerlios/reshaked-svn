@@ -35,6 +35,7 @@ public:
 	
 	int get_max_submap_lebel();
 	const float *get_osc(int p_submap_level=0);
+	float *get_osc_w();
 	int get_osc_bits(int p_submap_level);
 	void set_frame(int p_frame,float p_value);
 	

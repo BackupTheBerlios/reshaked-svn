@@ -143,6 +143,10 @@ private:
 	MidiSynth *midi_synth;
 	
 	void reset();		
+	
+	void save(TreeSaver *p_saver);	
+	void load(TreeLoader *p_loader);	
+		
 public:
 	
 	Oscillator* get_osc(int p_osc);

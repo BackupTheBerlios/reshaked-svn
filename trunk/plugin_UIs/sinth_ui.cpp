@@ -83,12 +83,11 @@ void SinthUI::oscedit_make_square_slot(int p_which) {
 }
 void SinthUI::oscedit_edit_slot(int p_which) {
 	
-	OscillatorEditor *oed = new OscillatorEditor(topLevelOf(this));
+	ERR_FAIL_INDEX(p_which,2);
 	
-	oed->exec();
-	
-	delete oed;
-	
+	oscedit_container->edit_osc[p_which]->exec( sinth->get_osc( p_which ) );
+	oscview_1->update();
+	oscview_2->update();
 }
 
 void SinthUI::filter_mode_selected(int p_mode) {
@@ -100,6 +99,21 @@ void SinthUI::filter_mode_selected(int p_mode) {
 }
 
 SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sinth) {
+	
+	
+	oscedit_container=NULL;
+	
+	oscedit_container = dynamic_cast<OscEditContain*>( p_sinth->get_metadata() );
+	
+	if (oscedit_container==NULL) {
+		
+		oscedit_container = new OscEditContain;
+		oscedit_container->edit_osc[0] = new OscillatorEditor(topLevelOf(this));
+		oscedit_container->edit_osc[1] = new OscillatorEditor(topLevelOf(this));
+		
+		p_sinth->set_metadata( oscedit_container );
+	}
+
 	
 	sinth=p_sinth;
 	

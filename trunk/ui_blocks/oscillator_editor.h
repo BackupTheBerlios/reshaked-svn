@@ -13,6 +13,7 @@
 #define RESHAKEDOSCILLATOR_EDITOR_H
 
 #include "ui_blocks/oscillator_display.h"
+#include "ui_blocks/shape_editor.h"
 
 #include <Qt/qdialog.h>
 #include <Qt/qcombobox.h>
@@ -59,6 +60,7 @@ class OscillatorEditor : public QDialog {
 	
 	QComboBox *wave_types;
 	QSlider *wave_parameter;
+	ShapeEditor *shape_editor;
 	
 	std::vector<QSlider*> harmonic_array;
 		
@@ -67,11 +69,18 @@ class OscillatorEditor : public QDialog {
 	
 	Oscillator osc;
 	
+	Shape custom;
+	
+	Oscillator *edited_osc;
+	Oscillator edited_osc_original;
 private slots:	
+	
 	
 	void regenerate_wave();
 	void wave_changed_slot(int);
 public:
+	int exec(Oscillator *p_edited_osc);
+	
 	OscillatorEditor(QWidget *p_parent);
 	~OscillatorEditor();
 };
