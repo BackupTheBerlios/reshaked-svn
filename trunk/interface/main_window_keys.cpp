@@ -84,8 +84,8 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/selection_begin","Selection Begin",Qt::ALT+Qt::Key_B);
 	data.keyboard_codes.add_key_bind("editor/selection_end","Selection Begin",Qt::ALT+Qt::Key_E);
 	data.keyboard_codes.add_key_bind("editor/selection_copy","Selection Copy",Qt::ALT+Qt::Key_C);
-	data.keyboard_codes.add_key_bind("editor/selection_paste_insert","Selection Paste Insert",Qt::ALT+Qt::Key_I);
-	data.keyboard_codes.add_key_bind("editor/selection_paste_overwrite","Selection Paste Overwrite",Qt::ALT+Qt::Key_P);
+	data.keyboard_codes.add_key_bind("editor/selection_paste_insert","Selection Paste Insert",Qt::ALT+Qt::Key_P);
+	data.keyboard_codes.add_key_bind("editor/selection_paste_overwrite","Selection Paste Overwrite",Qt::ALT+Qt::Key_O);
 	data.keyboard_codes.add_key_bind("editor/selection_paste_mix","Selection Paste Mix",Qt::ALT+Qt::Key_M);
 	data.keyboard_codes.add_key_bind("editor/select_column_block","Select Column/Block",Qt::ALT+Qt::Key_L);
 	data.keyboard_codes.add_key_bind("editor/selection_disable","Selection Disable",Qt::ALT+Qt::Key_U);

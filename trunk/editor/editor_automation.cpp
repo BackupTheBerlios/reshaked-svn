@@ -164,6 +164,103 @@ bool Editor::automation_edit_key_press(int p_key_value) {
 				}				
 				end_check_shift_selection();
 			}
+			
+			CASE( KEYBIND("editor/insert") ) {
+			
+				
+				
+				d->undo_stream.begin("Insert Row");
+				
+				Tick tick=d->cursor.get_tick_pos();
+				int block_idx = automation->get_block_idx_at_pos( tick );
+			
+				/* Can only paste at current block */
+				if (block_idx<0)
+					break;
+			
+				Tick block_len=automation->get_block( block_idx )->get_length();
+				Tick block_pos=automation->get_block_pos( block_idx );
+				Automation::AutomationData *blk = automation->get_block( block_idx )->get_data();
+			
+				Tick ticks_insert = d->cursor.get_snap_tick_size();
+			
+				for (int i_pc=((int)blk->get_stream_size()-1);i_pc>=0;i_pc--) {
+				
+				
+					Tick pos = blk->get_index_pos( i_pc );
+					Tick pos_global=pos+block_pos;
+					Automation::AutomationValue av = blk->get_index_value( i_pc );
+				
+					if (pos_global<tick) //not working above cursor
+						continue;
+				
+				
+					d->undo_stream.add_command( Command3(&commands,&EditorCommands::remove_automation_point,automation,block_idx,i_pc) );
+				
+					pos+=ticks_insert;
+					pos_global+=ticks_insert;
+				
+					if (pos>=block_len) //no go! insert past end
+						continue;
+				
+					d->undo_stream.add_command( Command4(&commands,&EditorCommands::add_automation_point,automation,pos_global,av.value,av.lfo_depth) );
+				
+				}
+				
+				d->undo_stream.end();
+				d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+		
+				
+			}
+			CASE( KEYBIND("editor/delete") ) {
+			
+				
+				d->undo_stream.begin("Delete Row");
+				
+				Tick tick=d->cursor.get_tick_pos();
+				int block_idx = automation->get_block_idx_at_pos( tick );
+			
+				/* Can only paste at current block */
+				if (block_idx<0)
+					break;
+			
+				Tick block_len=automation->get_block( block_idx )->get_length();
+				Tick block_pos=automation->get_block_pos( block_idx );
+				Automation::AutomationData *blk = automation->get_block( block_idx )->get_data();
+			
+				Tick ticks_delete = d->cursor.get_snap_tick_size();
+			
+				for (int i_pc=0;i_pc<blk->get_stream_size();i_pc++) {
+				
+				
+					Tick pos = blk->get_index_pos( i_pc );
+					Tick pos_global=pos+block_pos;
+					Automation::AutomationValue av = blk->get_index_value( i_pc );
+				
+					if (pos_global<tick) //not working above cursor
+						continue;
+				
+				
+					d->undo_stream.add_command( Command3(&commands,&EditorCommands::remove_automation_point,automation,block_idx,i_pc) );
+				
+					i_pc--; //temporarily removed
+					
+					pos-=ticks_delete;
+					pos_global-=ticks_delete;
+				
+					if (pos_global<tick) //no go! delete past begin
+						continue;
+				
+					d->undo_stream.add_command( Command4(&commands,&EditorCommands::add_automation_point,automation,pos_global,av.value,av.lfo_depth) );
+					
+					i_pc++; //reinserted, so go back to previous index
+				
+				}
+				
+				d->undo_stream.end();
+				d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+				
+			}
 			DEFAULT
 		
 				handled=false;

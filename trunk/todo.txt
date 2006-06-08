@@ -79,7 +79,7 @@ NB-MIDI in the DRIVERS
 	*-Track Top edit track swing/volume, somewhere..
 	*-Global Tempo/Swing/Volume somewhere?
 	*-Edit automation block LFO stuff.
-	-Settings Dialog
+	*Settings Dialog
 	*-Hints everywhere
 	*-Mixer
 	*-Show linked blocks property
@@ -96,8 +96,8 @@ NB-MIDI in the DRIVERS
 
 
 Goals for 100%
--Settings dialog
--Overal beautify/fix interface, make more intuitive
+*Settings dialog
+*Overal beautify/fix interface, make more intuitive
 *Big Mixer
 *hints (yellow little boxes) over most buttons
 
@@ -106,11 +106,11 @@ Goals for 100%
 Goals after 100%
 -MIDI Out
 -Complex synths
--LADSPA support
+*LADSPA support
 -DSSI support
 
 Goals after Goals after 100%
--good Windows/VST Support 
+*good Windows/VST Support 
 
 -hmm interesting idea.. have your base thing, and
 excite harmonics to midi input.. good!
@@ -127,7 +127,7 @@ if the block is valid too.
 as shared because of the one at the undo buffer!
 -stereo image.. make an histogram of sounds in l/r ?
 -erase empty undo groups when finished
--resize block doesnt erase automation poitns!
+*resize block doesnt erase automation poitns!
 -REWRITE THE DAMN GLOBAL VIEW!!
 -mover eventos en la seleccion asi como en una curva, y editar la curva
 

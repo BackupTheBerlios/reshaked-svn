@@ -720,6 +720,153 @@ void Editor::selection_paste() {
 }
 void Editor::selection_paste_insert() {
 	
+	if (!selection_can_paste_at( get_cursor_selection_pos() )) {
+		
+		d->ui_update_notify->notify_action( "Can't Paste Here!" );				
+		return; //can't paste here!
+	}
+	
+	if (d->selection.data.empty())
+		return;
+	
+	int column=get_cursor_selection_pos().column;
+	int blocklist=get_cursor_selection_pos().blocklist;
+	Tick tick=get_cursor_selection_pos().tick;
+	
+	if (blocklist>=get_blocklist_count())
+		return; 
+	
+	d->undo_stream.begin("Selection Insert Paste");
+	
+	for (int i=0;i<d->selection.data.get_column_count();i++) {
+		
+		if (blocklist>=get_blocklist_count())
+			break;
+		
+		BlockList *bl=get_blocklist(blocklist);
+		
+		if (dynamic_cast<Track_Pattern*>(bl)) {
+		
+			Track_Pattern *pattern_track=dynamic_cast<Track_Pattern*>(bl);
+			ERR_CONTINUE(!pattern_track);
+			
+			ColumnDataPattern *cdp = dynamic_cast<ColumnDataPattern *>(d->selection.data.get_column( i ));
+			
+			ERR_CONTINUE( cdp==NULL );
+			
+			int block_idx = pattern_track->get_block_idx_at_pos( tick );
+			
+			/* Can only paste at current block */
+			if (block_idx<0)
+				continue;
+			
+			Track_Pattern::PatternBlock *blk = pattern_track->get_block( block_idx );
+			
+			Tick ticks_insert = d->selection.data.get_length();
+			
+			for (int i_nc=(blk->get_note_count()-1);i_nc>=0;i_nc--) {
+				
+				Track_Pattern::Position pos=blk->get_note_pos(i_nc);
+				Track_Pattern::Position global_pos=pos;
+				global_pos.tick+=pattern_track->get_block_pos( block_idx );
+				
+				if (pos.column!=column) //not working on this column
+					continue;
+				if (global_pos.tick<tick) //not working above cursor
+					continue;
+				
+				Track_Pattern::Note n=blk->get_note(i_nc); //save
+				
+				SET_NOTE( global_pos, Track_Pattern::Note() ); //clear
+
+				pos.tick+=ticks_insert;
+				global_pos.tick+=ticks_insert;
+				
+				if (pos.tick>=blk->get_length()) //no go! insert past end
+					continue;
+				
+				SET_NOTE( global_pos, n ); //restore inserted
+				
+			}
+			
+			foreach(I,cdp->notes) {
+				
+				if (pattern_track->get_block_idx_at_pos( I->tick+tick )<0)
+					continue; //nowhere to set note
+				Track_Pattern::Position pp;
+				pp.tick=I->tick+tick;
+				pp.column=column;
+				SET_NOTE( pp, I->note);
+			}
+			
+			column++;	
+			if (column>=dynamic_cast<Track_Pattern*>(bl)->get_visible_columns()) {
+				column=0;
+				blocklist++;
+			}
+			
+		} else if (dynamic_cast<Automation*>(bl)) {
+			
+			
+			Automation *au=dynamic_cast<Automation*>(bl);
+			ERR_CONTINUE(au==NULL);
+			
+			ColumnDataAutomation *cda = dynamic_cast<ColumnDataAutomation *>(d->selection.data.get_column( i ));
+			
+			ERR_CONTINUE( cda==NULL );
+			
+			int block_idx = au->get_block_idx_at_pos( tick );
+			
+			/* Can only paste at current block */
+			if (block_idx<0)
+				continue;
+			
+			Tick block_len=au->get_block( block_idx )->get_length();
+			Tick block_pos=au->get_block_pos( block_idx );
+			Automation::AutomationData *blk = au->get_block( block_idx )->get_data();
+			
+			Tick ticks_insert = d->selection.data.get_length();
+			
+			for (int i_pc=((int)blk->get_stream_size()-1);i_pc>=0;i_pc--) {
+				
+				
+				Tick pos = blk->get_index_pos( i_pc );
+				Tick pos_global=pos+block_pos;
+				Automation::AutomationValue av = blk->get_index_value( i_pc );
+				
+				if (pos_global<tick) //not working above cursor
+					continue;
+				
+				
+				d->undo_stream.add_command( Command3(&commands,&EditorCommands::remove_automation_point,au,block_idx,i_pc) );
+				
+				pos+=ticks_insert;
+				pos_global+=ticks_insert;
+				
+				if (pos>=block_len) //no go! insert past end
+					continue;
+				
+				d->undo_stream.add_command( Command4(&commands,&EditorCommands::add_automation_point,au,pos_global,av.value,av.lfo_depth) );
+				
+			}
+			
+			foreach(I,cda->points) {
+				
+				int block_idx=au->get_block_idx_at_pos( I->tick+tick );
+				if (block_idx<0)
+					continue; //nowhere to set note
+
+				add_automation_point(au,I->tick+tick,I->point.value,I->point.lfo_depth);
+			}
+			
+			column=0;
+			blocklist++;
+		}
+	}
+	
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
 	
 }
 void Editor::selection_paste_overwrite() {
@@ -731,6 +878,9 @@ void Editor::selection_paste_overwrite() {
 		selection_paste_at( get_cursor_selection_pos() );
 		d->undo_stream.end();
 		d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	} else {
+		
+		d->ui_update_notify->notify_action( "Can't Paste Here!" );		
 	}
 	
 }
@@ -743,6 +893,9 @@ void Editor::selection_paste_mix() {
 		selection_paste_at( get_cursor_selection_pos() );
 		d->undo_stream.end();
 		d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	} else {
+		
+		d->ui_update_notify->notify_action( "Can't Paste Here!" );				
 	}
 	
 }

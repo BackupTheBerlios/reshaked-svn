@@ -34,12 +34,12 @@ typedef signed char Note;
 	NOTE_MAX=128,
 	NOTE_MIN=0,
 };
-
-#define SWITCH(m_v) { typeof(m_v) __m=m_v; if (0) {
+//do, so break works
+#define SWITCH(m_v) do { typeof(m_v) __m=m_v; if (0) {
 #define CASE(m_v) } else if ((m_v)==__m) {
 #define COND(m_c) } else if (m_c) {
 #define DEFAULT	  } else {
-#define END_SWITCH }}
+#define END_SWITCH }} while(0);
 
 enum TrackType {
 	TRACK_TYPE_PATTERN,

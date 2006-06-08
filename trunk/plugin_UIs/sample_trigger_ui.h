@@ -30,6 +30,7 @@ class SampleTriggerUI : public SoundPluginUI {
 
 	SampleTrigger *sample_trigger;
 
+	
 private slots:			
 
 

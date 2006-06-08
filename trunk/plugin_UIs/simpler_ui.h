@@ -30,6 +30,8 @@ class SimplerUI : public SoundPluginUI {
 	
 	Simpler *simpler;
 	
+	
+	
 private slots:			
 	
 	

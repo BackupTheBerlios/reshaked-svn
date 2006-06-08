@@ -13,14 +13,14 @@ cosas de editor:
 *quantize (left/closer/right)
 
 >>para despues
--paste insert
+*paste insert
 -block repeat, sera tan dificil?
 
 
 Settings dialog:
 *UI repaint interval
 XProcess interval
--Save Settings
+*Save Settings
 -Theme screen
 -default paths..?
 -default dir copy

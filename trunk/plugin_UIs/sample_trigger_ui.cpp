@@ -40,12 +40,14 @@ SoundPluginUI* SampleTriggerUI::create_this(SoundPlugin *p_plugin,QWidget *p_par
 
 void SampleTriggerUI::load_sample_slot() {
 	
+	static QString sample_dir=".";
 	
-	QString file=QFileDialog::getOpenFileName ( this, "Open Sample",".", "Waveforms (*.wav *.au *.aif *.WAV);;All Files (*)");
+	QString file=QFileDialog::getOpenFileName ( this, "Open Sample",sample_dir, "Waveforms (*.wav *.au *.aif *.WAV);;All Files (*)");
 			
 	if (file=="")
 		return;
 
+	sample_dir=get_dir_from_path(file);
 	
 	AudioControl::mutex_lock();
 			

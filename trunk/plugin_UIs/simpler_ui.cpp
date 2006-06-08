@@ -39,12 +39,14 @@ SoundPluginUI* SimplerUI::create_this(SoundPlugin *p_plugin,QWidget *p_parent) {
 
 void SimplerUI::load_sample_slot() {
 	
+	static QString sample_dir=".";
 	
-	QString file=QFileDialog::getOpenFileName ( this, "Open Sample",".", "Waveforms (*.wav *.au *.aif *.WAV);;All Files (*)");
+	QString file=QFileDialog::getOpenFileName ( this, "Open Sample",sample_dir, "Waveforms (*.wav *.au *.aif *.WAV);;All Files (*)");
 			
 	if (file=="")
 		return;
 
+	sample_dir=get_dir_from_path(file);
 	
 	AudioControl::mutex_lock();
 			
@@ -162,6 +164,8 @@ SimplerUI::SimplerUI(QWidget *p_parent,SoundPlugin *p_plugin) :SoundPluginUI(p_p
 	
 	create_editor_for_property( "global_gain", hb );
 	/* ***/
+	
+
 }
 
 
