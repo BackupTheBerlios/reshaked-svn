@@ -30,9 +30,12 @@ public:
 
 	class Block : public SharedBlock {
 
+		bool repeat;
 	public:
 			
 
+		void set_repeat_active(bool p_repeat);
+		virtual bool is_repeat_active();
 		virtual Tick get_length()=0;
 		virtual void set_length(Tick p_length)=0;
 	

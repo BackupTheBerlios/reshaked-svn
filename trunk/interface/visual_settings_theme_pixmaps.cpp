@@ -139,6 +139,10 @@
 #include "pixmaps/default_skin/filterbank__top.xpm"
 #include "pixmaps/default_skin/global_toolbar__add.xpm"
 #include "pixmaps/default_skin/global_toolbar__add_active.xpm"
+#include "pixmaps/default_skin/global_toolbar__block_set_repeat.xpm"
+#include "pixmaps/default_skin/global_toolbar__block_set_repeat_pushed.xpm"
+#include "pixmaps/default_skin/global_toolbar__block_unset_repeat.xpm"
+#include "pixmaps/default_skin/global_toolbar__block_unset_repeat_pushed.xpm"
 #include "pixmaps/default_skin/global_toolbar__bottom_right_pixmap.xpm"
 #include "pixmaps/default_skin/global_toolbar__copy.xpm"
 #include "pixmaps/default_skin/global_toolbar__copy_active.xpm"
@@ -153,6 +157,7 @@
 #include "pixmaps/default_skin/global_toolbar__select_active.xpm"
 #include "pixmaps/default_skin/global_toolbar__select_linked.xpm"
 #include "pixmaps/default_skin/global_toolbar__select_linked_pushed.xpm"
+#include "pixmaps/default_skin/global_toolbar__separator.xpm"
 #include "pixmaps/default_skin/global_toolbar__unlink_selected.xpm"
 #include "pixmaps/default_skin/global_toolbar__unlink_selected_pushed.xpm"
 #include "pixmaps/default_skin/global_toolbar__zoom_bg.xpm"
@@ -698,6 +703,14 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["global_toolbar__add"]=THEME_GLOBAL_TOOLBAR__ADD;
     pixmap_map[THEME_GLOBAL_TOOLBAR__ADD_ACTIVE]=QPixmap( (const char**) global_toolbar__add_active_xpm); 
     pixmap_map_skin["global_toolbar__add_active"]=THEME_GLOBAL_TOOLBAR__ADD_ACTIVE;
+    pixmap_map[THEME_GLOBAL_TOOLBAR__BLOCK_SET_REPEAT]=QPixmap( (const char**) global_toolbar__block_set_repeat_xpm); 
+    pixmap_map_skin["global_toolbar__block_set_repeat"]=THEME_GLOBAL_TOOLBAR__BLOCK_SET_REPEAT;
+    pixmap_map[THEME_GLOBAL_TOOLBAR__BLOCK_SET_REPEAT_PUSHED]=QPixmap( (const char**) global_toolbar__block_set_repeat_pushed_xpm); 
+    pixmap_map_skin["global_toolbar__block_set_repeat_pushed"]=THEME_GLOBAL_TOOLBAR__BLOCK_SET_REPEAT_PUSHED;
+    pixmap_map[THEME_GLOBAL_TOOLBAR__BLOCK_UNSET_REPEAT]=QPixmap( (const char**) global_toolbar__block_unset_repeat_xpm); 
+    pixmap_map_skin["global_toolbar__block_unset_repeat"]=THEME_GLOBAL_TOOLBAR__BLOCK_UNSET_REPEAT;
+    pixmap_map[THEME_GLOBAL_TOOLBAR__BLOCK_UNSET_REPEAT_PUSHED]=QPixmap( (const char**) global_toolbar__block_unset_repeat_pushed_xpm); 
+    pixmap_map_skin["global_toolbar__block_unset_repeat_pushed"]=THEME_GLOBAL_TOOLBAR__BLOCK_UNSET_REPEAT_PUSHED;
     pixmap_map[THEME_GLOBAL_TOOLBAR__BOTTOM_RIGHT_PIXMAP]=QPixmap( (const char**) global_toolbar__bottom_right_pixmap_xpm); 
     pixmap_map_skin["global_toolbar__bottom_right_pixmap"]=THEME_GLOBAL_TOOLBAR__BOTTOM_RIGHT_PIXMAP;
     pixmap_map[THEME_GLOBAL_TOOLBAR__COPY]=QPixmap( (const char**) global_toolbar__copy_xpm); 
@@ -726,6 +739,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["global_toolbar__select_linked"]=THEME_GLOBAL_TOOLBAR__SELECT_LINKED;
     pixmap_map[THEME_GLOBAL_TOOLBAR__SELECT_LINKED_PUSHED]=QPixmap( (const char**) global_toolbar__select_linked_pushed_xpm); 
     pixmap_map_skin["global_toolbar__select_linked_pushed"]=THEME_GLOBAL_TOOLBAR__SELECT_LINKED_PUSHED;
+    pixmap_map[THEME_GLOBAL_TOOLBAR__SEPARATOR]=QPixmap( (const char**) global_toolbar__separator_xpm); 
+    pixmap_map_skin["global_toolbar__separator"]=THEME_GLOBAL_TOOLBAR__SEPARATOR;
     pixmap_map[THEME_GLOBAL_TOOLBAR__UNLINK_SELECTED]=QPixmap( (const char**) global_toolbar__unlink_selected_xpm); 
     pixmap_map_skin["global_toolbar__unlink_selected"]=THEME_GLOBAL_TOOLBAR__UNLINK_SELECTED;
     pixmap_map[THEME_GLOBAL_TOOLBAR__UNLINK_SELECTED_PUSHED]=QPixmap( (const char**) global_toolbar__unlink_selected_pushed_xpm); 

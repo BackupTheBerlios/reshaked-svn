@@ -164,7 +164,7 @@ private:
         void commit_resizing_block();
 
 	void paint_name(QPainter &p,int p_blocklist,int p_ofs);
-	void paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover=false,bool p_notpossible=false,Tick p_len_othersize=-1,bool p_no_contents=false);
+	void paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover=false,bool p_notpossible=false,Tick p_len_othersize=-1,bool p_no_contents=false,bool p_is_repeat=false);
 
 signals:	
 	
@@ -172,12 +172,16 @@ signals:
 	void drawing_signal();
 public slots:
 			
-	void set_edit_mode(EditMode p_edit_mode);
+	void set_edit_mode(int p_edit_mode);
 	void block_layout_changed_slot();
 	void delete_selected_blocks();
 	
 	void select_linked_slot();
 	void unlink_selected_slot();
+	
+	void block_repeat_set_signal();
+	void block_repeat_unset_signal();
+	
 public:
 	
 	int get_total_pixel_width();

@@ -12,6 +12,7 @@
 #include "visual_settings.h"
 #include "pixmaps/pattern_glob_bg.xpm"
 #include "pixmaps/automation_glob_bg.xpm"
+#include "pixmaps/repeat_glob_bg.xpm"
 #include "pixmaps/pattern_glob_bg_sel.xpm"
 #include "pixmaps/automation_glob_bg_sel.xpm"
 #include "pixmaps/pattern_font.xpm"
@@ -444,12 +445,14 @@ VisualSettings::VisualSettings() {
 
 	singleton=this;    
 
+	skin_box_map[SKINBOX_GLOBALVIEW_REPEAT]=new SkinBox((const char**)repeat_glob_bg_xpm,7,7,7,7,true);
+	skin_box_map[SKINBOX_GLOBALVIEW_REPEAT]->set_center_color(QColor(0x9a,0x9a,0x9a));
 	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN]=new SkinBox((const char**)pattern_glob_bg_xpm,7,7,7,7,true);
 	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN]->set_center_color(QColor(0x81,0xab,0xb3));
 	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION]=new SkinBox((const char**)automation_glob_bg_xpm,7,7,7,7,true);
 	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION]->set_center_color(QColor(0xac,0xb3,0x81));
 	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]=new SkinBox((const char**)pattern_glob_bg_sel_xpm,7,7,7,7,true);
-	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]->set_center_color(QColor(0x91,0x6e,0x69));
+	skin_box_map[SKINBOX_GLOBALVIEW_PATTERN_SELECTED]->set_center_color(QColor(0xb3,0x88,0x81));
 	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]=new SkinBox((const char**)automation_glob_bg_sel_xpm,7,7,7,7,true);
 	skin_box_map[SKINBOX_GLOBALVIEW_AUTOMATION_SELECTED]->set_center_color(QColor(0xb3,0x88,0x81));
 	skin_box_map[SKINBOX_EDITING_PATTERN]=new SkinBox((const char**)pattern_bg_xpm,8,8,8,8);
@@ -490,6 +493,7 @@ VisualSettings::VisualSettings() {
 	color_map[COLORLIST_PATTERN_EDIT_SUBBEAT_LINE]=QColor(0x2f,0x3b,0x45);
 	color_map[COLORLIST_PATTERN_EDIT_BAR]=QColor(210,230,255);
 	color_map[COLORLIST_AUTOMATION_ENVELOPE]=QColor(255,255,200);
+	color_map[COLORLIST_AUTOMATION_ENVELOPE_REPEAT]=QColor(160,160,80);
 	color_map[COLORLIST_AUTOMATION_EDIT_BEAT_LINE]=QColor(0x70,0x7a,0x63);
 	color_map[COLORLIST_AUTOMATION_EDIT_SUBBEAT_LINE]=QColor(0x41,0x47,0x2e);
 	color_map[COLORLIST_AUTOMATION_EDIT_BAR]=QColor(0xcd,0xd7,0xbc);

@@ -441,6 +441,20 @@ CommandFunc* EditorCommands::blocklist_remove_block(bool p_no_undo,BlockList *p_
 		
 }
 
+CommandFunc* EditorCommands::blocklist_set_block_repeat(bool p_no_undo,BlockList::Block *p_block,bool p_repeat) {
+	
+	CommandFunc *ret=NULL;
+	if (!p_no_undo) {
+		
+		ret=Command2(this,&EditorCommands::blocklist_set_block_repeat,p_block,p_block->is_repeat_active()); 
+	}
+	
+	p_block->set_repeat_active(p_repeat);
+	d->ui_update_notify->block_layout_changed();
+	return ret;
+}
+
+
 CommandFunc* EditorCommands::blocklist_set_block_length(bool p_no_undo,BlockList *p_blocklist,int p_which,Tick p_length) {
 	
 	//block doesnt exist

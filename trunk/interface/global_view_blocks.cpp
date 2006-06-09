@@ -150,7 +150,7 @@ void GlobalViewBlocks::paint_block_contents(QPainter &p, int p_x,int p_y,int p_w
 			max_note++; //avoid divide by zero;
 		/* paint!! */
 		
-		p.setPen(GET_QCOLOR(COLORLIST_PATTERN_EDIT_NOTE));
+		p.setPen(QColor(0,0,0));
 		for (int i=0;i<note_list.size();i++) {
 			
 			float note_xv=(float)(note_list[i].note-min_note)/(float)(max_note-min_note);

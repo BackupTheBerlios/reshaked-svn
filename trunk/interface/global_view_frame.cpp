@@ -171,6 +171,8 @@ GlobalViewFrame::GlobalViewFrame(QWidget *p_parent,Editor *p_editor) : QFrame (p
 	QObject::connect(cursor_op,SIGNAL(select_linked_signal()),global_view,SLOT(select_linked_slot()));
 	QObject::connect(cursor_op,SIGNAL(unlink_selected_signal()),global_view,SLOT(unlink_selected_slot()));
 
+	QObject::connect(cursor_op,SIGNAL(repeat_set_signal()),global_view,SLOT(block_repeat_set_signal()));
+	QObject::connect(cursor_op,SIGNAL(repeat_unset_signal()),global_view,SLOT(block_repeat_unset_signal()));
 	
 	l->setMargin(0);
 	l->setSpacing(0);

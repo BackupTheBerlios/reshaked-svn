@@ -986,7 +986,7 @@ void GlobalView::paint_name(QPainter&p, int p_blocklist,int p_ofs) {
 	
 }
 
-void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover,bool p_notpossible,Tick p_len_othersize,bool p_no_contents) {
+void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,bool p_drawover,bool p_notpossible,Tick p_len_othersize,bool p_no_contents,bool p_is_repeat) {
 
 	int alpha=p_drawover?150:255;
 	BlockList *blocklist=get_block_list(p_list);
@@ -1005,11 +1005,13 @@ void GlobalView::paint_block(QPainter& p,int p_x,int p_y,int p_list,int p_block,
 	f_width-=BLOCK_SPACING*2;
 	
 	SkinBox *sb;
-	
-	if (is_block_selected(p_list,p_block))
+	if (p_is_repeat) 
+		sb=VisualSettings::get_singleton()->get_skin_box( SKINBOX_GLOBALVIEW_REPEAT );
+	else if (is_block_selected(p_list,p_block))
 		sb=get_block_list_skinbox( blocklist, true );
 	else
 		sb=get_block_list_skinbox( blocklist, false );
+	
 		
 	//p.fillRect(p_x,p_y,(int)f_width,(int)f_height,col);
 	//p.setPen(QColor(255,255,255,alpha));
@@ -1084,6 +1086,38 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 			float f_from_y=((float)blocklist->get_block_pos(j)/(float)(TICKS_PER_BEAT))*display.zoom_height-display.ofs_y*display.zoom_height;
 
 			paint_block(p,(int)f_from_x,(int)f_from_y,i,j,false);
+			
+			if (!blocklist->get_block(j)->is_repeat_active())
+				continue;
+			
+			/* Paint repeat */
+	
+			Tick from_rep=blocklist->get_block_pos(j)+blocklist->get_block(j)->get_length();
+			while (true) {
+				
+				float f_from_y=((float)from_rep/(float)(TICKS_PER_BEAT))*display.zoom_height-display.ofs_y*display.zoom_height;
+				
+				//if out of screen, break
+				if (f_from_y>height())
+					break;
+				
+				//compute size
+				Tick size=blocklist->get_block(j)->get_length();
+				
+				//if reached next block, break
+				if (j<(blocklist->get_block_count()-1) && from_rep>=blocklist->get_block_pos(j+1))
+					break;
+						
+				
+				if (j<(blocklist->get_block_count()-1) && (from_rep+size)>blocklist->get_block_pos(j+1)) {
+					
+					size=blocklist->get_block_pos(j+1)-from_rep;
+				}
+				
+				paint_block(p,(int)f_from_x,(int)f_from_y,i,j,false,false,size,false,true);
+				
+				from_rep+=size;
+			}
 		}
 
 		
@@ -1128,9 +1162,9 @@ void GlobalView::paintEvent(QPaintEvent *pe) {
 /******************************** CLASS API *************************************/
 /******************************** CLASS API *************************************/
 
-void GlobalView::set_edit_mode(EditMode p_edit_mode) {
+void GlobalView::set_edit_mode(int p_edit_mode) {
 	
-	edit_mode=p_edit_mode;
+	edit_mode=(EditMode)p_edit_mode;
 }
 
 int GlobalView::get_total_pixel_width() {
@@ -1245,6 +1279,63 @@ void GlobalView::select_linked_slot() {
 	
 	update();
 }
+
+void GlobalView::block_repeat_set_signal() {
+	
+	editor->begin_meta_undo_block("Set Block Repeats");
+	std::set<int> selection_copy=selection;
+	
+	foreach(I,selection_copy) {
+		
+		int list=*I%MAX_LISTS;
+		int block=*I/MAX_LISTS;
+		
+		BlockList *bl=get_block_list(list);
+		if (!bl)
+			continue;
+	
+		BlockList::Block *blk = bl->get_block(block);
+		
+		if (!blk)
+			continue;
+		
+		editor->blocklist_block_set_repeat(blk,true);
+		
+	}
+	
+	editor->end_meta_undo_block();
+	selection=selection_copy;
+	update();
+	
+}
+void GlobalView::block_repeat_unset_signal() {
+	
+	editor->begin_meta_undo_block("Clear Block Repeats");
+	std::set<int> selection_copy=selection;
+	
+	foreach(I,selection_copy) {
+		int list=*I%MAX_LISTS;
+		int block=*I/MAX_LISTS;
+		
+		BlockList *bl=get_block_list(list);
+		if (!bl)
+			continue;
+	
+		BlockList::Block *blk = bl->get_block(block);
+		if (!blk)
+			continue;
+				
+		editor->blocklist_block_set_repeat(blk,false);
+		
+	}
+	
+	editor->end_meta_undo_block();
+	selection=selection_copy;
+	update();
+	
+}
+
+
 void GlobalView::unlink_selected_slot() {
 	
 	update();

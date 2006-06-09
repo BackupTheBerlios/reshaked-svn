@@ -10,9 +10,18 @@
 namespace ReShaked {
 
 
+void BlockList::Block::set_repeat_active(bool p_repeat) {
+	
+	repeat=p_repeat;
+}
+bool BlockList::Block::is_repeat_active() {
+	
+	return repeat;
+}
+
 BlockList::Block::Block(SharedData *p_data) : SharedBlock(p_data) {
 	
-	
+	repeat=false;	
 }
 
 Tick BlockList::get_next_empty_pos(Tick p_tick) {

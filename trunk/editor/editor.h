@@ -122,6 +122,8 @@ public:
 	void get_blocklists_sharing_block(BlockList::Block * p_block, std::list<int> *p_blocklist);
 	void update_blocklists_sharing_block(BlockList::Block * p_block);
 	
+	void blocklist_block_set_repeat(BlockList::Block *p_block,bool p_repeat);
+	
 	Tick get_block_list_max_len(BlockList *p_bl);
 	
 	/** TRACK EDITING (editor_track.cpp) */

@@ -100,10 +100,19 @@ float Automation::AutomationData::get_tick_val(Tick p_tick) {
 float Automation::get_tick_val(Tick p_tick) {
 	
 	int block=get_block_idx_at_pos( p_tick );
-	if (block<0)
-		return -1.0;
 	
-	AutomationBlock *b=(AutomationBlock*)BlockList::get_block(block); //cant use dynamic cast here, too slow, sorry there are other checks :(
+	if (block<0) {
+		/* Check Repeat */
+		int prev_block=get_prev_block_from_idx( p_tick );
+		if (prev_block<0 || !get_block( prev_block )->is_repeat_active() )
+			return -1.0;
+		
+		// adjust block and tick
+		block=prev_block;
+		p_tick=(p_tick - get_block_pos( block )) % get_block( block )->get_length();
+	}
+	
+	AutomationBlock * b=(AutomationBlock*)BlockList::get_block(block); //cant use dynamic cast here, too slow, sorry there are other checks :(
 	
 	Tick block_tick=p_tick-get_block_pos(block);
 	

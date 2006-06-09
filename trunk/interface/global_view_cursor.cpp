@@ -53,7 +53,19 @@ GlobalViewCursor::GlobalViewCursor(QWidget *p_parent) : CHBox(p_parent) {
 	QObject::connect(unlink_selected,SIGNAL(mouse_pressed_signal()),this,SIGNAL(unlink_selected_signal()));
 	unlink_selected->setToolTip("Unlink Selected Blocks");
 	
+	new PixmapLabel(this,GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__SEPARATOR));
+	
+	
+	PixmapButton *set_repeat=new PixmapButton(this,PixmapButton::Skin( GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__BLOCK_SET_REPEAT),GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__BLOCK_SET_REPEAT_PUSHED)));;
+	QObject::connect(set_repeat,SIGNAL(mouse_pressed_signal()),this,SIGNAL(repeat_set_signal()));
+	set_repeat->setToolTip("Set Repeat on Selected Blocks");
+	
+	PixmapButton *unset_repeat=new PixmapButton(this,PixmapButton::Skin( GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__BLOCK_UNSET_REPEAT),GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__BLOCK_UNSET_REPEAT_PUSHED)));;
+	QObject::connect(unset_repeat,SIGNAL(mouse_pressed_signal()),this,SIGNAL(repeat_unset_signal()));
+	unset_repeat->setToolTip("Clear Repeat on Selected Blocks");
+	
 	new PixmapLabel(this,GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__HSPACER),PixmapLabel::EXPAND_TILE_H);
+	
 	
 	zoom = new PixmapSlider(this,PixmapSlider::Skin(GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__ZOOM_BG),GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__ZOOM_FG),GET_QPIXMAP(THEME_GLOBAL_TOOLBAR__ZOOM_GRABBER)),PixmapSlider::TYPE_HORIZONTAL,1,1);
 	QObject::connect(zoom,SIGNAL(value_changed_signal( float )),this,SIGNAL(zoom_changed(float)));

@@ -46,7 +46,9 @@ public:
 	
 signals:	
 	
-	void edit_mode_changed_signal(GlobalView::EditMode p_mode);
+	void repeat_set_signal();
+	void repeat_unset_signal();
+	void edit_mode_changed_signal(int);
 	void delete_clicked_signal();
 	void select_linked_signal();
 	void unlink_selected_signal();

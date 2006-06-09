@@ -223,6 +223,8 @@ void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_t
 
 	
 	QColor env_col=VisualSettings::get_singleton()->get_color( COLORLIST_AUTOMATION_ENVELOPE );
+	QColor env_col_normal=VisualSettings::get_singleton()->get_color( COLORLIST_AUTOMATION_ENVELOPE );
+	QColor env_col_repeat=VisualSettings::get_singleton()->get_color( COLORLIST_AUTOMATION_ENVELOPE_REPEAT );
 	QPen pen(VisualSettings::get_singleton()->get_color( COLORLIST_AUTOMATION_ENVELOPE ));
 	pen.setWidth(1);
 	p.setPen(pen);
@@ -233,7 +235,8 @@ void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_t
 	//p.setClipping(true);
 	//p.setClipRect ( ,4,width()-8,height()-8);
 	int prev=-1;
-	
+	bool last_is_repeat;
+
 	for (int i=0;i<lines;i++) { //paint an extra one, even if not editable
 		
 		int line=i+line_from;
@@ -246,6 +249,23 @@ void BlockListUI_Automation::paint_envelopes(QPainter &p,int p_from_row, int p_t
 			continue; //cant be drawn
 		}
 		
+		/* Repeat Color */
+		bool current_is_repeat;
+		if (automation->get_block_idx_at_pos( tick ) < 0 ) {
+			
+			current_is_repeat=true;
+			env_col=env_col_repeat;
+		} else {
+			
+			current_is_repeat=false;
+			env_col=env_col_normal;
+		}
+		
+		if (current_is_repeat!=last_is_repeat || i==0) {
+			
+			p.setPen(env_col);
+			last_is_repeat=current_is_repeat;
+		}
 		
 		int x_ofs=font_width+(int)(val*(float)(width()-font_width*2));
 		

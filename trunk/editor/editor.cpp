@@ -286,6 +286,30 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 			selection_create_block();
 		}		
 		
+		CASE( KEYBIND("editor/toggle_block_repeat") ) {
+		
+			int bl_idx=get_current_blocklist();
+			if (bl_idx<0)
+				break;
+			
+			BlockList *bl = get_blocklist( bl_idx );
+			
+			if (bl==NULL)
+				break;
+			
+			BlockList::Block *blk=bl->get_block_at_pos( d->cursor.get_tick_pos() );
+			
+			if (blk==NULL)
+				break;
+			
+			d->undo_stream.begin("Toggle Block Repeat");
+			d->undo_stream.add_command( Command2(&commands,&EditorCommands::blocklist_set_block_repeat,blk,!blk->is_repeat_active()));
+			d->undo_stream.end();
+			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+			
+				
+		}		
+
 		CASE( KEYBIND("note_entry/cursor_step_0") ) { cursor_set_step(0); }
 		CASE( KEYBIND("note_entry/cursor_step_1") ) { cursor_set_step(1); }
 		CASE( KEYBIND("note_entry/cursor_step_2") ) { cursor_set_step(2); }
@@ -357,6 +381,15 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 	return handled;
 }
 
+void Editor::blocklist_block_set_repeat(BlockList::Block *p_block,bool p_repeat) {
+	
+	d->undo_stream.begin("Toggle Block Repeat");
+	d->undo_stream.add_command( Command2(&commands,&EditorCommands::blocklist_set_block_repeat,p_block,p_repeat));
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+		
+	
+}
 
 int Editor::get_current_track_columns() {
 	

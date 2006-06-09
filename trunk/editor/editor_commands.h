@@ -60,6 +60,7 @@ friend class Editor;
 	
 	CommandFunc* blocklist_set_block_length(bool p_no_undo,BlockList *p_blocklist,int p_which,Tick p_length);
 	
+	CommandFunc* blocklist_set_block_repeat(bool p_no_undo,BlockList::Block *p_block,bool p_repeat);
 	
 	CommandFunc* set_note(bool p_no_undo,Track_Pattern *p_pattern,Track_Pattern::Position,Track_Pattern::Note);
 

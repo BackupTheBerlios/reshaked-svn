@@ -56,10 +56,11 @@ int BlockListUI_Pattern::get_row_size() {
 	return VisualSettings::get_singleton()->get_editing_row_height();
 }
 
-void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Pattern::NoteListElement & p_note ) {
+void BlockListUI_Pattern::paint_note_event( QPainter& p, int p_row, Track_Pattern::NoteListElement & p_note, bool p_repeat ) {
 
-	PixmapFont * font=VisualSettings::get_singleton()->get_pattern_font();
-	PixmapFont * font_vol=VisualSettings::get_singleton()->get_pattern_vol_font();
+	PixmapFont * repeat_font=VisualSettings::get_singleton()->get_pattern_font_nofit();
+	PixmapFont * font=p_repeat?repeat_font:VisualSettings::get_singleton()->get_pattern_font();
+	PixmapFont * font_vol=p_repeat?repeat_font:VisualSettings::get_singleton()->get_pattern_vol_font();
 
 	int rowsize=VisualSettings::get_singleton()->get_editing_row_height();
 	int fontofs=(rowsize-font->get_height())/2;
@@ -218,7 +219,7 @@ void BlockListUI_Pattern::paint_multiple_nonvisible_events( QPainter& p, int p_r
 }
 
 
-void BlockListUI_Pattern::paint_multiple_note_events( QPainter& p, int p_row , const Track_Pattern::NoteList& p_list ) {
+void BlockListUI_Pattern::paint_multiple_note_events( QPainter& p, int p_row , const Track_Pattern::NoteList& p_list , bool p_repeat) {
 
 
 	/* separate in columns */
@@ -243,7 +244,7 @@ void BlockListUI_Pattern::paint_multiple_note_events( QPainter& p, int p_row , c
 		if (notes_in_column[i].size()==1) {
 			
 
-			paint_note_event(p,p_row,*notes_in_column[i].begin());
+			paint_note_event(p,p_row,*notes_in_column[i].begin(),p_repeat);
 			
 			
 		} else
@@ -489,12 +490,48 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 
 		Tick from=editor->get_cursor().get_snapped_window_tick_pos(i);
 		Tick to=editor->get_cursor().get_snapped_window_tick_pos(i+1)-1;
+		Tick adjust=0;
 
+		/* Calculate Repeat, if exists */
+		
+		bool repeat=false;
+		
+		int blk_idx = track->get_block_idx_at_pos( from );
+		int prev=track->get_prev_block_from_idx( from );
+		
+		if (blk_idx<0 && prev>=0 && track->get_block( prev )->is_repeat_active())
+			repeat=true;
+		//printf("row %i, blkidx %i , prev %i, repeat %i\n",i,blk_idx,prev,repeat);
+
+		/* If repeat, adjust from and to */
+		
+		if (repeat) {
+			
+			Tick block_from=track->get_block_pos( prev );
+			Tick block_len=track->get_block( prev )->get_length();
+			
+			Tick new_tick_from= (from-block_from)%block_len;
+			
+			adjust=from-new_tick_from;
+			
+			to=new_tick_from+(to-from);
+			from=new_tick_from;
+		}
+		
 		Track_Pattern::NoteList nl = track->get_notes_in_range( from, to );
 
+		/* Then if repeat, adjust positions */
+		if (repeat) {
+			
+			foreach( I, nl ) {
+				
+				I->pos.tick+=adjust;
+			}
+		}
+		
 		if (!nl.empty()) {
 
-			paint_multiple_note_events( p,i , nl );
+			paint_multiple_note_events( p,i , nl, repeat );
 		}
 
 		//paint_cursor(p,i);

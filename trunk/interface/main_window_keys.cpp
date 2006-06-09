@@ -130,6 +130,7 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/set_loop_end","Set Loop End",Qt::CTRL+Qt::Key_E);
 	data.keyboard_codes.add_key_bind("editor/selection_to_loop","Selection -> Loop",Qt::CTRL+Qt::Key_L);
 	data.keyboard_codes.add_key_bind("editor/selection_create_blocks","Selection -> Create Blocks",Qt::CTRL+Qt::Key_A);
+	data.keyboard_codes.add_key_bind("editor/toggle_block_repeat","Toggle Block Repeat",Qt::CTRL+Qt::SHIFT+Qt::Key_R);
 	
 	
 	data.keyboard_codes.add_key_bind("global/raise_octave","Raise Octave",Qt::Key_Asterisk);
