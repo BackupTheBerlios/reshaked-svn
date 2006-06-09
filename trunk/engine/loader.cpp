@@ -230,7 +230,8 @@ void Loader::load_track_pattern(Track_Pattern *p_pattern_track,TreeLoader *p_loa
 			
 			int block_idx=p_loader->get_int("index");
 			Tick pos = p_loader->get_int("pos");
-			
+			bool repeat=p_loader->get_int("repeat");
+
 			Track_Pattern::PatternBlock *pb=get_shared_pattern_block_idx(block_idx);
 			if (pb==NULL) {
 					
@@ -246,7 +247,7 @@ void Loader::load_track_pattern(Track_Pattern *p_pattern_track,TreeLoader *p_loa
 			}			
 						
 			p_pattern_track->insert_block( pb, pos );
-			
+			pb->set_repeat_active( repeat );
 			p_loader->exit(); //block_idx
 					
 		}

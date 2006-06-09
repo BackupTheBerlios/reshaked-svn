@@ -157,7 +157,9 @@ void Saver::save_track_pattern(Track_Pattern *p_pattern_track,TreeSaver *p_saver
 			int block_idx=index_pattern_block( p_pattern_track->get_block(i) );
 			p_saver->add_int("index",block_idx);
 			p_saver->add_int("pos",p_pattern_track->get_block_pos(i));
+			p_saver->add_int("repeat",p_pattern_track->get_block(i)->is_repeat_active());
 			p_saver->exit(); //block_idx
+			
 					
 		}
 		p_saver->exit(); //blocks

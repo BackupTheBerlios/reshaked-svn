@@ -429,7 +429,6 @@ void BlockListUIList::show_edit_menu() {
 	ADD_ACTION("Set Loop End",ACTION_SET_LOOP_END,"editor/set_loop_end",editor->get_blocklist_count()>0);
 	
 	
-	
 	ADD_ACTION2("Create Blocks",ACTION_SELECTION_TO_BLOCK,"editor/selection_create_blocks",editor->is_selection_active());
 	
 	sel_submenu->addSeparator();
@@ -466,6 +465,7 @@ void BlockListUIList::show_edit_menu() {
 	ADD_ACTION2("Quantize Nearest",ACTION_SELECTION_QUANTIZE_NEAREST,"editor/quantize_nearest",editor->is_selection_active());
 
 	ADD_ACTION2("Quantize Down",ACTION_SELECTION_QUANTIZE_DOWN,"editor/quantize_down",editor->is_selection_active());
+	
 	
 #undef ADD_ACTION		
 #undef ADD_ACTION2
