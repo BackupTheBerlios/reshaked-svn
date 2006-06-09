@@ -97,7 +97,7 @@ public slots:
 	
 signals:	
 	
-	void screen_changed_signal(ScreenList p_screen);
+	void screen_changed_signal(int);
 	
 public:
 	

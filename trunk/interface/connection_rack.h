@@ -81,8 +81,8 @@ class ConnectionRack : public QWidget {
 	void paint_node(QPainter&p,int p_offset,AudioNode *p_node);
 	void paintEvent(QPaintEvent *pe);
 	
-	QPoint ConnectionRack::get_input_plug_pos(int p_node,int p_plug);
-	QPoint ConnectionRack::get_output_plug_pos(int p_node,int p_plug);
+	QPoint get_input_plug_pos(int p_node,int p_plug);
+	QPoint get_output_plug_pos(int p_node,int p_plug);
 	
 	
 	bool get_plug_data_at_pos(int p_x,int p_y,PlugData* p_data);

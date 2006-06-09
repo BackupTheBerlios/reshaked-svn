@@ -448,7 +448,7 @@ void MainWindow::add_menus() {
 
 }
 
-void MainWindow::screen_changed_slot(TopBarControls::ScreenList p_screen) {
+void MainWindow::screen_changed_slot(int p_screen) {
 	
 	switch(p_screen) {
 		
@@ -461,7 +461,7 @@ void MainWindow::screen_changed_slot(TopBarControls::ScreenList p_screen) {
 
 void MainWindow::closeEvent ( QCloseEvent * e ) {
 	
-	if (QMessageBox::question ( topLevelOf(this), "Exit?", "Are you sure?", QMessageBox::Yes, QMessageBox::No)==QMessageBox::Yes)
+	if (QMessageBox::question ( this, "Exit?", "Are you sure?", QMessageBox::Yes, QMessageBox::No)==QMessageBox::Yes)
 		e->accept();
 	else
 		e->ignore();
@@ -662,7 +662,7 @@ MainWindow::MainWindow(QString p_settings_dir,QString p_settings_file) {
 	QObject::connect(update_notify,SIGNAL(rack_repaint()),rack,SLOT(repaint_rack()));
 	QObject::connect(update_notify,SIGNAL(track_names_changed()),rack,SLOT(update_rack_combo_names_slot()));
 		
-	QObject::connect(top_bar,SIGNAL(screen_changed_signal( ScreenList )),this,SLOT(screen_changed_slot( TopBarControls::ScreenList )));
+	QObject::connect(top_bar,SIGNAL(screen_changed_signal( int )),this,SLOT(screen_changed_slot( int )));
 	
 	QObject::connect(update_notify,SIGNAL(current_track_add_column()),this,SLOT(current_track_add_column_slot()),Qt::QueuedConnection);
 	QObject::connect(update_notify,SIGNAL(current_track_remove_column()),this,SLOT(current_track_remove_column_slot()),Qt::QueuedConnection);

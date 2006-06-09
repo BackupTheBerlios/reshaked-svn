@@ -363,7 +363,7 @@ void Editor::selection_transpose(bool p_up) {
 							
 						} else {
 							
-							if (note.note==0)
+							if (note.note==0 || note.note>Track_Pattern::Note::MAX_NOTES)
 								continue;
 							
 							note.note--;
@@ -1000,7 +1000,7 @@ void Editor::selection_create_block() {
 		if (!bl)
 			return;
 		//if there are blocks where we want create, quit!
-		if (!bl->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
+		if (!bl->get_blocks_in_rage( tick_from, tick_to-1, &block_from,&block_to))
 			return;
 	}
 	begin_meta_undo_block("Create Blocks from Selection");
@@ -1015,7 +1015,7 @@ void Editor::selection_create_block() {
 			continue; //cant create blocks out of nowhere here
 		b->set_length( tick_to-tick_from );
 		
-		blocklist_insert_block( bl,b,tick_from );
+		blocklist_create_block( bl,b,tick_from );
 	}
 	
 	end_meta_undo_block();
@@ -1025,7 +1025,7 @@ void Editor::selection_set_volumes_to_mask() {
 	
 	if (!d->selection.enabled)
 		return;
-	printf("Transpose Begin\n");
+	//printf("Transpose Begin\n");
 	
 	Tick tick_from=d->selection.begin.tick;
 	Tick tick_to=d->selection.end.tick+TICKS_PER_BEAT/d->cursor.get_snap();
@@ -1090,6 +1090,9 @@ void Editor::selection_cursor_transpose_up() {
 			Track_Pattern::Position pos=Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column );
 					
 			Track_Pattern::Note note=pattern_track->get_note( pos );
+			if (note.note>=Track_Pattern::Note::MAX_NOTES)
+				return;
+			
 			if (note.is_empty())
 				return;
 			note.note++;
@@ -1118,9 +1121,9 @@ void Editor::selection_cursor_transpose_down() {
 			Track_Pattern::Position pos=Track_Pattern::Position( d->cursor.get_tick_pos(), d->pattern_edit.column );
 					
 			Track_Pattern::Note note=pattern_track->get_note( pos );
-			if (note.is_empty() || note.note==0)
+			if (note.is_empty() || note.note==0 || note.note>=Track_Pattern::Note::MAX_NOTES)
 				return;
-					
+			   
 			note.note--;
 			if (note.note>=Track_Pattern::Note::MAX_NOTES)
 				note.note=Track_Pattern::Note::MAX_NOTES-1;

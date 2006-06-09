@@ -40,8 +40,9 @@ void Filter::prepare_coefficients(Coeffs *p_coeffs) {
 
 	
 	double final_cutoff=(cutoff>=(sampling_rate/2))?(sampling_rate/2-1):cutoff;
-	if (final_cutoff==0) //avoid crapness
-		final_cutoff=0.0001;
+	if (final_cutoff<20) //avoid crapness
+		final_cutoff=20; //i dont allow less than this
+	
 	
 		
 	double omega=2.0*M_PI*final_cutoff/sampling_rate;

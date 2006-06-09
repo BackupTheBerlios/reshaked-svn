@@ -30,7 +30,10 @@ void RackUI::add_plugin_slot() {
 	ERR_FAIL_COND(track==NULL);
 	
 	SoundPluginChooser *plugin_chooser = new SoundPluginChooser(topLevelOf(this),track->can_use_synths(),track->get_channels());
-	plugin_chooser->exec();
+	if (plugin_chooser->exec()==QDialog::Rejected) {
+		delete plugin_chooser;
+		return;
+	}
 	int plugin_idx=plugin_chooser->get_selected_plugin_idx();
 	int custom_chans=plugin_chooser->get_selected_channels();
 	delete plugin_chooser;

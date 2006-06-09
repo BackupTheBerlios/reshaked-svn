@@ -57,9 +57,15 @@ void UndoStream::fix_undo_history_length() {
 	if (to_erase<=0)
 		return;
 	
+	current_index-=to_erase;
+	if (current_index<0)
+		current_index=0;
+	
 	while (to_erase--) {
 		
+		
 		UndoGroup&ug=undo_stream.front();
+		//printf("Erasing %s\n",ug.name.ascii().get_data());
 		std::list<UndoElement>::iterator I=ug.command_list.begin();
 		for (;I!=ug.command_list.end();I++) {
 			I->undo->erase_delete_data(); //since this undo is no longer needed, we erase the create data
@@ -78,7 +84,7 @@ void UndoStream::set_max_undo_steps(int p_max) {
 
 void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 
-        printf("Undo Begin!\n");
+        //printf("Undo Begin!\n");
 	inside_count++;
 	if (inside_count>1) //already into group, merge
 		return;
@@ -89,7 +95,7 @@ void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 	/* Shall we create a new group, or use the previous one? */
 	if (p_can_collapse_to_previous && !undo_stream.empty() && undo_stream.back().name==p_name && (GetTime::get_time_msec()-undo_stream.back().timestamp)<collapse_max_time_window) {
 		/* can collapse it to previous one! */
-		printf("collapsing %lls\n",p_name.c_str());
+		////printf("collapsing %lls\n",p_name.c_str());
 		undo_stream.back().collapses++;
 		
 	} else {
@@ -98,7 +104,7 @@ void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 		undo_group.name=p_name;
 		undo_group.timestamp=GetTime::get_time_msec();
 		undo_group.collapses=0;
-		printf("adding at time %i\n",undo_group.timestamp);
+		////printf("adding at time %i\n",undo_group.timestamp);
 		
 		undo_stream.push_back( undo_group );
 		current_index++;
@@ -110,7 +116,7 @@ void UndoStream::begin(String p_name,bool p_can_collapse_to_previous) {
 
 void UndoStream::add_command( CommandFunc *p_command ) {
 
-        printf("Command Begin\n");
+        ////printf("Command Begin\n");
 	ERR_FAIL_COND(inside_count==0);
 	ERR_FAIL_COND(undo_stream.empty());
 	
@@ -216,7 +222,7 @@ void UndoStream::undo() {
 	
 	std::list<UndoGroup>::iterator I=get_block_iterator( current_index );
 	ERR_FAIL_COND(I==undo_stream.end());
-	printf("UNDO: %lls\n",I->name.c_str());
+	////printf("UNDO: %lls\n",I->name.c_str());
 	undo_group( &(*I) );
 	current_index--;
 }
@@ -233,7 +239,7 @@ void UndoStream::redo() {
 	
 	std::list<UndoGroup>::iterator I=get_block_iterator( current_index+1 );
 	ERR_FAIL_COND(I==undo_stream.end());
-	printf("REDO: %lls\n",I->name.c_str());
+	////printf("REDO: %lls\n",I->name.c_str());
 	redo_group( &(*I) );
 	current_index++;
 }

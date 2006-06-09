@@ -427,7 +427,7 @@ void GlobalView::commit_moving_block_list() {
 
 				BlockList::Block *bl=src_bl->create_duplicate_block( src_bl->get_block( src_block_index ) );
 				BlockList *dst_bl=get_block_list( dst_list );
-				editor->blocklist_insert_block(dst_bl,bl, dst_tick);
+				editor->blocklist_create_block(dst_bl,bl, dst_tick);
 
 
 			} break;
@@ -436,7 +436,7 @@ void GlobalView::commit_moving_block_list() {
 
 				BlockList::Block *bl=src_bl->create_link_block( src_bl->get_block( src_block_index ) );
 				BlockList *dst_bl=get_block_list( dst_list );
-				editor->blocklist_insert_block(dst_bl,bl, dst_tick);
+				editor->blocklist_create_block(dst_bl,bl, dst_tick);
 				
 			} break;
 			case MovingBlock::OP_MOVE: {
@@ -515,7 +515,7 @@ void GlobalView::delete_selected_blocks() {
 	
 		int which=J->blocklist->get_block_index(J->block);
 		ERR_CONTINUE(which<0);
-		editor->blocklist_remove_block( J->blocklist, which );
+		editor->blocklist_delete_block( J->blocklist, which );
 		
 	}
 	
@@ -567,7 +567,7 @@ void GlobalView::commit_resizing_block() {
 		
 		BlockList::Block *block=bl->create_block(NULL);
 		
-		if (editor->blocklist_insert_block(bl,block, resizing_block.from )) {
+		if (editor->blocklist_create_block(bl,block, resizing_block.from )) {
 			
 			delete block;
 			
@@ -1268,8 +1268,8 @@ void GlobalView::unlink_selected_slot() {
 		
 		BlockList::Block *db=bl->create_duplicate_block( sb );
 		Tick pos = bl->get_block_pos(block);
-		editor->blocklist_remove_block( bl, block );
-		editor->blocklist_insert_block( bl, db, pos );
+		editor->blocklist_delete_block( bl, block );
+		editor->blocklist_create_block( bl, db, pos );
 	
 	}
 	

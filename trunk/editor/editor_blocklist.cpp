@@ -166,6 +166,26 @@ Tick Editor::get_block_list_max_len(BlockList *p_bl) {
 
 
 
+bool Editor::blocklist_create_block(BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos) {
+	
+	ERR_FAIL_COND_V( !p_blocklist->block_fits( p_pos, p_block->get_length() ) , true ); 
+	d->undo_stream.begin("Create Block");
+	d->undo_stream.add_command( Command3(&commands,&EditorCommands::blocklist_create_block,p_blocklist,p_block,p_pos) );
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
+	return false;
+	
+}
+void Editor::blocklist_delete_block(BlockList *p_blocklist,int p_which) {
+	
+	ERR_FAIL_INDEX(p_which,p_blocklist->get_block_count());
+	d->undo_stream.begin("Delete Block");
+	d->undo_stream.add_command( Command2(&commands,&EditorCommands::blocklist_delete_block,p_blocklist,p_which) );
+	d->undo_stream.end();
+	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
+}
 
 bool Editor::blocklist_insert_block(BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos) {
 	

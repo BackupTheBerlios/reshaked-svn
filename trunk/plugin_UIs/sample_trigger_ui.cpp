@@ -59,6 +59,15 @@ void SampleTriggerUI::load_sample_slot() {
 	
 	AudioControl::mutex_unlock();
 	
+	QString preset_name=get_file_from_path(file);
+	
+	if (preset_name.lastIndexOf(".")!=-1) {
+			
+		preset_name.remove(0,preset_name.lastIndexOf(".")+1);
+	}
+	
+	sample_trigger->set_current_preset_name( DeQStrify(preset_name) );
+	
 	viewer->set_sample_data( &sample_trigger->get_sample() );	
 	
 	viewer->update();

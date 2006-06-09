@@ -355,7 +355,7 @@ double PropertyEditor::get() {
 	
 void PropertyEditor::check_if_changed() {
 	
-	if (last_value!=property->get()) {
+	if (FLOATS_NOT_EQ(last_value,property->get())) {
 		last_value=property->get();
 		changed();
 	}
@@ -501,7 +501,7 @@ void MultiPropertyEditor::check_if_changed() {
 		if (!property_list[i].property)
 			continue;
 		
-		if (property_list[i].property->get()!=property_list[i].last_value)
+		if (FLOATS_NOT_EQ(property_list[i].property->get(),property_list[i].last_value))
 			changed(i);
 	}
 }

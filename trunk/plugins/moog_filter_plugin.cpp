@@ -108,7 +108,13 @@ void MoogFilterPlugin::process(int p_frames) {
 
 // Set coefficients given frequency & resonance [0.0...1.0]
 
-	float frequency=2*cutoff.get()/mix_rate;
+	float cutoff_val = cutoff.get();
+	if (cutoff_val>(mix_rate/2.0-1.0))
+		cutoff_val=mix_rate/2.0-1.0;
+	if (cutoff_val<20)
+		cutoff_val=20;
+	
+	float frequency=2*cutoff_val/mix_rate;
 	
 	q = 1.0f - frequency;
 	p = frequency + 0.8f * frequency * q;
@@ -173,7 +179,7 @@ MoogFilterPlugin::MoogFilterPlugin(const SoundPluginInfo *p_info,int p_channels)
 	input_plug = new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	output_plug = new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
 	
-	cutoff.set_all( 400, 0.1, 16000, 0.1, 0.1, Property::DISPLAY_SLIDER, "cutoff","Cutoff","hz");
+	cutoff.set_all( 400, 20, 16000, 0.1, 0.1, Property::DISPLAY_SLIDER, "cutoff","Cutoff","hz");
 	cutoff.set_quad_coeff( true );
 	resonance.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "resonance","Resonance","");
 	type.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "mode","Mode","","LPF","HPF");

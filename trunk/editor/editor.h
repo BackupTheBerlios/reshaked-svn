@@ -109,6 +109,12 @@ public:
 	
 	/** BLOCKLIST EDITING (editor_blocklist.cpp) */
 	
+	/* USed when creating the block for the first time */
+	bool blocklist_create_block(BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos);
+	/* Used when effectively deletingt the block */
+	void blocklist_delete_block(BlockList *p_blocklist,int p_which);
+	
+	/* USed for moving aroudn blocks */
 	bool blocklist_insert_block(BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos);
 	void blocklist_remove_block(BlockList *p_blocklist,int p_which);
 	void blocklist_resize_block(BlockList *p_blocklist,int p_which,Tick p_new_size);

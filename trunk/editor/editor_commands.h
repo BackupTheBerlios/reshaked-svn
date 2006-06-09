@@ -52,6 +52,9 @@ friend class Editor;
 	CommandFunc* automation_set_follow_swing(bool p_no_undo,Automation *p_automation, bool p_follow);
 	
 	
+	CommandFunc* blocklist_create_block(bool p_no_undo,BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos);
+	CommandFunc* blocklist_delete_block(bool p_no_undo,BlockList *p_blocklist,int p_which);
+	
 	CommandFunc* blocklist_insert_block(bool p_no_undo,BlockList *p_blocklist,BlockList::Block *p_block,Tick p_pos);
 	CommandFunc* blocklist_remove_block(bool p_no_undo,BlockList *p_blocklist,int p_which);
 	

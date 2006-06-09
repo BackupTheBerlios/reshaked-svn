@@ -58,6 +58,9 @@ enum TrackType {
         m_itname++ )
         
         
+#define EQ_THRESH 0.00001
+#define FLOATS_EQ(m_f1,m_f2) ( fabsf((m_f1)-(m_f2))<EQ_THRESH )
+#define FLOATS_NOT_EQ(m_f1,m_f2) ( fabsf((m_f1)-(m_f2))>=EQ_THRESH )
 
 template<class T>
 inline void SWAP(T&a, T&b) {

@@ -274,7 +274,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			
 				Track_Pattern::Note note=p->get_note(i);
 			
-			//erase
+		//erase
 				Track_Pattern::NoteListElement op_clear;
 				op_clear.note=Track_Pattern::Note();
 				op_clear.pos=Track_Pattern::Position( pos.tick+block_pos, pos.column);
@@ -283,7 +283,7 @@ bool Editor::pattern_edit_key_press(int p_event) {
 			//set again above
 				Tick new_pos=pos.tick+block_pos-d->cursor.get_snap_tick_size();
 			
-				if (new_pos<cursor_block_pos)
+				if (new_pos<cursor_pos)
 					continue;
 				
 				if (!pattern_track->is_pos_editable( new_pos ))

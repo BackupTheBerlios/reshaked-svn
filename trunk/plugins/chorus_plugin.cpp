@@ -201,10 +201,10 @@ void ChorusPlugin::process(int p_frames) {
 				
 				if (c==0) {
 					
-					vol_modifier*=1.0-v.pan.get();
+					vol_modifier*=(1.0-v.pan.get())*2.0;
 				} else if (c==1) {
 					
-					vol_modifier*=v.pan.get();			
+					vol_modifier*=v.pan.get()*2.0;
 				}
 				
 
@@ -220,17 +220,17 @@ void ChorusPlugin::process(int p_frames) {
 				
 				if (c==0) {
 					
-					vol_modifier*=(1.0-depth)*l;
+					vol_modifier*=(1.0-depth)*l*4.0;
 					
 				} else if (c==1) {
 					
-					vol_modifier*=(1.0-depth)*r;
+					vol_modifier*=(1.0-depth)*r*4.0;
 				} else if (c==2) {
 					
-					vol_modifier*=depth*l;
+					vol_modifier*=depth*l*4.0;
 				} else if (c==3) {
 					
-					vol_modifier*=depth*r;
+					vol_modifier*=depth*r*4.0;
 				}
 				
 			}
