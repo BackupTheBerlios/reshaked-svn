@@ -158,6 +158,7 @@ friend class Saver; //saver needs access to Pattern structure for comparing it
 	SwingProcess swing_process;
 	
 	void plugin_added_notify(SoundPlugin *p_plugin);	
+	void track_block_pre_process(int p_frames,int p_block, Tick p_offset, Tick p_total,Tick p_from, Tick p_to);
 	void track_pre_process(int p_frames);
 	
 	void reset_last_notes();

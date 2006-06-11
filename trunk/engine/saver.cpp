@@ -236,6 +236,7 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 				p_saver->enter("block_"+String::num(j));
 				int block_idx=index_automation_block( a->get_block(j) );
 				p_saver->add_int("index",block_idx);
+				p_saver->add_int("repeat",a->get_block(j)->is_repeat_active());
 				p_saver->add_int("pos",a->get_block_pos(j));
 				p_saver->exit(); //block_idx
 				

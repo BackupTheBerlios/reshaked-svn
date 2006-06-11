@@ -381,6 +381,63 @@ void Track_Pattern::play_external_event(const EventMidi &p_event_midi) {
 }
 
 
+
+void Track_Pattern::track_block_pre_process(int p_frames,int p_block, Tick p_offset,Tick p_total, Tick p_from, Tick p_to) {
+
+	
+	Tick block_pos=get_block_pos(p_block);
+	Tick tick_from_local=p_from;
+	Tick tick_to_local=p_to;
+	if (tick_from_local<0)
+		tick_from_local=0;
+	if (tick_to_local<0)
+		tick_to_local=0;
+		
+	Position pos_from_local(tick_from_local,0);
+	Position pos_to_local(tick_to_local,MAX_COLUMNS);
+		
+	Pattern *pd=get_block(p_block)->get_pattern();
+	int from_idx;
+	int to_idx;
+	if (!pd->data.find_values_in_range(pos_from_local,pos_to_local,&from_idx,&to_idx)) {
+			//printf("ticks %i to %i have indexes %i to %i\n",(int)tick_from_local,(int)tick_to_local,from_idx,to_idx);
+		
+		for (int i=from_idx;i<=to_idx;i++) {
+								
+			Tick tick=pd->data.get_index_pos(i).tick;
+			if (tick<tick_from_local)
+				continue;
+			if (tick>tick_to_local)
+				break;
+			int col=pd->data.get_index_pos(i).column;
+			if (col<0 || col>=MAX_COLUMNS)
+				continue; //wont play what is not visible
+			int frame=(p_offset+tick)*(p_total)/(Tick)p_frames;
+				
+				//printf("something at %i, in index %i (%i to %i) out of %i\n",(int)tick,i,from_idx,to_idx,pd->data.get_stream_size());
+			Note n = pd->data.get_index_value(i);
+				
+			if (n.is_note()) {
+					
+					
+				add_noteon_event_to_buffer(n.note,n.volume,col,data.event_buffer,frame);
+					
+			} else if (n.is_note_off() && data.last_note[col].is_note()) {
+					
+					//printf("AT %i - note off\n",(int)tick_to);
+					
+				Event e;
+				SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[col].note,0);
+				e.frame_offset=frame; //off te
+				data.event_buffer.push_event(e);
+				data.last_note[col]=n;
+			}
+		}
+	}
+	
+	
+}
+
 void Track_Pattern::track_pre_process(int p_frames) {
 	/* I HATE THIS FUNCTION */
 	
@@ -429,14 +486,77 @@ void Track_Pattern::track_pre_process(int p_frames) {
 	int block_idx=get_prev_block_from_idx(tick_from);
 	//printf("PAT: from %i to %i\n",(int)tick_from,(int)tick_to);
 	
-	if (block_idx==-1 || (get_block_pos(block_idx)+get_block(block_idx)->get_length())<tick_from) {
+	if (block_idx==-1) {
 		
-		block_idx++;
+		block_idx=0;
 	}
 	
 	while (block_idx<block_count && (get_block_pos(block_idx)<=tick_to) ) {
 		
+		/* process block */
 		Tick block_pos=get_block_pos(block_idx);
+		Tick block_len=get_block(block_idx)->get_length();
+		Tick block_end=block_pos+block_len;
+		
+		/* If not inside the block, dont even bother */
+		if (tick_from<block_end)
+			track_block_pre_process( p_frames, block_idx, 0, tick_to-tick_from, tick_from-block_pos, tick_to-block_pos );
+		
+		/* Check if this has repeat, and has to be computed! */
+		if (get_block(block_idx)->is_repeat_active() && tick_to>=block_end) {
+			
+			Tick rep_tick_from=tick_from;
+			Tick rep_tick_to=tick_to;
+			Tick rep_ofs=0;
+			
+			/* Wrap tick to repeat-able-space*/
+			if (block_idx<(block_count-1) && tick_to>=get_block_pos(block_idx+1)) {
+				
+				rep_tick_to=get_block_pos(block_idx+1)-1;
+			}
+			
+			if (tick_from<block_end) {
+				rep_tick_from=block_end;
+				rep_ofs=block_end-tick_from;
+			}
+			
+			/* convert to local to block positions */
+			
+			rep_tick_from-=block_pos;
+			rep_tick_to-=block_pos;
+			
+			if (rep_tick_from<=rep_tick_to) { //can do bussiness 
+			
+				int from_at_idx=rep_tick_from/block_len;
+				int to_at_idx=rep_tick_to/block_len;
+				
+				/* convert to inside block positions  */
+				
+				rep_tick_from=rep_tick_from%block_len;
+				rep_tick_to=rep_tick_to%block_len;
+				
+				/* process all blocks that need repeat! */
+				for (int i=from_at_idx;i<=to_at_idx;i++) {
+					
+					Tick from_local=0;
+					Tick to_local=block_len-1;
+												
+					// adjust depending on begin and end
+					if (i==from_at_idx)
+						from_local=rep_tick_from;
+					
+					if (i==to_at_idx)
+						to_local=rep_tick_to;
+					
+//					printf("%i Repeat at %i, %i - inside %i\n",i-from_at_idx,(int)from_local,(int)to_local,(int)block_len);
+					track_block_pre_process( p_frames, block_idx, rep_ofs, tick_to-tick_from, from_local, to_local );
+					
+					rep_ofs+=block_len-from_local;
+				}
+			}
+		}
+		
+		/* 
 		Tick tick_from_local=tick_from-block_pos;
 		Tick tick_to_local=tick_to-block_pos;
 		if (tick_from_local<0)
@@ -484,8 +604,10 @@ void Track_Pattern::track_pre_process(int p_frames) {
 					data.last_note[col]=n;
 				}
 			}
-		}
+		} */
 
+		
+		
 		/* Process note OFFs at end of block */
 		
 		/* Is there a reason for this?

@@ -125,7 +125,7 @@ int TreeLoaderDisk::get_int(String p_name) {
 	Value *v;
 	if ((v=get_value(p_name))==NULL) {
 		
-		return -1;
+		return 0;
 	}
 	if (v->type!=FILE_FIELD_INT) {
 		
