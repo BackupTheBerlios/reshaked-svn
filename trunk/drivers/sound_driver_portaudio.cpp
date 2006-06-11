@@ -191,8 +191,9 @@ bool SoundDriver_PortAudio::init() {
 	out_params.suggestedLatency=0; //die
 	out_params.hostApiSpecificStreamInfo=NULL;
 	
+
 	
-	PaError error = Pa_OpenStream  	(&stream,&in_params,&out_params,mixing_frequency,buffsize,paNoFlag,&SoundDriver_PortAudio::static_callback, this);
+	PaError error = Pa_OpenStream  	(&stream,(current_inputs>0)?&in_params:NULL,(current_outputs>0)?&out_params:NULL,mixing_frequency,buffsize,paNoFlag,&SoundDriver_PortAudio::static_callback, this);
 			
 	if (error<0) {
 		
@@ -208,7 +209,7 @@ bool SoundDriver_PortAudio::init() {
 		return true;
 	}
 	
-	printf("OPENING PORTAUDIO\n");
+	//printf("OPENING PORTAUDIO\n");
 	
 	active=true;
 	return false;

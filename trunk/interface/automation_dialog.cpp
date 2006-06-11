@@ -94,7 +94,7 @@ void AutomationPopup::rebuild() {
 						break;
 					QString auxp=path.left( idx );
 					from=idx+1; //so it skips the /
-					printf("searching %s\n",auxp.toAscii().data());
+					//printf("searching %s\n",auxp.toAscii().data());
 					I=hashmap.find(auxp);
 					if (I==hashmap.end()) { //we must create it!
 						
@@ -117,7 +117,7 @@ void AutomationPopup::rebuild() {
 						
 						parent=node;
 						hashmap[auxp]=node;
-						printf("adding %s, nodename: %s\n",auxp.toAscii().data(),nodename.toAscii().data());
+						//printf("adding %s, nodename: %s\n",auxp.toAscii().data(),nodename.toAscii().data());
 						
 					} else { //exists
 						 

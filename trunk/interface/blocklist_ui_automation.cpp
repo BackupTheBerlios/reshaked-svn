@@ -706,7 +706,7 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 			setFocus();
 			update();
 			mouse_selection_begin( e->pos() );
-			printf("SELECTION BEGIN?\n");
+			//printf("SELECTION BEGIN?\n");
 			return;
 		}
 	}

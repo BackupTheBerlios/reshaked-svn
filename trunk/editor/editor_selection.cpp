@@ -314,7 +314,7 @@ void Editor::selection_transpose(bool p_up) {
 	
 	if (!d->selection.enabled)
 		return;
-        printf("Transpose Begin\n");
+        //printf("Transpose Begin\n");
 	
 	Tick tick_from=d->selection.begin.tick;
 	Tick tick_to=d->selection.end.tick+TICKS_PER_BEAT/d->cursor.get_snap();
@@ -458,7 +458,7 @@ void Editor::selection_paste_at(EditorData::Selection::Pos p_pos) {
 
 void Editor::begin_check_shift_selection() {
 	
-	printf("begin shift selecting %i\n",d->selection.shift_selecting);
+	//printf("begin shift selecting %i\n",d->selection.shift_selecting);
 	
 	
 	if (d->selection.enabled) {
@@ -471,7 +471,7 @@ void Editor::begin_check_shift_selection() {
 		EditorData::Selection::Pos cursor=get_cursor_selection_pos();
 		
 		if ((d->selection.end!=cursor && d->selection.begin!=cursor && top_right!=cursor && bottom_left!=cursor)) {
-			printf("changing valid to false from %i\n",d->selection.shift_selection_valid);
+			//printf("changing valid to false from %i\n",d->selection.shift_selection_valid);
 			d->selection.shift_selection_valid=false;		
 		}		
 	}
@@ -490,7 +490,7 @@ void Editor::begin_check_shift_selection() {
 }
 void Editor::end_check_shift_selection() {
 	
-	printf("end shift selecting %i\n",d->selection.shift_selecting);
+	//printf("end shift selecting %i\n",d->selection.shift_selecting);
 	if (!d->selection.shift_selecting || !d->selection.shift_selection_valid)
 		return;
 	
@@ -663,7 +663,7 @@ void Editor::selection_end() {
 
 }
 void Editor::selection_column_all() {
-	printf("meh");
+	//printf("meh");
 	BlockList *bl=get_blocklist( get_current_blocklist() );
 	if (!bl)
 		return;
@@ -701,7 +701,7 @@ void Editor::selection_column_all() {
 	
 	fix_selection();
 	d->ui_update_notify->edit_window_changed();
-	printf("moh");
+	//printf("moh");
 	
 }
 void Editor::selection_zap() {

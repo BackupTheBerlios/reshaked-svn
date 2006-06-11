@@ -72,11 +72,11 @@ bool AudioGraph::recompute_process_order() {
 	
 	*/
 	
-	printf("Iterations needed to solve graph: %i ( %i being worst case  )\n",iterations,worst_case);
+	//printf("Iterations needed to solve graph: %i ( %i being worst case  )\n",iterations,worst_case);
 	
 	if (iterations>=(int)nodes.size()) {
 		
-		printf("graph solving FAILED.\n");
+		//printf("graph solving FAILED.\n");
 		return true; /* we fucked it */
 	}
 

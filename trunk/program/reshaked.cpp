@@ -68,8 +68,9 @@
 
 #include "drivers/mutex_lock_win32.h"
 
-#define CONFIG_DIR QString("ReShaked")
-#define CONFIG_DIR_PATH QString(getenv("APPDATA"))
+// for win9x, use current dir/config , for winXP use APPDATA
+#define CONFIG_DIR QString(getenv("APPDATA")?"ReShaked":"config")
+#define CONFIG_DIR_PATH QString(getenv("APPDATA")?getenv("APPDATA"):"./") 
 
 #endif
 

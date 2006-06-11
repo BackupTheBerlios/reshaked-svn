@@ -30,6 +30,12 @@ class BottomBarControls : public CHBox {
 	
 	Q_OBJECT
 	
+	enum {
+		
+		MSG_NOTIFY_TIME_MS=3000,
+		UPDATE_INTERVAL_MS=80
+	};
+			
 	Editor *editor;
 	
 	QTimer *time_updater;	
@@ -43,8 +49,18 @@ class BottomBarControls : public CHBox {
 	
 	Piano_Keys *vpiano;
 	
+	QString last_time;
+	QString last_msg;
+		
+	int tmp_msg_time;
+	
+	
+	void update_time_label(QString p_str,bool p_play);
+	
 public slots:
 			
+	
+	
 	void action_notify(String p_action);
 	void time_update_slot();
 

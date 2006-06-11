@@ -163,19 +163,19 @@ int Sample::get_channels() const {
 	
 	return data.size();
 }
-int Sample::get_length(){
+int Sample::get_length() const{
 	
 	if (data.size()==0)
 		return 0;
 	
-	return data[0].size();
+	return data[0].size()-PADDING*2;
 	
 }
-const float* Sample::get_buffer(int p_channel){
+const float* Sample::get_buffer(int p_channel) const{
 	
 	ERR_FAIL_INDEX_V(p_channel,data.size(),NULL);
 	
-	return &data[p_channel][0];
+	return &data[p_channel][PADDING];
 }
 
 float* Sample::get_buffer_w(int p_channel){
@@ -183,19 +183,19 @@ float* Sample::get_buffer_w(int p_channel){
 	ERR_FAIL_INDEX_V(p_channel,data.size(),NULL);
 	
 	peakcache_dirty=true;
-	return &data[p_channel][0];
+	return &data[p_channel][PADDING];
 }
 
 FrameData Sample::get_frame(int p_pos) const{
 	
 	ERR_FAIL_COND_V(data.size()==0,FrameData(get_channels()));
-	ERR_FAIL_INDEX_V(p_pos,data[0].size(),FrameData(get_channels()));
+	ERR_FAIL_INDEX_V(p_pos,get_length(),FrameData(get_channels()));
 	
 	FrameData frame(get_channels());
 	
 	for (int i=0;i<data.size();i++) {
 		
-		frame.set(i,data[i][p_pos]);
+		frame.set(i,data[i][p_pos+PADDING]);
 	}
 	
 	return frame;
@@ -205,18 +205,18 @@ void Sample::set_frame(int p_pos,const FrameData& p_data){
 	
 	ERR_FAIL_COND(p_data.get_channels()!=get_channels());
 	ERR_FAIL_COND(data.size()==0);
-	ERR_FAIL_INDEX(p_pos,data[0].size());
+	ERR_FAIL_INDEX(p_pos,get_length());
 	
 	for (int i=0;i<data.size();i++) {
 		
-		data[i][p_pos]=p_data.get(i);
+		data[i][PADDING+p_pos]=p_data.get(i);
 	}
 	
 	peakcache_dirty=true;
 	
 }
 
-float Sample::get_base_freq() {
+float Sample::get_base_freq() const {
 	
 	return base_freq;	
 }
@@ -231,7 +231,7 @@ void Sample::set_loop_begin(int p_pos) {
 	loop_begin=p_pos;
 }
 
-int Sample::get_loop_begin() {
+int Sample::get_loop_begin() const {
 	
 	return loop_begin;
 }
@@ -242,7 +242,7 @@ void Sample::set_loop_end(int p_pos) {
 	loop_end=p_pos;
 }
 
-int Sample::get_loop_end() {
+int Sample::get_loop_end()  const {
 	
 	return loop_end;	
 }
@@ -253,7 +253,7 @@ void Sample::set_loop_type(LoopType p_type) {
 	loop_type=p_type;
 }
 
-Sample::LoopType Sample::get_loop_type() {
+Sample::LoopType Sample::get_loop_type() const {
 	
 	
 	return loop_type;	
@@ -297,7 +297,7 @@ void Sample::generate_peak_cache(int p_len) {
 			
 				if (j>=sample_sizei)
 					break;
-				float samp=data[ch][j];
+				float samp=data[ch][PADDING+j];
 				if (samp>max_peak)
 					max_peak=samp;
 				if (samp<min_peak)
@@ -328,8 +328,8 @@ void Sample::create(int p_channels,int p_length) {
 	
 	for (int i=0;i<p_channels;i++) {
 		
-		data[i].resize(p_length);
-		for (int j=0;j<p_length;j++)
+		data[i].resize(p_length+PADDING*2);
+		for (int j=0;j<(p_length+PADDING*2);j++)
 			data[i][j]=0;
 	}
 	

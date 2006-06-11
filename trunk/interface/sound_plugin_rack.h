@@ -100,6 +100,8 @@ Q_OBJECT
 	void resizeEvent(QResizeEvent * event);
 public slots:
 	
+	void plugin_renamed_slot();
+	
 	void h_qscrollbar_range_changed( int,int );
 	
 	void scrollbar_changed_slot(int p_val);

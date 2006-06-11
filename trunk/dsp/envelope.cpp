@@ -277,7 +277,7 @@ void Envelope::set_loop_enabled (bool p_enabled) {
 
 
 	loop_on=p_enabled;
-	printf("loop is %i\n",p_enabled);
+	//printf("loop is %i\n",p_enabled);
 }
 
 void Envelope::set_sustain_loop_enabled (bool p_enabled) {

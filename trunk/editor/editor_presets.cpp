@@ -34,19 +34,19 @@ TreeLoaderDisk::ErrorReading Editor::load_plugin_preset(SoundPlugin *p_plugin,St
 	
 	d->song->stop(); //stop song
 	
-	printf("LOADING FILE\n");
+	//printf("LOADING FILE\n");
 	TreeContainer *current = new TreeContainer;
 	p_plugin->save( current );
 	current->goto_root();
 	
-	printf("LOADING CONTAINER\n");
+	//printf("LOADING CONTAINER\n");
 	
 	TreeContainer *_new = new TreeContainer( &tld );
 	_new->goto_root();
 	
 	tld.close_file();
 	
-	printf("LOAD OK, SETTING PRESET\n");
+	//printf("LOAD OK, SETTING PRESET\n");
 	
 	d->undo_stream.begin("Load Preset for "+p_plugin->get_info()->caption,true);
 	d->undo_stream.add_command(Command4(&commands,&EditorCommands::plugin_load_preset,p_plugin,(TreeLoader*)current,(TreeLoader*)_new,p_track));

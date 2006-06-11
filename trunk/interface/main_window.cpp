@@ -378,7 +378,7 @@ void MainWindow::create_action(MenuItems p_item,QString p_text,String p_kb_path,
 	
 	if (p_widget) {
 		p_widget->addAction(q);
-		printf("action at %p\n",q);
+		//printf("action at %p\n",q);
 		
 	}
 

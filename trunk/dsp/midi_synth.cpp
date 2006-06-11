@@ -358,7 +358,7 @@ MidiSynth::MidiSynth(int p_channels,std::vector<Voice*> p_voice_pool) /*: active
 	modulation_depth.set_all(0,0,2,0,0.1,Property::DISPLAY_KNOB,"modulation_depth","Control/Modulation Depth","st");
 	mono_mode.set_all(0,0,1,0,1,Property::DISPLAY_CHECKBOX,"mono","Switch/Mono Mode","","Off","On");
 	sustain.set_all(0,0,1,0,1,Property::DISPLAY_CHECKBOX,"sustain","Switch/Sustain","","Off","On");
-	duplicate_check.set_all(1,0,1,1,1,Property::DISPLAY_CHECKBOX,"duplicate_check","Switch/Duplicate Check","","Off","On");
+	duplicate_check.set_all(0,0,1,0,1,Property::DISPLAY_CHECKBOX,"duplicate_check","Switch/Duplicate Check","","Off","On");
 	transpose.set_all(0,-24,24,0,1,Property::DISPLAY_KNOB,"transpose","Control/Transpose","nt","-2 Oct","+2 Oct");
 	finetune.set_all(0,-1,1,0,0.01,Property::DISPLAY_KNOB,"finetune","Control/Finetune","cnt","-st","+st");
 

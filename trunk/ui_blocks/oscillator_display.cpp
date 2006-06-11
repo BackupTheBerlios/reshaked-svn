@@ -52,7 +52,7 @@ void OscillatorDisplay::paintEvent(QPaintEvent *e) {
 	
 	int submap_size=(1<<oscil->get_osc_bits(submap));
 	
-	printf("submap %i, size %i\n",submap,submap_size);
+	//printf("submap %i, size %i\n",submap,submap_size);
 	for (int i=0;i<w;i++) {
 		
 		float oscv=oscil->get_osc(submap)[i*submap_size/w];

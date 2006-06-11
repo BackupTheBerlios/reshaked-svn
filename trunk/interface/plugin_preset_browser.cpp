@@ -61,7 +61,7 @@ void PluginPresetBrowser::rename_slot() {
 	}
 
 	QDir d;
-	printf("RENAME %s -> %s\n",item.toAscii().data(),new_name.toAscii().data());
+	//printf("RENAME %s -> %s\n",item.toAscii().data(),new_name.toAscii().data());
 	if (!d.rename(item,new_name)) {
 		
 		QMessageBox::information ( this, "Info", "Rename Failed" , QMessageBox::Ok);
@@ -113,7 +113,7 @@ void PluginPresetBrowser::save_as_slot() {
 	
 	if (QFile::exists(temptative_file)) {
 		
-		printf("%s exists?\n",selected_file.toAscii().data());
+		//printf("%s exists?\n",selected_file.toAscii().data());
 		int action=QMessageBox::warning ( this, "Warning", "File Exists, Overwrite??" , QMessageBox::Yes, QMessageBox::No);
 		
 		if (action==QMessageBox::No)
@@ -223,7 +223,7 @@ void PluginPresetBrowser::make_dir() {
 	QDir cdir(working_path);
 	ERR_FAIL_COND(!cdir.mkdir(dirname));
 	
-	printf("Now at %s\n",working_path.toAscii().data());
+	//printf("Now at %s\n",working_path.toAscii().data());
 	
 	rebuild_tree();
 }
@@ -266,7 +266,7 @@ void PluginPresetBrowser::tree_item_changed (  ) {
 
 void PluginPresetBrowser::parse_dir(QDir &p_dir,QTreeWidgetItem *p_parent,QTreeWidget *p_tree_base) {
 	
-	printf("Enter %s\n",p_dir.path().toAscii().data());
+	//printf("Enter %s\n",p_dir.path().toAscii().data());
 	TreeItem *dir_item;
 	
 	if (p_tree_base) {
@@ -292,7 +292,7 @@ void PluginPresetBrowser::parse_dir(QDir &p_dir,QTreeWidgetItem *p_parent,QTreeW
 	foreach(I,subdirs) {
 		if (*I=="." || *I=="..")
 			continue;
-		printf("trying subdir %s\n",I->toAscii().data());
+		//printf("trying subdir %s\n",I->toAscii().data());
 		ERR_CONTINUE(!p_dir.cd(*I));
 		parse_dir(p_dir,dir_item);
 		p_dir.cdUp();
@@ -343,7 +343,7 @@ void PluginPresetBrowser::ensure_dir_exists() {
 		
 		if (!plugin_dir.mkdir(dir)) {
 			
-			printf("plugin dir couldnt be created \n");
+			//printf("plugin dir couldnt be created \n");
 			
 			QMessageBox::critical ( this, "ERROR!", "Cant create plugin Presets Dir!", QMessageBox::Ok,QMessageBox::NoButton);
 			reject();

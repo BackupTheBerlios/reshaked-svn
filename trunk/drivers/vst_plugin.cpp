@@ -834,7 +834,7 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,String p_dir,
 	if (p_channels<1)
 		p_channels=1;
 	
-	printf("Begin plugin instancing\n");
+	//printf("Begin plugin instancing\n");
 	//input_plug = new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	//output_plug = new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
 	
@@ -844,7 +844,7 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,String p_dir,
 		enabled=false;
 		return;
 	}
-	printf("Library open OK\n");
+	//printf("Library open OK\n");
 		
 	AEffect* (__cdecl* getNewPlugInstance)(audioMasterCallback);
 	getNewPlugInstance=(AEffect*(__cdecl*)(audioMasterCallback))GetProcAddress(libhandle, "main");
@@ -855,7 +855,7 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,String p_dir,
 		enabled=false;
 		return;
 	}
-	printf("Get instancing func OK\n");
+	//printf("Get instancing func OK\n");
 	
 	ptrPlug=getNewPlugInstance(&VST_Plugin::host);
 
@@ -865,7 +865,7 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,String p_dir,
 		FreeLibrary(libhandle);
 		return;
 	}
-	printf("Call instancing func OK\n");
+	//printf("Call instancing func OK\n");
 	
 	if (ptrPlug->magic!=kEffectMagic) {
 			
@@ -876,7 +876,7 @@ VST_Plugin::VST_Plugin(const SoundPluginInfo *p_info,String p_path,String p_dir,
 			
 	}	
 	
-	printf("plugin instanced OK\n");
+	//printf("plugin instanced OK\n");
 	
 	//Open Plugin
 	ptrPlug->dispatcher(ptrPlug,effOpen,0,0,NULL,0.0f);

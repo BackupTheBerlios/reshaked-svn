@@ -218,9 +218,9 @@ void MarkerColumn::mousePressEvent(QMouseEvent *e) {
 		
 		if (marker_idx!=INVALID_STREAM_INDEX) {
 			
-			printf("size %i\n",marker_list->get_stream_size());
+			//printf("size %i\n",marker_list->get_stream_size());
 			editor->marker_remove(marker_idx);
-			printf("removed %i, size %i\n",marker_idx,marker_list->get_stream_size());
+			//printf("removed %i, size %i\n",marker_idx,marker_list->get_stream_size());
 			update();
 		}
 		return;

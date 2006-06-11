@@ -63,7 +63,7 @@ void SampleTriggerUI::load_sample_slot() {
 	
 	if (preset_name.lastIndexOf(".")!=-1) {
 			
-		preset_name.remove(0,preset_name.lastIndexOf(".")+1);
+		preset_name=preset_name.left(preset_name.lastIndexOf("."));
 	}
 	
 	sample_trigger->set_current_preset_name( DeQStrify(preset_name) );
@@ -71,6 +71,8 @@ void SampleTriggerUI::load_sample_slot() {
 	viewer->set_sample_data( &sample_trigger->get_sample() );	
 	
 	viewer->update();
+	
+	preset_name_changed_signal();
 	
 }
 void SampleTriggerUI::edit_sample_slot() {

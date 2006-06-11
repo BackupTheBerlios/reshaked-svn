@@ -64,6 +64,8 @@ class PropertyEditLabel : public PixmapLabel, public PropertyEditor {
 	bool suffix;
 	void click_override();
 	void mousePressEvent(QMouseEvent *e);		
+	void wheelEvent ( QWheelEvent * e ) ;
+	
 signals:	
 
 	void external_edit_signal(Property *p_property);

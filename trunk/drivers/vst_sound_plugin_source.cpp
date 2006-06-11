@@ -33,14 +33,14 @@ VST_SoundPluginSource * VST_SoundPluginSource::singleton=NULL;
 /* Path to VSTs */
 SoundPlugin* VST_SoundPluginSource::create_vst_plugin(const SoundPluginInfo *p_info,int p_channels) {
 	
-	printf("Attempt to instance\n");
+	//printf("Attempt to instance\n");
 	for (int i=0;i<singleton->plugin_list.size();i++) {
 		
 		if (&singleton->plugin_list[i]->plugin_info!=p_info) {
-			printf("skipped on %s\n",singleton->plugin_list[i]->plugin_info.caption.ascii().get_data());
+			//printf("skipped on %s\n",singleton->plugin_list[i]->plugin_info.caption.ascii().get_data());
 			continue;
 		}
-		printf("instancing plugin.. info: %p , path %s, chans %i\n",p_info,singleton->plugin_list[i]->path.ascii().get_data(),p_channels);
+		//printf("instancing plugin.. info: %p , path %s, chans %i\n",p_info,singleton->plugin_list[i]->path.ascii().get_data(),p_channels);
 		return new VST_Plugin(	p_info, singleton->plugin_list[i]->path, singleton->plugin_list[i]->dir, singleton->plugin_list[i]->write_only,p_channels);
 
 		
@@ -81,7 +81,7 @@ void VST_SoundPluginSource::scan_path(String p_path) {
 			continue;
 
 		
-		printf("Scanning %s\n",lib_name);
+		//printf("Scanning %s\n",lib_name);
 		
 		
 		
@@ -89,7 +89,7 @@ void VST_SoundPluginSource::scan_path(String p_path) {
 		HINSTANCE libhandle=LoadLibrary(lib_name);
 
 		if (libhandle==NULL) {
-			printf("invalid file: %s\n",lib_name);
+			//printf("invalid file: %s\n",lib_name);
 			continue;
 		}
 		

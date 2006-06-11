@@ -84,7 +84,7 @@ void AutomationTree::update_automation_tree() {
 						break;
 					QString auxp=path.left( idx );
 					from=idx+1; //so it skips the /
-					printf("searching %s\n",auxp.toAscii().data());
+					//printf("searching %s\n",auxp.toAscii().data());
 					I=hashmap.find(auxp);
 					if (I==hashmap.end()) { //we must create it!
 						
@@ -103,7 +103,7 @@ void AutomationTree::update_automation_tree() {
 						
 						parent=node;
 						hashmap[auxp]=node;
-						printf("adding %s, nodename: %s\n",auxp.toAscii().data(),nodename.toAscii().data());
+						//printf("adding %s, nodename: %s\n",auxp.toAscii().data(),nodename.toAscii().data());
 						
 					} else { //exists
 						 
@@ -186,7 +186,7 @@ void AutomationTree::set_track(Track *p_track) {
 void AutomationTree::item_clicked( QTreeWidgetItem * p_item, int column ) {
 	
 	QTreeAutomationItem *item = dynamic_cast<QTreeAutomationItem*>(p_item);
-	printf("callbacko\n");				
+	//printf("callbacko\n");				
 	if (!item)
 		return;
 	bool checked=(item->checkState(0)==Qt::Checked);
@@ -199,7 +199,7 @@ void AutomationTree::item_clicked( QTreeWidgetItem * p_item, int column ) {
 	if (checked==has_auto)
 		return; //nothing to do
 	
-	printf("checked %i\n",idx);
+	//printf("checked %i\n",idx);
 	if (checked)
 
 		attempt_automation_add_signal(idx);	
@@ -232,12 +232,12 @@ AutomationTree::~AutomationTree()
 
 void AutomationTreeeDialog::attempt_automation_add_slot(int p_index) {
 	
-	printf("add %i\n",p_index);
+	//printf("add %i\n",p_index);
 	editor->show_automation( p_index, track );
 }
 void AutomationTreeeDialog::attempt_automation_remove_slot(int p_index) {
 	
-	printf("rem %i\n",p_index);
+	//printf("rem %i\n",p_index);
 	editor->hide_automation( p_index, track );
 	
 }

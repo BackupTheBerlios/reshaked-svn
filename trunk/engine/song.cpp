@@ -279,7 +279,7 @@ void Song::clear(bool p_new) {
 	if (p_new) {
 		
 		audio_port_layout.port_out_info.push_back(2);
-		audio_port_layout.port_in_info.push_back(2);
+		//audio_port_layout.port_in_info.push_back(2);
 		marker_list.insert(0,"Markers");
 		
 	}
@@ -319,8 +319,8 @@ Song::Song() : song_playback(&global_properties), global_track(&global_propertie
 	input_node=NULL;
 	output_node=NULL;
 	audio_port_layout.port_out_info.push_back(2);
-	audio_port_layout.port_in_info.push_back(2);
-	marker_list.insert(0,"Markers");
+	//audio_port_layout.port_in_info.push_back(2);
+	marker_list.insert(0,"Intro");
 	loopdata.begin_beat=0;
 	loopdata.end_beat=0;
 	process_data.buffer_exp = 7;

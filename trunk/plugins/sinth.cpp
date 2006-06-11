@@ -298,7 +298,7 @@ void Sinth::Voice::process_template(int p_frames) {
 					
 				}
 				
-				printf("release at %g, trying to reach %g, multiplier %g\n",filter.env_pos,filter.release_end_pos,filter.release_env_mult);
+				//printf("release at %g, trying to reach %g, multiplier %g\n",filter.env_pos,filter.release_end_pos,filter.release_env_mult);
 				
 			
 			}

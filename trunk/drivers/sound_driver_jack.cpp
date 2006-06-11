@@ -284,7 +284,7 @@ bool SoundDriver_JACK::init() {
 	   running.
 	*/
 	
-	printf("JACK: outputs %i\n",output_port_list.size());
+	//printf("JACK: outputs %i\n",output_port_list.size());
 	if (!output_port_list.empty() && !output_port_list[0].ports.empty()) {
 		const char **port_names_array;
 		if ((port_names_array = jack_get_ports (client, NULL, NULL, 
@@ -300,7 +300,7 @@ bool SoundDriver_JACK::init() {
 					break;
 				
 				if(jack_connect(client, jack_port_name (output_port_list[0].ports[idx]), names[idx])) 
-					printf("Coudlnt connect %s to %s\n",jack_port_name (output_port_list[0].ports[idx]),names[idx]);
+					//printf("Coudlnt connect %s to %s\n",jack_port_name (output_port_list[0].ports[idx]),names[idx]);
 				idx++;
 			}
 				
@@ -308,7 +308,7 @@ bool SoundDriver_JACK::init() {
 			however examples i saw dont erase it*/
 		} else {
 			
-			printf("JACK: Found no physical output ports ( ? ? )\n");
+			WARN_PRINT("JACK: Found no physical output ports ( ? ? )\n");
 		}
 
 	}

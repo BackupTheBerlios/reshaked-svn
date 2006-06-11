@@ -28,7 +28,7 @@ void SettingsKeys::load(TreeLoader *p_loader) {
 		
 		if (!p_loader->is_var(bind.name)) {
 			
-			printf("var %s not found\n",bind.name.ascii().get_data());
+			//printf("var %s not found\n",bind.name.ascii().get_data());
 			
 			continue;
 		}
@@ -50,7 +50,7 @@ void SettingsKeys::load(TreeLoader *p_loader) {
 			
 		} else {
 			
-			printf("loaded bind %s , as %i\n",bind.name.ascii().get_data(),ks[0]);
+			//printf("loaded bind %s , as %i\n",bind.name.ascii().get_data(),ks[0]);
 			Keyboard_Input::get_singleton_instance()->set_key_bind_key( i, ks[0] );
 			
 		}

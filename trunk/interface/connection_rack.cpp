@@ -52,11 +52,11 @@ bool ConnectionRack::get_plug_data_at_pos(int p_x,int p_y,PlugData* p_data) {
 	for (int i=0;i<graph->get_node_count();i++) {
 		
 		for (int j=0;j<graph->get_node(i)->get_output_plug_count();j++) {
-			printf("search in node %lls\n",	graph->get_node(i)->get_caption().c_str() );
+			//printf("search in node %lls\n",	graph->get_node(i)->get_caption().c_str() );
 			QPoint p = get_output_plug_pos( i, j);
 			
 			int sqr_distance=POW2(p_x-p.x())+POW2(p_y-p.y());
-			printf("Node: %lls, plug %iCompare output %i,%i against %i,%i - %i<%i\n",graph->get_node(i)->get_caption().c_str(),j,p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
+			//printf("Node: %lls, plug %iCompare output %i,%i against %i,%i - %i<%i\n",graph->get_node(i)->get_caption().c_str(),j,p_x,p_y,p.x(),p.y(),sqr_distance,jack_sqr_len);
 			if (sqr_distance>jack_sqr_len)
 				continue;
 			
@@ -485,7 +485,7 @@ void ConnectionRack::mousePressEvent ( QMouseEvent * e ) {
 	if (get_plug_data_at_pos( e->x(),e->y(),&info)) 
 		return;
 	
-	printf("found node %i plug %i\n",info.graph_node,info.plug);
+	//printf("found node %i plug %i\n",info.graph_node,info.plug);
 	connecting.from=info;
 	connecting.enabled=true;
 	
@@ -568,7 +568,7 @@ void ConnectionRack::update_scrollbar() {
 		return;
 	if (!graph) {
 		
-		scrollbar->hide();
+		//scrollbar->hide();
 		return;
 	}
 	int total_width=get_total_width();
@@ -577,14 +577,14 @@ void ConnectionRack::update_scrollbar() {
 	
 	
 	if (scroll_area<=0) {
-		scrollbar->hide();
-		return;
+		//scrollbar->hide();
+		//return;
 	}
 	
 	scrollbar->set_max( total_width );
 	scrollbar->set_pagesize( width() );
 	scrollbar->set_value( -view_offset );
-	scrollbar->show();
+	//scrollbar->show();
 	
 }
 
@@ -622,7 +622,7 @@ void ConnectionRack::set_view_offset(int p_ofs) {
 	int diff=p_ofs-view_offset;
 	view_offset=p_ofs;
 	//scroll(diff,0);
-	printf("scrolling %i\n",diff);
+	//printf("scrolling %i\n",diff);
 	scroll(diff,0);
 }
 
@@ -637,7 +637,7 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 	p.setClipRect(pe->rect());
 	
 	p.fillRect(0,0,width(),height(),QColor(0,0,0));
-	printf("BEG RECT: %i,%i - %i %i\n",pe->rect().x(),pe->rect().y(),pe->rect().width(),pe->rect().height());
+	//printf("BEG RECT: %i,%i - %i %i\n",pe->rect().x(),pe->rect().y(),pe->rect().width(),pe->rect().height());
 	int ofs=0;
 	//printf("nodes %i\n",graph->get_connection_count());
 	for (int i=0;i<graph->get_node_count();i++) {
@@ -673,7 +673,7 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 	
 	p.setClipping(false);
 	
-	printf("END RECT: %i,%i - %i %i\n",pe->rect().x(),pe->rect().y(),pe->rect().width(),pe->rect().height());
+	//printf("END RECT: %i,%i - %i %i\n",pe->rect().x(),pe->rect().y(),pe->rect().width(),pe->rect().height());
 	
 	if (connecting.enabled) {
 		

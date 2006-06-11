@@ -19,7 +19,7 @@ bool load_sample_from_tree(TreeLoader *p_tree,Sample *p_sample) {
 	int len=p_tree->get_int("length");
 	int chans=p_tree->get_int("channels");
 	
-	printf("sample has %i len, %i channels\n",len,chans);
+//	printf("sample has %i len, %i channels\n",len,chans);
 	
 	p_sample->create( chans, len );
 	for (int i=0;i<chans;i++) {

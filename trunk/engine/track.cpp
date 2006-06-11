@@ -195,13 +195,18 @@ void Track::feed_input(int p_frames) {
 }
 void Track::read_output(int p_frames) {
 	
-	if (base_private.audio.mute)
-		return; //process all, just dont read from output
 	
 	AudioBuffer *track_output_buff=base_private.output_plug->get_buffer();
 	AudioBuffer *output_buff=base_private.output_proxy.get_input_plug(0)->get_buffer();
 	
+	if (base_private.audio.mute) {
+		
+		track_output_buff->clear( p_frames );
+
+		return; //process all, just dont read from output
+	}
 	
+	base_private.audio.volume_ratio=db_to_energy( base_private.volume.get() );
 	
 	for (int i=0;i<output_buff->get_channels();i++) {
 		

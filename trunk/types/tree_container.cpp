@@ -354,7 +354,7 @@ void TreeContainer::add_int_array(String p_name,const int *p_arr,int p_len) {
 void TreeContainer::add_float(String p_name,float p_float)  {
 	if (is_var(p_name)) {
 		
-		printf("%s exists\n",p_name.ascii().get_data());
+		//printf("%s exists\n",p_name.ascii().get_data());
 	}
 	ERR_FAIL_COND(is_var(p_name));	
 	
@@ -442,7 +442,7 @@ void TreeContainer::erase_node(Node *p_node) {
 
 void TreeContainer::load_node(TreeLoader *p_loader) {
 	
-	printf("path %s\n",get_path().ascii().get_data());
+	//printf("path %s\n",get_path().ascii().get_data());
 
 	for (int i=0;i<p_loader->get_child_count();i++) {
 	

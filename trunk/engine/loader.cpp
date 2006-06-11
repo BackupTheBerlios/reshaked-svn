@@ -171,12 +171,18 @@ void Loader::load_track_rack(Track *p_track,TreeLoader *p_loader) {
 		p_loader->enter(p_loader->get_child_name(i));
 		
 		String ID=p_loader->get_string("ID");
-		printf("Request Plugin ID: %s\n",ID.ascii().get_data());
+		//printf("Request Plugin ID: %s\n",ID.ascii().get_data());
 		int channels=p_loader->get_int("channels_created");
 		SoundPlugin *p=SoundPluginList::get_singleton()->instance_plugin(ID,channels);
 		
+		if (p==NULL) {
+			//instance some shitty missing plugin
+			p_loader->exit();
+			continue;
+		}
 		p->set_skip_processing( p_loader->get_int("skips_processing") );
 		p->set_duplicate( p_loader->get_int("duplicate") );
+		p->set_current_preset_name( p_loader->get_string("preset_name") );
 		
 		
 		{ //plugin data

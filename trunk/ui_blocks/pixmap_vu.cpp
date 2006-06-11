@@ -93,6 +93,7 @@ void PixmapVU::set_fall_time(float p_speed) {
 
 PixmapVU::PixmapVU(QWidget *p_parent,const Skin& p_skin,Type p_type,int p_margin_beg,int p_margin_end) :QWidget(p_parent) {
 	
+	visual_value=0;
 	skin=p_skin;
 	value=0;
 	setFixedSize(p_skin.bottom.size());

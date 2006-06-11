@@ -48,7 +48,8 @@ void SoundPluginUI::register_property_editor(PropertyEditorBase* p_editor) {
 	
 	if (w) {
 		
-		QObject::connect(w,SIGNAL(external_edit_signal(Property *)),this,SIGNAL(property_options_requested( Property* )));
+		if (w->metaObject()->indexOfSignal( SIGNAL(external_edit_signal(Property *) ) )>=0)
+			QObject::connect(w,SIGNAL(external_edit_signal(Property *)),this,SIGNAL(property_options_requested( Property* )));
 	}
 	
 }

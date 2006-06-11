@@ -63,7 +63,7 @@ void SimplerUI::load_sample_slot() {
 	
 	if (preset_name.lastIndexOf(".")!=-1) {
 			
-		preset_name.remove(0,preset_name.lastIndexOf(".")+1);
+		preset_name=preset_name.left(preset_name.lastIndexOf("."));
 	}
 	
 	simpler->set_current_preset_name( DeQStrify(preset_name) );
@@ -72,6 +72,8 @@ void SimplerUI::load_sample_slot() {
 	
 	
 	viewer->update();
+	
+	preset_name_changed_signal();
 	
 }
 void SimplerUI::edit_sample_slot() {

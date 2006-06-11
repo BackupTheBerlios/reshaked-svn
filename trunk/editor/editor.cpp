@@ -24,6 +24,9 @@ void Editor::marker_set(int p_beat,String p_text) {
 }
 void Editor::marker_remove(int p_index) {
 	
+	if (p_index<0 || p_index>=d->song->get_marker_list().get_stream_size())
+		return;
+	
 	d->song->get_marker_list().erase_index(p_index);
 }
 

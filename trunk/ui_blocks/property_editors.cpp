@@ -77,17 +77,37 @@ void PropertyEditLabel::changed() {
 
 void PropertyEditLabel::mousePressEvent(QMouseEvent *e) {
 	
+	ERR_FAIL_COND( get_property()==NULL );
+	
 	if (e->button()==Qt::RightButton)
 		external_edit_signal( get_property() );
 	else	
 		PixmapLabel::mousePressEvent(e);
 }
 
+void PropertyEditLabel::wheelEvent( QWheelEvent * e ) {
+	
+	ERR_FAIL_COND( get_property()==NULL );
+	
+	if (e->delta()>0) 
+		set( get() + get_property()->get_stepping() );
+	else if (e->delta()<0)
+		set( get() - get_property()->get_stepping() );
+
+	changed();
+
+}
+
 void PropertyEditLabel::click_override() {
+	
+	ERR_FAIL_COND( get_property()==NULL );
 	
 	bool ok;
 	
-	double val=QInputDialog::getDouble ( this, QStrify( get_property()->get_caption()), "Enter Value", get(), get_property()->get_min(), get_property()->get_max(), 4, &ok);
+	QString range = QStrify(get_property()->get_text_value(  get_property()->get_min() ) + " to " + get_property()->get_text_value(  get_property()->get_max() ) );
+	
+	
+	double val=QInputDialog::getDouble ( this, QStrify( get_property()->get_caption()), QString("Enter Value (") + range + ")", get(), get_property()->get_min(), get_property()->get_max(), 4, &ok);
 	if (ok)
 		set(val);
 	

@@ -319,11 +319,12 @@ void TrackRack::update_scrollbar() {
 	
 	scrollbar->set_pagesize( width() );
 	
+	/*
 	if (tracklist_width<width())
 		scrollbar->hide();
 	else
 		scrollbar->show();
-	
+	*/
 	scrollbar->set_value( horizontalScrollBar()->value() );
 }
 

@@ -190,7 +190,7 @@ bool GlobalView::get_click_location( int p_x, int p_y, int *p_blocklist, int *p_
 	if (block_idx<0)
 		return true;
 
-	printf("block %i, tick %.2f - blocks idx %i\n",blocklist,(float)tick/(float)TICKS_PER_BEAT,block_idx);
+	//printf("block %i, tick %.2f - blocks idx %i\n",blocklist,(float)tick/(float)TICKS_PER_BEAT,block_idx);
 
 	*p_blocklist=blocklist;
 	*p_block=block_idx;
@@ -263,7 +263,7 @@ void GlobalView::compute_moving_block_list() {
 			e.can_move=true;
 		
 		moving_block.moving_element_list.push_back(e);
-		printf("adding %i,%i\n",block,list);
+		//printf("adding %i,%i\n",block,list);
 	}
 
 	moving_block.moving=true;

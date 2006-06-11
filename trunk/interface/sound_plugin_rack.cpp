@@ -310,7 +310,7 @@ void SoundPluginRack::update_rack() {
 		QObject::connect(ui,SIGNAL(property_edited_signal( Property*, double )),this,SLOT(property_edited_slot( Property*, double )));
 		QObject::connect(e.top,SIGNAL(action_signal( int,int )),this,SLOT(plugin_action_signal( int,int )),Qt::QueuedConnection);
 		QObject::connect(ui,SIGNAL(property_options_requested( Property* )),this,SLOT(property_options_requested( Property* )),Qt::QueuedConnection); //queue is necesary to avoid crashes
-		
+		QObject::connect(ui,SIGNAL(preset_name_changed_signal()),this,SLOT(plugin_renamed_slot())); //queue is necesary to 		
 		
 		
 	}	
@@ -359,6 +359,12 @@ void SoundPluginRack::resizeEvent(QResizeEvent * event) {
 }
 
 
+void SoundPluginRack::plugin_renamed_slot() {
+	
+	
+	repaint();
+}
+
 void SoundPluginRack::update_scrollbar() {
 	
 	if (!spacer)
@@ -370,11 +376,12 @@ void SoundPluginRack::update_scrollbar() {
 	
 	scrollbar->set_pagesize( width() );
 	
+	/*
 	if (tracklist_width<width())
 		scrollbar->hide();
 	else
 		scrollbar->show();
-	
+	*/
 	scrollbar->set_value( horizontalScrollBar()->value() );
 }
 

@@ -201,7 +201,7 @@ SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sin
 			if (i>0)
 				new PixmapLabel(osc1_env_hb,GET_QPIXMAP( THEME_SINTH__OSCENV_OSC1_KNOB_SEPARATOR ) );
 			
-			printf("name is %s\n",name.ascii().get_data());
+//			printf("name is %s\n",name.ascii().get_data());
 			Property *p = &sinth->get_port_by_name( name );
 			ERR_CONTINUE(p==NULL);
 			PropertyEditor *pe = new PropertyEditKnob(osc1_env_hb, sk );

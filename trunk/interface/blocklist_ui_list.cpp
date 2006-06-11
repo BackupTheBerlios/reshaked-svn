@@ -62,7 +62,7 @@ void BlockListUIList::property_editor_property_edited(PropertyEditor* p_editor,d
 	Track *t=NULL; // see if we can hint the track
 	
 	if (p_editor->get_property()==&editor->get_song()->get_global_properties().get_tempo()) {
-		printf("is tempo!\n");
+		//printf("is tempo!\n");
 		t=&editor->get_song()->get_global_track();
 		
 	}
@@ -197,7 +197,7 @@ void BlockListUIList::cursor_changed_blocklist() {
 
 	ensure_cursor_visible();
 
-	printf("some data: poshbox %i,%i , poswidget %i,%i - hboxw %i vpw %i -sm, %i, sp %i\n",hbox->pos().x(),hbox->pos().y(),block_list_ui_list[current_blocklist]->pos().x(),block_list_ui_list[current_blocklist]->pos().y(),hbox->width(),scrollarea->viewport()->width(),scrollarea->horizontalScrollBar()->maximum(), scrollarea->horizontalScrollBar()->value());
+	//printf("some data: poshbox %i,%i , poswidget %i,%i - hboxw %i vpw %i -sm, %i, sp %i\n",hbox->pos().x(),hbox->pos().y(),block_list_ui_list[current_blocklist]->pos().x(),block_list_ui_list[current_blocklist]->pos().y(),hbox->width(),scrollarea->viewport()->width(),scrollarea->horizontalScrollBar()->maximum(), scrollarea->horizontalScrollBar()->value());
 
 }
 void BlockListUIList::repaint_track_list() {
@@ -422,7 +422,8 @@ void BlockListUIList::show_edit_menu() {
 	edit_menu->addSeparator();
 	
 	ADD_ACTION("Edit Marker",ACTION_EDIT_MARKER,"editor/edit_marker",editor->get_blocklist_count()>0);
-	
+	ADD_ACTION("Edit Bar Length",ACTION_EDIT_BAR_LENGTH,"editor/bar_length_at_pos",editor->get_blocklist_count()>0);
+		
 	edit_menu->addSeparator();
 	
 	ADD_ACTION("Set Loop Begin",ACTION_SET_LOOP_BEGIN,"editor/set_loop_begin",editor->get_blocklist_count()>0);
@@ -504,6 +505,21 @@ void BlockListUIList::edit_menu_selected_item(int p_item) {
 		case ACTION_PASTE_MIX: editor->selection_paste_mix(); break;
 		
 		case ACTION_EDIT_MARKER: {
+			
+			int beat=editor->get_cursor().get_beat();
+			int marker_idx=editor->get_song()->get_marker_list().get_exact_index( beat );
+	
+			QString current_text=QStrify( (marker_idx>=0)?editor->get_song()->get_marker_list().get_index_value_w( marker_idx):"" );
+			QString text=QInputDialog::getText ( this,"Insert Marker", "Marker Text:", QLineEdit::Normal, current_text);
+			if (text=="") {
+				if (marker_idx>=0)
+					editor->marker_remove( beat );
+			} else 
+				editor->marker_set( beat, DeQStrify(text) );
+	
+			
+		}break;
+		case ACTION_EDIT_BAR_LENGTH: {
 			
 		}break;
 		case ACTION_SET_LOOP_BEGIN: {
@@ -693,7 +709,7 @@ void BlockListUIList::update_hscrollbar_range() {
 
 void BlockListUIList::h_qscrollbar_range_changed(int p_min,int p_max) {
 	
-	printf("range_changed %i - %i\n",p_min,p_max);
+	//printf("range_changed %i - %i\n",p_min,p_max);
 	update_hscrollbar_range();
 }
 void BlockListUIList::h_qscrollbar_changed(int p_val) {

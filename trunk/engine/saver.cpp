@@ -86,6 +86,7 @@ void Saver::save_track_rack(Track *p_track,TreeSaver *p_saver) {
 		p_saver->enter("plugin_"+String::num(i));
 		
 		p_saver->add_string("ID",p->get_info()->unique_ID);
+		p_saver->add_string("preset_name",p->get_current_preset_name());
 		p_saver->add_int("duplicate",p->get_duplicate());
 		p_saver->add_int("skips_processing",p->skips_processing());
 		if (p->get_info()->can_custom_channels)
@@ -206,7 +207,7 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 			plugin_idx=p_track->find_plugin_idx_for_property(a->get_property());
 			if (plugin_idx==-1) {
 				
-				printf("Failed to find plugin for property %s\n",a->get_property()->get_caption().ascii().get_data() );
+				//printf("Failed to find plugin for property %s\n",a->get_property()->get_caption().ascii().get_data() );
 			}
 			ERR_CONTINUE(plugin_idx==-1);
 		}

@@ -179,6 +179,8 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/quantize_nearest","Quantize Nearest",Qt::CTRL+Qt::Key_I);
 	data.keyboard_codes.add_key_bind("editor/quantize_down","Quantize Down",Qt::CTRL+Qt::Key_O);
 	
+	data.keyboard_codes.add_key_bind("editor/bar_length_at_pos","Set Bar Length",Qt::CTRL+Qt::SHIFT+Qt::Key_B);
+		
 	data.keyboard_codes.set_key_bind_key_by_name("actions/undo",Qt::CTRL+Qt::Key_Z);
 	data.keyboard_codes.set_key_bind_key_by_name("actions/redo",Qt::SHIFT+Qt::CTRL+Qt::Key_Z);
 

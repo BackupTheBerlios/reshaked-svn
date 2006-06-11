@@ -1,4 +1,4 @@
-//
+//time
 // C++ Implementation: bottom_bar_controls
 //
 // Description: 
@@ -14,12 +14,15 @@
 #include "visual_settings.h"
 #include "get_time.h"
 #include <Qt/qinputdialog.h>
+#include "engine/sound_driver_list.h"
+
 namespace ReShaked {
 
 
 void BottomBarControls::action_notify(String p_action) {
 	
 	info_label->set_text(QStrify(p_action));
+	tmp_msg_time=MSG_NOTIFY_TIME_MS;
 }
 
 void BottomBarControls::octave_edit_popup() {
@@ -50,17 +53,30 @@ void BottomBarControls::octave_changed_slot() {
 	label_octave->set_text( QString::number( editor->get_editing_octave() ) );			
 }
 
+
+void BottomBarControls::update_time_label(QString p_str,bool p_play) {
+	
+	QColor col=p_play?GET_QCOLOR(COLORLIST_TIME_LABEL_PLAY):GET_QCOLOR(COLORLIST_TIME_LABEL);
+	
+	time_label->set_color(col);
+	time_label->set_text(p_str);	
+	
+}
+
 void BottomBarControls::time_update_slot() {
 	
-	QColor col;
+	
+	/* CHECK CLOCK */
+	
+	bool playing;
 	unsigned int time;
 	if (editor->get_song()->get_song_playback().get_status()==SongPlayback::STATUS_PLAY) {
-		time=GetTime::get_time_msec()-editor->get_song()->get_song_playback().get_song_playback_time();
 		
-		col=GET_QCOLOR(COLORLIST_TIME_LABEL_PLAY);
+		time=GetTime::get_time_msec()-editor->get_song()->get_song_playback().get_song_playback_time();
+		playing=true;
 	} else {
 		time=GetTime::get_time_msec();
-		col=GET_QCOLOR(COLORLIST_TIME_LABEL);
+		playing=false;
 	}
 	
 	time/=1000; //seconds
@@ -80,8 +96,55 @@ void BottomBarControls::time_update_slot() {
 	bufdigit[1]='0'+secs%10;
 	timestr+=bufdigit;
 	
-	time_label->set_color(col);
-	time_label->set_text(timestr);	
+	if (timestr!=last_time)
+		update_time_label(timestr,playing);
+	
+	last_time=timestr;
+	
+	if (tmp_msg_time>=0) { //cant update msg
+		
+		tmp_msg_time-=UPDATE_INTERVAL_MS;
+		return;
+	}
+	
+	
+	QString message="Player Stopped";
+	
+	if (!SoundDriverList::get_singleton()->is_current_driver_active()) {
+		
+		message="**AUDIO DRIVER IS DISABLED**";
+		
+	} else if (playing) {
+			
+		Tick playpos=editor->get_song()->get_song_playback().get_playback_pos_tick();
+		
+		int beat=playpos/TICKS_PER_BEAT;
+		int bar=editor->get_song()->get_bar_map().get_bar_at_beat( beat );
+		int bar_beat=editor->get_song()->get_bar_map().get_bar_beat( beat );
+		int mark_idx = editor->get_song()->get_marker_list().get_prev_index( beat );
+		QString mark = (mark_idx>=0) ? QStrify( editor->get_song()->get_marker_list().get_index_value( mark_idx ) ) : "";
+		
+		message="Playing: " +mark + " at " + QString::number(bar) + ":"+ QString::number(bar_beat+1);
+		
+	}
+	
+	if (message!=last_msg) {
+		
+		info_label->set_text( message );
+	}
+	
+	/*
+	
+	if (playpos_text!=last_msg)
+			
+	Tick playtick = 
+	
+	int playback_beat=editor->get_cursor().get_beat();
+	int playback_subbeat=editor->get_cursor().get_pos()%editor->get_cursor().get_snap();
+	int playback_bar=editor->get_cursor().get_pos()%editor->get_cursor().get_snap();
+	
+	
+	*/
 	
 }
 
@@ -165,8 +228,8 @@ BottomBarControls::BottomBarControls(QWidget *p_parent,Editor *p_editor) : CHBox
 	
 	time_updater = new QTimer(this);
 	QObject::connect(time_updater ,SIGNAL(timeout()),this,SLOT(time_update_slot()));
-	time_updater->start(1000);
-	
+	time_updater->start(80);
+	tmp_msg_time=0;	
 }
 
 

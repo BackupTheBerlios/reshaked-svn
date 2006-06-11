@@ -64,6 +64,11 @@ public:
 	};
 private:	
 	
+	enum {
+		
+		PADDING=2 // used to help in interpolation cases, padding before and after
+	};
+	
 	//@TODO Realloc and use memory properly, since vector<> takes up a lot more than asked!
 	std::vector<std::vector<float> > data;
 	
@@ -87,24 +92,24 @@ private:
 public:
 	
 	int get_channels() const;
-	int get_length();
-	const float* get_buffer(int p_channel);
+	int get_length() const;
+	const float* get_buffer(int p_channel) const;
 	float* get_buffer_w(int p_channel);
 	
 	FrameData get_frame(int p_pos) const;
 	void set_frame(int p_pos,const FrameData& p_data);
 
-	float get_base_freq();
+	float get_base_freq() const;
 	void set_base_freq(float p_freq);
 	
 	void set_loop_begin(int p_pos);
-	int get_loop_begin();
+	int get_loop_begin() const;
 	
 	void set_loop_end(int p_pos);
-	int get_loop_end();
+	int get_loop_end() const;
 	
 	void set_loop_type(LoopType p_type);
-	LoopType get_loop_type();
+	LoopType get_loop_type() const;
 	
 	void generate_peak_cache(int p_len=16384);
 	inline const std::vector<PeakCache>& get_peak_cache() const { return peakcache; } //fast drawing

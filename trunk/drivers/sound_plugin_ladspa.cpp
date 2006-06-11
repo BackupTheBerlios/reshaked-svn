@@ -165,7 +165,7 @@ void SoundPlugin_LADSPA::connect_audio_ports() {
 
 void SoundPlugin_LADSPA::reset() {
 	
-	printf("RESET called\n");
+	//printf("RESET called\n");
 
 	if (!working)
 		return;
@@ -191,7 +191,7 @@ void SoundPlugin_LADSPA::reset() {
 	
 
 	int inport_count=0,outport_count=0;
-	printf("Relink to properties\n");
+	//printf("Relink to properties\n");
 	/* If you dont connect all the input/outputs to something, the plugin will CRASH!!!" */
 
 	for (int i=0;i < (int)descriptor->PortCount;i++) {
@@ -220,7 +220,7 @@ void SoundPlugin_LADSPA::reset() {
 					int idx=inport_count;
 					if (idx<0 || idx>=input_ports.size()) {
 						
-						printf("idx %i / %i\n",idx,input_ports.size());
+						//printf("idx %i / %i\n",idx,input_ports.size());
 					}
 					ERR_CONTINUE(idx<0 || idx>=input_ports.size());
 							

@@ -299,7 +299,7 @@ void Track_Pattern::plugin_added_notify(SoundPlugin *p_plugin) {
 
 void Track_Pattern::add_noteon_event_to_buffer(char p_note,char p_velocity,int p_column,EventBuffer &p_buffer,int p_frame_offset) {
 	
-	printf("note %i\n",p_note);
+	//printf("note %i\n",p_note);
 	
 	if (data.last_note[p_column].is_note() && data.last_note[p_column].note==p_note) {
 		/* IF the note is the same, we must mute it before */

@@ -18,11 +18,11 @@ namespace ReShaked {
 void PropertyEditComboBox::config() {
 	
 	clear();
-	printf("OPTIONS: %i\n",(int)get_property()->get_max());
+	//printf("OPTIONS: %i\n",(int)get_property()->get_max());
 	for (int i=0;i<=(int)get_property()->get_max();i++) {
 		
 		QString option=QStrify(get_property()->get_text_value((double)i));
-		printf("Option %s\n",option.toAscii().data());
+		//printf("Option %s\n",option.toAscii().data());
 		addItem(option);
 	}
 	

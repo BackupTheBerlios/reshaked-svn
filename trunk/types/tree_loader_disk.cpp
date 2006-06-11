@@ -78,7 +78,7 @@ void TreeLoaderDisk::enter(String p_dir) {
 		}
 	}
 	
-	printf("child dir at %s\n",p_dir.ascii().get_data());
+	//printf("child dir at %s\n",p_dir.ascii().get_data());
 	ERR_PRINT("Child dir doesnt exist");
 }
 void TreeLoaderDisk::exit() {
@@ -400,13 +400,13 @@ TreeLoaderDisk::ErrorReading TreeLoaderDisk::open_file(String p_file) {
 				Node *new_n=new Node;
 				new_n->parent=current;
 				new_n->name=read_string();
-				printf("ENTER: %lls\n",new_n->name.c_str());
+				//printf("ENTER: %lls\n",new_n->name.c_str());
 				current->childs.push_back(new_n);
 				enter(new_n->name);		
 				
 			} break;
 			case FILE_FIELD_EXIT: {
-				printf("EXIT: %lls\n",current->name.c_str());
+				//printf("EXIT: %lls\n",current->name.c_str());
 				exit();
 			} break;
 			case FILE_FIELD_INT:
@@ -419,12 +419,12 @@ TreeLoaderDisk::ErrorReading TreeLoaderDisk::open_file(String p_file) {
 				Value * v= extract_value( (FileFieldType)command);
 				if (!v)
 					break; //corrupt
-				printf("Value: %lls\n",v->name.c_str());
+				//printf("Value: %lls\n",v->name.c_str());
 				current->values.push_back(v);
 				
 			} break;
 			case FILE_FIELD_EOF: {
-				printf("EOF!\n");
+				//printf("EOF!\n");
 				read_ok=true;
 				
 			} break;
