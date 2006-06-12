@@ -20,7 +20,11 @@ EventBuffer::EventBuffer(int p_max_size) {
 	
 }
 
-
+EventBuffer::~EventBuffer() {
+	
+	delete [] events;
+	delete [] event_ptrs;
+}
 
 
 

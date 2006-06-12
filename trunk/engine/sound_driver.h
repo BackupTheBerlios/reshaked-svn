@@ -138,7 +138,7 @@ public:
 	AudioNode *get_output_node();
 	
 	
-	virtual ~SoundDriver() {};
+	virtual ~SoundDriver();
 
 };
 

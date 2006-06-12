@@ -650,7 +650,7 @@ void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 	for (int i=0;i<=9;i++) {
 		cursor_stepping->add_item( QString::number(i) );
 	}
-	QObject::connect(cursor_stepping,SIGNAL(item_selected_signal( int )),this,SLOT(cursor_step_changed(int p_step)));
+	QObject::connect(cursor_stepping,SIGNAL(item_selected_signal( int )),this,SLOT(cursor_step_changed(int)));
 	cursor_stepping->select_item( 1 ); //1 preselected
 	new PixmapLabel(cursor_stepping_vb,GET_QPIXMAP(THEME_EDIT_TOOLBAR__CURSOR_STEPPING_DROPDOWN_BOTTOM));
 		

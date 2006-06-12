@@ -331,6 +331,10 @@ Song::Song() : song_playback(&global_properties), global_track(&global_propertie
 		
 Song::~Song() {
 	
+	for (int i=0;i<track_list.size();i++) {
+		
+		delete track_list[i];
+	}
 }
 
 };

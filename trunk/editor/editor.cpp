@@ -696,8 +696,9 @@ void Editor::set_loop_end_at_cursor() {
 }
 
 
-Editor::~Editor()
-{
+Editor::~Editor() {
+	
+	delete d;
 }
 
 

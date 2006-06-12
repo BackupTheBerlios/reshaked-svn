@@ -829,6 +829,8 @@ Track::~Track()
 		delete base_private.property_list[i]->automation;
 		delete base_private.property_list[i];
 	}
+	
+	
 	//delete plugs
 	delete base_private.input_plug;
 	delete base_private.output_plug;

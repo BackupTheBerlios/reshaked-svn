@@ -213,5 +213,20 @@ void SoundDriver::set_midi_input_handler(MidiInputHandlerBase *p_handler) {
 	midi_input_handler=p_handler;
 }
 
+SoundDriver::~SoundDriver()  {
 
+	for (int i=0;i<input_node.input_plugs.size();i++) {
+		
+		delete input_node.input_plugs[i];
+	}
+	input_node.input_plugs.clear();
+	
+	
+	for (int i=0;i<output_node.output_plugs.size();i++) {
+		
+		delete output_node.output_plugs[i];
+	}
+	output_node.output_plugs.clear();
+
+}
 }

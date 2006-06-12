@@ -289,8 +289,9 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 	
 	QFont f;
 	f.setBold(true);
-	p.setFont(f);
 	f.setPixelSize(skin()->get_top()/2);
+	p.setFont(f);
+	
 	p.setPen(QColor(200,200,240));
 	int node_width=get_node_width(p_node);
 	

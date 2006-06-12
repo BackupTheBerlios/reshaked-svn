@@ -361,7 +361,7 @@ TreeLoaderDisk::ErrorReading TreeLoaderDisk::open_file(String p_file) {
 	fread(buffer,mime.length()+1,1,f);
 	buffer[mime.length()]=0;//zero just in case
 	String mime_compare=buffer;
-	delete buffer;
+	delete[] buffer;
 	if (mime_compare!=mime) {
 		
 		fclose(f);

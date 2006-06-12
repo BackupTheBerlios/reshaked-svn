@@ -100,6 +100,8 @@ void String::copy_on_write() {
 	
 	Shared *old=shared;
 	
+	shared=NULL;
+	
 	create_shared();
 	
 	resize_shared(old->len);
@@ -121,6 +123,8 @@ void String::resize_shared(int p_newsize) {
 
 void String::create_shared(int p_length) {
 	
+	ERR_FAIL_COND(shared!=NULL);
+	
 	shared = new Shared;
 	shared->len=p_length;
 	shared->data=(CharType*)malloc(sizeof(CharType)*(p_length+1));
@@ -134,12 +138,13 @@ void String::free_shared() {
 	if (shared->refcount==1) { //only us using it
 		free(shared->data);
 		delete shared;
-		shared=NULL;
+		
 	} else {
 		
 		shared->refcount--;
 	}
 	
+	shared=NULL;
 }
 	
 void String::copy_from(String& p_string) {

@@ -135,6 +135,8 @@ PixmapLabel::PixmapLabel(QWidget *p_parent,QPixmap p_pixmap,PixmapExpandType p_t
 	
 	font.setBold(true);
 	int font_pix_size=p_pixmap.height()*3/5;
+	if (font_pix_size<=0)
+		font_pix_size=1; //so qt wont complain 
 	font.setPixelSize(font_pix_size);
 	set_pos(QPoint(p_pixmap.width()/2,(p_pixmap.height()-font_pix_size)/2),true);
 	set_color(QColor(255,255,255));

@@ -96,7 +96,7 @@ void CompressorPlugin::set_mixing_rate(float p_mixing_rate) { //sort of useless
 void CompressorPlugin::reset() {
 	
 	if (avg_buffer)
-		delete avg_buffer;
+		delete[] avg_buffer;
 	
 	avg_size=lrint((float)MAX_AVG_BUFFER_MS/1000.0*mix_rate);
 	

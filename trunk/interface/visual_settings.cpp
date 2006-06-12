@@ -94,7 +94,7 @@
 #include "pixmaps/track_top_bg.xpm"
 
 #include "pixmaps/linked_block.xpm"
-
+#include "typedefs.h"
 // #include "pixmaps/default_skin/top__bpm_bottom.xpm"
 // #include "pixmaps/default_skin/top__bpm_display.xpm"
 // #include "pixmaps/default_skin/top__bpm_end.xpm"
@@ -828,10 +828,19 @@ VisualSettings::VisualSettings() {
 }
 
 
-VisualSettings::~VisualSettings()
-{
+VisualSettings::~VisualSettings() {
+	
+	
+	foreach(I,skin_box_map) {
+		
+		delete (I->second);
+	}
+	
 }
 
 
+
+
 }
+  
   

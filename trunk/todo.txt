@@ -57,7 +57,7 @@ BIG TODO AFTER 80%: Order doesnt matter anymore?
 
 *-Song Loop
 *-Sounds when editing
-NB-Virtual pianito
+*-Virtual pianito
 *-proper reset on stop and other things
 NB-MIDI in the DRIVERS
 	NB-MIDI Input
@@ -133,5 +133,5 @@ as shared because of the one at the undo buffer!
 
 
 PropertyEditLabel
--Use mouse wheel to move step
--Show Proper range on click
+*-Use mouse wheel to move step
+*-Show Proper range on click

@@ -306,10 +306,16 @@ int main(int argc, char *argv[]) {
 	
 	int res=q->exec();
 	
+	driver_list.finish_driver(); //avoid multithread problems
+	
+	printf("sound should be off\n");
 	delete w;
+	delete q;
+	
 #ifdef DRIVER_PORTAUDIO_ENABLED
 	
 	ReShaked::SoundDriver_PortAudio::finalize_portaudio();
+	delete driver_portaudio;
 	
 #endif
 	

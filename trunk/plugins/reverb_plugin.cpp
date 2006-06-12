@@ -156,6 +156,8 @@ ReverbPlugin::ReverbPlugin(const SoundPluginInfo *p_info,int p_channels) : Sound
 ReverbPlugin::~ReverbPlugin(){ 
 	
 	delete[] reverb;
+	delete input_plug;
+	delete output_plug;
 }
 
 

@@ -229,7 +229,7 @@ OscillatorEditor::OscillatorEditor(QWidget *p_parent) : QDialog(p_parent) {
 	oscd_sk.margin=10;
 	oscd_sk.wave_color=QColor(255,255,255);
 	
-	display = new OscillatorDisplay(this,oscd_sk);
+	display = new OscillatorDisplay(NULL,oscd_sk);
 	
 	display->setMinimumSize(400,120);
 	

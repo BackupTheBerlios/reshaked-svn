@@ -28,6 +28,7 @@ public:
 	inline const Event* get_event(int p_idx) const;
 	
 	EventBuffer(int p_max_size=DEFAULT_MAX_SIZE);
+	~EventBuffer();
 };
 
 void EventBuffer::push_event(const Event& p_event) {

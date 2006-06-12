@@ -88,6 +88,7 @@ int SoundDriverList::get_output_latency() {
 
 
 void SoundDriverList::finish_driver() {
+	
 	ERR_FAIL_COND(song==NULL);
 	if (!is_current_driver_active())
 		return;
