@@ -181,7 +181,7 @@ MoogFilterPlugin::MoogFilterPlugin(const SoundPluginInfo *p_info,int p_channels)
 	
 	cutoff.set_all( 400, 20, 16000, 0.1, 0.1, Property::DISPLAY_SLIDER, "cutoff","Cutoff","hz");
 	cutoff.set_quad_coeff( true );
-	resonance.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "resonance","Resonance","");
+	resonance.set_all( 0.01, 0.01, 0.99, 0.01, 0.01, Property::DISPLAY_SLIDER, "resonance","Resonance","");
 	type.set_all( 0, 0, 1, 0, 0.01, Property::DISPLAY_SLIDER, "mode","Mode","","LPF","HPF");
 	
 	property_list.push_back(&cutoff);

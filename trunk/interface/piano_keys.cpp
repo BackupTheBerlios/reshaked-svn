@@ -118,7 +118,7 @@ void Piano_Keys::mousePressEvent( QMouseEvent * e ) {
 }
 
 
-void Piano_Keys::press_key(int p_key) {
+void Piano_Keys::press_key(int p_key,bool p_keyboard) {
 
 	if (p_key<0 || p_key>=MAX_KEY)
 		return;
@@ -127,6 +127,7 @@ void Piano_Keys::press_key(int p_key) {
 		key_pressed_signal(p_key);
 
 	keys[p_key].pressed++;
+	keys[p_key].keyboard=p_keyboard;
 
 
 
@@ -190,6 +191,7 @@ void Piano_Keys::octave_changed_slot() {
 				
 			key_released_signal(i);
 			keys[i].pressed=0;	
+			keys[i].keyboard=0;	
 		}	
 	}
 		
@@ -209,6 +211,21 @@ int Piano_Keys::get_key_from_key_event( QKeyEvent * e ) {
 	return INVALID_KEY;
 }
 
+void Piano_Keys::focusOutEvent ( QFocusEvent * event ) {
+	
+	for (int i=0;i<MAX_KEY;i++) { //release keybiord-pressed keys
+			
+		if (keys[i].pressed && keys[i].keyboard) { //mute all keys when switching octave, just by security
+				
+			key_released_signal(i);
+			keys[i].pressed=0;	
+			keys[i].keyboard=0;	
+		}	
+	}
+	update();
+}
+
+
 void Piano_Keys::keyPressEvent ( QKeyEvent * e ) {
 
 	if (e->isAutoRepeat())
@@ -227,7 +244,8 @@ void Piano_Keys::keyPressEvent ( QKeyEvent * e ) {
 		int key=get_key_from_key_event(e);
 		if (key==INVALID_KEY)
 			return;
-		press_key(key);
+		press_key(key,true);
+
 		update();
 	}
 

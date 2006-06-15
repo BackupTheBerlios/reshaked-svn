@@ -320,7 +320,7 @@ void SampleTrigger::process_to_buffer(int p_frames,AudioBuffer *p_buffer) {
 		
 		float release_time=pow(param.release.get()*2,3);
 		float amount_to_release=(float)p_frames/((float)mix_rate*release_time);
-		release_env+=amount_to_release;
+		release_env-=amount_to_release;
 		if (release_env<0.0)
 			release_env=0.0;
 		

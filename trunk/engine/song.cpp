@@ -2,6 +2,7 @@
 #include "song.h"
 #include "track_pattern.h"
 #include "audio_control.h"
+#include "dsp/formulas.h"
 
 namespace ReShaked {
 
@@ -48,8 +49,7 @@ void Song::add_track(Track* p_track,int p_at_pos,std::list<AudioGraph::Connectio
 	track_list.insert(track_list.begin()+p_at_pos,p_track);
 	track_graph.add_node( p_track, p_node_connections);
 	p_track->update_plugins_mix_rate();
-	AudioControl::mutex_unlock();
-	
+	AudioControl::mutex_unlock();	
 	
 }
 
@@ -166,14 +166,37 @@ int Song::process(int p_frames) {
 		
 		int to_process=to_write;
 		while (to_process) {
+			
 			to_process-=track_graph.process( to_process );
+			
 		}
 		todo-=to_write;
+	}
+	
+	/* update highest energy for global VU */
+	
+	for (int i=0;i<track_list.size();i++) {
+		
+		for (int j=0;j<track_list[i]->get_channels();j++) {
+			
+			float nrg=track_list[i]->read_highest_energy(j);
+			
+
+			 if (nrg>process_data.max_gain)
+				 process_data.max_gain=nrg;
+		}
+		
 	}
 	
 	return p_frames;
 }
 
+float Song::grab_accumulated_max_gain() {
+	
+	float res=process_data.max_gain;
+	process_data.max_gain=0;
+	return res;
+}
 
 void Song::play(Tick p_from_pos) {
 
@@ -323,7 +346,8 @@ Song::Song() : song_playback(&global_properties), global_track(&global_propertie
 	marker_list.insert(0,"Intro");
 	loopdata.begin_beat=0;
 	loopdata.end_beat=0;
-	process_data.buffer_exp = 7;
+	process_data.buffer_exp = 9;
+	process_data.max_gain=0;
 	track_graph.set_visual_node_order( this );
 
 }

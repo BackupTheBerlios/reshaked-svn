@@ -186,7 +186,7 @@ public:
 	int get_channels();
 	
 	void reset_automations();
-	float read_highest_energy(int p_channel);
+	float read_highest_energy(int p_channel,bool p_clear_old=true);
 	void set_mute(bool p_mute);
 	bool is_mute();
 	

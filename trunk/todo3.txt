@@ -1,0 +1,35 @@
+
+BUGS:
+  *Cancel sound plugin chooser chooses selectedp plugin anyway
+  *Fix pixmap for sample trigger
+  *Chorus Level is too low
+  *Undo History gets corrupted
+  *Investigate high cpu usage on filterbanl UI
+  *When loading wav on trigger or simpler, set name to that
+
+TODO:
+
+  *fix scrollbars, make them constant size on rack
+  *ringbuffered noteoff system for trigger and midisynth
+  *Save preset names
+  *Loading of preset name from import wave file is still not OK
+
+  *Track Repeat!!
+  *Display time as Mark/Bar/Beat
+  -Edit BarLength from Editor UI
+  *volume for track
+  *sample class must have padding before and after for interpolation to work
+
+
+TODO MORE:
+ -arreglar cositas del theme de los linked en edit view
+ *minipiano, arreglar problema de las teclas que se quedan trabadas
+
+ -new tracks sometimes dont get connected?
+ -VU global y volumen global
+ -Make LFO-Depthing more intuitive so it only happens at moving left/right
+ -interconnect inputs/outputs when removing plugin
+ -save looppoints
+ -F9/F10 KEYS mute/umnute
+ -right click en controles ya no funciona?
+ -sacarle posibilidad de focus al scrollview de sound plugin chooser

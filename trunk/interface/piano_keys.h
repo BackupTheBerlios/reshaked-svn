@@ -49,9 +49,10 @@ private:
 
 	struct Key {
 
+		bool keyboard;
 		int pressed; //refcount since works for keyboard too
 
-		Key() { pressed=false; }
+		Key() { pressed=false; keyboard=false; }
 	};
 
 	Skin skin;
@@ -71,7 +72,7 @@ private:
 
 	int mouse_key_drag;
 
-	void press_key(int p_key);
+	void press_key(int p_key,bool p_keyboard=false);
 	void release_key(int p_key);
 
 	int get_key_from_key_event( QKeyEvent * e );
@@ -83,14 +84,14 @@ private:
 
 	void keyPressEvent ( QKeyEvent * e );
 	void keyReleaseEvent ( QKeyEvent * e );
-
+	void focusOutEvent ( QFocusEvent * event );
 	int visible_octaves;
 	
 	Editor *editor;
 	
 public slots:
 			
-		void octave_changed_slot();		
+	void octave_changed_slot();		
 signals:
 
 	void key_pressed_signal(int p_key);

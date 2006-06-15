@@ -207,6 +207,8 @@ void Track::read_output(int p_frames) {
 	}
 	
 	base_private.audio.volume_ratio=db_to_energy( base_private.volume.get() );
+	float ratio=base_private.audio.volume_ratio;
+	ratio*=db_to_energy( base_private.global_props->get_volume().get() );
 	
 	for (int i=0;i<output_buff->get_channels();i++) {
 		
@@ -217,7 +219,7 @@ void Track::read_output(int p_frames) {
 		
 		for (int j=0;j<p_frames;j++) {
 			
-			dst[j]=src[j]*base_private.audio.volume_ratio;
+			dst[j]=src[j]*ratio;
 			float abs_dst=fabsf(dst[j]);
 			if (abs_dst>max_chan_nrg)
 				max_chan_nrg=abs_dst;
@@ -230,12 +232,13 @@ void Track::read_output(int p_frames) {
 
 }
 
-float Track::read_highest_energy(int p_which) {
+float Track::read_highest_energy(int p_which,bool p_clear_old) {
 	
 	ERR_FAIL_INDEX_V(p_which,base_private.audio.highest_energy.size(),0);
 	
 	float highest_nrg=base_private.audio.highest_energy[p_which];
-	base_private.audio.highest_energy[p_which]=0;
+	if (p_clear_old)
+		base_private.audio.highest_energy[p_which]=0;
 	return highest_nrg;
 }
 

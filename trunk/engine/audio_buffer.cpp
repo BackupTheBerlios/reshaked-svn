@@ -111,8 +111,9 @@ void AudioBuffer::copy_from(AudioBuffer *p_src,int p_frames) {
 		float *dst=&data[i][0];
 		float *src=&p_src->data[i][0];
 		
-		for (int j=0;j<p_frames;j++)
-			dst[j]=src[j];
+		memcpy(dst,src,sizeof(float)*p_frames);
+		//for (int j=0;j<p_frames;j++)
+		//	dst[j]=src[j];
 	}
 	
 }
@@ -126,8 +127,20 @@ void AudioBuffer::add_from(AudioBuffer *p_src,int p_frames) {
 		float *dst=&data[i][0];
 		float *src=&p_src->data[i][0];
 		
-		for (int j=0;j<p_frames;j++)
-			dst[j]+=src[j];
+		int todo=p_frames>>2;
+		
+		while (todo--) {
+			
+			*(dst++)+=*(src++);
+			*(dst++)+=*(src++);
+			*(dst++)+=*(src++);
+			*(dst++)+=*(src++);
+		}
+		
+		todo=p_frames&3;
+		
+		while (todo--)
+			*(dst++)+=*(src++);
 		
 	}
 	

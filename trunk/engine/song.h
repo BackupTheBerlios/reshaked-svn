@@ -33,7 +33,8 @@ private:
 	struct ProcessData {
 		
 		int buffer_exp;
-	
+		float max_gain;
+		
 	} process_data;
 	
 	AudioNode *input_node; ///< Global Input Node
@@ -77,6 +78,8 @@ public:
 	void loop();
 	void set_pause(bool p_paused);
 	void stop();
+	
+	float grab_accumulated_max_gain();
 	
 	void set_loop_begin(int p_beat);
 	int get_loop_begin();
