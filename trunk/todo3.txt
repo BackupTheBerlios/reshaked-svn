@@ -33,3 +33,7 @@ TODO MORE:
  -F9/F10 KEYS mute/umnute
  -right click en controles ya no funciona?
  -sacarle posibilidad de focus al scrollview de sound plugin chooser
+ -averiguar porque tiemblan los vus
+ -sacar iconos de envelope que no se usan
+ -Peak/clear Peak
+ -sacar cosas mas azul oscuras glitcheosas del skin

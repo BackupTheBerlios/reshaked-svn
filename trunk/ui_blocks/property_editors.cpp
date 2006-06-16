@@ -173,7 +173,7 @@ PropertyEditSlider::~PropertyEditSlider() {
 void PropertyEditSliderVU::changed() {
 	
 	
-	set_value( get_property()->get_coeff_value() );
+	//set_value( get_property()->get_coeff_value() );
 	update();
 }
 
@@ -182,7 +182,7 @@ void PropertyEditSliderVU::value_changed(float p_new_value) {
 	set( get_property()->get_value_from_coeff( p_new_value) );
 }
 
-PropertyEditSliderVU::PropertyEditSliderVU(QWidget *p_parent,const Skin& p_skin,Type p_type,int p_margin_beg,int p_margin_end) : PixmapSliderVU(p_parent,p_skin,p_type,p_margin_beg,p_margin_end) {
+PropertyEditSliderVU::PropertyEditSliderVU(QWidget *p_parent,QPixmap p_skin) : PixmapSliderVU(p_parent,p_skin) {
 	
 		
 	

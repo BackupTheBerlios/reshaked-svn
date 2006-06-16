@@ -118,6 +118,7 @@
 #include "pixmaps/default_skin/effect_panel_generic_value.xpm"
 #include "pixmaps/default_skin/effect_panel_generic_vu_empty.xpm"
 #include "pixmaps/default_skin/effect_panel_generic_vu_fill.xpm"
+#include "pixmaps/default_skin/effect_panel_generic_vu_range.xpm"
 #include "pixmaps/default_skin/filterbank__bottom.xpm"
 #include "pixmaps/default_skin/filterbank__combo.xpm"
 #include "pixmaps/default_skin/filterbank__combo_str_separator.xpm"
@@ -166,6 +167,7 @@
 #include "pixmaps/default_skin/global_toolbar__zoom_icon.xpm"
 #include "pixmaps/default_skin/left__margin.xpm"
 #include "pixmaps/default_skin/main_vu.xpm"
+#include "pixmaps/default_skin/main_vu_grabber.xpm"
 #include "pixmaps/default_skin/middle__separator_begin.xpm"
 #include "pixmaps/default_skin/middle__separator_center.xpm"
 #include "pixmaps/default_skin/middle__separator_end.xpm"
@@ -662,6 +664,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["effect_panel_generic_vu_empty"]=THEME_EFFECT_PANEL_GENERIC_VU_EMPTY;
     pixmap_map[THEME_EFFECT_PANEL_GENERIC_VU_FILL]=QPixmap( (const char**) effect_panel_generic_vu_fill_xpm); 
     pixmap_map_skin["effect_panel_generic_vu_fill"]=THEME_EFFECT_PANEL_GENERIC_VU_FILL;
+    pixmap_map[THEME_EFFECT_PANEL_GENERIC_VU_RANGE]=QPixmap( (const char**) effect_panel_generic_vu_range_xpm); 
+    pixmap_map_skin["effect_panel_generic_vu_range"]=THEME_EFFECT_PANEL_GENERIC_VU_RANGE;
     pixmap_map[THEME_FILTERBANK__BOTTOM]=QPixmap( (const char**) filterbank__bottom_xpm); 
     pixmap_map_skin["filterbank__bottom"]=THEME_FILTERBANK__BOTTOM;
     pixmap_map[THEME_FILTERBANK__COMBO]=QPixmap( (const char**) filterbank__combo_xpm); 
@@ -758,6 +762,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["left__margin"]=THEME_LEFT__MARGIN;
     pixmap_map[THEME_MAIN_VU]=QPixmap( (const char**) main_vu_xpm); 
     pixmap_map_skin["main_vu"]=THEME_MAIN_VU;
+    pixmap_map[THEME_MAIN_VU_GRABBER]=QPixmap( (const char**) main_vu_grabber_xpm); 
+    pixmap_map_skin["main_vu_grabber"]=THEME_MAIN_VU_GRABBER;
     pixmap_map[THEME_MIDDLE__SEPARATOR_BEGIN]=QPixmap( (const char**) middle__separator_begin_xpm); 
     pixmap_map_skin["middle__separator_begin"]=THEME_MIDDLE__SEPARATOR_BEGIN;
     pixmap_map[THEME_MIDDLE__SEPARATOR_CENTER]=QPixmap( (const char**) middle__separator_center_xpm); 

@@ -481,6 +481,10 @@ void MainWindow::ui_update_slot() {
 	top_bar->update_playback_indicator();
 	rack->ui_update_callback();	
 	
+	float global_db=data.song.grab_accumulated_max_gain();
+	global_db+=60;
+	global_db/=60.0+24.0;
+	main_vol->set_value( global_db );
 	
 }
 
@@ -537,6 +541,7 @@ void MainWindow::save_settings() {
 	ConfigHandler ch;
 	ch.set_header_check( "ReShaked Configuration" );
 	ch.save( DeQStrify(settings_path), &tc );
+	
 
 }
 
@@ -590,6 +595,9 @@ MainWindow::MainWindow(QString p_settings_dir,QString p_settings_file) {
 	vu_scale->set_max(24);
 	vu_scale->set_color(QColor(0xc1,0xef,0xec));
 	vu_scale->set_zero_color(QColor(255,255,255));
+	main_vol = new PixmapSliderVU(stack_hbox,GET_QPIXMAP(THEME_MAIN_VU_GRABBER));
+	main_vol->set_fall_time( 1.0 );
+	
 	new PixmapLabel(stack_hbox,GET_QPIXMAP(THEME_RIGHT__MARGIN),PixmapLabel::EXPAND_TILE_V);
 	
 	global_view_frame = new GlobalViewFrame(main_stack,data.editor);

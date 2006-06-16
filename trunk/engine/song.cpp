@@ -175,25 +175,29 @@ int Song::process(int p_frames) {
 	
 	/* update highest energy for global VU */
 	
+	float max_nrg=0;
+	
 	for (int i=0;i<track_list.size();i++) {
 		
 		for (int j=0;j<track_list[i]->get_channels();j++) {
 			
-			float nrg=track_list[i]->read_highest_energy(j);
+			float nrg=track_list[i]->read_highest_energy(j,false);
 			
 
-			 if (nrg>process_data.max_gain)
-				 process_data.max_gain=nrg;
+			if (nrg>max_nrg)
+				max_nrg=nrg;
 		}
 		
 	}
+	if (max_nrg>process_data.max_gain)
+		process_data.max_gain=max_nrg;
 	
 	return p_frames;
 }
 
 float Song::grab_accumulated_max_gain() {
 	
-	float res=process_data.max_gain;
+	float res=energy_to_db(process_data.max_gain);
 	process_data.max_gain=0;
 	return res;
 }

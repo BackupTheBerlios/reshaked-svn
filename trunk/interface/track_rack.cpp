@@ -19,6 +19,7 @@
 #include <Qt/qaction.h>
 #include "dsp/formulas.h"
 #include <Qt/qmenu.h>
+#include "ui_blocks/vu_scale.h"
 
 namespace ReShaked {
 
@@ -170,6 +171,12 @@ void TrackRack::add_track(Track *p_track) {
 			CHBox *hb_vus = new CHBox(vb_vus);
 		
 			new PixmapLabel(vb_vus,GET_QPIXMAP(THEME_TRACK_PANEL__LABEL_BOTTOM),PixmapLabel::EXPAND_TILE_H);			
+			
+			VUScale *scale = new VUScale(hb_vus,GET_QPIXMAP(THEME_EFFECT_PANEL_GENERIC_VU_RANGE));
+			scale->set_min(-60);
+			scale->set_max(24);
+			scale->set_color(QColor(50,50,50));
+			scale->set_zero_color(QColor(0,0,0));
 			
 			std::vector< PixmapVU* > vu_vector;
 			for (int i=0;i<p_track->get_channels();i++) {

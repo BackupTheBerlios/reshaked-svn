@@ -136,6 +136,8 @@ class MainWindow : public QWidget {
 	RackUI *rack;
 	CVBox *rack_vbox;
 	
+	PixmapSliderVU *main_vol;
+	
 	SettingsDialog *settings;
 
 	void set_top_screen(TopScreenList p_list);
