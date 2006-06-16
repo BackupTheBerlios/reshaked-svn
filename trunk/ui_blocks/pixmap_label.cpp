@@ -76,7 +76,10 @@ void PixmapLabel::set_color(QColor p_col) {
 	update();
 }
 
-
+QColor PixmapLabel::get_color() {
+	
+	return col;
+}
 void PixmapLabel::set_angle(int p_phi) {
 	
 	angle=p_phi;

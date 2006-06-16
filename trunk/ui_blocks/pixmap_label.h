@@ -37,7 +37,6 @@ private:
 	SkinBox *skin_box;
 	QPixmap pixmap;
 	bool owned;
-	void paintEvent(QPaintEvent *e);
 	QString text;
 	QFont font;
 	QPoint pos;
@@ -47,6 +46,7 @@ private:
 	bool centered;
 	virtual void click_override();
 protected:	
+	void paintEvent(QPaintEvent *e);
 	void mousePressEvent(QMouseEvent *e);
 signals:
 			
@@ -60,6 +60,7 @@ public:
 	void set_font(const QFont &p_font);
 	void set_text(QString p_text);
 	QFont& get_font();
+	QColor get_color();
 	PixmapLabel(QWidget *p_parent,SkinBox *p_skin_box,bool p_own_it=false);
 	PixmapLabel(QWidget *p_parent,QPixmap p_pixmap,PixmapExpandType p_type=EXPAND_NONE);
 

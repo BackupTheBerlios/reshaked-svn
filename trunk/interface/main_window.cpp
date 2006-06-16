@@ -18,7 +18,7 @@
 #include <Qt/qtoolbutton.h>
 #include <Qt/qmenubar.h>
 #include <Qt/qlabel.h>
-#include  "indexed_action.h"
+#include "indexed_action.h"
 #include "typedefs.h"
 #include "interface/new_track_dialog.h"
 #include "pixmaps/view_global.xpm"
@@ -28,7 +28,7 @@
 #include "engine/sound_driver_list.h"
 #include "engine/midi_driver_list.h"
 #include "editor/midi_input_handler.h"
-
+#include "ui_blocks/vu_scale.h"
 #include "tree_saver_disk.h"
 #include "tree_loader_disk.h"
 #include "engine/saver.h"
@@ -585,6 +585,11 @@ MainWindow::MainWindow(QString p_settings_dir,QString p_settings_file) {
 			
 	new PixmapLabel(stack_hbox,GET_QPIXMAP(THEME_LEFT__MARGIN),PixmapLabel::EXPAND_TILE_V);
 	main_stack = new QStackedWidget(stack_hbox);
+	VUScale * vu_scale = new VUScale(stack_hbox,GET_QPIXMAP(THEME_MAIN_VU),VUScale::EXPAND_STRETCH_V);
+	vu_scale->set_min(-60);
+	vu_scale->set_max(24);
+	vu_scale->set_color(QColor(0xc1,0xef,0xec));
+	vu_scale->set_zero_color(QColor(255,255,255));
 	new PixmapLabel(stack_hbox,GET_QPIXMAP(THEME_RIGHT__MARGIN),PixmapLabel::EXPAND_TILE_V);
 	
 	global_view_frame = new GlobalViewFrame(main_stack,data.editor);

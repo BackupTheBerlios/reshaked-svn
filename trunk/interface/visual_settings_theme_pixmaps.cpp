@@ -165,6 +165,7 @@
 #include "pixmaps/default_skin/global_toolbar__zoom_grabber.xpm"
 #include "pixmaps/default_skin/global_toolbar__zoom_icon.xpm"
 #include "pixmaps/default_skin/left__margin.xpm"
+#include "pixmaps/default_skin/main_vu.xpm"
 #include "pixmaps/default_skin/middle__separator_begin.xpm"
 #include "pixmaps/default_skin/middle__separator_center.xpm"
 #include "pixmaps/default_skin/middle__separator_end.xpm"
@@ -755,6 +756,8 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["global_toolbar__zoom_icon"]=THEME_GLOBAL_TOOLBAR__ZOOM_ICON;
     pixmap_map[THEME_LEFT__MARGIN]=QPixmap( (const char**) left__margin_xpm); 
     pixmap_map_skin["left__margin"]=THEME_LEFT__MARGIN;
+    pixmap_map[THEME_MAIN_VU]=QPixmap( (const char**) main_vu_xpm); 
+    pixmap_map_skin["main_vu"]=THEME_MAIN_VU;
     pixmap_map[THEME_MIDDLE__SEPARATOR_BEGIN]=QPixmap( (const char**) middle__separator_begin_xpm); 
     pixmap_map_skin["middle__separator_begin"]=THEME_MIDDLE__SEPARATOR_BEGIN;
     pixmap_map[THEME_MIDDLE__SEPARATOR_CENTER]=QPixmap( (const char**) middle__separator_center_xpm); 
