@@ -26,14 +26,16 @@ TODO MORE:
  *minipiano, arreglar problema de las teclas que se quedan trabadas
 
  -new tracks sometimes dont get connected?
- -VU global y volumen global
+ *VU global y volumen global
  -Make LFO-Depthing more intuitive so it only happens at moving left/right
  -interconnect inputs/outputs when removing plugin
  -save looppoints
  -F9/F10 KEYS mute/umnute
- -right click en controles ya no funciona?
- -sacarle posibilidad de focus al scrollview de sound plugin chooser
- -averiguar porque tiemblan los vus
+ *right click en controles ya no funciona?
+ *sacarle posibilidad de focus al scrollview de sound plugin chooser
+ *averiguar porque tiemblan los vus
  -sacar iconos de envelope que no se usan
  -Peak/clear Peak
  -sacar cosas mas azul oscuras glitcheosas del skin
+ -segfault on keymapping edit
+ -stop the midi, not only the audio! (at exit)

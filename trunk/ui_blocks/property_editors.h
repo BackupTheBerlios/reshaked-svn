@@ -101,7 +101,13 @@ class PropertyEditSliderVU : public PixmapSliderVU, public PropertyEditor {
 	Q_OBJECT
 
 	virtual void changed();
-	virtual void value_changed(float p_new_value);
+	virtual void slider_value_changed(float p_new_value);
+	void mousePressEvent(QMouseEvent *e);
+	
+signals:	
+
+	void external_edit_signal(Property *p_property);
+
 public:
 
 	PropertyEditSliderVU(QWidget *p_parent,QPixmap p_skin);

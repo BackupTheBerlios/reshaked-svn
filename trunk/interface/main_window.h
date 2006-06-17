@@ -136,13 +136,15 @@ class MainWindow : public QWidget {
 	RackUI *rack;
 	CVBox *rack_vbox;
 	
-	PixmapSliderVU *main_vol;
+	PropertyEditSliderVU *main_vol;
 	
 	SettingsDialog *settings;
 
 	void set_top_screen(TopScreenList p_list);
 	//void set_track_settings_page(TrackSettings::TrackSettingsPage p_page);
 
+	static void global_property_editor_property_edited_callback(void *_this,Property* p_property,double p_old_val);
+	
 	
 	void update_titlebar();
 	
@@ -151,6 +153,8 @@ class MainWindow : public QWidget {
 	void save_settings();
 	
 public slots:
+	
+	void property_options_requested(Property *p_property);
 	
 	void ui_update_interval_changed(int p_to_value);
 	

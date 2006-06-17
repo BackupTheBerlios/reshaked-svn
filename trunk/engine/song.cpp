@@ -234,6 +234,7 @@ void Song::stop() {
 	
 	AudioControl::mutex_lock();
 	song_playback.stop();
+	global_track.reset_automations();
 	for (int i=0;i<track_list.size();i++) {
 		track_list[i]->reset_automations();
 		track_list[i]->reset_plugins();

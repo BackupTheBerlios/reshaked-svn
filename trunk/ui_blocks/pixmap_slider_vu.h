@@ -48,7 +48,6 @@ private:
 	
 	float slider_value;
 	float get_click_pos(QPoint p_mouse_pos);
-	void mousePressEvent(QMouseEvent *e);
 	void mouseMoveEvent(QMouseEvent *e);
 	void mouseReleaseEvent(QMouseEvent *e);
 	void wheelEvent ( QWheelEvent * e ) ;
@@ -62,6 +61,7 @@ private:
 	} drag;
 
 protected:	
+	void mousePressEvent(QMouseEvent *e);
 	virtual void slider_value_changed(float p_new_val);
 	
 private slots:	

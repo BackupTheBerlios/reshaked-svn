@@ -170,14 +170,23 @@ PropertyEditSlider::~PropertyEditSlider() {
 
 /***********************************/
 
+void PropertyEditSliderVU::mousePressEvent(QMouseEvent *e) {
+	
+	if (e->button()==Qt::RightButton)
+		external_edit_signal( get_property() );
+	else	
+		PixmapSliderVU::mousePressEvent(e);
+}
+
+
 void PropertyEditSliderVU::changed() {
 	
 	
-	//set_value( get_property()->get_coeff_value() );
+	set_slider_value( get_property()->get_coeff_value() );
 	update();
 }
 
-void PropertyEditSliderVU::value_changed(float p_new_value) {
+void PropertyEditSliderVU::slider_value_changed(float p_new_value) {
 	
 	set( get_property()->get_value_from_coeff( p_new_value) );
 }

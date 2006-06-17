@@ -46,6 +46,8 @@ void PixmapSliderVU::updater_slot() {
 		return; // guess it can happen?
 	float old_val=visual_value;
 	visual_value-=((float)UPDATE_INTERVAL/1000.0)/fall_time;
+	if (visual_value<value)
+		visual_value=value;
 	if (visual_value<0)
 		visual_value=0;
 	
@@ -177,12 +179,12 @@ void PixmapSliderVU::wheelEvent ( QWheelEvent * e ) {
 		step*=5.0;
 	
 	if (e->delta()>0)
-		set_slider_value( value + step );
+		set_slider_value( slider_value + step );
 	else if (e->delta()<0)
-		set_slider_value( value - step );
+		set_slider_value( slider_value - step );
 	
-	slider_value_changed( value );
-	slider_value_changed_signal(value);
+	slider_value_changed( slider_value );
+	slider_value_changed_signal(slider_value);
 }
 
 void PixmapSliderVU::mouseReleaseEvent(QMouseEvent *e) {

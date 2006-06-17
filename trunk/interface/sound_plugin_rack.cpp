@@ -407,6 +407,7 @@ SoundPluginRack::SoundPluginRack(QWidget *p_parent,PropertyEditUpdater *p_update
 	viewport()->setPalette(p);
 	setLineWidth(0);
 	setFrameStyle(QFrame::NoFrame);
+	setFocusPolicy(Qt::NoFocus);
 	viewport()->setContentsMargins(0,0,0,0);
 	setContentsMargins(0,0,0,0);
 	scrollbar=NULL;

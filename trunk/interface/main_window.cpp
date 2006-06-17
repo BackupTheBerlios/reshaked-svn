@@ -448,6 +448,51 @@ void MainWindow::add_menus() {
 
 }
 
+void MainWindow::property_options_requested(Property *p_property) {
+	
+	Track *track=&data.song.get_global_track();
+	int prop_idx=-1;
+	
+	for (int j=0;j<track->get_property_count();j++) {
+		
+		if (track->get_property(j)==p_property) {
+			
+			prop_idx=j;
+			break;
+		}
+	}
+	
+	ERR_FAIL_COND(prop_idx==-1);
+	
+	bool is_automated=track->has_property_visible_automation(prop_idx);
+	
+	QList<QAction*> ac_list;
+	QAction *op_auto = new QAction(GET_QPIXMAP(PIXMAP_TRACK_SETTINGS_AUTOMATIONS),is_automated?"Hide Automation":"Show Automation",this);
+	ac_list.push_back(op_auto);
+	QAction *res = QMenu::exec(ac_list,QCursor::pos());
+	
+	if (res==op_auto) {
+		
+		if (is_automated)
+			data.editor->hide_automation( prop_idx, track );
+		else
+			data.editor->show_automation( prop_idx, track );
+	}
+	
+	foreach(I,ac_list) {
+		delete *I;
+	}
+	
+}
+
+void MainWindow::global_property_editor_property_edited_callback(void *_this,Property* p_property,double p_old_val) {
+	
+	MainWindow *instance=(MainWindow*)_this;
+	instance->data.editor->property_changed(p_property,p_old_val,&instance->data.song.get_global_track());
+	
+}
+
+
 void MainWindow::screen_changed_slot(int p_screen) {
 	
 	switch(p_screen) {
@@ -585,6 +630,12 @@ MainWindow::MainWindow(QString p_settings_dir,QString p_settings_file) {
 	layout()->addWidget(main_vbox);
 	
 	top_bar = new TopBarControls(main_vbox,data.editor,&data.property_edit_updater);
+	top_bar->label_prop_bpm->set_changed_by_editor_callback( this, &MainWindow::global_property_editor_property_edited_callback );
+	top_bar->updown_prop_bpm->set_changed_by_editor_callback( this, &MainWindow::global_property_editor_property_edited_callback );
+	top_bar->knob_swing->set_changed_by_editor_callback( this, &MainWindow::global_property_editor_property_edited_callback );
+	
+	QObject::connect(top_bar->label_prop_bpm,SIGNAL(external_edit_signal( Property* )),this,SLOT(property_options_requested( Property* )));
+	QObject::connect(top_bar->knob_swing,SIGNAL(external_edit_signal( Property* )),this,SLOT(property_options_requested( Property* )));
 	
 	CHBox *stack_hbox = new CHBox(main_vbox);
 			
@@ -595,8 +646,13 @@ MainWindow::MainWindow(QString p_settings_dir,QString p_settings_file) {
 	vu_scale->set_max(24);
 	vu_scale->set_color(QColor(0xc1,0xef,0xec));
 	vu_scale->set_zero_color(QColor(255,255,255));
-	main_vol = new PixmapSliderVU(stack_hbox,GET_QPIXMAP(THEME_MAIN_VU_GRABBER));
+	main_vol = new PropertyEditSliderVU(stack_hbox,GET_QPIXMAP(THEME_MAIN_VU_GRABBER));
 	main_vol->set_fall_time( 1.0 );
+	main_vol->set_property(&data.song.get_global_properties().get_volume());
+	main_vol->set_changed_by_editor_callback( this, &MainWindow::global_property_editor_property_edited_callback );
+	QObject::connect(main_vol,SIGNAL(external_edit_signal( Property* )),this,SLOT(property_options_requested( Property* )));
+	
+	data.property_edit_updater.add_editor(main_vol);
 	
 	new PixmapLabel(stack_hbox,GET_QPIXMAP(THEME_RIGHT__MARGIN),PixmapLabel::EXPAND_TILE_V);
 	

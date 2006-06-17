@@ -18,7 +18,7 @@
 #include "ui_blocks/pixmap_slider.h"
 #include "ui_blocks/property_editors.h"
 #include "interface/visual_settings.h"
-
+#include <Qt/qmetaobject.h>
 namespace ReShaked {
 
 
@@ -48,8 +48,17 @@ void SoundPluginUI::register_property_editor(PropertyEditorBase* p_editor) {
 	
 	if (w) {
 		
-		if (w->metaObject()->indexOfSignal( SIGNAL(external_edit_signal(Property *) ) )>=0)
+		//printf("index for %s es is %i\n", QMetaObject::normalizedSignature(SIGNAL(external_edit_signal(Property *) )).data(),w->metaObject()->indexOfSignal( QMetaObject::normalizedSignature(SIGNAL(external_edit_signal(Property *) )).data() ));
+		if (w->metaObject()->indexOfSignal( QMetaObject::normalizedSignature("external_edit_signal(Property*)").data() )>=0)
 			QObject::connect(w,SIGNAL(external_edit_signal(Property *)),this,SIGNAL(property_options_requested( Property* )));
+		/*printf("comparing to others..");
+		
+		for (int i=0;i<w->metaObject()->methodCount();i++) {
+			
+			if (!w->metaObject()->method(i).methodType()==QMetaMethod::Signal)
+				continue;
+			printf(" %i is - %s\n",i,w->metaObject()->method(i).signature());
+		} */
 	}
 	
 }

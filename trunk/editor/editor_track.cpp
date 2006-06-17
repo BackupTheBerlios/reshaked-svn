@@ -275,7 +275,7 @@ void Editor::property_changed(Property * p_property,double p_old_value,Track *p_
 		} else {
 			if (p_property->get()==a->get_initial_value())
 				return; //no point
-			d->undo_stream.begin("Automation Initial Changed",can_collapse);
+			d->undo_stream.begin(p_property->get_caption() + " Changed",can_collapse);
 			d->undo_stream.add_command(Command2(&commands,&EditorCommands::automation_initial_value_changed ,a,p_property->get()));
 			d->undo_stream.end();
 			d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );

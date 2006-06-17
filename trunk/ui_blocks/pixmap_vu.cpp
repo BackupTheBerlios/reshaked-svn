@@ -73,8 +73,12 @@ void PixmapVU::updater_slot() {
 		return; // guess it can happen?
 	float old_val=visual_value;
 	visual_value-=((float)UPDATE_INTERVAL/1000.0)/fall_time;
+	
+	if (visual_value<value)
+		visual_value=value;
 	if (visual_value<0)
 		visual_value=0;
+	
 	
 	if (old_val!=visual_value)
 		update();

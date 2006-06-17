@@ -46,7 +46,6 @@ class TrackRack : public QScrollArea {
 	QWidget *spacer;
 	
 	void update_scrollbar();
-	
 
 	void resizeEvent(QResizeEvent * event);	
 	
