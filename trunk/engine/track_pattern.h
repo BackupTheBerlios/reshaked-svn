@@ -148,7 +148,6 @@ friend class Saver; //saver needs access to Pattern structure for comparing it
 	struct Data {
 		
 		int visible_columns;	
-		EventBuffer event_buffer;
 		EventBuffer edit_event_buffer;
 		
 		Note last_note[MAX_COLUMNS];

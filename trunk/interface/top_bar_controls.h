@@ -98,7 +98,7 @@ public slots:
 signals:	
 	
 	void screen_changed_signal(int);
-	
+	void song_stop_signal();	
 public:
 	
 	QMenu * get_file_menu();

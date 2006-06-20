@@ -68,8 +68,7 @@ void TopBarControls::playback_pause_slot(bool p_selected) {
 }
 void TopBarControls::playback_stop_slot(bool p_selected) {
 	
-	editor->get_song()->stop();	
-	editor->midi_reset();
+	song_stop_signal();	
 }
 
 

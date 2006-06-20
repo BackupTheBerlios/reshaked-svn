@@ -109,17 +109,19 @@ void MainWindow::create_keybindings() {
 	data.keyboard_codes.add_key_bind("editor/move_note_up","Move Note Up",Qt::CTRL+Qt::Key_Up,true);
 	data.keyboard_codes.add_key_bind("editor/move_note_down","Move Note Down",Qt::CTRL+Qt::Key_Down,true);
 
-	data.keyboard_codes.add_key_bind("editor/next_pattern","Next Pattern",Qt::Key_Plus);
+	data.keyboard_codes.add_key_bind("editor/next_marker","Goto Next Marker",Qt::Key_Plus);
+	data.keyboard_codes.add_key_bind("editor/previous_marker","Goto Prev Marker",Qt::Key_Minus);
 	
-
-	data.keyboard_codes.add_key_bind("editor/previous_pattern","Prev Pattern",Qt::Key_Minus);
+	data.keyboard_codes.add_key_bind("editor/track_mute","Mute/Unmute Track",Qt::Key_F9);
+	data.keyboard_codes.add_key_bind("editor/track_solo","Solo Track",Qt::Key_F10);
 	
 	data.keyboard_codes.add_key_bind("editor/add_column","Add Column",Qt::ALT+Qt::Key_BracketRight);
 	data.keyboard_codes.add_key_bind("editor/remove_column","Remove Column",Qt::ALT+Qt::Key_BracketLeft);
 
 
-	data.keyboard_codes.add_key_bind("editor/automation_mode_stream","Stream Automation Edit",Qt::CTRL+Qt::Key_T,false,NULL,new QWidget_KeybindDescription(blui_list->automation_stream));
+	/*data.keyboard_codes.add_key_bind("editor/automation_mode_stream","Stream Automation Edit",Qt::CTRL+Qt::Key_T,false,NULL,new QWidget_KeybindDescription(blui_list->automation_stream));
 	data.keyboard_codes.add_key_bind("editor/automation_mode_envelope","Envelope Automation Edit",Qt::CTRL+Qt::Key_E,false,NULL,new QWidget_KeybindDescription(blui_list->automation_envelope));
+	*/
 	data.keyboard_codes.add_key_bind("editor/midi_input_insert","Insert Notes from MIDI",Qt::CTRL+Qt::Key_M,false,NULL,new QWidget_KeybindDescription(blui_list->midi_in_edit));
 	data.keyboard_codes.add_key_bind("editor/quantize","Quantize",Qt::ALT+Qt::Key_T);
 	

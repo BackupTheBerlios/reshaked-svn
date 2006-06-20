@@ -39,6 +39,8 @@ public:
 	template<class Td>
 	void add_delete_data(Td *p_data) {  delete_data.push_back(new UndoDataTemplate<Td>(p_data)); }
 	
+	void clear_create_data();
+	void clear_delete_data();
 	void erase_create_data();
 	void erase_delete_data();
 			

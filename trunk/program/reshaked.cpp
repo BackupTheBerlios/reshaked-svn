@@ -306,9 +306,9 @@ int main(int argc, char *argv[]) {
 	
 	int res=q->exec();
 	
+	midi_driver_list.finish_driver();
 	driver_list.finish_driver(); //avoid multithread problems
-	
-	printf("sound should be off\n");
+
 	delete w;
 	delete q;
 	

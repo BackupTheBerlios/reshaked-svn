@@ -25,7 +25,7 @@ class DelayLinePlugin : public SoundPlugin {
 	
 	enum {
 		
-		MAX_DELAY_MS=1500,
+		MAX_DELAY_MS=3000,
 		MAX_TAPS=2
 	};
 	

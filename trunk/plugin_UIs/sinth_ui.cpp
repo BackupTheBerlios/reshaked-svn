@@ -405,10 +405,12 @@ SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sin
 		pe_sk.bg=GET_QPIXMAP( THEME_SINTH__FILTER_ATTACK_DISPLAY );
 		pe_sk.pos=GET_QPIXMAP( THEME_SINTH__ENV_POS );
 		pe_sk.border_w=1;
+		pe_sk.line_to=QColor(255,255,255);
 		
 		PannerEditor *pne = new PannerEditor(filter_env_stg_vb,true,pe_sk);
 		pne->set_properties( &sinth->get_port_by_name( "filter_attack_time"), &sinth->get_port_by_name( "filter_attack_level") );
 		register_property_editor( pne );
+		pne->set_line_to( QPoint( pe_sk.bg.width(),pe_sk.bg.height()/2) );
 		
 		filter_env_stg_vb = new CVBox(filter_env_hb);
 		
@@ -423,6 +425,7 @@ SinthUI::SinthUI(QWidget *p_parent,Sinth *p_sinth) :SoundPluginUI(p_parent,p_sin
 		pne = new PannerEditor(filter_env_stg_vb,true,pe_sk);
 		pne->set_properties( &sinth->get_port_by_name( "filter_release_time"), &sinth->get_port_by_name( "filter_release_level") );
 		register_property_editor( pne );
+		pne->set_line_to( QPoint( 0,pe_sk.bg.height()/2 ));
 		
 		
 		new PixmapLabel(hb, GET_QPIXMAP( THEME_SINTH__FILTER_SEPARATOR) );

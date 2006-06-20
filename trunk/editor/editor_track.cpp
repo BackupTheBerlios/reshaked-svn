@@ -121,8 +121,54 @@ void Editor::remove_plugin_from_track(Track *p_track,int p_which) {
 	
 	ERR_FAIL_INDEX(p_which,p_track->get_plugin_count());
 	
+	std::list<AudioGraph::Connection> in_connects;
+	std::list<AudioGraph::Connection> out_connects;
+	
+	AudioGraph *plugin_graph=&p_track->get_plugin_graph();
+	
+	int plugin_graph_index=plugin_graph->get_node_index( p_track->get_plugin( p_which ) );
+	
+	for (int i=0;i<plugin_graph->get_connection_count();i++) {
+		
+		AudioGraph::Connection c = *plugin_graph->get_connection( i );
+		
+		if (c.node_to==plugin_graph_index) {
+			if (c.node_from>plugin_graph_index) //adjust by index removed
+				c.node_from--;
+			
+		//	printf("In %i:%i\n",c.node_from,c.plug_from);
+			in_connects.push_back(c);
+		} else if (c.node_from==plugin_graph_index) {
+			
+			if (c.node_to>plugin_graph_index) //adjust by index removed
+				c.node_to--;
+			
+			out_connects.push_back(c);
+		//	printf("Out %i:%i\n",c.node_to,c.plug_to);
+		}
+	}
+	
 	d->undo_stream.begin("Remove Plugin");
+	/* Remove the Plugin */
 	d->undo_stream.add_command(Command2(&commands,&EditorCommands::track_plugin_remove,p_track,p_which));
+	
+	/* Then, Interconnect to fill the gap */
+	foreach(I, in_connects) {
+		
+		AudioGraph::Connection c_in=*I;
+		
+		foreach(J, out_connects) {
+		
+			AudioGraph::Connection c_out=*J;
+			
+			if (c_in.plug_from!=c_out.plug_to)
+				continue;
+			
+			d->undo_stream.add_command(Command5(&commands,&EditorCommands::connection_create,plugin_graph,c_in.node_from,c_in.plug_from,c_out.node_to,c_out.plug_to));
+
+		}
+	}
+	
 	d->undo_stream.end();
 	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
 	

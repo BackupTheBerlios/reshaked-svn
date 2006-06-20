@@ -16,7 +16,7 @@ QT_VERSION_MINOR_NEEDED = 1
 qtdir=detect.check_qtdir(QT_VERSION_MAJOR_NEEDED,QT_VERSION_MINOR_NEEDED);
 os.environ["QTDIR"]=qtdir;
 
-env = Environment(CPPFLAGS=['-g3','-Wall','-Wno-sign-compare'],tools=['default','qt'], ENV={'PATH' : os.environ['PATH']});
+env = Environment(CPPFLAGS=['-g3','-Wall','-msse','-malign-double','-mfpmath=sse','-Wno-sign-compare'],tools=['default','qt'], ENV={'PATH' : os.environ['PATH']});
 
 env.use_asio=False;
 

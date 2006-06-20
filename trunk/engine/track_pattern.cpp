@@ -292,12 +292,12 @@ bool Track_Pattern::accepts_block(Block *p_block) {
 
 void Track_Pattern::plugin_added_notify(SoundPlugin *p_plugin) {
 	
-	if (p_plugin->get_info()->is_synth)
-		p_plugin->set_event_buffer( &data.event_buffer );
 }
 
 
 void Track_Pattern::add_noteon_event_to_buffer(char p_note,char p_velocity,int p_column,EventBuffer &p_buffer,int p_frame_offset) {
+	
+	EventBuffer &event_buffer=get_event_buffer();
 	
 	//printf("note %i\n",p_note);
 	
@@ -384,6 +384,7 @@ void Track_Pattern::play_external_event(const EventMidi &p_event_midi) {
 
 void Track_Pattern::track_block_pre_process(int p_frames,int p_block, Tick p_offset,Tick p_total, Tick p_from, Tick p_to) {
 
+	EventBuffer &event_buffer=get_event_buffer();
 	
 	Tick block_pos=get_block_pos(p_block);
 	Tick tick_from_local=p_from;
@@ -420,7 +421,7 @@ void Track_Pattern::track_block_pre_process(int p_frames,int p_block, Tick p_off
 			if (n.is_note()) {
 					
 					
-				add_noteon_event_to_buffer(n.note,n.volume,col,data.event_buffer,frame);
+				add_noteon_event_to_buffer(n.note,n.volume,col,event_buffer,frame);
 					
 			} else if (n.is_note_off() && data.last_note[col].is_note()) {
 					
@@ -429,7 +430,7 @@ void Track_Pattern::track_block_pre_process(int p_frames,int p_block, Tick p_off
 				Event e;
 				SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[col].note,0);
 				e.frame_offset=frame; //off te
-				data.event_buffer.push_event(e);
+				event_buffer.push_event(e);
 				data.last_note[col]=n;
 			}
 		}
@@ -441,15 +442,14 @@ void Track_Pattern::track_block_pre_process(int p_frames,int p_block, Tick p_off
 void Track_Pattern::track_pre_process(int p_frames) {
 	/* I HATE THIS FUNCTION */
 	
-	data.event_buffer.clear(); //first of all, always clear event buffer	
-	
+	EventBuffer &event_buffer=get_event_buffer();
 	
 	//add the edit events (if any) at offset 0
 	for (int i=0;i<data.edit_event_buffer.get_event_count();i++) {
 		
 		Event e=*data.edit_event_buffer.get_event(i);
 		e.frame_offset=0;
-		data.event_buffer.push_event(e);
+		event_buffer.push_event(e);
 	}
 	data.edit_event_buffer.clear();
 
@@ -591,7 +591,7 @@ void Track_Pattern::track_pre_process(int p_frames) {
 				if (n.is_note()) {
 					
 					
-					add_noteon_event_to_buffer(n.note,n.volume,col,data.event_buffer,frame);
+					add_noteon_event_to_buffer(n.note,n.volume,col,event_buffer,frame);
 					
 				} else if (n.is_note_off() && data.last_note[col].is_note()) {
 					
@@ -600,7 +600,7 @@ void Track_Pattern::track_pre_process(int p_frames) {
 					Event e;
 					SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[col].note,0);
 					e.frame_offset=frame; //off te
-					data.event_buffer.push_event(e);
+					event_buffer.push_event(e);
 					data.last_note[col]=n;
 				}
 			}
@@ -625,7 +625,7 @@ void Track_Pattern::track_pre_process(int p_frames) {
 					Event e;
 					SET_EVENT_MIDI(e,EventMidi::MIDI_NOTE_OFF,0,data.last_note[i].note,0);
 					e.frame_offset=frame; //off te
-					data.event_buffer.push_event(e);
+					event_buffer.push_event(e);
 					data.last_note[i]=Note(Note::NOTE_OFF);
 				}				
 			}

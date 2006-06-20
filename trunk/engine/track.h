@@ -100,6 +100,8 @@ private:
 			bool mute;
 		} audio;
 		
+		EventBuffer event_buffer;
+		
 	} base_private;
 
 	int get_input_plug_count();
@@ -114,6 +116,7 @@ private:
 	void validate_plugin_duplicate(SoundPlugin *p_plugin);
 protected:
 
+	EventBuffer &get_event_buffer();
 	
 	SongPlayback*get_song_playback();
 	const EventBuffer& get_seq_event_buffer();

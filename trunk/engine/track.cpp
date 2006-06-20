@@ -287,9 +287,24 @@ void Track::process_automations(bool p_use_current_tick_to) {
 	
 	
 }
+
+EventBuffer &Track::get_event_buffer() {
+	
+	return base_private.event_buffer;
+}
 void Track::process(int p_frames) {
 
 	process_automations();
+	
+	/* Clear event buffer */
+	base_private.event_buffer.clear();
+	/* push tempo event */
+	Event tempo_event;
+	tempo_event.type=Event::TYPE_SEQ_TEMPO;
+	tempo_event.frame_offset=0;
+	tempo_event.param.tempo.bpm=base_private.global_props->get_tempo().get();
+	base_private.event_buffer.push_event( tempo_event );
+	
 	track_pre_process(p_frames);
 	base_private.plugin_graph.process( p_frames );
 }
@@ -518,6 +533,7 @@ void Track::add_plugin(PluginInsertData* p_plugin) {
 	base_private.plugin_graph.add_node( p_plugin->plugin, &p_plugin->connections );
 	
 	rebuild_active_automation_cache();
+	p_plugin->plugin->set_event_buffer( &base_private.event_buffer );
 	plugin_added_notify( p_plugin->plugin );
 	
 	p_plugin->plugin->set_mixing_rate( get_song_playback()->get_mix_rate() );

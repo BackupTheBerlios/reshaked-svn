@@ -32,11 +32,19 @@ void PannerEditor::paintEvent(QPaintEvent *e) {
 		int y=(int)(depth->get()*height())-skin.pos.height()/2;
 		p.drawPixmap(x,y,skin.pos);
 				
+		if (use_line_to) {
+		
+			p.setPen(skin.line_to);
+			p.drawLine(x+skin.pos.width()/2,y+skin.pos.height()/2,line_to.x(),line_to.y());
+		
+		}
+		
 	} else {
 		
 		int x=(int)(pos->get()*width())-skin.pos.width()/2;
 		int y=(height()-skin.pos.height())/2;
 		p.drawPixmap(x,y,skin.pos);
+		
 		
 	}
 	
@@ -107,6 +115,13 @@ void PannerEditor::set_properties(Property *p_pos,Property *p_depth) {
 	
 	update();
 	
+	
+}
+
+void PannerEditor::set_line_to(QPoint p_where) {
+	
+	use_line_to=true;
+	line_to=p_where;
 }
 
 PannerEditor::PannerEditor(QWidget *p_parent,bool p_quad,const Skin &p_skin) : QWidget(p_parent), MultiPropertyEditor(2) {
@@ -119,7 +134,7 @@ PannerEditor::PannerEditor(QWidget *p_parent,bool p_quad,const Skin &p_skin) : Q
 	click.drag=false;
 	setBackgroundRole(QPalette::NoRole);
 	setFixedSize(p_skin.bg.size());
-	
+	use_line_to=false;	
 	
 }
 

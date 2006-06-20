@@ -510,12 +510,15 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 			Tick block_from=track->get_block_pos( prev );
 			Tick block_len=track->get_block( prev )->get_length();
 			
-			Tick new_tick_from= (from-block_from)%block_len;
+			Tick new_tick_from=block_from+(from-block_from)%block_len;
 			
 			adjust=from-new_tick_from;
 			
+			
 			to=new_tick_from+(to-from);
 			from=new_tick_from;
+			
+
 		}
 		
 		Track_Pattern::NoteList nl = track->get_notes_in_range( from, to );
@@ -526,6 +529,7 @@ void BlockListUI_Pattern::paintEvent(QPaintEvent *e) {
 			foreach( I, nl ) {
 				
 				I->pos.tick+=adjust;
+
 			}
 		}
 		

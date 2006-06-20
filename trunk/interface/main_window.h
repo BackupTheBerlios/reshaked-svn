@@ -137,6 +137,8 @@ class MainWindow : public QWidget {
 	CVBox *rack_vbox;
 	
 	PropertyEditSliderVU *main_vol;
+	PixmapLabel *vu_peak;
+	bool peaked;
 	
 	SettingsDialog *settings;
 
@@ -153,6 +155,9 @@ class MainWindow : public QWidget {
 	void save_settings();
 	
 public slots:
+	
+	void clear_peaked();
+	void song_stop();
 	
 	void property_options_requested(Property *p_property);
 	

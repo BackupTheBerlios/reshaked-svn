@@ -4,6 +4,16 @@
 
 namespace ReShaked {
 
+void CommandFunc::clear_create_data() {
+	
+	create_data.clear();
+	
+}
+void CommandFunc::clear_delete_data() {
+	
+	delete_data.clear();
+	
+}
 
 
 void CommandFunc::erase_create_data() {
@@ -39,6 +49,7 @@ void UndoStream::delete_redo_history() {
 		std::list<UndoElement>::iterator I=ug.command_list.begin();
 		for (;I!=ug.command_list.end();I++) {
 			I->undo->erase_create_data(); //since this undo is no longer needed, we erase the create data
+			I->undo->clear_delete_data();
 			delete I->undo;
 			delete I->redo;
 		}
@@ -69,6 +80,7 @@ void UndoStream::fix_undo_history_length() {
 		std::list<UndoElement>::iterator I=ug.command_list.begin();
 		for (;I!=ug.command_list.end();I++) {
 			I->undo->erase_delete_data(); //since this undo is no longer needed, we erase the create data
+			I->undo->clear_create_data();
 			delete I->undo;
 			delete I->redo;
 		}

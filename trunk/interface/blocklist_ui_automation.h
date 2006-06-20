@@ -67,9 +67,12 @@ class BlockListUI_Automation : public BlockListUI_Base {
 	
 	struct MovingPoint {
 		
+		QPoint prev_pointer_pos;
+		
 		int block;
 		int point;
 		bool moving;
+		bool moving_first;
 		bool lfo_depthing;
 		bool adding;
 		

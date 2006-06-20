@@ -17,7 +17,7 @@ namespace ReShaked {
 
 struct EventSeqTempo  {
 	
-	float tempo;
+	float bpm;
 	
 };
 

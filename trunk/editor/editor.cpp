@@ -96,7 +96,7 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 				enter_blocklist(EditorData::ENTER_LEFT);
 			}				
 		
-		
+			
 		}
 		CASE( KEYBIND("prev_track") ) {
 		
@@ -137,6 +137,47 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 			}				
 		
 			d->pattern_edit.field=0;
+		}
+		
+		CASE( KEYBIND("editor/next_marker")) {
+				
+			int beat_count=d->song->get_marker_list().get_stream_size();
+			int beat=d->cursor.get_beat();
+			int marker_idx=d->song->get_marker_list().get_next_index( beat );
+			if (marker_idx>=beat_count)
+				break;
+			
+			if (d->song->get_marker_list().get_index_pos( marker_idx ) == beat )
+				marker_idx++;
+			
+			if (marker_idx>=beat_count)
+				break;
+			
+			d->cursor.set_pos( d->song->get_marker_list().get_index_pos( marker_idx ) * d->cursor.get_snap() );
+			d->cursor.set_window_offset( d->cursor.get_pos() - d->cursor.get_window_size()/2 );
+			
+			
+		}
+	
+
+		CASE( KEYBIND("editor/previous_marker")) {
+			
+			int beat=d->cursor.get_beat();
+			int marker_idx=d->song->get_marker_list().get_prev_index( beat );
+			if (marker_idx<0)
+				break;
+			
+			if (d->song->get_marker_list().get_index_pos( marker_idx ) == beat )
+				marker_idx--;
+			
+			if (marker_idx<0)
+				break;
+			
+			d->cursor.set_pos( d->song->get_marker_list().get_index_pos( marker_idx ) * d->cursor.get_snap() );
+			d->cursor.set_window_offset( d->cursor.get_pos() - d->cursor.get_window_size()/2 );
+
+			
+			
 		}
 		
 
@@ -373,6 +414,26 @@ bool Editor::handle_navigation_key_press(BlockList *p_blocklist,int &p_event) {
 		CASE( KEYBIND("editor/quantize_down") ) { 
 			
 			selection_quantize( QUANTIZE_DOWN );
+		}
+		
+		CASE( KEYBIND("editor/track_mute")) {
+			
+			int track_idx=get_current_track();
+			if (track_idx==-1)
+				break;
+			Track *t = d->song->get_track( track_idx );
+			
+			set_track_mute(t,!t->is_mute());
+		}
+		
+		CASE( KEYBIND("editor/track_solo")) {
+			
+			int track_idx=get_current_track();
+			if (track_idx==-1)
+				break;
+		
+			set_track_solo(track_idx);
+	
 		}
 		
 		DEFAULT

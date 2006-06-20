@@ -635,11 +635,12 @@ void BlockListUIList::fill_hb_top(QWidget* p_hb_top) {
 	
 	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
 	
+	/*
 	automation_envelope = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE),GET_QPIXMAP(THEME_EDIT_TOOLBAR__AUTOMATION_MODE_ENVELOPE_ACTIVE)),PixmapButton::TYPE_TOGGLE);
 	automation_stream = new PixmapButton(p_hb_top,PixmapButton::Skin(GET_QPIXMAP(THEME_EDIT_TOOLBAR__AUTOMATION_MODE_STREAM),GET_QPIXMAP(THEME_EDIT_TOOLBAR__AUTOMATION_MODE_STREAM_ACTIVE)),PixmapButton::TYPE_TOGGLE);
 	
 	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__SEPARATOR));
-	
+	*/
 	new PixmapLabel(p_hb_top,GET_QPIXMAP(THEME_EDIT_TOOLBAR__CURSOR_STEPPING_ICON));
 	
 	CVBox *cursor_stepping_vb = new CVBox(p_hb_top);

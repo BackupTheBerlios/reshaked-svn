@@ -303,6 +303,7 @@ void SettingsKeys::rebuild() {
 	path_translation["actions"]="Actions";
 	
 	tree->clear();
+	items.clear();
 	
 	tree->setColumnCount(2);
 	QStringList strlist;

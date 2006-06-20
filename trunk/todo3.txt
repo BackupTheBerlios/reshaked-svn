@@ -25,17 +25,24 @@ TODO MORE:
  -arreglar cositas del theme de los linked en edit view
  *minipiano, arreglar problema de las teclas que se quedan trabadas
 
- -new tracks sometimes dont get connected?
+ ?new tracks sometimes dont get connected?
  *VU global y volumen global
- -Make LFO-Depthing more intuitive so it only happens at moving left/right
- -interconnect inputs/outputs when removing plugin
- -save looppoints
- -F9/F10 KEYS mute/umnute
+ *Make LFO-Depthing more intuitive so it only happens at moving left/right
+ *interconnect inputs/outputs when removing plugin
+ *save looppoints
+ *F9/F10 KEYS mute/umnute
  *right click en controles ya no funciona?
  *sacarle posibilidad de focus al scrollview de sound plugin chooser
  *averiguar porque tiemblan los vus
- -sacar iconos de envelope que no se usan
- -Peak/clear Peak
- -sacar cosas mas azul oscuras glitcheosas del skin
- -segfault on keymapping edit
- -stop the midi, not only the audio! (at exit)
+ *sacar iconos de envelope que no se usan
+ *Peak/clear Peak
+ *sacar cosas mas azul oscuras glitcheosas del skin
+ *segfault on keymapping edit
+ *stop the midi, not only the audio! (at exit)
+ *bpm based delay
+ *env attack/release in sinth lines
+ *optimizar/arreglar chorus, que ademas hace ruiditos (crackling)
+ *pattern repeat se ve mal o algo asi
+ *paste andaba mal en patterns no alineadas en cero o algo asi?
+ *muchos efectos y cosas no andaban bien con alt-v y demas
+ *jump to marker

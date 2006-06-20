@@ -31,8 +31,9 @@ public:
 		QPixmap	bg;
 		QPixmap	pos;
 		int border_w;
+		QColor line_to;
 		
-		Skin(QPixmap p_bg=QPixmap(),QPixmap p_pos=QPixmap(),int p_border_w=0) { bg=p_bg ; pos=p_pos; border_w=p_border_w; }
+		Skin(QPixmap p_bg=QPixmap(),QPixmap p_pos=QPixmap(),int p_border_w=0,QColor p_line_to=QColor(0,0,0)) { bg=p_bg ; pos=p_pos; border_w=p_border_w; p_line_to=line_to; }
 	};
 private:	
 	
@@ -42,6 +43,9 @@ private:
 	};
 	
 	bool quad_mode;
+	
+	bool use_line_to;
+	QPoint line_to;
 	
 	struct Click {
 		bool drag;
@@ -60,6 +64,8 @@ private:
 	Property *depth;
 public:
 
+	void set_line_to(QPoint p_where);
+	
 	void set_properties(Property *p_pos,Property *p_depth);
 	PannerEditor(QWidget *p_parent,bool p_quad,const Skin &p_skin);
 	~PannerEditor();

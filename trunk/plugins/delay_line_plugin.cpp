@@ -193,7 +193,19 @@ void DelayLinePlugin::process(int p_frames) {
 		return;
 	}
 	
+	const EventBuffer *ebuff=get_event_buffer();
 	
+	for (int i=0;i<ebuff->get_event_count();i++) {
+		
+		const Event *e=ebuff->get_event(i);
+				
+		if (e->type==Event::TYPE_SEQ_TEMPO) {
+			
+			bpm=e->param.tempo.bpm;
+			
+		}
+	}
+		
 	float main_level_f=(main_active.get()>0)?(main_level.get()/100.0):0.0;
 	
 	/* Tap 1 */
@@ -201,17 +213,24 @@ void DelayLinePlugin::process(int p_frames) {
 	float tap_1_level_f=(tap_1_active.get()>0)?(tap_1_level.get()/100.0):0.0;
 	
 	int tap_1_delay_frames=0;
+	int divisor=1;
+	if (tap_1_active.get()>0)
+		divisor++;
+	if (tap_2_active.get()>0)
+		divisor++;
 	
+	int echo_size_limit=(float)((MAX_DELAY_MS/divisor)/1000.0)*mix_rate;
 	if (tap_1_active.get()>0) {
 		
 		if (bpm_based) {
 			
 			float beat_size=(mix_rate*60.0)/bpm;
-			beat_size*=tap_1_delay.get();
-			if (beat_size>(MAX_DELAY_MS/(MAX_TAPS+1)))
-				beat_size=(MAX_DELAY_MS/(MAX_TAPS+1));
+			
+			int echo_size=lrintf(beat_size*tap_1_delay.get());
+			if (echo_size>echo_size_limit)
+				echo_size=echo_size_limit;
 	
-			tap_1_delay_frames=lrintf(beat_size);
+			tap_1_delay_frames=echo_size;
 		} else {
 			
 			tap_1_delay_frames=lrintf((tap_1_delay.get()/1000.0)*mix_rate);
@@ -229,11 +248,12 @@ void DelayLinePlugin::process(int p_frames) {
 		if (bpm_based) {
 			
 			float beat_size=(mix_rate*60.0)/bpm;
-			beat_size*=tap_2_delay.get();
-			if (beat_size>(MAX_DELAY_MS/(MAX_TAPS+1)))
-				beat_size=(MAX_DELAY_MS/(MAX_TAPS+1));
+			
+			int echo_size=lrintf(beat_size*tap_2_delay.get());
+			if (echo_size>echo_size_limit)
+				echo_size=echo_size_limit;
 	
-			tap_2_delay_frames+=lrintf(beat_size);
+			tap_2_delay_frames+=echo_size;
 		} else {
 			
 			tap_2_delay_frames+=lrintf((tap_2_delay.get()/1000.0)*mix_rate);
@@ -250,11 +270,13 @@ void DelayLinePlugin::process(int p_frames) {
 		if (bpm_based) {
 			
 			float beat_size=(mix_rate*60.0)/bpm;
-			beat_size*=feedback_delay.get();
-			if (beat_size>(MAX_DELAY_MS/(MAX_TAPS+1)))
-				beat_size=(MAX_DELAY_MS/(MAX_TAPS+1));
+			
+			int echo_size=lrintf(beat_size*feedback_delay.get());
+			if (echo_size>echo_size_limit)
+				echo_size=echo_size_limit;
+			
 	
-			feedback_delay_frames+=lrintf(beat_size);
+			feedback_delay_frames+=echo_size;
 		} else {
 			
 			feedback_delay_frames+=lrintf((feedback_delay.get()/1000.0)*mix_rate);
@@ -342,34 +364,34 @@ DelayLinePlugin::DelayLinePlugin(const SoundPluginInfo *p_info,int p_channels,bo
 	main_pan_depth.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "main_pan_depth","Main Pan Depth","","Front","Rear");
 	
 	/* Tap 1 */
-	tap_1_active.set_all( 1, 0, 1, 0, 1, Property::DISPLAY_CHECKBOX, "tap_1_active","Tap 1 Active");
+	tap_1_active.set_all( 0, 0, 1, 0, 1, Property::DISPLAY_CHECKBOX, "tap_1_active","Tap 1 Active");
 	if (p_bpm_based) 
-		tap_1_delay.set_all(0.01, 0, 4, 0, 0.1, Property::DISPLAY_SLIDER, "tap_1_delay","Tap 1 Delay");
+		tap_1_delay.set_all(1, 0, 4, 0, 0.1, Property::DISPLAY_SLIDER, "tap_1_delay","Tap 1 Delay");
 	else
 		tap_1_delay.set_all(250, 1, MAX_DELAY_MS/(MAX_TAPS+1), 1, 1, Property::DISPLAY_SLIDER, "tap_1_delay","Tap 1 Delay","ms");
 	
-	tap_1_level.set_all( 100, 0, 100, 100, 1, Property::DISPLAY_SLIDER, "tap_1_level","Tap 1 Level","%");
+	tap_1_level.set_all( 50, 0, 100, 100, 1, Property::DISPLAY_SLIDER, "tap_1_level","Tap 1 Level","%");
 	tap_1_pan.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "tap_1_pan","Tap 1 Pan","","Left","Right");
 	tap_1_pan_depth.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "tap_1_pan_depth","Tap 1 Pan Depth","","Front","Rear");
 	
 	/* Tap 2 */
 	
-	tap_2_active.set_all( 1, 0, 1, 0, 1, Property::DISPLAY_CHECKBOX, "tap_2_active","Tap 2 Active");
+	tap_2_active.set_all( 0, 0, 1, 0, 1, Property::DISPLAY_CHECKBOX, "tap_2_active","Tap 2 Active");
 	if (p_bpm_based) 
-		tap_2_delay.set_all(0.01, 0, 4, 0, 0.1, Property::DISPLAY_SLIDER, "tap_2_delay","Tap 2 Delay");
+		tap_2_delay.set_all(1, 0, 4, 0, 0.1, Property::DISPLAY_SLIDER, "tap_2_delay","Tap 2 Delay");
 	else
 		tap_2_delay.set_all(250, 1, MAX_DELAY_MS/(MAX_TAPS+1), 1, 1, Property::DISPLAY_SLIDER, "tap_2_delay","Tap 2 Delay","ms");
 	
-	tap_2_level.set_all( 100, 0, 100, 100, 1, Property::DISPLAY_SLIDER, "tap_2_level","Tap 2 Level","%");
+	tap_2_level.set_all( 60, 0, 100, 100, 1, Property::DISPLAY_SLIDER, "tap_2_level","Tap 2 Level","%");
 	tap_2_pan.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "tap_2_pan","Tap 2 Pan","","Left","Right");
 	tap_2_pan_depth.set_all( 0.5, 0, 1, 0.5, 0.01, Property::DISPLAY_SLIDER, "tap_2_pan_depth","Tap 2 Pan Depth","","Front","Rear");
 	
 	
 	/* Feedback */
 	feedback_active.set_all( 1, 0, 1, 0, 1, Property::DISPLAY_CHECKBOX, "feedback_active","Feedback Active");
-	feedback_level.set_all( 0, 0, 99, 99, 1, Property::DISPLAY_SLIDER, "feedback_level","Feedback Level","%");
+	feedback_level.set_all( 40, 0, 99, 99, 1, Property::DISPLAY_SLIDER, "feedback_level","Feedback Level","%");
 	if (p_bpm_based) 
-		feedback_delay.set_all(0.01, 0, 4, 0, 0.1, Property::DISPLAY_SLIDER, "feedback_delay","Feedback Delay");
+		feedback_delay.set_all(1, 0, 4, 0, 0.1, Property::DISPLAY_SLIDER, "feedback_delay","Feedback Delay");
 	else
 		feedback_delay.set_all(250, 1, MAX_DELAY_MS/(MAX_TAPS+1), 1, 1, Property::DISPLAY_SLIDER, "feedback_delay","Feedback Delay","ms");
 	

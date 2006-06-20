@@ -168,6 +168,8 @@
 #include "pixmaps/default_skin/left__margin.xpm"
 #include "pixmaps/default_skin/main_vu.xpm"
 #include "pixmaps/default_skin/main_vu_grabber.xpm"
+#include "pixmaps/default_skin/main_vu_peak.xpm"
+#include "pixmaps/default_skin/main_vu_peak_active.xpm"
 #include "pixmaps/default_skin/middle__separator_begin.xpm"
 #include "pixmaps/default_skin/middle__separator_center.xpm"
 #include "pixmaps/default_skin/middle__separator_end.xpm"
@@ -764,6 +766,10 @@ void VisualSettings::load_default_theme_pixmaps() {
     pixmap_map_skin["main_vu"]=THEME_MAIN_VU;
     pixmap_map[THEME_MAIN_VU_GRABBER]=QPixmap( (const char**) main_vu_grabber_xpm); 
     pixmap_map_skin["main_vu_grabber"]=THEME_MAIN_VU_GRABBER;
+    pixmap_map[THEME_MAIN_VU_PEAK]=QPixmap( (const char**) main_vu_peak_xpm); 
+    pixmap_map_skin["main_vu_peak"]=THEME_MAIN_VU_PEAK;
+    pixmap_map[THEME_MAIN_VU_PEAK_ACTIVE]=QPixmap( (const char**) main_vu_peak_active_xpm); 
+    pixmap_map_skin["main_vu_peak_active"]=THEME_MAIN_VU_PEAK_ACTIVE;
     pixmap_map[THEME_MIDDLE__SEPARATOR_BEGIN]=QPixmap( (const char**) middle__separator_begin_xpm); 
     pixmap_map_skin["middle__separator_begin"]=THEME_MIDDLE__SEPARATOR_BEGIN;
     pixmap_map[THEME_MIDDLE__SEPARATOR_CENTER]=QPixmap( (const char**) middle__separator_center_xpm); 

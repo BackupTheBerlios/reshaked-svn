@@ -22,6 +22,7 @@ namespace ReShaked {
 void BottomBarControls::action_notify(String p_action) {
 	
 	info_label->set_text(QStrify(p_action));
+	info_label->set_color(QColor(220,230,255));
 	tmp_msg_time=MSG_NOTIFY_TIME_MS;
 }
 
@@ -109,10 +110,11 @@ void BottomBarControls::time_update_slot() {
 	
 	
 	QString message="Player Stopped";
-	
+	QColor desired_color=QColor(160,160,160);
 	if (!SoundDriverList::get_singleton()->is_current_driver_active()) {
 		
 		message="**AUDIO DRIVER IS DISABLED**";
+		desired_color=QColor(255,200,200);
 		
 	} else if (playing) {
 			
@@ -125,12 +127,14 @@ void BottomBarControls::time_update_slot() {
 		QString mark = (mark_idx>=0) ? QStrify( editor->get_song()->get_marker_list().get_index_value( mark_idx ) ) : "";
 		
 		message="Playing: " +mark + " at " + QString::number(bar) + ":"+ QString::number(bar_beat+1);
+		desired_color=QColor(200,255,200);
 		
 	}
 	
 	if (message!=last_msg) {
 		
 		info_label->set_text( message );
+		info_label->set_color(desired_color);
 	}
 	
 	/*

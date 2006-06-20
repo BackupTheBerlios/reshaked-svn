@@ -317,9 +317,7 @@ void MainWindow::menu_action_callback(int p_action) {
 		} break;
 		case CONTROL_STOP: {
 			
-			data.song.stop();
-			data.editor->midi_reset();
-			
+			song_stop();	
 		} break;
 		
 		case CONTROL_RECORD_AUTOMATIONS: {
@@ -527,8 +525,13 @@ void MainWindow::ui_update_slot() {
 	rack->ui_update_callback();	
 	
 	float global_db=data.song.grab_accumulated_max_gain();
+	if (global_db>=0 && !peaked) {
+		
+		vu_peak->set_bg( GET_QPIXMAP( THEME_MAIN_VU_PEAK_ACTIVE ) );
+	}
 	global_db+=60;
 	global_db/=60.0+24.0;
+	
 	main_vol->set_value( global_db );
 	
 }
@@ -572,6 +575,20 @@ void MainWindow::automation_options(int p_blocklist) {
 void MainWindow::ui_update_interval_changed(int p_to_value) {
 	
 	ui_updater->setInterval(p_to_value);
+}
+
+void MainWindow::song_stop() {
+
+	data.song.stop();
+	data.editor->midi_reset();
+	
+	clear_peaked();
+}
+
+void MainWindow::clear_peaked() {
+	
+	peaked=false;
+	vu_peak->set_bg( GET_QPIXMAP( THEME_MAIN_VU_PEAK ) );
 }
 
 void MainWindow::save_settings() {
@@ -641,12 +658,21 @@ MainWindow::MainWindow(QString p_settings_dir,QString p_settings_file) {
 			
 	new PixmapLabel(stack_hbox,GET_QPIXMAP(THEME_LEFT__MARGIN),PixmapLabel::EXPAND_TILE_V);
 	main_stack = new QStackedWidget(stack_hbox);
-	VUScale * vu_scale = new VUScale(stack_hbox,GET_QPIXMAP(THEME_MAIN_VU),VUScale::EXPAND_STRETCH_V);
+	
+	CVBox *vu_vbox = new CVBox(stack_hbox);
+
+	vu_peak = new PixmapLabel(vu_vbox,GET_QPIXMAP(THEME_MAIN_VU_PEAK));
+	peaked=false;
+	QObject::connect(vu_peak,SIGNAL(clicked_signal()),this,SLOT(clear_peaked()));
+	
+	CHBox *vu_hbox = new CHBox(vu_vbox);
+	
+	VUScale * vu_scale = new VUScale(vu_hbox,GET_QPIXMAP(THEME_MAIN_VU),VUScale::EXPAND_STRETCH_V);
 	vu_scale->set_min(-60);
 	vu_scale->set_max(24);
 	vu_scale->set_color(QColor(0xc1,0xef,0xec));
 	vu_scale->set_zero_color(QColor(255,255,255));
-	main_vol = new PropertyEditSliderVU(stack_hbox,GET_QPIXMAP(THEME_MAIN_VU_GRABBER));
+	main_vol = new PropertyEditSliderVU(vu_hbox,GET_QPIXMAP(THEME_MAIN_VU_GRABBER));
 	main_vol->set_fall_time( 1.0 );
 	main_vol->set_property(&data.song.get_global_properties().get_volume());
 	main_vol->set_changed_by_editor_callback( this, &MainWindow::global_property_editor_property_edited_callback );
@@ -749,6 +775,8 @@ MainWindow::MainWindow(QString p_settings_dir,QString p_settings_file) {
 	
 	QObject::connect(update_notify,SIGNAL(editor_marker_edit_request()),blui_list,SLOT(edit_marker_slot()));
 	QObject::connect(update_notify,SIGNAL(editor_volume_scale_request()),blui_list,SLOT(scale_volume_slot()));
+	
+	QObject::connect(top_bar,SIGNAL(song_stop_signal()),this,SLOT(song_stop()));
 	
 	ui_updater = new QTimer(this);
 	QObject::connect(ui_updater,SIGNAL(timeout()),this,SLOT(ui_update_slot()));

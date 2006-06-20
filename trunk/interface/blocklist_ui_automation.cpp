@@ -566,6 +566,9 @@ void BlockListUI_Automation::compute_point_over(int p_x,int p_y) {
 
 void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 	
+	QPoint delta=e->pos()-moving_point.prev_pointer_pos;
+	moving_point.prev_pointer_pos=e->pos();
+	
 	
 	/* track to point over */
 	mouse_selection_update_check();
@@ -591,6 +594,16 @@ void BlockListUI_Automation::mouseMoveEvent ( QMouseEvent * e ) {
 	Automation::AutomationData *d=automation->get_block(moving_point.block)->get_data();
 	
 	/* Adjust Tick Motion */
+	
+	
+	if (moving_point.moving_first) {
+		
+		
+		if ( abs(delta.x()) > abs(delta.y()) && e->modifiers()&Qt::ShiftModifier )
+			moving_point.lfo_depthing=true;
+		
+		moving_point.moving_first=false;
+	}
 	
 	if (!moving_point.lfo_depthing) {
 	
@@ -679,6 +692,7 @@ void BlockListUI_Automation::get_pos_at_pointer(QPoint p_pointer, int *p_blockli
 
 void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 	
+	moving_point.prev_pointer_pos=e->pos();
 	
 	if (e->button()==Qt::LeftButton)
 		editor->lock_undo_stream();
@@ -797,7 +811,7 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 		moving_point.moving=true;		
 		moving_point.adding=true;		
 		moving_point.lfo_depthing=false;
-		
+		moving_point.moving_first=false;
 		update();
 		
 	} else {
@@ -816,8 +830,9 @@ void BlockListUI_Automation::mousePressEvent ( QMouseEvent * e ) {
 		moving_point.moving=true;
 		moving_point.adding=false;
 		
-		moving_point.lfo_depthing=(e->modifiers()&Qt::ShiftModifier);
-
+		moving_point.moving_first=true;
+		
+		
 				
 	}
 
@@ -853,6 +868,7 @@ void BlockListUI_Automation::mouseReleaseEvent ( QMouseEvent * e ) {
 	moving_point.moving=false;
 	moving_point.lfo_depthing=false;
 	moving_point.snap=false;	
+	moving_point.moving_first=false;
 	update();	
 	
 }

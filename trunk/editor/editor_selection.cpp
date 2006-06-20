@@ -148,7 +148,7 @@ void Editor::selection_copy() {
 		if (dynamic_cast<Track_Pattern*>(bl)) {
 			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
 			int columns=tp->get_visible_columns();
-			int column_from=(i==0)?d->selection.begin.column:0;
+			int column_from=(i==d->selection.begin.blocklist)?d->selection.begin.column:0;
 			int column_to=(i==d->selection.end.blocklist)?d->selection.end.column:(columns-1);
 						
 			for (int j=column_from;j<=column_to;j++) {
@@ -328,7 +328,7 @@ void Editor::selection_transpose(bool p_up) {
 		if (dynamic_cast<Track_Pattern*>(bl)) {
 			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
 			int columns=tp->get_visible_columns();
-			int column_from=(i==0)?d->selection.begin.column:0;
+			int column_from=(i==d->selection.begin.blocklist)?d->selection.begin.column:0;
 			int column_to=(i==d->selection.end.blocklist)?d->selection.end.column:(columns-1);
 						
 			for (int j=column_from;j<=column_to;j++) {
@@ -917,16 +917,17 @@ void Editor::selection_volume_scale(int p_percent) {
 	
 	for (int i=d->selection.begin.blocklist;i<=d->selection.end.blocklist;i++) {
 		
+		printf("i at %i\n",i);
 		BlockList *bl=get_blocklist(i);
 		
 		if (dynamic_cast<Track_Pattern*>(bl)) {
 			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
 			int columns=tp->get_visible_columns();
-			int column_from=(i==0)?d->selection.begin.column:0;
+			int column_from=(i==d->selection.begin.blocklist)?d->selection.begin.column:0;
 			int column_to=(i==d->selection.end.blocklist)?d->selection.end.column:(columns-1);
 						
 			for (int j=column_from;j<=column_to;j++) {
-				
+				printf("j at %i\n",j);
 				int block_from,block_to;
 				if (tp->get_blocks_in_rage( tick_from, tick_to, &block_from,&block_to))
 					continue;
@@ -1039,7 +1040,7 @@ void Editor::selection_set_volumes_to_mask() {
 		if (dynamic_cast<Track_Pattern*>(bl)) {
 			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
 			int columns=tp->get_visible_columns();
-			int column_from=(i==0)?d->selection.begin.column:0;
+			int column_from=(i==d->selection.begin.blocklist)?d->selection.begin.column:0;
 			int column_to=(i==d->selection.end.blocklist)?d->selection.end.column:(columns-1);
 						
 			for (int j=column_from;j<=column_to;j++) {
@@ -1161,7 +1162,7 @@ void Editor::selection_quantize(QuantizeType p_type) {
 		if (dynamic_cast<Track_Pattern*>(bl)) {
 			Track_Pattern *tp=dynamic_cast<Track_Pattern*>(bl);
 			int columns=tp->get_visible_columns();
-			int column_from=(i==0)?d->selection.begin.column:0;
+			int column_from=(i==d->selection.begin.blocklist)?d->selection.begin.column:0;
 			int column_to=(i==d->selection.end.blocklist)?d->selection.end.column:(columns-1);
 						
 			for (int j=column_from;j<=column_to;j++) {
