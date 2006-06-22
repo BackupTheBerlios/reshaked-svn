@@ -66,7 +66,12 @@ void PluginTop::remove_pressed() {
 	
 }
 	
-void PluginTop::set_preset_name(QString p_name) {
+void PluginTop::set_preset_name(QString p_name,bool p_referenced) {
+	
+	if (p_referenced)
+		preset_name->set_color(QColor(255,200,200));
+	else
+		preset_name->set_color(QColor(200,220,255));
 	
 	preset_name->set_text( p_name );
 }
@@ -182,7 +187,7 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 				
 				case PluginPresetBrowser::ACTION_OPEN: {
 					
-					editor->load_plugin_preset(plugin,DeQStrify( ppb->get_file() ),track,DeQStrify( get_file_from_path( ppb->get_file()) ));
+					editor->load_plugin_preset(plugin,DeQStrify( ppb->get_file() ),track,DeQStrify( get_file_from_path( ppb->get_file()) ),ppb->is_reference());
 					
 				} break;
 				case PluginPresetBrowser::ACTION_SAVE: {
@@ -192,8 +197,12 @@ void SoundPluginRack::plugin_action_signal(int p_action,int p_plugin) {
 						QMessageBox::critical ( this, "Error", "Error Saving File." , QMessageBox::Ok,QMessageBox::NoButton);
 					} else {
 						
-						plugin->set_current_file( DeQStrify( ppb->get_file() ) );
+						editor->begin_meta_undo_block( "Saved File: " + DeQStrify( get_file_from_path( ppb->get_file()) )) ;
+						
 						editor->set_plugin_preset_name(plugin,DeQStrify( get_file_from_path( ppb->get_file()) ));
+						editor->set_plugin_preset_file(plugin,DeQStrify( ppb->get_file() ),ppb->is_reference());
+						
+						editor->end_meta_undo_block();
 						
 					}
 					
@@ -337,7 +346,7 @@ void SoundPluginRack::repaint() {
 	for (int i=0;i<rack_elements.size();i++) {
 			
 		rack_elements[i].top->set_skipping_state( track->get_plugin( i)->skips_processing() );
-		rack_elements[i].top->set_preset_name( QStrify( track->get_plugin( i)->get_current_preset_name() ));
+		rack_elements[i].top->set_preset_name( QStrify( track->get_plugin( i)->get_current_preset_name() ), track->get_plugin(i)->is_current_file_referenced());
 	}
 }
 

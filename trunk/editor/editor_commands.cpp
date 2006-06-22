@@ -584,6 +584,42 @@ CommandFunc* EditorCommands::plugin_set_name(bool p_no_undo,SoundPlugin *p_plugi
 	return ret;
 	
 }
+
+CommandFunc* EditorCommands::plugin_set_preset_file(bool p_no_undo,SoundPlugin *p_plugin,String p_file) {
+	
+	CommandFunc *ret=NULL;
+		
+	if (!p_no_undo) {
+		
+
+		ret=Command2(this,&EditorCommands::plugin_set_preset_file,p_plugin,p_plugin->get_current_file());
+		
+	}
+	
+	p_plugin->set_current_file( p_file );
+	
+	return ret;
+}
+
+
+CommandFunc* EditorCommands::plugin_set_preset_file_reference(bool p_no_undo,SoundPlugin *p_plugin,bool p_reference) {
+	
+	CommandFunc *ret=NULL;
+		
+	if (!p_no_undo) {
+		
+
+		ret=Command2(this,&EditorCommands::plugin_set_preset_file_reference,p_plugin,p_plugin->is_current_file_referenced());
+		
+	}
+	
+	p_plugin->set_current_file_referenced( p_reference );
+	d->ui_update_notify->rack_repaint();
+	
+	return ret;
+	
+}
+
 CommandFunc* EditorCommands::track_plugin_add(bool p_no_undo,Track *p_track,Track::PluginInsertData p_data) {
 	
 	

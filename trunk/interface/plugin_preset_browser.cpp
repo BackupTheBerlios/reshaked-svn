@@ -82,6 +82,7 @@ void PluginPresetBrowser::open_slot() {
 	accept();
 	
 }
+
 void PluginPresetBrowser::save_as_slot() {
 	
 	QString folder_alone=working_path;
@@ -357,7 +358,10 @@ void PluginPresetBrowser::ensure_dir_exists() {
 	dir_path=plugin_dir.path();
 	
 }
-
+bool PluginPresetBrowser::is_reference() {
+	
+	return reference_check?reference_check->isChecked():false;
+}
 PluginPresetBrowser::Action PluginPresetBrowser::get_action() {
 	
 	return action;
@@ -370,7 +374,7 @@ QString PluginPresetBrowser::get_file() {
 
 
 
-void PluginPresetBrowser::init(QString p_dir,QString p_current) {
+void PluginPresetBrowser::init(QString p_dir,QString p_current,bool p_can_ref) {
 	
 	
 	setLayout( new QHBoxLayout(this) );
@@ -388,6 +392,15 @@ void PluginPresetBrowser::init(QString p_dir,QString p_current) {
 	save->setEnabled(false);
 	QObject::connect(save,SIGNAL(clicked()),this,SLOT(save_slot()));
 	save_as= new QPushButton(GET_QPIXMAP(ICON_FILE_SAVEAS),"Save As",vb);
+	if (p_can_ref) {
+		
+		reference_check = new QCheckBox("Reference",vb);
+		
+	} else {
+		
+		reference_check = NULL;
+	}
+	
 	(new QFrame(vb))->setFixedHeight(16);
 	QObject::connect(save_as,SIGNAL(clicked()),this,SLOT(save_as_slot()));
 	new_subfolder= new QPushButton(GET_QPIXMAP(ICON_FILE_FOLDER_NEW),"New SubFolder",vb);
@@ -397,6 +410,8 @@ void PluginPresetBrowser::init(QString p_dir,QString p_current) {
 	(new QFrame(vb))->setFixedHeight(16);
 	remove = new QPushButton("Remove",vb);
 	QObject::connect(remove,SIGNAL(clicked()),this,SLOT(remove_slot()));
+	
+	
 	(new QFrame(vb))->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
 	
 	cancel = new QPushButton("Cancel",vb);
@@ -435,7 +450,12 @@ PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin
 	QString cfile_dir=get_dir_from_path(QStrify(p_plugin->get_current_file()));
 	QString cfile_file=QStrify(p_plugin->get_current_preset_name());
 	
-	init(QStrify(p_plugin->get_info()->unique_ID),cfile_dir+"/"+cfile_file);
+	init(QStrify(p_plugin->get_info()->unique_ID),cfile_dir+"/"+cfile_file,true);
+	
+	if (p_plugin->is_current_file_referenced() && QFile::exists(QStrify(p_plugin->get_current_file()))) {
+		
+		reference_check->setChecked(true);
+	}
 	
 	if (p_plugin->get_info()->xpm_preview) {
 		
@@ -448,7 +468,7 @@ PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,SoundPlugin *p_plugin
 
 PluginPresetBrowser::PluginPresetBrowser(QWidget *p_parent,QString p_current_file) :QDialog (p_parent){
 	
-	init("racks",p_current_file);
+	init("racks",p_current_file,false);
 	setWindowTitle("Rack Presets");
 
 	

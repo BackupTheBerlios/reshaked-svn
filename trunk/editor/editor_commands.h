@@ -76,10 +76,14 @@ friend class Editor;
 	CommandFunc* track_plugin_move_left(bool p_no_undo,Track *p_track,int p_which);
 	CommandFunc* track_plugin_move_right(bool p_no_undo,Track *p_track,int p_which);
 	
+
 	CommandFunc* track_mute(bool p_no_undo,Track *p_track,bool p_mute);
 		
 	CommandFunc* plugin_set_skip(bool p_no_undo,SoundPlugin *p_plugin,bool p_skip);
 	CommandFunc* plugin_set_name(bool p_no_undo,SoundPlugin *p_plugin,String p_name);
+	
+	CommandFunc* plugin_set_preset_file(bool p_no_undo,SoundPlugin *p_plugin,String p_file);
+	CommandFunc* plugin_set_preset_file_reference(bool p_no_undo,SoundPlugin *p_plugin,bool p_reference);
 	
 	CommandFunc* automation_initial_value_changed(bool p_no_undo,Automation *p_auto,double p_to_val);
 	CommandFunc* property_value_changed(bool p_no_undo,Property *p_property,double p_old_val,double p_to_val);
@@ -88,6 +92,9 @@ friend class Editor;
 	CommandFunc* bar_length_remove(bool p_no_undo,int p_at_beat);
 
 	CommandFunc* plugin_load_preset(bool p_no_undo,SoundPlugin *p_plugin, TreeLoader *p_old_preset, TreeLoader *p_new_preset,Track *p_track);
+	
+	CommandFunc* set(bool p_no_undo,Track_Pattern *p_pattern);
+	
 	
 };
 

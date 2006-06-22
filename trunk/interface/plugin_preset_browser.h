@@ -19,6 +19,7 @@
 #include <Qt/qdialog.h>
 #include "engine/sound_plugin.h"
 #include <Qt/qdir.h>
+#include <Qt/qcheckbox.h>
 
 
 
@@ -57,12 +58,14 @@ private:
 	QTreeWidget *tree;
 	
 	QPushButton *open;
+	QPushButton *reference;
 	QPushButton *save;	
 	QPushButton *save_as;	
 	QPushButton *new_subfolder;	
 	QPushButton *cancel;	
 	QPushButton *remove;	
 	QPushButton *rename;	
+	QCheckBox *reference_check;
 	
 	QString dir_path;
 	QString dir;
@@ -77,7 +80,7 @@ private:
 	void rebuild_tree();
 	void ensure_dir_exists();
 	
-	void init(QString p_dir,QString p_current);
+	void init(QString p_dir,QString p_current,bool p_can_ref);
 private slots:
 		
 	void open_slot();
@@ -94,6 +97,7 @@ public:
 	
 	Action get_action();
 	QString get_file();
+	bool is_reference();
 	/**
 	 * Build a preset browser for plugins
 	 * @param p_parent Parent Widget

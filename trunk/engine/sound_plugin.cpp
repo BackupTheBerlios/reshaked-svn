@@ -84,6 +84,16 @@ bool SoundPlugin::skips_processing() {
 }
 
 
+void SoundPlugin::set_current_file_referenced(bool p_referenced) {
+	
+	_reference_file=p_referenced;
+}
+bool SoundPlugin::is_current_file_referenced() {
+	
+	return _reference_file;
+}
+
+
 /* Internal UI Methods */
 void SoundPlugin::show_internal_UI() {
 	
@@ -166,6 +176,7 @@ SoundPlugin::SoundPlugin(const SoundPluginInfo *p_info,int p_channels) {
 	_skip_processing=false;
 	_duplicate=0;
 	_metadata=NULL;
+	_reference_file=false;	
 }
 
 

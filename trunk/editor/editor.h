@@ -255,7 +255,9 @@ public:
 	
 	/** PRESETS */
 	
-	TreeLoaderDisk::ErrorReading load_plugin_preset(SoundPlugin *p_plugin,String p_filename,Track *p_track,String p_set_preset_name="");
+	void set_plugin_preset_file(SoundPlugin *p_plugin,String p_filename,bool p_reference);
+			
+	TreeLoaderDisk::ErrorReading load_plugin_preset(SoundPlugin *p_plugin,String p_filename,Track *p_track,String p_set_preset_name="",bool p_reference=false);
 	TreeLoaderDisk::ErrorReading load_track_preset(Track *p_track,String p_filename);
 	
 	

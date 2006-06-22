@@ -21,9 +21,18 @@ namespace ReShaked {
 
 
 
+void Editor::set_plugin_preset_file(SoundPlugin *p_plugin,String p_filename,bool p_reference) {
+	
+	d->undo_stream.begin("Set Preset File");
+	
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::plugin_set_preset_file,p_plugin,p_filename));
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::plugin_set_preset_file_reference,p_plugin,p_reference));
+	
+	d->undo_stream.end();
+	
+}
 
-
-TreeLoaderDisk::ErrorReading Editor::load_plugin_preset(SoundPlugin *p_plugin,String p_filename,Track *p_track,String p_set_preset_name) {
+TreeLoaderDisk::ErrorReading Editor::load_plugin_preset(SoundPlugin *p_plugin,String p_filename,Track *p_track,String p_set_preset_name,bool p_reference) {
 	
 	
 	TreeLoaderDisk tld("RESHAKED_PLUGIN_"+p_plugin->get_info()->unique_ID,0,0);
@@ -54,10 +63,14 @@ TreeLoaderDisk::ErrorReading Editor::load_plugin_preset(SoundPlugin *p_plugin,St
 	if (p_set_preset_name!="")
 		d->undo_stream.add_command(Command2(&commands,&EditorCommands::plugin_set_name,p_plugin,p_set_preset_name));
 
-		
+	
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::plugin_set_preset_file,p_plugin,p_filename));
+	d->undo_stream.add_command(Command2(&commands,&EditorCommands::plugin_set_preset_file_reference,p_plugin,p_reference));
+	
 	
 	d->undo_stream.end();
 	d->ui_update_notify->notify_action( d->undo_stream.get_current_action_text() );
+	
 	
 	p_plugin->set_current_file(p_filename);
 
