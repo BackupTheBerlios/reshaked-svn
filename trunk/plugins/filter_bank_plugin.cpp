@@ -160,6 +160,8 @@ void FilterBankPlugin::process(int p_frames) {
 		float cutoff=f.cutoff.get();
 		
 		cutoff*=powf( 2 , cutoff_offset.get() );
+		if (cutoff<50)
+			cutoff=50; // shitty things happen with very low cutoffs
 		
 		filter.set_cutoff( cutoff );
 		filter.set_mode( current_mode );

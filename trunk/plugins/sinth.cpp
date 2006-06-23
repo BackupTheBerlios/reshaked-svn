@@ -688,7 +688,7 @@ Sinth::Sinth(const SoundPluginInfo *p_info,int p_channels) : SoundPlugin(p_info,
 	
 	f.type.set_all("filter_type","Filter Type",filt_mode);
 	f.type.set_write_only(true);
-	f.cutoff.set_all( 8000, 20, 16000, 20, 1, Property::DISPLAY_SLIDER, "filter_cutoff","Filter Cutoff","hz");
+	f.cutoff.set_all( 8000, 50, 16000, 20, 1, Property::DISPLAY_SLIDER, "filter_cutoff","Filter Cutoff","hz");
 	f.cutoff.set_quad_coeff( true );
 	
 	f.resonance.set_all( 1, 0, 3, 1, 0.01, Property::DISPLAY_SLIDER, "filter_resonance","Filter Resonance");
