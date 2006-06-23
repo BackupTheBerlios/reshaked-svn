@@ -114,7 +114,8 @@ float OscillatorEditor::get_wave_value(float p_phase,int p_wave_type) {
 	
 	
 	float param=(float)wave_parameter->value()/1000.0;
-	
+	float phase_mod=wave_phase->value()/1000.0;
+	p_phase=fmodf(p_phase+phase_mod,1.0);
 	
 	switch (p_wave_type) {
 		
@@ -261,10 +262,16 @@ OscillatorEditor::OscillatorEditor(QWidget *p_parent) : QDialog(p_parent) {
 	wave_parameter = new QSlider(Qt::Horizontal);
 	wave_parameter->setRange(0,1000);
 	wave_parameter->setValue(500);
-	
-	QObject::connect(wave_parameter,SIGNAL(valueChanged(int)),this,SLOT(wave_changed_slot( int )));
-	
 	param_vbl->addWidget(wave_parameter);
+	
+	param_vbl->addWidget(new QLabel("Phase:"));
+	wave_phase = new QSlider(Qt::Horizontal);
+	wave_phase->setRange(0,1000);
+	wave_phase->setValue(0);
+	
+	QObject::connect(wave_phase,SIGNAL(valueChanged(int)),this,SLOT(wave_changed_slot( int )));
+	param_vbl->addWidget(wave_phase);
+	
 	//std::vector<QSlider*> harmonics;
 	
 	ShapeEditor::Skin se_sk;

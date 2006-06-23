@@ -60,6 +60,7 @@ class OscillatorEditor : public QDialog {
 	
 	QComboBox *wave_types;
 	QSlider *wave_parameter;
+	QSlider *wave_phase;
 	ShapeEditor *shape_editor;
 	
 	std::vector<QSlider*> harmonic_array;

@@ -29,6 +29,7 @@ QString InfoEditor::get_author() {
 }
 QString InfoEditor::get_notes() {
 	
+	
 	return notes->toPlainText();
 	
 }
@@ -76,7 +77,8 @@ InfoEditor::InfoEditor(QWidget *p_parent,Song *p_song) : QDialog(p_parent)
 	layout()->addWidget(hb);
 	(new QFrame(hb))->setFixedWidth(20);
 	
-	notes = new QTextEdit(QStrify(p_song->get_info_notes() ), hb );
+	notes = new QTextEdit( hb );
+	notes->insertPlainText(QStrify(p_song->get_info_notes() ));
 	
 	setMinimumSize(500,300);
 	

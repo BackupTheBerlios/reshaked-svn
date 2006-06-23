@@ -12,7 +12,7 @@
 #include "loader.h"
 #include "engine/sound_plugin_list.h"
 #include "engine/sound_driver_list.h"
-
+#include "tree_loader_disk.h"
 namespace ReShaked {
 
 
@@ -184,8 +184,23 @@ void Loader::load_track_rack(Track *p_track,TreeLoader *p_loader) {
 		p->set_duplicate( p_loader->get_int("duplicate") );
 		p->set_current_preset_name( p_loader->get_string("preset_name") );
 		
+		if (p_loader->get_int("referenced")) {
 		
-		{ //plugin data
+			TreeLoaderDisk tld("RESHAKED_PLUGIN_"+p->get_info()->unique_ID,0,0);
+			
+			TreeLoaderDisk::ErrorReading error=tld.open_file( p_loader->get_string( "reference_file" ) );
+			if (!error) {
+
+				p->load( &tld );
+				p->set_current_file_referenced( true );
+				p->set_current_file( p_loader->get_string( "reference_file" ) );
+				printf("REF!\n");
+			}
+			
+			tld.close_file();
+
+			
+		} else { //plugin data
 			p_loader->enter("data");
 			
 			p->load(p_loader); //plugin handles its own loading

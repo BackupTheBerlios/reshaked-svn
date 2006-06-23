@@ -333,7 +333,7 @@ void SoundPluginRack::update_rack() {
 	rack_box->show();
 	
 	
-	
+	repaint();
 	update_scrollbar();
 }
 

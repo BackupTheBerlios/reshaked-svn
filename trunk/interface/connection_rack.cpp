@@ -331,6 +331,9 @@ void ConnectionRack::paint_node(QPainter&p,int p_offset,AudioNode *p_node) {
 		
 		p_offset+=get_plug_size().width();
 	}
+	
+	y_offset=skin()->get_top();
+	
 	for (int i=0;i<p_node->get_output_plug_count();i++) {
 		
 		if (i>0) {
@@ -693,8 +696,12 @@ void ConnectionRack::paintEvent(QPaintEvent *pe) {
 
 void ConnectionRack::set_audio_graph(AudioGraph *p_graph) {
 	
+	if (graph!=p_graph) 
+		view_offset=0;
+	
 	graph=p_graph;
 	update_rack();
+	update_scrollbar();
 	
 }
 

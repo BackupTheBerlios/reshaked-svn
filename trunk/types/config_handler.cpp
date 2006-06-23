@@ -53,6 +53,7 @@ void ConfigHandler::save_subtree(String p_path,FILE *f, TreeLoader *p_loader) {
 				field+="(string)"+name+"=";
 				String validated=p_loader->get_string( name );
 				validated.replace("\n","\\n");
+				validated.replace(";","[scln]");
 				field+=validated;
 					
 					
@@ -231,6 +232,7 @@ void ConfigHandler::add_item(TreeSaver *p_saver,String p_section,String p_key,St
 	} else 	if (var_type=="string") {
 		
 		p_value.replace("\\n","\n"); //return to de-validation
+		p_value.replace("[scln]",";"); //return to de-validation
 		p_saver->add_string( key_name, p_value);
 	} else if (var_type=="int_array") {
 		

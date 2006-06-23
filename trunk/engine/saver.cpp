@@ -39,7 +39,7 @@ void Saver::save_graph(AudioGraph *p_graph,const std::vector<int> &p_node_remap,
 }
 
 
-void Saver::save_track_rack(Track *p_track,TreeSaver *p_saver) {
+void Saver::save_track_rack(Track *p_track,TreeSaver *p_saver,bool p_self_contained) {
 	
 	
 	/** PLUGIN GRAPH */
@@ -94,7 +94,15 @@ void Saver::save_track_rack(Track *p_track,TreeSaver *p_saver) {
 		else
 			p_saver->add_int("channels_created",-1);
 		
-		{ //plugin data
+		if (p->is_current_file_referenced() && !p_self_contained) {
+			//plugin is just referencing a preset on disk
+			p_saver->add_int("referenced",1);
+			p_saver->add_string("reference_file",p->get_current_file());
+			
+		} else 	{ //plugin data
+			//plugin saves self contained
+			p_saver->add_int("referenced",0);
+
 			p_saver->enter("data");
 			
 			p->save(p_saver); //plugin handles its own saving
@@ -185,7 +193,7 @@ void Saver::save_track(Track *p_track,TreeSaver *p_saver) {
 	
 	/** SAVE RACK */
 	p_saver->enter("rack");
-	save_track_rack(p_track,p_saver);
+	save_track_rack(p_track,p_saver,self_contained);
 	p_saver->exit(); //rack
 	
 	/** AUTOMATIONS */
@@ -322,8 +330,9 @@ void Saver::save_pattern_block(Track_Pattern::PatternBlock *p_block,TreeSaver *p
 }
 
 
-void Saver::save_song(Song *p_song,TreeSaver *p_saver) {
+void Saver::save_song(Song *p_song,TreeSaver *p_saver,bool p_self_contained) {
 	
+	self_contained=p_self_contained;
 	/* Stop the song, so properties are restored to their initial values 
 	If the song isnt stopped, all properties/controls/etc wouldnt be in their proper value */
 	p_song->stop(); 

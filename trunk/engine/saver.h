@@ -36,13 +36,15 @@ class Saver{
 	void save_automation_block(Automation::AutomationBlock *p_block,TreeSaver *p_saver);
 	void save_pattern_block(Track_Pattern::PatternBlock *p_block,TreeSaver *p_saver);
 	
+	bool self_contained;
+	
 public:
 	
 	
 	static void save_graph(AudioGraph *p_graph,const std::vector<int> &p_node_remap,TreeSaver *p_saver);
-	static void save_track_rack(Track *p_track,TreeSaver *p_saver);
+	static void save_track_rack(Track *p_track,TreeSaver *p_saver,bool p_self_contained=false);
 	
-	void save_song(Song *p_song,TreeSaver *p_saver);
+	void save_song(Song *p_song,TreeSaver *p_saver,bool p_self_contained=false);
 	Saver();
 	~Saver();
 

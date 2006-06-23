@@ -109,7 +109,10 @@ float Automation::get_tick_val(Tick p_tick) {
 		
 		// adjust block and tick
 		block=prev_block;
-		p_tick=(p_tick - get_block_pos( block )) % get_block( block )->get_length();
+		Tick block_pos=get_block_pos( block );
+		p_tick=(p_tick - block_pos) % get_block( block )->get_length();
+		p_tick+=block_pos;
+		
 	}
 	
 	AutomationBlock * b=(AutomationBlock*)BlockList::get_block(block); //cant use dynamic cast here, too slow, sorry there are other checks :(
