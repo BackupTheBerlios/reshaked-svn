@@ -15,6 +15,7 @@
 #include "engine/sound_plugin.h"
 #include "dsp/midi_synth.h"
 #include "plugins/chionic_params.h"
+#include "plugins/chionic_voice.h"
 
 namespace ReShaked {
 
@@ -27,8 +28,9 @@ class Chionic : public SoundPlugin {
 	AudioPlug *output_plug;
 	
 	ChionicParams params;
+	ChionicVoiceBuffers voice_buffers;
 	
-//	MidiSynth *midi_synth;
+	MidiSynth *midi_synth;
 	
 	void reset();		
 	

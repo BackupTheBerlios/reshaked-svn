@@ -72,19 +72,25 @@ AudioPlug *Chionic::get_output_plug(int p_index)  {
 /* Port Info */
 int Chionic::get_port_count()  {
 	
-	return 0;
+	return midi_synth->get_input_property_count()+midi_synth->get_output_property_count();
+
 	
 }
 Property& Chionic::get_port(int p_index)  {
 	
-	static LocalProperty none;
+	if (p_index<midi_synth->get_input_property_count())
+		return *midi_synth->get_input_property(p_index);
+	else 
+		return *midi_synth->get_output_property(p_index-midi_synth->get_input_property_count());
 	
-	return none;
 }
 
 SoundPlugin::PortType Chionic::get_port_type(int p_index)  {
 	
-	return TYPE_WRITE;
+	if (p_index<midi_synth->get_input_property_count())
+		return TYPE_WRITE;
+	else 
+		return TYPE_READ; 
 	
 }
 
@@ -92,18 +98,70 @@ SoundPlugin::PortType Chionic::get_port_type(int p_index)  {
 /* Setting up */
 void Chionic::set_mixing_rate(float p_mixing_rate)  {
 	
-	
+	midi_synth->set_mix_rate( p_mixing_rate );
 	
 }
 
 void Chionic::reset() {
 	
-	
+	midi_synth->reset();	
 }
 
 /* Processing */
 void Chionic::process(int p_frames)  {
 	
+	const EventBuffer *ebuff=get_event_buffer();
+	
+	for (int i=0;i<ebuff->get_event_count();i++) {
+		
+		const Event *e=ebuff->get_event(i);
+				
+		if (e->type==Event::TYPE_MIDI) {
+			
+			const EventMidi &em=e->param.midi;
+			switch (em.midi_type) {
+				
+				case EventMidi::MIDI_NOTE_ON: {
+					
+					
+					midi_synth->control_note_on( em.data.note.note, em.data.note.velocity );
+					/*
+					printf("NOTE ON %i,%i\n",em.data.note.note,em.data.note.velocity);
+					ofs=0;
+					freq=440.0*powf(2.0,((float)em.data.note.note-69.0)/12.0);
+					amp=DEFAULT_AMP*(float)em.data.note.velocity/127.0;
+					float fade=release.get();
+					float frames_for_fade=(float)mixing_rate*fade;
+					amp_decr=amp/frames_for_fade;
+					sust=true;*/
+									
+						
+				} break;
+				case EventMidi::MIDI_NOTE_OFF: {
+					
+					midi_synth->control_note_off( em.data.note.note );
+					/*					
+					printf("NOTE OFF %i\n",em.data.note.note);
+					
+					sust=false;
+					
+					*/
+				} break;
+				default: {} //dont annoy, gcc
+			}
+		}
+	}
+	
+	
+	
+	output_plug->get_buffer()->clear( p_frames );
+	
+	for (int i=0;i<output_plug->get_buffer()->get_channels();i++) {
+		
+		midi_synth->set_buffer( i, output_plug->get_buffer()->get_buffer( i ) );
+	}
+	
+	midi_synth->process( p_frames);
 	
 	
 }
@@ -116,6 +174,17 @@ Chionic::Chionic(const SoundPluginInfo *p_info,int p_channels) : SoundPlugin(p_i
 	
 	input_plug = new AudioPlug(p_channels,AudioPlug::TYPE_INPUT,this);
 	output_plug = new AudioPlug(p_channels,AudioPlug::TYPE_OUTPUT,this);
+	
+		
+	std::vector<MidiSynth::Voice*> voices;
+	for (int i=0;i<32;i++) { //32 voices!
+		
+		voices.push_back( new ChionicVoice(&params,&voice_buffers) );
+		
+	}
+	
+	midi_synth = new MidiSynth(p_channels,voices);
+
 	
 	
 }

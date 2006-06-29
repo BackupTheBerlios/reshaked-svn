@@ -21,6 +21,11 @@
 
 namespace ReShaked {
 
+class EnvelopeProcess;
+
+
+
+
 struct Envelope {
 
 	enum {
@@ -35,7 +40,7 @@ struct Envelope {
 	};
 	
 private:
-
+friend class EnvelopeProcess;
 	InterpolationType interp_type;
 	
 	struct Node {
@@ -131,6 +136,71 @@ public:
 
 	Envelope();
 
+};
+
+
+class EnvelopeProcess {
+	
+	Envelope *envelope;
+	
+	double pos;
+	bool sustain;
+public:	
+	
+	void set_envelope(Envelope *p_envelope) { envelope=p_envelope; }
+
+	inline void process(double p_time) {
+	
+		pos+=p_time;
+	
+		if (!envelope->on)
+			return;
+		
+		if (sustain && envelope->sustain_loop_on) {
+		
+			
+			ERR_FAIL_INDEX(envelope->sustain_loop_end_node,envelope->node.size());
+			ERR_FAIL_INDEX(envelope->sustain_loop_begin_node,envelope->node.size());
+		
+		
+			double end_pos=(double)envelope->node[envelope->sustain_loop_end_node].offset;
+			if (pos>end_pos) {
+		
+				pos=envelope->node[envelope->sustain_loop_begin_node].offset+(pos-end_pos);
+			}
+		
+		} 
+		
+		if (!sustain && envelope->loop_on) {
+		
+			ERR_FAIL_INDEX(envelope->loop_end_node,envelope->node.size());
+			ERR_FAIL_INDEX(envelope->loop_begin_node,envelope->node.size());
+		
+		
+			double end_pos=(double)envelope->node[envelope->loop_end_node].offset;
+			if (pos>end_pos) {
+		
+				pos=envelope->node[envelope->loop_begin_node].offset+(pos-end_pos);
+			}
+		
+		
+		}
+		
+	
+	
+	}
+
+	inline float get() {
+	
+		return envelope->get_value_at_pos(pos);
+
+	}
+
+	inline bool is_active() { return envelope->on; }
+	void set_sustain(bool p_sustain) { sustain=p_sustain; }
+
+	void reset() { pos=0; sustain=false; }
+	EnvelopeProcess() { envelope=NULL; pos=0; sustain=false; }
 };
 
 }

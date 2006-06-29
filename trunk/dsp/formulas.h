@@ -17,6 +17,10 @@
 #include "typedefs.h"
 namespace ReShaked {
 
+static inline float note_to_freq(float p_note) {
+	
+	return 40.0*powf(2.0,(p_note-69.0)/12.0);	
+}
 
 static inline Tick get_swing_pos(Tick p_src_tick,int p_swing_base,double p_swing) {
 	

@@ -191,6 +191,9 @@ int AudioGraphProcess::process(int p_frames) {
 	
 	/**
 	 * Process the audio in the topologically solved graph 
+	 * The audio should flow by itself, except when many outputs
+	 * are connected to an input, in which case, they must be added
+	 * manually.
 	 */
 	
 	for (int i=0;i<(int)process_nodes.size();i++) {
