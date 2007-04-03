@@ -22,7 +22,7 @@ else:
 	env = Environment(CPPPATH=['#/globals','#gui','#.'],CPPFLAGS=['-DANSIC_LIBS_ENABLED'],ENV=os.environ);
 
 
-env.Append(LIBS=['interface','tracker','gui_drivers','gui_bundles','gui_widgets','gui_containers','gui_base','gui_string','gui_signals','fileio','drivers','player','song','mixer','globals']);
+env.Append(LIBS=['drivers','gui_drivers','gui_bundles','gui_widgets','gui_containers','gui_base','gui_string','gui_signals','editor','plugins','engine','song','dsp','types']);
 
 env.icon_obj=""
 
@@ -73,7 +73,7 @@ else:
 #	env['CXX']='g++-2.95'
 
 
-env.Append(LIBPATH=['#song','#mixer','#gui/base','#gui/drivers','#gui/signals','#gui/containers','#gui/string','#gui/widgets','#gui/bundles','#drivers','#fileio','#tracker','#globals','#player','#interface']);
+env.Append(LIBPATH=['#drivers','#gui/base','#gui/drivers','#gui/signals','#gui/containers','#gui/string','#gui/widgets','#gui/bundles','#editor','#plugins','#engine','#song','#dsp','#types']);
 
 
 if (not win32msvc):
@@ -90,8 +90,13 @@ env.bin_targets=[]
 Export('env');
 
 SConscript('gui/SCsub');
+SConscript('types/SCsub');
+SConscript('dsp/SCsub');
+SConscript('engine/SCsub');
+SConscript('editor/SCsub');
+SConscript('gui/SCsub');
+SConscript('drivers/SCsub');
 SConscript('program/SCsub');
-
 
 
 if env['prefix']:
