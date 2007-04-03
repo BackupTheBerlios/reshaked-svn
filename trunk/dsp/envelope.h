@@ -54,6 +54,8 @@ friend class EnvelopeProcess;
 	bool on;
 
 	bool loop_on;
+	
+	bool cubic;
 
 	int loop_begin_node;
 	int loop_end_node;
@@ -80,6 +82,8 @@ friend class EnvelopeProcess;
 public:
 
 
+	void set_cubic(bool p_cubic) { cubic=p_cubic; }
+	bool is_cubic() { return cubic; }
 
 //max and min height for nodes
 	void set_max_value(float p_max) { max_value=p_max; }
@@ -145,6 +149,8 @@ class EnvelopeProcess {
 	
 	double pos;
 	bool sustain;
+	
+	bool finished;		
 public:	
 	
 	void set_envelope(Envelope *p_envelope) { envelope=p_envelope; }
@@ -169,9 +175,7 @@ public:
 				pos=envelope->node[envelope->sustain_loop_begin_node].offset+(pos-end_pos);
 			}
 		
-		} 
-		
-		if (!sustain && envelope->loop_on) {
+		} else if (envelope->loop_on) {
 		
 			ERR_FAIL_INDEX(envelope->loop_end_node,envelope->node.size());
 			ERR_FAIL_INDEX(envelope->loop_begin_node,envelope->node.size());
@@ -184,9 +188,12 @@ public:
 			}
 		
 		
+		} else if (envelope->node.size() && pos>(float)envelope->node[envelope->node.size()-1].offset) {
+			
+			finished=true;
+			pos=(float)envelope->node[envelope->node.size()-1].offset;
+			
 		}
-		
-	
 	
 	}
 
@@ -198,9 +205,10 @@ public:
 
 	inline bool is_active() { return envelope->on; }
 	void set_sustain(bool p_sustain) { sustain=p_sustain; }
+	bool has_finished() { return finished; }
 
-	void reset() { pos=0; sustain=false; }
-	EnvelopeProcess() { envelope=NULL; pos=0; sustain=false; }
+	void reset() { pos=0; sustain=false; finished=false; }
+	EnvelopeProcess() { envelope=NULL; pos=0; sustain=false; finished=false; }
 };
 
 }

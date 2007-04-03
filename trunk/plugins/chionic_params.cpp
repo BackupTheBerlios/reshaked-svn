@@ -44,9 +44,10 @@ ChionicParams::ChionicParams() {
 		p.volume.velocity_range_begin.set_all(0,0,1,0,0.01,Property::DISPLAY_SLIDER,n+"vel_range_begin","Vel. Range Begin");
 		p.volume.velocity_range_end.set_all(1,0,1,1,0.01,Property::DISPLAY_SLIDER,n+"vel_range_end","Vel. Range End");
 		
-		p.volume.velocity_range_begin_level.set_all(1,0,1,1,0.01,Property::DISPLAY_SLIDER,n+"vel_range_begin_level","Vel. Range Begin");
+		p.volume.velocity_range_blend_expr.set_all(0,0,1,0,1,Property::DISPLAY_CHECKBOX,n+"vel_range_blend_expr","Vel. Range Blend Expression");
 		
-		p.volume.velocity_range_end_level.set_all(1,0,1,1,0.01,Property::DISPLAY_SLIDER,n+"vel_range_end_level","Vel. Range End");
+		p.volume.velocity_range_blend.set_all(0,0,1,0,0.01,Property::DISPLAY_SLIDER,n+"vel_range_blend","Vel. Range Blend");
+		
 		
 		p.volume.pitch_scale.set_all(0,-1.0,1.0,0,0.01,Property::DISPLAY_SLIDER,n+"volume_pitch_scale","Pitch Scaling");
 		
@@ -69,13 +70,13 @@ ChionicParams::ChionicParams() {
 		filter_types.push_back("Notch");
 		
 		p.filter.type.set_all(n+"filter_type","Type",filter_types,0);
-		p.filter.cutoff.set_all(1024,0,16000,1024,0.1,Property::DISPLAY_SLIDER,n+"filter_cutoff","Cutoff");
+		p.filter.cutoff.set_all(1024,50,16000,1024,0.1,Property::DISPLAY_SLIDER,n+"filter_cutoff","Cutoff");
 		p.filter.resonance.set_all(0,0,3,0,0.01,Property::DISPLAY_SLIDER,n+"filter_resonance","Resonance");
 		
-		p.filter.cutoff_velsens.set_all(0,-1.0,1.0,0,0.01,Property::DISPLAY_SLIDER,n+"filter_cutoff_velsens","VS Cut");
+		p.filter.cutoff_velsens.set_all(0,-10.0,10.0,0,0.01,Property::DISPLAY_SLIDER,n+"filter_cutoff_velsens","VS Cut","oct");
 		p.filter.resonance_velsens.set_all(0,-1.0,1.0,0,0.01,Property::DISPLAY_SLIDER,n+"filter_resonance_velsens","VS Reso");
-		p.filter.envelope_cutoff.set_max_value(256.0);
-		p.filter.envelope_cutoff.set_min_value(0.0);
+		p.filter.envelope_cutoff.set_max_value(128.0);
+		p.filter.envelope_cutoff.set_min_value(-128.0);
 		p.filter.envelope_cutoff.set_prefix("smt",1);
 		p.filter.lfo_cutoff.set_max_depth(128.0);
 		p.filter.lfo_cutoff.set_rate_unit_size(1000); //msecs
@@ -119,12 +120,19 @@ void ChionicParams::Layer::copy_from(Layer *p_from) {
 	
 }
 
-ChionicParams::~ChionicParams() {
+void ChionicParams::clear_sources() {
 	
 	for (int i=0;i<global.sources.size();i++) {
 		
 		global.sources[i].clear();
 	}
+	
+	global.sources.clear();
+	
+}
+ChionicParams::~ChionicParams() {
+	
+	clear_sources();
 }
 
 

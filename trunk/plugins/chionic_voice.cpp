@@ -38,15 +38,43 @@ void ChionicVoice::event(Event p_event) {
 				layer[i].env_pitch.reset();
 				layer[i].env_cutoff.reset();
 				layer[i].env_reso.reset();
-				layer[i].done=false;				
+				layer[i].env_vol.set_sustain(true);
+				layer[i].env_pan.set_sustain(true);
+				layer[i].env_depth.set_sustain(true);
+				layer[i].env_pitch.set_sustain(true);
+				layer[i].env_cutoff.set_sustain(true);
+				layer[i].env_reso.set_sustain(true);
+				
+				layer[i].done=false;		
+						
+				layer[i].filter_mode=params->layer[i].params.filter.type.get_current();
+				
+				for (int j=0;j<MAX_CHANS;j++) {
+					
+					layer[i].filter[j].ha1=0;
+					layer[i].filter[j].ha2=0;
+					layer[i].filter[j].hb1=0;
+					layer[i].filter[j].hb2=0;
+					layer[i].filter[j].old=Filter::Coeffs();
+				}
 			}
 
+			
 						
 		} break;
 		case NOTE_OFF: {
 			
-			done=true;
-			/* nothing */			
+			for (int i=0;i<ChionicParams::MAX_LAYERS;i++) {
+				
+				layer[i].env_vol.set_sustain(false);
+				layer[i].env_pan.set_sustain(false);
+				layer[i].env_depth.set_sustain(false);
+				layer[i].env_pitch.set_sustain(false);
+				layer[i].env_cutoff.set_sustain(false);
+				layer[i].env_reso.set_sustain(false);
+			}
+
+			
 		} break;
 		default: {}		
 		
@@ -143,10 +171,11 @@ inline bool ChionicVoice::process_layer_source(int p_layer,int p_source,float p_
 		
 		/* Dest Buffers */
 		int dst_chans=get_buffer_count();
-		
+		AudioBuffer &ab=buffers->voice[p_layer].buffer;
+
 		for (int i=0;i<dst_chans;i++) {
 			
-			rd.dst_buffers[i]=get_buffer(i);
+			rd.dst_buffers[i]=ab.get_buffer(i);
 		}
 		
 		/* Volumes */
@@ -225,19 +254,22 @@ inline void ChionicVoice::set_volumes_from_pan(float p_pan,float p_depth,float *
 
 inline void ChionicVoice::process_layer(int p_layer) {
 	
+	layer[p_layer].mixed=false;
 	
 	ChionicParams::Layer &l=params->layer[p_layer];
 	
 	if (l.modulation_mode==ChionicParams::Layer::MODE_OFF) {
 		layer[p_layer].done=true;
+		
 		return; //OFF
 	}
 	
+	buffers->voice[p_layer].buffer.clear(frames_to_mix);
 	
 	/* pre process ramped envelopes & LFOs, all but pitch */
 	
 	double env_process_time=(double)usecs_to_mix/1000.0; //envelopes are edited in msecs
-	unsigned long lfo_time=(unsigned long)(usecs_to_mix/1000);
+	unsigned long lfo_time=(unsigned long)(usecs/1000);
 	
 	layer[p_layer].env_vol.process(env_process_time);
 	layer[p_layer].env_pan.process(env_process_time);
@@ -313,12 +345,63 @@ inline void ChionicVoice::process_layer(int p_layer) {
 		return; //can't do much
 	
 
-	float gain=params->global.volume.send.get();
+	float gain=get_total_amplitude();
 	
-	{ /* Compute Gain */
+	{ /** VOLUME & GAIN **/
+		
+		gain*=params->global.volume.send.get();
 		gain*=l.params.volume.send.get();
-		gain*=layer[p_layer].env_vol.get();
+		if (layer[p_layer].env_vol.is_active())
+			gain*=layer[p_layer].env_vol.get();
 		gain*=powf( 2.0, l.params.volume.lfo.get_value( lfo_time )*4.0 );
+		gain*=get_volume_scale(note,l.params.volume.pitch_scale.get());
+		
+		/* Range */
+		
+		float velocity=(float)get_velocity()/127.0;
+		float expression=get_expression();
+		
+		float range_src=(l.params.volume.velocity_range_blend_expr.get()>0.1)?(velocity*expression):velocity;
+		
+		float range_modifier=1.0;
+		
+		float range_beg=l.params.volume.velocity_range_begin.get();
+		float range_end=l.params.volume.velocity_range_end.get();
+		float range_blend=l.params.volume.velocity_range_blend.get();
+		
+		if (range_beg>range_end)
+			SWAP(range_beg,range_end);
+		
+		if (range_src<range_beg) {
+			
+			float blend_from=range_beg-range_blend;
+			
+			if (range_src<=blend_from) {
+				
+				range_modifier=0;
+			} else {
+					
+				range_modifier=(range_src-blend_from)/(range_beg-blend_from);
+			}
+			
+		} else if (range_src>range_end) {
+			
+			
+			float blend_to=range_end+range_blend;
+			
+			if (range_src>=blend_to) {
+				
+				range_modifier=0;
+			} else {
+					
+				range_modifier=1.0-(range_src-range_end)/(blend_to-range_end);
+			}
+			
+		}
+		
+		gain*=range_modifier;
+		
+		//printf("rmod: %f, scale %f, lfo %f, send %f, global send, %f, total amp %f\n",range_modifier,get_volume_scale(note,l.params.volume.pitch_scale.get()),powf( 2.0, l.params.volume.lfo.get_value( lfo_time )*4.0 ),l.params.volume.send.get(),params->global.volume.send.get(),get_total_amplitude());
 	}
 	
 	
@@ -328,10 +411,12 @@ inline void ChionicVoice::process_layer(int p_layer) {
 	{ /** PAN && DEPTH **/
 
 		
-		pan+=l.params.pan.pos.get();
-		depth+=l.params.pan.depth.get();
-		pan+=layer[p_layer].env_pan.get()/2.0;
-		depth+=layer[p_layer].env_depth.get()/2.0;
+		pan+=l.params.pan.pos.get()-0.5;
+		depth+=l.params.pan.depth.get()-0.5;
+		if (layer[p_layer].env_pan.is_active())
+			pan+=layer[p_layer].env_pan.get()/2.0;
+		if (layer[p_layer].env_depth.is_active())
+			depth+=layer[p_layer].env_depth.get()/2.0;
 		pan+=l.params.pan.lfo.get_value( lfo_time )/2.0;
 		depth+=l.params.pan.lfo_depth.get_value( lfo_time )/2.0;
 		
@@ -368,13 +453,163 @@ inline void ChionicVoice::process_layer(int p_layer) {
 	if (src_above>=0 && process_layer_source( p_layer, src_above, note_above, adjust_above, blend_coeff ) )
 		done_above=true;
 	
+	
+	/* modulate from sources (ADD & RING)*/
+	
+	if (l.modulation_mode==ChionicParams::Layer::MODE_ON_ADD || l.modulation_mode==ChionicParams::Layer::MODE_RING) {
+		
+		const std::vector<int> &sources= params->global.modulation_source[p_layer].read_from;
+		
+		for (int i=0;i<sources.size();i++) {
+			
+			int src_idx=sources[i];
+			ERR_CONTINUE(src_idx<0);
+			
+			AudioBuffer *src_ab=(src_idx>=ChionicParams::MAX_LAYERS)?buffers->input:&buffers->voice[src_idx].buffer;
+			
+			AudioBuffer *dst_ab=&buffers->voice[p_layer].buffer;
+			
+			ERR_CONTINUE(dst_ab==src_ab);
+			ERR_CONTINUE(dst_ab->get_channels()!=src_ab->get_channels());
+			
+						
+			if (l.modulation_mode==ChionicParams::Layer::MODE_ON_ADD) {
+				
+				dst_ab->add_from( src_ab, frames_to_mix ); 
+			} else {
+				
+				dst_ab->mult_from( src_ab, frames_to_mix ); 
+				
+			}
+		}
+	}
+	
+	/* FILTER */	
+	
+	if (layer[p_layer].filter_mode>0) {
+		
+		/* SETUP CUTOFF */		
+		float cutoff=l.params.filter.cutoff.get();
+		
+		
+		float env_lfo_cutoff_semitones=l.params.filter.lfo_cutoff.get_value( lfo_time );
+				
+		if (layer[p_layer].env_cutoff.is_active())
+			env_lfo_cutoff_semitones+=layer[p_layer].env_cutoff.get();
+		
+		//freq tracking from the middle C (60)
+		env_lfo_cutoff_semitones+=(note-60)*l.params.filter.freq_tracking.get();
+		//velocity sens (translate from octaves to semitones)
+		env_lfo_cutoff_semitones+=12.0*l.params.filter.cutoff_velsens.get()*(get_velocity()/127.0);
+		
+		cutoff*=pow(2,env_lfo_cutoff_semitones/12.0);
+		
+		if (cutoff<l.params.filter.cutoff.get_min())
+			cutoff=l.params.filter.cutoff.get_min();
+		
+		if (cutoff>l.params.filter.cutoff.get_max())
+			cutoff=l.params.filter.cutoff.get_max();
+		
+		float resonance=l.params.filter.resonance.get();
+		
+		if (layer[p_layer].env_reso.is_active())
+			resonance+=layer[p_layer].env_reso.get();
+		
+		resonance+=l.params.filter.lfo_resonance.get_value( lfo_time );
+		resonance+=2.0*l.params.filter.resonance_velsens.get()*(get_velocity()/127.0);
+		
+		if (resonance<=0)
+			resonance=0.0001;
+		if (resonance>3)
+			resonance=3;
+		
+		AudioBuffer *ab=&buffers->voice[p_layer].buffer;
+		for (int i=0;i<ab->get_channels();i++) {
+				
+			Filter f;
+			
+			switch(layer[p_layer].filter_mode) {
+				
+				case 1: f.set_mode( Filter::LOWPASS ); break;
+				case 2: f.set_mode( Filter::BANDPASS ); break;
+				case 3: f.set_mode( Filter::HIGHPASS ); break;
+				case 4: f.set_mode( Filter::NOTCH ); break;	
+			}
+			
+			f.set_cutoff( cutoff );
+			f.set_resonance( resonance );
+			f.set_sampling_rate( mix_rate );
+			
+			Filter::Coeffs c,c_inc;
+			
+			f.prepare_coefficients( &c );
+			
+			Layer::FilterH &fh=layer[p_layer].filter[i];
+			
+			float *buff=ab->get_buffer( i );
+			
+			if (c==fh.old) { //no change, run normally
+				
+				for (int j=0;j<frames_to_mix;j++) {
+				
+					float pre=buff[j];
+					buff[j] = (buff[j] * c.b0 + fh.hb1 * c.b1  + fh.hb2 * c.b2 + fh.ha1 * c.a1 + fh.ha2 * c.a2); 	
+					fh.ha2=fh.ha1;                                                             		
+					fh.hb2=fh.hb1;                                                             		
+					fh.hb1=pre;
+					fh.ha1=buff[j];
+					
+				}
+			} else { //changed, interpolate filter to avoid clickery
+				
+				c_inc.a1=(c.a1-fh.old.a1)/(float)frames_to_mix;
+				c_inc.a2=(c.a2-fh.old.a2)/(float)frames_to_mix;
+				c_inc.b1=(c.b1-fh.old.b1)/(float)frames_to_mix;
+				c_inc.b2=(c.b2-fh.old.b2)/(float)frames_to_mix;
+				c_inc.b0=(c.b0-fh.old.b0)/(float)frames_to_mix;
+				
+				c=fh.old;				
+				
+				for (int j=0;j<frames_to_mix;j++) {
+				
+					float pre=buff[j];
+					buff[j] = (buff[j] * c.b0 + fh.hb1 * c.b1  + fh.hb2 * c.b2 + fh.ha1 * c.a1 + fh.ha2 * c.a2); 	
+					fh.ha2=fh.ha1;                                                             		
+					fh.hb2=fh.hb1;                                                             		
+					fh.hb1=pre;
+					fh.ha1=buff[j];
+					
+					c.a1+=c_inc.a1;
+					c.a2+=c_inc.a2;
+					c.b0+=c_inc.b0;
+					c.b1+=c_inc.b1;
+					c.b2+=c_inc.b2;
+					
+					
+				}
+				
+			}
+			
+			fh.old=c;
+			
+		}
+		
+	}
+	
+	
 	if (done_above && done_below)
 		layer[p_layer].done=true;
 	
+	//check note finished because of envelope finished
+	if (layer[p_layer].env_vol.is_active() && layer[p_layer].env_vol.has_finished() && FLOATS_EQ(layer[p_layer].env_vol.get(),0))
+		layer[p_layer].done=true;
+		
 	for (int i=0;i<MAX_CHANS;i++) {
 		
 		layer[p_layer].current_volumes[i]=new_volumes[i];
 	}	
+	
+	layer[p_layer].mixed=true;
 }
 
 void ChionicVoice::process(int p_frames) {
@@ -388,17 +623,50 @@ void ChionicVoice::process(int p_frames) {
 	usecs_to_mix=lrint(time_to_mix*1000000.0);
 	usecs+=usecs_to_mix;
 	
-	bool all_done=true;
-	
+	/* process layers */
 	for (int i=0;i<ChionicParams::MAX_LAYERS;i++) {
 		
 		
 		process_layer( i );
-		if (!layer[i].done)
-			all_done=false;
 		
 	}
 	
+	/* copy outputs to out */
+	bool all_done=true;
+	
+	const std::vector<int> &sources= params->global.modulation_source[ChionicParams::MAX_LAYERS].read_from; //out
+		
+	for (int i=0;i<sources.size();i++) {
+	
+		int src_idx=sources[i];
+		
+		ERR_CONTINUE(src_idx<0 || src_idx>ChionicParams::MAX_LAYERS);
+		
+		if (src_idx==ChionicParams::MAX_LAYERS)
+			continue; //pointless to do here
+		
+		if (!layer[src_idx].mixed)
+			continue;
+		
+		AudioBuffer *src_ab=(src_idx>=ChionicParams::MAX_LAYERS)?buffers->input:&buffers->voice[src_idx].buffer;
+		ERR_CONTINUE(get_buffer_count()!=src_ab->get_channels());
+		printf("must mix from source %i\n",src_idx);
+		for (int j=0;j<src_ab->get_channels();j++) {
+			
+			float *src=src_ab->get_buffer(j);
+			float *dst=get_buffer(j);
+			
+			for (int k=0;k<p_frames;k++) {
+				
+				dst[k]+=src[k];
+			}
+			
+		}
+		
+		if (!layer[src_idx].done)
+			all_done=false;
+		
+	}
 	if (all_done)
 		done=true;
 	cycles+=cycles_to_mix;

@@ -79,6 +79,7 @@
 #include "plugin_UIs/chionic_pixmaps/controls__filter_off.xpm"
 
 #include "plugin_UIs/chionic_pixmaps/controls__spinbox_label.xpm"
+#include "plugin_UIs/chionic_pixmaps/controls__spinbox_label_small.xpm"
 #include "plugin_UIs/chionic_pixmaps/controls__spinbox_spin.xpm"
 
 #include "plugin_UIs/chionic_pixmaps/controls__sens_curve.xpm"
@@ -183,6 +184,8 @@
 #include "plugin_UIs/chionic_pixmaps/global__modulation_ring_active.xpm"
 #include "plugin_UIs/chionic_pixmaps/global__modulation_ring.xpm"
 
+#include "plugin_UIs/chionic_pixmaps/params__exp_blend.xpm"
+#include "plugin_UIs/chionic_pixmaps/params__exp_blend_active.xpm"
 
 namespace ReShaked {
 
@@ -336,49 +339,58 @@ void ChionicWindow::sources_action(int p_action) {
 	switch (p_action) {
 		case SourcesPage::ACTION_LOAD: {
 			
-			QString file=QFileDialog::getOpenFileName ( this, "Open Sample/OSC",".", "Waveforms (*.wav *.au *.aif *.WAV);;Oscs (*.osc);;All Files (*)");
+			QStringList files = QFileDialog::getOpenFileNames ( this, "Open Samples/OSCs" ,  current_dir, "Waveforms (*.wav *.au *.aif *.WAV);;Oscs (*.osc);;All Files (*)");
+			files.sort();		
+			foreach(I,files) {
+				
+				QString file=*I;
+				if (file=="")
+					break;
+				
+	
+				/* try with sample */
+				Sample *s = new Sample;
+				
+				if (SampleFile::get_singleton()->load_sample( DeQStrify(file),s )) {
+					delete s; //failed loading
+					continue;
+				}
+				
+				QString fname=file;
+				
+				if (fname.lastIndexOf("/")!=-1) {
 			
-			if (file=="")
-				break;
-			
-			/* try with sample */
-			Sample *s = new Sample;
-			
-			if (SampleFile::get_singleton()->load_sample( DeQStrify(file),s )) {
-				delete s; //failed loading
-				break;
-			}
-			
-			QString fname=file;
-			
-			if (fname.lastIndexOf("/")!=-1) {
-		
-				fname.remove(0,fname.lastIndexOf("/")+1);
+					fname.remove(0,fname.lastIndexOf("/")+1);
+				}
+	
+				
+				if (!s)
+					continue;
+				
+				
+				current_dir=get_dir_from_path(file);
+				
+				ChionicParams::Source src;
+				
+				src.type=ChionicParams::Source::TYPE_SAMPLE;
+				src.sample=s;
+				src.name=DeQStrify(fname);
+				
+				AudioControl::mutex_lock();
+				
+				chionic->get_params()->global.sources.push_back(src);
+				
+				AudioControl::mutex_unlock();
+				
+				
+			}			
+					
+			if (!files.empty()) {
+				update_sources_list();			
+				sources.source_list->select_item( sources.source_list->get_item_count() -1 );
+				source_selected( sources.source_list->get_item_count() -1 );
 			}
 
-			
-			if (!s)
-				break; //some messagebox?
-			
-			
-			ChionicParams::Source src;
-			
-			src.type=ChionicParams::Source::TYPE_SAMPLE;
-			src.sample=s;
-			src.name=DeQStrify(fname);
-			
-			AudioControl::mutex_lock();
-			
-			chionic->get_params()->global.sources.push_back(src);
-			
-			AudioControl::mutex_unlock();
-			
-			update_sources_list();
-			
-			sources.source_list->select_item( sources.source_list->get_item_count() -1 );
-			source_selected( sources.source_list->get_item_count() -1 );
-			
-					
 			
 		} break;
 		
@@ -393,7 +405,7 @@ void ChionicWindow::sources_action(int p_action) {
 				break;
 			
 			
-			QString file=QFileDialog::getOpenFileName ( this, "Open Sample/OSC",".", "Waveforms (*.wav *.au *.aif *.WAV);;Oscs (*.osc);;All Files (*)");
+			QString file=QFileDialog::getOpenFileName ( this, "Open Sample/OSC",current_dir, "Waveforms (*.wav *.au *.aif *.WAV);;Oscs (*.osc);;All Files (*)");
 			
 			if (file=="")
 				break;
@@ -416,6 +428,7 @@ void ChionicWindow::sources_action(int p_action) {
 			if (!s)
 				break; //some messagebox?
 			
+			current_dir=get_dir_from_path(file);
 			
 			ChionicParams::Source src;
 			
@@ -1385,10 +1398,35 @@ void ChionicWindow::init_params_page() {
 	params.vol_send=add_slider_edit_control( controls_vb, &p.volume.send,&params.vol_send_disp );
 	
 	
-	add_control_label("Vel/Exp Range",controls_vb);
+	CHBox *velrange_label_hb = new CHBox( controls_vb);
+	
+	add_control_label("Range",velrange_label_hb);
+	
+	velrange_label_hb->get_box_layout()->insertStretch(-1);
+	
+	params.vol_range_blend_exp = new PropertyEditButton( velrange_label_hb, PixmapButton::Skin( QPixmap(params__exp_blend_xpm), QPixmap(params__exp_blend_active_xpm) ) );
+	params.vol_range_blend_exp->set_property( &p.volume.velocity_range_blend_expr );
+	
+	CHBox * velrange_hb = new CHBox( controls_vb );
+	
+	params.vol_range_begin = new PropertyEditLabel(velrange_hb,settings.spin_small_bg);
+	params.vol_range_begin->set_property( &p.volume.velocity_range_begin );
+	params.vol_range_begin_updown= new PropertyEditUpDown(velrange_hb,settings.updown_skin);
+	params.vol_range_begin_updown->set_property( &p.volume.velocity_range_begin );
+	
+	velrange_hb->get_box_layout()->insertStretch(-1);
+	
+	params.vol_range_end = new PropertyEditLabel(velrange_hb,settings.spin_small_bg);
+	params.vol_range_end->set_property( &p.volume.velocity_range_end );
+	params.vol_range_end_updown= new PropertyEditUpDown(velrange_hb,settings.updown_skin);
+	params.vol_range_end_updown->set_property( &p.volume.velocity_range_end );
+	
+	params.vol_range_blend=add_slider_edit_control(controls_vb, &p.volume.velocity_range_blend);
+	
+	/*	
 	params.vol_range = new RangeLevelEditor(controls_vb,settings.range_level_skin);
 	params.vol_range->set_properties(&p.volume.velocity_range_begin_level,&p.volume.velocity_range_end_level,&p.volume.velocity_range_begin,&p.volume.velocity_range_end);
-			
+	*/		
 	add_control_label( QStrify(p.volume.pitch_scale.get_caption()), controls_vb );
 	params.vol_pitch_scale=new KeyScalingEditor(controls_vb,settings.key_scaling_skin);
 	params.vol_pitch_scale->set_property(&p.volume.pitch_scale);
@@ -1630,7 +1668,12 @@ void ChionicWindow::layer_selected_slot(int p_layer) {
 	params.vol_send->set_property( &p.volume.send );
 	params.vol_send_disp->set_property( &p.volume.send );
 	
-	params.vol_range->set_properties(&p.volume.velocity_range_begin_level,&p.volume.velocity_range_end_level,&p.volume.velocity_range_begin,&p.volume.velocity_range_end);
+	//params.vol_range->set_properties(&p.volume.velocity_range_begin_level,&p.volume.velocity_range_end_level,&p.volume.velocity_range_begin,&p.volume.velocity_range_end);
+	params.vol_range_begin->set_property( &p.volume.velocity_range_begin );
+	params.vol_range_begin_updown->set_property( &p.volume.velocity_range_begin );
+	params.vol_range_end->set_property( &p.volume.velocity_range_end );
+	params.vol_range_end_updown->set_property( &p.volume.velocity_range_end );
+	params.vol_range_blend->set_property( &p.volume.velocity_range_blend );
 	
 	params.vol_pitch_scale->set_property(&p.volume.pitch_scale);
 	
@@ -1685,6 +1728,41 @@ void ChionicWindow::layer_paste_slot() {
 }
 
 
+void ChionicWindow::check_if_preset_loaded() {
+	
+	
+	if (!chionic->check_if_preset_was_loaded())
+		return;
+	
+	update_sources_list();
+	
+	global.route_edit->update();
+	for (int i=0;i<global.modulation_modes.size();i++) {
+			
+		global.modulation_modes[i]->set_selected_index( chionic->get_params()->layer[i].modulation_mode );
+	
+	}
+	
+	global.vol_send_disp->check_if_changed();
+	global.vol_send->check_if_changed();
+		
+	global.sens_editor->check_if_changed();
+		
+	global.pan_panner->check_if_changed();
+				
+	global.pan_pitch_scale->check_if_changed();
+			
+	global.pan_pitch_scale_center->check_if_changed();
+	global.pan_pitch_scale_center_updown->check_if_changed();
+		
+	global.tune_fine->check_if_changed();
+	global.tune_fine_disp->check_if_changed();
+	global.tune_coarse->check_if_changed();
+	global.tune_coarse_updown->check_if_changed();
+	
+	layer_selected_slot(layers.selected);
+}
+
 ChionicWindow::ChionicWindow(QWidget *p_parent,Chionic *p_chionic) : QDialog(p_parent) {
 	
 	chionic=p_chionic;
@@ -1708,6 +1786,7 @@ ChionicWindow::ChionicWindow(QWidget *p_parent,Chionic *p_chionic) : QDialog(p_p
 	settings.filter_editor_skin = FilterEditor::Skin( QPixmap( (const char**) controls__filter_display_xpm ), QPixmap( (const char**) controls__filter_display_xpm ),QColor(235,245,255,200),1);
 	settings.updown_skin=PixmapUpDown::Skin( QPixmap ( (const char**)controls__spinbox_spin_xpm ),QPixmap ( (const char**)controls__spinbox_spin_xpm ),QPixmap ( (const char**)controls__spinbox_spin_xpm ) );
 	settings.spin_bg=QPixmap ( (const char**)controls__spinbox_label_xpm );
+	settings.spin_small_bg=QPixmap ( (const char**)controls__spinbox_label_small_xpm );
 	settings.list_bg.load_from_xpm( (const char**)source__list_bg_xpm, 2,2,2,2);
 	settings.list_bg.set_center_color( QColor(0,0,0) );
 	settings.scroll_bg.load_from_xpm( (const char**)controls__scrollbar_bg_xpm, 2,2,2,2);
@@ -1816,6 +1895,13 @@ ChionicWindow::ChionicWindow(QWidget *p_parent,Chionic *p_chionic) : QDialog(p_p
 	layout()->setMargin(0);
 	layout()->setSpacing(0);
 	setWindowTitle("Chionic 2");
+	
+	QTimer* preset_loaded_check=new QTimer(this);
+	QObject::connect(preset_loaded_check,SIGNAL(timeout()),this,SLOT(check_if_preset_loaded()));
+	preset_loaded_check->start(1000);
+	
+	current_dir=".";
+	
 }
 
 

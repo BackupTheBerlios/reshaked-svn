@@ -155,7 +155,14 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 		PropertyEditor *vol_send;
 		PropertyEditor *vol_send_disp;
 		
-		RangeLevelEditor *vol_range;
+		//RangeLevelEditor *vol_range;
+		
+		PropertyEditor *vol_range_begin;
+		PropertyEditor *vol_range_end;
+		PropertyEditor *vol_range_begin_updown;
+		PropertyEditor *vol_range_end_updown;
+		PropertyEditor *vol_range_blend_exp;
+		PropertyEditor *vol_range_blend;
 		
 		PropertyEditor *vol_pitch_scale;
 		
@@ -208,6 +215,7 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 		PannerEditor::Skin panner_skin;
 		FilterEditor::Skin filter_editor_skin;
 		QPixmap spin_bg;
+		QPixmap spin_small_bg;
 		PixmapUpDown::Skin updown_skin;
 		SkinBox list_bg;
 		SkinBox scroll_bg;
@@ -250,6 +258,8 @@ class ChionicWindow : public QDialog, public SoundPlugin_MetaData {
 	
 	void add_sources_button(QWidget *p_parent, SourcesPage::Action p_action,  char *p_pix[],  char *p_pix_pushed[]);
 	
+	QString current_dir;
+	
 private slots:	
 	
 	void update_sources_list();
@@ -290,6 +300,9 @@ private slots:
 	void global_layer_5_mode_selected(int p_mode);
 	void global_layer_6_mode_selected(int p_mode);
 	void global_layer_mode_selected(int p_layer,int p_mode);
+	
+	
+	void check_if_preset_loaded();
 	
 public:
 	ChionicWindow(QWidget *p_parent,Chionic *p_chionic);

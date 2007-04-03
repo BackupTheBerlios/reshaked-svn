@@ -22,24 +22,18 @@ float AudioBuffer::get_highest_energy(int p_frames) {
 		
 	return max;
 }
-
+/*
 float *AudioBuffer::get_buffer(int p_channel) {
 
 	ERR_FAIL_INDEX_V(p_channel,(int)data.size(),NULL);
 	
 	return &data[p_channel][0];
 
-}
+}*/
 
 int AudioBuffer::get_size() {
 
 	return size;
-}
-int AudioBuffer::get_channels() {
-
-
-			
-	return data.size();
 }
 
 
@@ -141,6 +135,27 @@ void AudioBuffer::add_from(AudioBuffer *p_src,int p_frames) {
 		
 		while (todo--)
 			*(dst++)+=*(src++);
+		
+	}
+	
+}
+
+void AudioBuffer::mult_from(AudioBuffer *p_src,int p_frames) {
+	
+	ERR_FAIL_COND(p_frames>size);///< check if frames are valid
+	ERR_FAIL_COND(p_src->data.size()!=data.size()); ///check if channels are valid
+	
+	for (int i=0;i<data.size();i++) {
+		
+		float *dst=&data[i][0];
+		float *src=&p_src->data[i][0];
+		
+		int todo=p_frames;
+		
+		while (todo--) {
+			
+			dst[todo]*=src[todo];
+		}
 		
 	}
 	

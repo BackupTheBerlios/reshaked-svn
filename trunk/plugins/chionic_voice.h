@@ -15,6 +15,7 @@
 #include "dsp/midi_synth.h"
 #include "plugins/chionic_params.h"
 #include "engine/audio_buffer.h"
+#include "dsp/filter.h"
 
 namespace ReShaked {
 
@@ -24,6 +25,7 @@ namespace ReShaked {
 
 struct ChionicVoiceBuffers {
 	
+	AudioBuffer *input;
 	struct Voice {
 	
 		AudioBuffer buffer;
@@ -40,6 +42,7 @@ class ChionicVoice : public MidiSynth::Voice {
 		
 		FRAC_BITS=12, //work with 12 bits of fixed point precision
 		MAX_CHANS=4,
+		VEL_SENS_SEMITONES=128
 	};
 	
 	bool done;
@@ -54,15 +57,26 @@ class ChionicVoice : public MidiSynth::Voice {
 	
 	struct Layer {
 		
+		bool mixed;
+		
 		int source_idx_below;
 		int source_idx_above;
 		bool done;
 		
-		float current_volumes[4];
-		float current_volumes_incr[4];
+		int filter_mode;
 		
-		float current_volumes_above[4];
-		float current_volumes_incr_above[4];
+		struct FilterH {
+				
+			Filter::Coeffs old;
+			float ha1,ha2,hb1,hb2; //history
+
+		} filter[MAX_CHANS];
+		
+		float current_volumes[MAX_CHANS];
+		float current_volumes_incr[MAX_CHANS];
+		
+		float current_volumes_above[MAX_CHANS];
+		float current_volumes_incr_above[MAX_CHANS];
 		
 		EnvelopeProcess env_vol;
 		EnvelopeProcess env_pan;

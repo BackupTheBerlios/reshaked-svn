@@ -35,6 +35,7 @@ public:
 			char original_note; ///< Note from the midi event, for reference (note off)
 			float note; ///< Note after transpose, this can be modified by portamento, too
 			int velocity; ///< 0 .. 127 always
+			float expression;
 			float note_fine;
 			std::vector<float*> *buffers;
 			bool active;
@@ -50,6 +51,7 @@ public:
 		int get_original_note();
 		float get_current_note();
 		int get_velocity();
+		float get_expression();
 		int get_buffer_count();
 		inline float *get_buffer(int p_buff) { return (*internal.buffers)[p_buff]; }
 	

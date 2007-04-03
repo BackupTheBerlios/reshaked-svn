@@ -363,8 +363,10 @@ void PropertyEditor::check_if_changed() {
 }
 void PropertyEditor::set_property(Property *p_property) {
 	
-	property=p_property;
-	config();
+	if (p_property!=property) {
+		property=p_property;
+		config();
+	}
 	check_if_changed();
 
 }
@@ -463,10 +465,16 @@ void MultiPropertyEditor::set_property(int p_which,Property *p_property) {
 	
 	ERR_FAIL_INDEX(p_which,property_list.size());
 	
-	property_list[p_which].property=p_property;
-	property_list[p_which].last_value=p_property->get();
+	if (p_property!=property_list[p_which].property) {
+		
+		property_list[p_which].property=p_property;
+		property_list[p_which].last_value=p_property->get();
+	}
+	
+	check_if_changed();
 	
 }
+
 Property * MultiPropertyEditor::get_property(int p_which) {
 	
 	ERR_FAIL_INDEX_V(p_which,property_list.size(),NULL);

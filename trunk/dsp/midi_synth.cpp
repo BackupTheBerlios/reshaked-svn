@@ -71,6 +71,13 @@ int MidiSynth::Voice::get_buffer_count() {
 	return internal.buffers->size();
 	
 }
+
+float MidiSynth::Voice::get_expression() {
+
+	return internal.expression;
+
+}
+
 /*
 float *MidiSynth::Voice::get_buffer(int p_buff) {
 	
@@ -93,6 +100,7 @@ void MidiSynth::process_voice_internal(int p_voice,int p_frames) {
 	v.internal.current_note+=pitch_bend.get()*2.0; //should change pbdepth
 	v.internal.current_note+=lfo_depth;
 	v.internal.current_note+=finetune.get();
+	v.internal.expression=expression.get();
 	
 	
 }

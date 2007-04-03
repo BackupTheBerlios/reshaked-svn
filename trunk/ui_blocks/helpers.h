@@ -33,6 +33,8 @@ class CHBox : public QWidget {
 	QPixmap bg;
 
 public:
+	QBoxLayout *get_box_layout() { return l; }
+	
 	void set_bg(QPixmap p_px);
 	
 	QBoxLayout *layout() { return l; }

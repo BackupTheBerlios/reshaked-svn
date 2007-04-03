@@ -143,8 +143,8 @@ public:
 				LocalProperty velocity_range_begin;
 				LocalProperty velocity_range_end;
 				
-				LocalProperty velocity_range_begin_level;
-				LocalProperty velocity_range_end_level;
+				LocalProperty velocity_range_blend_expr;
+				LocalProperty velocity_range_blend;
 							
 				LocalProperty pitch_scale;
 				
@@ -225,7 +225,7 @@ public:
 	} layer[MAX_LAYERS];
 	
 	
-	
+	void clear_sources();
 	ChionicParams();
 	~ChionicParams();
 };

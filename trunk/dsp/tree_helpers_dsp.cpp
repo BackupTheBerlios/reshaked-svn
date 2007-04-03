@@ -11,6 +11,8 @@
 //
 #include "tree_helpers_dsp.h"
 #include "sample.h"
+#include "lfo.h"
+#include "envelope.h"
 namespace ReShaked {
 
 bool load_sample_from_tree(TreeLoader *p_tree,Sample *p_sample) {
@@ -66,5 +68,94 @@ void save_sample_to_tree(TreeSaver *p_tree,Sample *p_sample) {
 	
 }
 
+bool load_lfo_from_tree(TreeLoader *p_tree,LFO *p_lfo) {
+	
+	p_lfo->set_delay( p_tree->get_float( "delay")  );	
+	p_lfo->set_rate( p_tree->get_float( "rate" ) );	
+	p_lfo->set_depth( p_tree->get_float( "depth" ) );	
+	p_lfo->set_phase( p_tree->get_float( "phase" ) );		
+	p_lfo->set_random_depth( p_tree->get_float( "random_depth") );	
+	p_lfo->set_random_seed( p_tree->get_float( "random_seed") );	
+	
+	switch( p_tree->get_int( "mode") ) {
+		
+		case LFO::MODE_SINE: p_lfo->set_mode( LFO::MODE_SINE ); break;
+		case LFO::MODE_SAW_UP: p_lfo->set_mode( LFO::MODE_SAW_UP ); break;
+		case LFO::MODE_SAW_DOWN: p_lfo->set_mode( LFO::MODE_SAW_DOWN ); break;
+		case LFO::MODE_SQUARE: p_lfo->set_mode( LFO::MODE_SQUARE ); break;
+		
+	}
+	
+	
+}
+void save_lfo_to_tree(TreeSaver *p_tree,LFO *p_lfo) {
+	
+	p_tree->add_float( "delay", p_lfo->get_delay() );	
+	p_tree->add_float( "rate", p_lfo->get_rate() );	
+	p_tree->add_float( "depth", p_lfo->get_depth() );	
+	p_tree->add_float( "phase", p_lfo->get_phase() );		
+	p_tree->add_float( "random_depth", p_lfo->get_random_depth() );	
+	p_tree->add_float( "random_seed", p_lfo->get_random_seed() );	
+	p_tree->add_int( "mode", p_lfo->get_mode() );	
+
+	
+	
+}
+
+bool save_envelope_to_tree(TreeSaver *p_tree,Envelope *p_envelope) {
+	
+	p_tree->add_int("enabled",p_envelope->is_enabled());
+	p_tree->add_int("loop_enabled",p_envelope->is_loop_enabled());
+	p_tree->add_int("loop_begin",p_envelope->get_loop_begin());
+	p_tree->add_int("loop_end",p_envelope->get_loop_end());
+	p_tree->add_int("sustain_loop_enabled",p_envelope->is_sustain_loop_enabled());
+	p_tree->add_int("sustain_loop_begin",p_envelope->get_sustain_loop_begin());
+	p_tree->add_int("sustain_loop_end",p_envelope->get_sustain_loop_end());
+	p_tree->add_int("cubic",p_envelope->is_cubic());
+	p_tree->enter("nodes");
+	
+	for (int i=0;i<p_envelope->get_node_count();i++) {
+		
+		p_tree->enter("node_"+String::num(i+1));
+		p_tree->add_int("offset",p_envelope->get_node_offset(i) );
+		p_tree->add_float("value",p_envelope->get_node_value(i) );
+		p_tree->exit();
+	}
+	
+	p_tree->exit();
+	
+}
+void load_envelope_from_tree(TreeLoader *p_tree,Envelope *p_envelope) {
+	
+	p_envelope->reset(false);
+	
+	p_envelope->set_enabled(p_tree->get_int("enabled"));
+	p_envelope->set_cubic(p_tree->get_int("cubic"));
+	
+	p_tree->enter("nodes");
+	
+	for (int i=0;i<p_tree->get_child_count();i++) {
+		
+		p_tree->enter(p_tree->get_child_name(i));
+		
+		int offset=p_tree->get_int("offset");
+		float value=p_tree->get_float("value");
+		
+		p_envelope->add_node_at_offset( offset,value);
+		
+		p_tree->exit();
+	}
+	
+	p_tree->exit();
+	
+	p_envelope->set_loop_enabled(p_tree->get_int("loop_enabled"));
+	p_envelope->set_loop_begin(p_tree->get_int("loop_begin"));
+	p_envelope->set_loop_end(p_tree->get_int("loop_end"));
+	p_envelope->set_sustain_loop_enabled(p_tree->get_int("sustain_loop_enabled"));
+	p_envelope->set_sustain_loop_begin(p_tree->get_int("sustain_loop_begin"));
+	p_envelope->set_sustain_loop_end(p_tree->get_int("sustain_loop_end"));
+	
+	
+}
 
 }

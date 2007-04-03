@@ -24,6 +24,12 @@ namespace ReShaked {
 */
 class Chionic : public SoundPlugin {
 	
+	
+	enum {
+		
+		INTERNAL_BUFFER_SIZE=1024
+	};
+	
 	AudioPlug *input_plug;
 	AudioPlug *output_plug;
 	
@@ -34,8 +40,14 @@ class Chionic : public SoundPlugin {
 	
 	void reset();		
 	
+	void save(TreeSaver *p_saver);	
+	void load(TreeLoader *p_loader);	
+	
+	bool preset_loaded;
 
 public:
+	
+	bool check_if_preset_was_loaded();
 	
 	static const SoundPluginInfo *create_info();
 	/* Plugs */	

@@ -23,6 +23,7 @@ Envelope::Envelope() {
 	min_nodes=2;
 	digits=0;
 	prefix="";
+	cubic=false;
 	reset();
 }
 
