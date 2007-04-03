@@ -5,32 +5,37 @@ EnsureSConsVersion(0,14);
 import os;
 import string;
 import sys
+import detect
+import version
 
 palmos=False;
 win32=False
 
 win32cross=True
 win32msvc=False
-#env = Environment(CC='arm-palmos-gcc',CXX='arm-palmos-g++' , RANLIB='arm-palmos-ranlib', AR='arm-palmos-ar', CPPPATH=['#/globals','#.']);
+#env = Environment(CC='arm-palmos-gcc',CXX='arm-palmos-g++' , RANLIB='arm-palmos-ranlib', AR='arm-palmos-ar', CPPPATH=['#/types','#.']);
 
 
 if (win32 and win32cross):
-	env = Environment(CPPPATH=['#/globals','#gui','#.'],CPPFLAGS=['-DANSIC_LIBS_ENABLED','-g3','-Wall','-fstrict-aliasing'],CXX='i586-mingw32msvc-g++',RANLIB='i586-mingw32msvc-ranlib',LD='i586-mingw32msvc-ld',CC='i586-mingw32msvc-gcc',AR='i586-mingw32msvc-ar' );
-elif (win32 and win32msvc):
-	env = Environment(CPPPATH=['#/globals','#gui','#.'],CPPFLAGS=['/DANSIC_LIBS_ENABLED'],ENV=os.environ);
+	env = Environment(CPPPATH=['#/types','#gui','#.'],CPPFLAGS=['-DANSIC_LIBS_ENABLED','-g3','-Wall','-fstrict-aliasing'],CXX='i586-mingw32msvc-g++',RANLIB='i586-mingw32msvc-ranlib',LD='i586-mingw32msvc-ld',CC='i586-mingw32msvc-gcc',AR='i586-mingw32msvc-ar' );
+	version.enables+=['WIN32_ENABLED'];
+	version.enables+=['VST_ENABLED'];
 else:
-	env = Environment(CPPPATH=['#/globals','#gui','#.'],CPPFLAGS=['-DANSIC_LIBS_ENABLED'],ENV=os.environ);
-
+	env = Environment(CPPPATH=['#/types','#gui','#.'],CPPFLAGS=['-DANSIC_LIBS_ENABLED'],ENV=os.environ);
+	env.Append(LIBS=['pthread']);
+	version.enables+=['POSIX_ENABLED'];
+	version.enables+=['LADSPA_ENABLED'];
 
 env.Append(LIBS=['drivers','gui_drivers','gui_bundles','gui_widgets','gui_containers','gui_base','gui_string','gui_signals','editor','plugins','engine','song','dsp','types']);
 
-env.icon_obj=""
+version.enables+=['DRIVER_PORTAUDIO_ENABLED'];
 
 opts=Options()
 opts.Add('optimize', 'Optimize.', 0)
 opts.Add('debug', 'Add debug symbols.', 1)
 opts.Add('prefix', 'The installation prefix', '/usr/local/')
 opts.Add('meta_as_alt', 'META Key works as ALT (MAC keyboards)', 0)
+
 
 opts.Update(env)
 Help(opts.GenerateHelpText(env))
@@ -40,10 +45,9 @@ if (palmos):
 	env.Append(CPPFLAGS=['-DNATIVE','-mcpu=arm9tdmi','-nostartfiles','-mshort-load-bytes','-ffixed-r9','-ffixed-r8','-mpic-register=r10','-msingle-pic-base','-fPIC','-fno-rtti']);
 elif (win32cross and win32):
 
-	env.Append(CPPFLAGS=['-I/usr/i586-mingw32msvc/include/SDL','-D_REENTRANT','-DWINDOWS_ENABLED']);
+	env.Append(CPPFLAGS=['-I/usr/i586-mingw32msvc/include/SDL','-D_REENTRANT','-DWINDOWS_ENABLED','-Wno-sign-compare']);
 	env.Append(LINKFLAGS=['-L/usr/i586-mingw32msvc/lib','-mwindows']);
 	env.Append(LIBS=['mingw32','SDLmain','SDL']);
-	env.icon_obj="cticon.o"
 
 elif (win32):
 	if (win32msvc):
@@ -69,7 +73,7 @@ else:
 
 	env.ParseConfig('sdl-config --cflags --libs')
 
-	env.Append(CPPFLAGS=['-DPOSIX_ENABLED','-fno-exceptions']);
+	env.Append(CPPFLAGS=['-fno-exceptions','-Wno-sign-compare']);
 #	env['CXX']='g++-2.95'
 
 
@@ -86,8 +90,13 @@ if (not win32msvc):
 if ((env['meta_as_alt'])):
 	env.Append(CXXFLAGS=['-DMETA_AS_ALT']);
 
+env.use_asio=False
 env.bin_targets=[]
+env.__class__.find_source_files = detect.find_source_files
+
 Export('env');
+
+version.save();
 
 SConscript('gui/SCsub');
 SConscript('types/SCsub');

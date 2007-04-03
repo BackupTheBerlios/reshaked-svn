@@ -14,7 +14,7 @@
 #include "editor.h"
 #include "tree_container.h"
 #include "tree_loader_disk.h"
-#include "loader.h"
+#include "engine/loader.h"
 
 namespace ReShaked {
 
