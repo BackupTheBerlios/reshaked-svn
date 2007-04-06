@@ -74,7 +74,8 @@ BitmapID PixmapData::create_bitmap_from_buffer(const unsigned char *p_png_buffer
 
 	png_read_image(png, row_p);
 
-	BitmapID bmp=painter->create_bitmap(Size(width,height));
+	BitmapID bmp=painter->create_bitmap(Size(width,height),MODE_PIXMAP,true);
+	
 	switch(color) {
 
 		case 0 : { // Each pixel is a grayscale sample.
@@ -151,6 +152,13 @@ BitmapID PixmapData::create_bitmap_from_buffer(const unsigned char *p_png_buffer
 
 BitmapID PixmapData::pixmap_id_list[PIXMAP_MAX];
 
+BitmapID PixmapData::get_pixmap(PixmapDataList p_pixmap) {
+	
+	ERR_FAIL_INDEX_V(p_pixmap,PIXMAP_MAX,-1);
+	
+	return pixmap_id_list[p_pixmap];
+	
+}
 
 void PixmapData::set_painter(Painter *p_painter) {
 	

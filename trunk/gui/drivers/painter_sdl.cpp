@@ -201,7 +201,7 @@ BitmapID PainterSDL::load_bitmap(String p_file) {
 		
 	
 }
-BitmapID PainterSDL::create_bitmap(const Size& p_size,BitmapMode p_mode) {
+BitmapID PainterSDL::create_bitmap(const Size& p_size,BitmapMode p_mode,bool p_alpha) {
 
 	if (p_size.width<=0 || p_size.height<=0)
 		return -1;
@@ -211,10 +211,26 @@ BitmapID PainterSDL::create_bitmap(const Size& p_size,BitmapMode p_mode) {
 
 	if (p_mode==MODE_PIXMAP) {
 
-		s= SDL_CreateRGBSurface((surface->flags&SDL_HWSURFACE)?SDL_HWSURFACE:SDL_SWSURFACE, p_size.width, p_size.height, surface->format->BitsPerPixel, surface->format->Rmask,surface->format->Gmask,surface->format->Bmask,surface->format->Amask);
-		
-		if (s)
-			SDL_SetColorKey(s,SDL_SRCCOLORKEY,0xFF00FF);
+		if (p_alpha) { 
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+			Uint32 rmask = 0xff000000;
+			Uint32 gmask = 0x00ff0000;
+			Uint32 bmask = 0x0000ff00;
+			Uint32 amask = 0x000000ff;
+#else
+			Uint32 rmask = 0x000000ff;
+			Uint32 gmask = 0x0000ff00;
+			Uint32 bmask = 0x00ff0000;
+			Uint32 amask = 0xff000000;
+#endif			
+			s= SDL_CreateRGBSurface((surface->flags&SDL_HWSURFACE)?SDL_HWSURFACE:SDL_SWSURFACE, p_size.width, p_size.height, 32,rmask,gmask,bmask,amask);
+			
+		} else {
+			s= SDL_CreateRGBSurface((surface->flags&SDL_HWSURFACE)?SDL_HWSURFACE:SDL_SWSURFACE, p_size.width, p_size.height, surface->format->BitsPerPixel, surface->format->Rmask,surface->format->Gmask,surface->format->Bmask,surface->format->Amask);
+			
+			if (s)
+				SDL_SetColorKey(s,SDL_SRCCOLORKEY,0xFF00FF);
+		}
 		
 	} if (p_mode==MODE_ALPHA_MASK) {
 

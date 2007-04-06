@@ -458,14 +458,18 @@ int main(int argc, char *argv[]) {
 	
 	ScrollBar::set_can_focus_by_default( false );
 	
+	ReShaked::PixmapData::set_painter( painter ); //configure in-memory pixmaps
+	
 	ReShaked::RSSkin skin;		
 	
 	Window window( painter, timer, &skin );
+	
 	
 	window.set_size( Size( DEFAULT_W,DEFAULT_H ) );
 	
 	ReShaked::MainWindow *interface = new ReShaked::MainWindow;
 	window.set_root_frame(interface);
+	interface->initialize();
 	
 	window.redraw_all();
 	window.update();

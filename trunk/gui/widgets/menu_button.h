@@ -44,7 +44,7 @@ friend class PopUpMenu;
 	int get_id();
 	void set_userdata(void *p_userdata);
 	void *get_userdata();
-	
+public:	
 	bool is_checked(); ///< Same as is_pressed()
 	void set_checked(bool p_checked);
 	

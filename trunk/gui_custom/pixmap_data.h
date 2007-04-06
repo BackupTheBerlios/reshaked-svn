@@ -33,6 +33,7 @@ class PixmapData{
 	static Painter *painter;
 public:
 	
+	static BitmapID get_pixmap(PixmapDataList p_pixmap);
 	static void set_painter(Painter *p_painter);
 };
 

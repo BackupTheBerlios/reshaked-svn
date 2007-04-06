@@ -11,6 +11,13 @@
 //
 #include "main_window.h"
 
+#include "widgets/separator.h"
+#include "widgets/icon.h"
+#include "bundles/menu_box.h"
+#include "gui_custom/rsskin.h"
+
+#include <stdio.h>
+
 namespace ReShaked {
 
 	
@@ -25,10 +32,107 @@ void MainWindow::quit_request() {
 
 }
 	
+	
+void MainWindow::menu_callback(int p_option) {
+		
+	
+	
+}
+	
+void MainWindow::initialize() {
+		
+	HBoxContainer *hb = add(new HBoxContainer);
+	
+	tab_bar = hb->add( new TabBar );
+	
+	tab_bar->add_tab("Song");
+	tab_bar->add_tab("Edit");
+	tab_bar->add_tab("Rack");
+	
+	hb->add( new VSeparator );
+	
+	MenuBox * file_menu = hb->add( new MenuBox("File") );
+	
+	file_menu->item_selected_signal.connect( this, &MainWindow::menu_callback );
+	
+	file_menu->add_item("New Song",FILE_NEW_SONG);
+	file_menu->add_item("Open Song",FILE_OPEN_SONG);
+	file_menu->add_item("Save Song",FILE_SAVE_SONG);
+	file_menu->add_item("Save Song As",FILE_SAVE_SONG_AS);
+	file_menu->add_separator();
+	file_menu->add_item("Import MIDI File",FILE_IMPORT_MIDI);
+	file_menu->add_item("Export MIDI File",FILE_EXPORT_MIDI);
+	file_menu->add_separator();
+	file_menu->add_item("Export WAV",FILE_EXPORT_WAV);
+	file_menu->add_separator();
+	file_menu->add_item("Quit",FILE_QUIT);
+	
+	MenuBox * track_menu = hb->add( new MenuBox("Track") );
+	
+	track_menu->item_selected_signal.connect( this, &MainWindow::menu_callback );
+	
+	track_menu->add_item("Add Pattern Track",TRACK_ADD_PATTERN);
+	track_menu->add_item("Add Audio Track",TRACK_ADD_AUDIO);
+	track_menu->add_separator();
+	track_menu->add_item("Track Mixer",TRACK_MIXER);
+	
+	hb->add( new VSeparator );
+	
+	printf("bitmap for undo: %i\n",bitmap(BITMAP_ICON_UNDO));
+	hb->add( new MenuButton(bitmap(BITMAP_ICON_UNDO)) )->pressed_signal.connect( Method( Method1<int>(this, &MainWindow::menu_callback), (int)EDIT_UNDO ));
+	hb->add( new MenuButton(bitmap(BITMAP_ICON_REDO)) )->pressed_signal.connect( Method(Method1<int>(this, &MainWindow::menu_callback), (int)EDIT_REDO ));	
+	
+	hb->add( new VSeparator );
+
+	hb->add( new MenuButton(bitmap(BITMAP_CONTROL_RW)) )->pressed_signal.connect( Method( Method1<int>(this, &MainWindow::menu_callback), (int)CONTROL_RW ));
+	hb->add( new MenuButton(bitmap(BITMAP_CONTROL_PLAY)) )->pressed_signal.connect( Method( Method1<int>(this, &MainWindow::menu_callback), (int)CONTROL_PLAY ));
+	hb->add( new MenuButton(bitmap(BITMAP_CONTROL_LOOP)) )->pressed_signal.connect( Method( Method1<int>(this, &MainWindow::menu_callback), (int)CONTROL_LOOP ));
+	hb->add( new MenuButton(bitmap(BITMAP_CONTROL_PAUSE)) )->pressed_signal.connect( Method( Method1<int>(this, &MainWindow::menu_callback), (int)CONTROL_PAUSE ));
+	hb->add( new MenuButton(bitmap(BITMAP_CONTROL_STOP)) )->pressed_signal.connect( Method( Method1<int>(this, &MainWindow::menu_callback), (int)CONTROL_STOP ));
+	hb->add( new MenuButton(bitmap(BITMAP_CONTROL_FF)) )->pressed_signal.connect( Method( Method1<int>(this, &MainWindow::menu_callback), (int)CONTROL_FF ));
+	hb->add( new MenuButton(bitmap(BITMAP_CONTROL_REC)) )->pressed_signal.connect( Method( Method1<int>(this, &MainWindow::menu_callback), (int)CONTROL_REC ));
+	hb->add( new MenuButton(bitmap(BITMAP_CONTROL_REC_AUTO)) )->pressed_signal.connect( Method( Method1<int>(this, &MainWindow::menu_callback), (int)CONTROL_REC_AUTO ));
+	
+	hb->add( new VSeparator );
+	
+	hb->add( new Widget, 1 ); //expand
+	
+	hb->add( new VSeparator );
+	
+	MenuBox * tools_menu = hb->add( new MenuBox("Config") );
+	
+	tools_menu->item_selected_signal.connect( this, &MainWindow::menu_callback );
+	
+	tools_menu->add_item("Settings",TOOL_SETTINGS);
+	tools_menu->add_item("Midi Output Assign",TOOL_MIDI_OUTPUT_ASSIGN);
+	
+	MenuBox * help_menu = hb->add( new MenuBox("Help") );	
+	
+	help_menu->item_selected_signal.connect( this, &MainWindow::menu_callback );
+	
+	help_menu->add_item("Help!",HELP_HELP);
+	help_menu->add_item("About",HELP_ABOUT);
+	
+	main_stack = add( new StackContainer, 1 );
+	
+	hb = add( new HBoxContainer );
+	
+	hb->add( new Icon( bitmap( BITMAP_ICON_INFO ) ) );
+	
+	info_line = hb->add( new LineEdit, 4 );
+	
+	hb->add( new Icon( bitmap( BITMAP_ICON_TIME ) ) );
+	
+	time_line = hb->add( new LineEdit );
+	time_line->set_minimum_size( Size(150,-1));
+	
+	
+}
+	
 MainWindow::MainWindow() 
 {
 	
-	add(new Label("hello"));
+
 }
 
 

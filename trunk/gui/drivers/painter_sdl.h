@@ -58,7 +58,7 @@ public:
 	virtual void draw_fill_rect(const Point & p_from,const Size & p_size,const Color& p_color);
 	
 	virtual BitmapID load_bitmap(String p_file);
-	virtual BitmapID create_bitmap(const Size& p_size,BitmapMode p_mode=MODE_PIXMAP);
+	virtual BitmapID create_bitmap(const Size& p_size,BitmapMode p_mode=MODE_PIXMAP,bool p_with_alpha=false);
 	virtual Color get_bitmap_pixel(BitmapID p_bitmap,const Point& p_pos);
 	virtual void set_bitmap_pixel(BitmapID p_bitmap,const Point& p_pos,const Color& p_color,unsigned char p_alpha=255);
 	

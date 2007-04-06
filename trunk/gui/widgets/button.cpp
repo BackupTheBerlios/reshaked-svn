@@ -67,7 +67,8 @@ Size Button::get_minimum_size_internal() {
 		if (min.height < icon_size.height )
 			min.height=icon_size.height;
 
-		min.width+=constant( C_BUTTON_SEPARATION ); //if there is an icon, add the label-icon separation
+		if (label_text!="")
+			min.width+=constant( C_BUTTON_SEPARATION ); //if there is an icon, add the label-icon separation
 	}
 
 
@@ -202,8 +203,10 @@ void Button::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 
 		area_rect.pos.x+=icon_size.width;
 		area_rect.size.x-=icon_size.width;
-		area_rect.pos.x+=constant( C_BUTTON_SEPARATION ); //separation for the label
-		area_rect.size.x-=constant( C_BUTTON_SEPARATION ); //separation for the label
+		if (label_text!="") {
+			area_rect.pos.x+=constant( C_BUTTON_SEPARATION ); //separation for the label
+			area_rect.size.x-=constant( C_BUTTON_SEPARATION ); //separation for the label
+		}
 
 	}
 
