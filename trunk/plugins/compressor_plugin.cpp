@@ -14,7 +14,7 @@
 #include <math.h>
 #include "dsp/formulas.h"
 
-#include "pixmaps/icon_compressor.xpm"
+#include "icon_compressor.xpm"
 
 namespace ReShaked {
 

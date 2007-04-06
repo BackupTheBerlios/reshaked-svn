@@ -21,12 +21,12 @@ if (win32 and win32cross):
 	version.enables+=['WIN32_ENABLED'];
 	version.enables+=['VST_ENABLED'];
 else:
-	env = Environment(CPPPATH=['#/types','#gui','#.'],CPPFLAGS=['-DANSIC_LIBS_ENABLED'],ENV=os.environ);
+	env = Environment(CPPPATH=['#/types','#gui','#.'],CPPFLAGS=['-DANSIC_LIBS_ENABLED','-DPOSIX_ENABLED'],ENV=os.environ);
 	env.Append(LIBS=['pthread']);
-	version.enables+=['POSIX_ENABLED'];
+	
 	version.enables+=['LADSPA_ENABLED'];
 
-env.Append(LIBS=['drivers','gui_drivers','gui_bundles','gui_widgets','gui_containers','gui_base','gui_string','gui_signals','editor','plugins','engine','song','dsp','types']);
+env.Append(LIBS=['drivers','portaudio','interface','gui_custom','gui_drivers','gui_bundles','gui_widgets','gui_containers','gui_base','gui_string','gui_signals','editor','plugins','engine','dsp','types']);
 
 version.enables+=['DRIVER_PORTAUDIO_ENABLED'];
 
@@ -62,7 +62,7 @@ elif (win32):
 		env.icon_obj="cticon.o"
 
 else:
-	#UNIX, needs some detection
+	#UNIX, needs some detection, detect SDL
 	errorval=os.system("sdl-config --version");
 
         if (errorval):
@@ -73,11 +73,22 @@ else:
 
 	env.ParseConfig('sdl-config --cflags --libs')
 
+	# detect png
+	errorval=os.system("pkg-config libpng --modversion");
+
+        if (errorval):
+                print "Error: cant execute pkg-config to check for libpng, make sure pkg-config and libpng are installed";
+                exit(255);
+	else:
+		print("libPNG Detected");
+
+	env.ParseConfig('pkg-config libpng --cflags --libs')
+
 	env.Append(CPPFLAGS=['-fno-exceptions','-Wno-sign-compare']);
 #	env['CXX']='g++-2.95'
 
 
-env.Append(LIBPATH=['#drivers','#gui/base','#gui/drivers','#gui/signals','#gui/containers','#gui/string','#gui/widgets','#gui/bundles','#editor','#plugins','#engine','#song','#dsp','#types']);
+env.Append(LIBPATH=['#drivers','#drivers/portaudio','#interface','#gui_custom/','#gui/base','#gui/drivers','#gui/signals','#gui/containers','#gui/string','#gui/widgets','#gui/bundles','#editor','#plugins','#engine','#song','#dsp','#types']);
 
 
 if (not win32msvc):
@@ -94,6 +105,7 @@ env.use_asio=False
 env.bin_targets=[]
 env.__class__.find_source_files = detect.find_source_files
 
+env.Append(CXXFLAGS=['-DGUI_EXTERNAL_STRING="\\\"types/rstring.h\\\""']);
 Export('env');
 
 version.save();
@@ -103,7 +115,10 @@ SConscript('types/SCsub');
 SConscript('dsp/SCsub');
 SConscript('engine/SCsub');
 SConscript('editor/SCsub');
+SConscript('plugins/SCsub');
 SConscript('gui/SCsub');
+SConscript('gui_custom/SCsub');
+SConscript('interface/SCsub');
 SConscript('drivers/SCsub');
 SConscript('program/SCsub');
 

@@ -13,7 +13,7 @@
 
 
 #include <math.h>
-#include "pixmaps/icon_stereo_enhance.xpm"
+#include "icon_stereo_enhance.xpm"
 namespace ReShaked {
 
 static SoundPlugin* create_stereo_enhancer(const SoundPluginInfo *p_info,int p_channels) {

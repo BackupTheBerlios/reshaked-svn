@@ -13,7 +13,7 @@
 #include <math.h>
 #include "dsp/resample.h"
 #include "dsp/tree_helpers_dsp.h"
-#include "pixmaps/icon_simpler.xpm"
+#include "icon_simpler.xpm"
 
 
 #define C5_FREQ 261.6255653006

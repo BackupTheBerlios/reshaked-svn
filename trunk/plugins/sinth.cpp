@@ -12,12 +12,13 @@
 #include "sinth.h"
 
 #include "math.h"
-#include "pixmaps/icon_sinth.xpm"
+#include "icon_sinth.xpm"
 
 #define DEFAULT_AMP 0.1
 
 namespace ReShaked {
 
+	
 
 static SoundPlugin* create_sinth(const SoundPluginInfo *p_info,int p_channels) {
 	

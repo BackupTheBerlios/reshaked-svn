@@ -10,7 +10,7 @@
 //
 //
 #include "filter_bank_plugin.h"
-#include "pixmaps/icon_filterbank.xpm"
+#include "icon_filterbank.xpm"
 #include <math.h>
 
 namespace ReShaked {

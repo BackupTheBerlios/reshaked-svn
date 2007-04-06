@@ -10,7 +10,7 @@
 //
 //
 #include "reverb_plugin.h"
-#include "pixmaps/icon_reverb.xpm"
+#include "icon_reverb.xpm"
 
 namespace ReShaked {
 

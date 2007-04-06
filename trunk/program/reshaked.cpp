@@ -1,14 +1,11 @@
 
 
 #include "editor/plugin_preset_manager.h"
-#include "interface/main_window.h"
-#include <Qt/qapplication.h>
 #include "engine/sound_driver_list.h"
 #include "engine/midi_driver_list.h"
 #include "engine/audio_control.h"
 #include "drivers/sound_driver_jack.h"
 #include "drivers/vst_sound_plugin_source.h"
-#include "plugin_UIs/vst_plugin_ui.h"
 #include "engine/sound_plugin_list.h"
 #include "plugins/amplifier_plugin.h"
 #include "plugins/compressor_plugin.h"
@@ -24,23 +21,11 @@
 #include "plugins/distortion_plugin.h"
 #include "plugins/stereo_enhancer_plugin.h"
 #include "plugins/filter_bank_plugin.h"
-#include "plugin_UIs/chorus_plugin_ui.h"
-#include "plugin_UIs/sinth_ui.h"
-#include "plugin_UIs/limiter_plugin_ui.h"
-#include "plugin_UIs/sample_trigger_ui.h"
 #include "plugins/chorus_plugin.h"
-#include "plugin_UIs/sound_plugin_ui_generic.h"
-#include "plugin_UIs/chionic_interface.h"
-#include "plugin_UIs/simpler_ui.h"
-#include "plugin_UIs/panner_plugin_ui.h"
-#include "plugin_UIs/delay_line_ui.h"
-#include "plugin_UIs/moog_filter_plugin_ui.h"
 #include "plugins/limiter_plugin.h"
 #include "plugins/panner_plugin.h"
 #include "plugins/freq_splitter_plugin.h"
 #include "plugins/sound_plugin_eq.h"
-#include "plugin_UIs/reverb_plugin_ui.h"
-#include "plugin_UIs/filter_bank_plugin_ui.h"
 #include "drivers/get_time_posix.h"
 #include "dsp/sample_file.h"
 #include "editor/midi_input_handler.h"
@@ -53,15 +38,15 @@
 
 #include "drivers/get_time_win32.h"
 
-#include <Qt/qdir.h>
+#include "gui_custom/pixmap_data.h"
+#include "gui_custom/rsskin.h"
 
-#include "interface/sound_plugin_ui_list.h"
 #ifdef POSIX_ENABLED
 
 #include "drivers/mutex_lock_pthreads.h"
 
-#define CONFIG_DIR QString(".reshaked")
-#define CONFIG_DIR_PATH QString(getenv("HOME"))
+#define CONFIG_DIR String(".reshaked")
+#define CONFIG_DIR_PATH String(getenv("HOME"))
 #endif
 
 #ifdef WIN32_ENABLED
@@ -69,8 +54,8 @@
 #include "drivers/mutex_lock_win32.h"
 
 // for win9x, use current dir/config , for winXP use APPDATA
-#define CONFIG_DIR QString(getenv("APPDATA")?"ReShaked":"config")
-#define CONFIG_DIR_PATH QString(getenv("APPDATA")?getenv("APPDATA"):"./") 
+#define CONFIG_DIR String(getenv("APPDATA")?"ReShaked":"config")
+#define CONFIG_DIR_PATH String(getenv("APPDATA")?getenv("APPDATA"):"./") 
 
 #endif
 
@@ -86,6 +71,19 @@
 #include "drivers/sample_loader_sndfile.h"
 
 #endif
+
+
+#include "interface/main_window.h"
+
+#include "gui/base/window.h"
+#include "gui/drivers/painter_sdl.h"
+#include "gui/drivers/timer_sdl.h"
+#include "gui/drivers/keycodes_sdl.h"
+#include "gui/drivers/file_system_dirent.h"
+#include "gui/drivers/file_system_windows.h"
+#include "gui/widgets/scroll_bar.h"
+
+using namespace GUI;
 
 /* WINDOWS CONFIG DIR SHOULD BE APPDATA */
 
@@ -122,32 +120,7 @@ static void init_sound_plugin_list() {
 	sound_plugin_list.add_info( ReShaked::MergerPlugin::create_info() );
 }
 
-
-ReShaked::SoundPluginUI_List sound_plugin_UI_list;
-
-static void init_sound_plugin_UI_list() {
-		
-	sound_plugin_UI_list.add_creator(    ReShaked::ChionicInterface::create_this );
-	sound_plugin_UI_list.add_creator(    ReShaked::SimplerUI::create_this );
-	
-	sound_plugin_UI_list.add_creator(    ReShaked::ChorusPluginUI::create_this );
-	sound_plugin_UI_list.add_creator(    ReShaked::ReverbPluginUI::create_this );
-	sound_plugin_UI_list.add_creator(    ReShaked::FilterBankPluginUI::create_this );
-	sound_plugin_UI_list.add_creator(    ReShaked::LimiterPluginUI::create_this );
-	sound_plugin_UI_list.add_creator(    ReShaked::MoogFilterPluginUI::create_this );
-	sound_plugin_UI_list.add_creator(    ReShaked::PannerPluginUI::create_this );
-	sound_plugin_UI_list.add_creator(    ReShaked::DelayLinePluginUI::create_this );
-	sound_plugin_UI_list.add_creator(    ReShaked::SinthUI::create_this );
-	sound_plugin_UI_list.add_creator(    ReShaked::SampleTriggerUI::create_this );
-
-#ifdef VST_ENABLED
-	sound_plugin_UI_list.add_creator(    ReShaked::VST_PluginUI::create_this );
-#endif
-	/* this one must go last, since it's the last resort */
-	sound_plugin_UI_list.add_creator(    ReShaked::SoundPluginUI_Generic::create_this );
-	
-}
-
+/*
 static void test_config_dir() {
 	
 	QDir config_dir(CONFIG_DIR_PATH);
@@ -160,39 +133,219 @@ static void test_config_dir() {
 	if (!config_dir.cd("presets")) {
 		
 		ERR_FAIL_COND( !config_dir.mkdir("presets") );
-		/* copy all default presets */
+		// copy all default presets 
 	} else
 		config_dir.cd("..");
 	
 	if (!config_dir.cd("themes")) {
 		
 		ERR_FAIL_COND( !config_dir.mkdir("themes") );
-		/* copy all default presets */
+		// copy all default presets
 	} else
 		config_dir.cd("..");
 	
 	if (!config_dir.cd("insdefs")) {
 		
 		ERR_FAIL_COND( !config_dir.mkdir("insdefs") );
-		/* copy all default presets */
+		// copy all default presets 
 	} else
 		config_dir.cd("..");
 	
 	if (!config_dir.cd("demos")) {
 	
 		ERR_FAIL_COND( !config_dir.mkdir("demos") );
-		/* copy all default presets */
+		// copy all default presets 
 	} else
 		config_dir.cd("..");
 		
 }
 
+*/
 
+#define DEFAULT_H 550
+#define DEFAULT_W 750
+
+int main_loop(Window& window,SDL_Surface *screen,TimerSDL *timer,unsigned int flags,ReShaked::MainWindow *interface) {
+	KeycodesSDL keycode_sdl_translator;
+	
+	bool done=false;
+	
+	SDL_Event event;
+	Uint32 last_click_tick=0;
+	bool can_dblclick=false;
+	while((!done) && (SDL_WaitEvent(&event))) {
+		
+		
+		switch(event.type) {
+			//case SDL_USEREVENT:
+		//		HandleUserEvents(&event);
+	//			break;
+			case SDL_VIDEORESIZE:
+				printf("??\n");	
+	
+				screen = SDL_SetVideoMode  (event.resize.w,event.resize.h, 32, flags);
+				window.set_size( Size(event.resize.w,event.resize.h ) );
+				
+				window.redraw_all();
+				window.update();
+				
+				break;
+			case SDL_KEYUP:
+			case SDL_KEYDOWN: {
+                // Handle any key presses here.
+		
+				unsigned int mod=0;
+				
+				if (  event.key.keysym.mod & (KMOD_LSHIFT|KMOD_RSHIFT))
+					mod|=KEY_MASK_SHIFT;
+				
+				if (  event.key.keysym.mod & (KMOD_LALT|KMOD_RALT))
+					mod|=KEY_MASK_ALT;
+				
+				if (  event.key.keysym.mod & (KMOD_LCTRL|KMOD_RCTRL))
+					mod|=KEY_MASK_CTRL;
+								  
+
+				if (  event.key.keysym.mod & (KMOD_LMETA|KMOD_RMETA)) {
+#ifdef META_AS_ALT					
+					mod|=KEY_MASK_ALT;
+#else
+					
+					mod|=KEY_MASK_META;
+#endif
+				}
+				
+				window.key( event.key.keysym.unicode, keycode_sdl_translator.get_code(event.key.keysym.sym), event.key.state==SDL_PRESSED,false, mod );
+				
+				
+				/*if (event.key.keysym.sym==SDLK_F1) {
+
+					painter->draw_fill_rect( Point() , Size( screen->w , screen->h ), Color(100,20,33) );
+					SDL_UpdateRect(screen, 0,0,0,0);
+			}*/
+
+				//if (event.key.keysym.sym==SDLK_F2) {
+
+				//painter->update_screen();
+				//}
+
+				if ((event.key.keysym.mod&KMOD_LSHIFT) && event.key.keysym.sym==SDLK_F12) {
+					
+					printf("DeadLocking Audio Thread on Purpose! (shift-f12)!!\n");
+					SDL_LockAudio();
+				}
+				
+//				printf("Pressed Key %s, unicode %i\n",Keyboard::get_code_name( keycode_sdl_translator.get_code(event.key.keysym.sym)).ascii().get_data(),event.key.keysym.unicode);
+			} break;
+
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEBUTTONDOWN: {
+				
+				
+				do {
+					
+					Uint32 last_click_delta=0;
+					
+					
+					if (event.button.type==SDL_MOUSEBUTTONDOWN && event.button.button==BUTTON_LEFT) {
+						
+						last_click_delta=SDL_GetTicks()-last_click_tick;
+						last_click_tick=SDL_GetTicks();
+					}
+					
+																
+					SDLMod	mod_state=SDL_GetModState();
+	
+					unsigned int mod=0;
+					
+					if (  mod_state & (KMOD_LSHIFT|KMOD_RSHIFT))
+						mod|=KEY_MASK_SHIFT;
+					
+					if (  mod_state & (KMOD_LALT|KMOD_RALT))
+						mod|=KEY_MASK_ALT;
+					
+					if (  mod_state & (KMOD_LCTRL|KMOD_RCTRL))
+						mod|=KEY_MASK_CTRL;
+									
+					if (  mod_state & (KMOD_LMETA|KMOD_RMETA))
+						mod|=KEY_MASK_META;
+					
+					
+					window.mouse_button( Point( event.button.x, event.button.y ), event.button.button, event.button.type==SDL_MOUSEBUTTONDOWN, mod );
+					
+					if (can_dblclick && last_click_delta<250 && event.button.type==SDL_MOUSEBUTTONDOWN && event.button.button==BUTTON_LEFT) {
+						window.mouse_doubleclick( Point( event.button.x, event.button.y ), mod );
+						can_dblclick=false;
+	
+					} else
+						can_dblclick=true;
+					
+				} while (SDL_PeepEvents(&event,1,SDL_GETEVENT,SDL_EVENTMASK(SDL_MOUSEMOTION))>0);
+
+					
+				
+				
+			} break;
+				
+			case SDL_MOUSEMOTION:
+
+				can_dblclick=false; //can't doubleclick! wah wah wah
+				/* Motion compensation, in case there are MANY motion events pending */
+				SDL_Event compensator;
+				
+				while (SDL_PeepEvents(&compensator,1,SDL_GETEVENT,SDL_EVENTMASK(SDL_MOUSEMOTION))>0) {
+					
+					event.motion.xrel+=compensator.motion.xrel;
+					event.motion.yrel+=compensator.motion.yrel;
+					event.motion.state=compensator.motion.state;
+					event.motion.x=compensator.motion.x;
+					event.motion.y=compensator.motion.y;
+				}
+
+				
+				window.mouse_motion( Point( event.motion.x, event.motion.y ), Point( event.motion.xrel, event.motion.yrel ), event.motion.state );
+				break;
+				
+			case SDL_USEREVENT: {
+				
+				if (event.user.code!=TimerSDL::SDL_TIMER_EVENT_CODE)
+					break;
+				
+				TimerID *timer_id=(TimerID*)event.user.data1;
+				timer->call(*timer_id);
+			} break; 
+			case SDL_QUIT:
+				interface->quit_request();
+				break;
+
+			default: {}
+				break;
+
+		}   // End switch
+            
+
+//		printf("check updates! - %i\n",i++);
+		timer->loop_iterate();
+		window.check_for_updates();
+		//SDL_UpdateRect   (screen, 0, 0, 0, 0);
+		
+		done=interface->must_quit();
+	}   // End while
+        	
+	return 0;
+	
+}
 
 int main(int argc, char *argv[]) {
 
+#ifdef WINDOWS_ENABLED	
+	FileSystemWindows::set_default_filesystem();
+#else
+	FileSystemDirent::set_default_filesystem();
+
+#endif
 	
-	QApplication *q = new QApplication(argc,argv);
+
 	
 	ReShaked::MidiInputHandler midi_input_handler;
 	
@@ -270,15 +423,15 @@ int main(int argc, char *argv[]) {
 	ReShaked::VST_SoundPluginSource vst_plugin_source;
 	
 #endif
-	init_sound_plugin_UI_list();
+//	init_sound_plugin_UI_list();
 	
 	ReShaked::AudioControl::init();
 	
 	
 
-	test_config_dir();
+//	test_config_dir();
 	
-	ReShaked::PluginPresetManager plugin_preset_manager(ReShaked::DeQStrify(CONFIG_DIR_PATH+"/"+CONFIG_DIR+"/presets"));
+	ReShaked::PluginPresetManager plugin_preset_manager((CONFIG_DIR_PATH+"/"+CONFIG_DIR+"/presets"));
 	
 #ifdef DRIVER_JACK_ENABLED
 	
@@ -287,10 +440,39 @@ int main(int argc, char *argv[]) {
 	
 #endif
 	
+	/** ENABLE GUI AND SDL */
 	
-	ReShaked::MainWindow *w = new ReShaked::MainWindow(CONFIG_DIR_PATH+"/"+CONFIG_DIR,"settings.cfg");
+	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
+		printf("Unable to initialize SDL: %s\n", SDL_GetError());
+		return 1;
+	}
+ 
+	SDL_EnableUNICODE(1);
+
+	const SDL_VideoInfo *vinfo=SDL_GetVideoInfo();
+	Uint32 flags =SDL_SWSURFACE | SDL_RESIZABLE;
+	SDL_Surface *screen = SDL_SetVideoMode  (DEFAULT_W, DEFAULT_H,vinfo->vfmt->BitsPerPixel , flags);
 	
-	if (w->load_settings()) { //if failed loading settings, init the default drivers
+	PainterSDL *painter = new PainterSDL(screen);
+	TimerSDL *timer = new TimerSDL;
+	
+	ScrollBar::set_can_focus_by_default( false );
+	
+	ReShaked::RSSkin skin;		
+	
+	Window window( painter, timer, &skin );
+	
+	window.set_size( Size( DEFAULT_W,DEFAULT_H ) );
+	
+	ReShaked::MainWindow *interface = new ReShaked::MainWindow;
+	window.set_root_frame(interface);
+	
+	window.redraw_all();
+	window.update();
+			
+	/**** GUI AND SDL INIT END */
+	
+	if (true/*w->load_settings()*/) { //if failed loading settings, init the default drivers
 		WARN_PRINT("Loading settings failed");
 		driver_list.init_driver(0);
 		midi_driver_list.init_driver(0);
@@ -301,16 +483,14 @@ int main(int argc, char *argv[]) {
 	
 	vst_plugin_source.scan_plugins();
 #endif	
-	//q.setMainWidget(&w);
-	w->show();
 	
-	int res=q->exec();
+	
+	int res = main_loop(window,screen,timer,flags,interface);
+	
 	
 	midi_driver_list.finish_driver();
 	driver_list.finish_driver(); //avoid multithread problems
 
-	delete w;
-	delete q;
 	
 #ifdef DRIVER_PORTAUDIO_ENABLED
 	

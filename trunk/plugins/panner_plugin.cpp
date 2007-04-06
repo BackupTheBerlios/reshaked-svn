@@ -12,7 +12,7 @@
 #include "panner_plugin.h"
 
 #include <math.h>
-#include "pixmaps/icon_panner.xpm"
+#include "icon_panner.xpm"
 
 namespace ReShaked {
 

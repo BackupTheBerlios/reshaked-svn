@@ -10,8 +10,8 @@
 //
 //
 #include "tool_plugins.h"
-#include "pixmaps/icon_merger.xpm"
-#include "pixmaps/icon_splitter.xpm"
+#include "icon_merger.xpm"
+#include "icon_splitter.xpm"
 namespace ReShaked {
 
 static SoundPlugin* create_splitter(const SoundPluginInfo *p_info,int p_channels) {

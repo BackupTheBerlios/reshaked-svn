@@ -12,8 +12,8 @@
 #include "delay_line_plugin.h"
 
 #include <math.h>
-#include "pixmaps/icon_delay.xpm"
-#include "pixmaps/icon_delay_bpm.xpm"
+#include "icon_delay.xpm"
+#include "icon_delay_bpm.xpm"
 
 namespace ReShaked {
 

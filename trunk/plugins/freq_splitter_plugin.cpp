@@ -12,7 +12,7 @@
 #include "freq_splitter_plugin.h"
 
 #include <math.h>
-#include "pixmaps/icon_freq_split.xpm"
+#include "icon_freq_split.xpm"
 
 namespace ReShaked {
 

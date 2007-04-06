@@ -15,7 +15,7 @@
 //#include "pixmaps/effect_limiter.xpm"
 #include "dsp/formulas.h"
 
-#include "pixmaps/icon_limiter.xpm"
+#include "icon_limiter.xpm"
 
 namespace ReShaked {
 

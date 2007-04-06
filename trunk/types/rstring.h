@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef RESHAKEDRSTRING_H
-#define RESHAKEDRSTRING_H
+#ifndef RESHAKEDSTRING_H
+#define RESHAKEDSTRING_H
 
-namespace ReShaked {
+
+
+
 
 /**
 	@author red <red@killy>
@@ -45,7 +47,8 @@ public:
 
 class String {
 public:			    
-	typedef wchar_t CharType;
+//	typedef wchar_t CharType; -- standard
+	typedef unsigned short CharType; // ucs16 
 private:
 			    
 	struct Shared {
@@ -120,6 +123,11 @@ public:
 	bool operator==(const CharType *p_str) const;
 	bool operator!=(const char *p_str) const;
 	bool operator!=(const CharType *p_str) const;
+	bool operator<(const CharType *p_str) const;
+	bool operator<(const char *p_str) const;
+	bool operator<(String p_str) const;
+	
+	signed char nocasecmp_to(String p_str) const; ////strcmp like, <0 for less 0 for equal > 0 for greater
 	
 	/* [] op */	
 	const CharType& operator[](int p_idx) const; //constref
@@ -135,14 +143,25 @@ public:
 	/* complex helpers */
 	String substr(int p_from,int p_chars);
 	int find(String p_str,int p_from=0); ///< return <0 if failed
+	int findn(String p_str,int p_from=0); ///< return <0 if failed, case insensitive
 	void replace(String p_key,String p_with);
+	void insert(int p_at_pos,String p_string);
 	static String num(double p_num,int p_digits=-1);
+	double to_double();
+	int to_int();
+	
+	int get_slice_count(String p_splitter);
+	String get_slice(String p_splitter,int p_slice);
+	
+	String to_upper();
 	
 	String left(int p_chars);
 
+	void erase(int p_pos, int p_chars);
 	
 	CharString ascii(bool p_allow_extended=false) const;
 	CharString utf8() const;
+	bool parse_utf8(const char* p_utf8); //return true on error
 	/**
 	 * The constructors must not depend on other overloads
 	 */
@@ -164,6 +183,9 @@ String operator+(String::CharType p_chr, const String& p_str);
 
 
 
-} /* end of namespace */
+
+
+
+
 
 #endif

@@ -11,7 +11,7 @@
 //
 #include "distortion_plugin.h"
 #include "dsp/formulas.h"
-#include "pixmaps/icon_distortion.xpm"
+#include "icon_distortion.xpm"
 namespace ReShaked {
 
 static SoundPlugin* create_distortion(const SoundPluginInfo *p_info,int p_channels) {

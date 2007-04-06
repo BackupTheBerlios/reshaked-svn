@@ -11,7 +11,7 @@
 //
 #include "chorus_plugin.h"
 #include <math.h>
-#include "pixmaps/icon_chorus.xpm"
+#include "icon_chorus.xpm"
 
 namespace ReShaked {
 

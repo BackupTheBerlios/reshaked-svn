@@ -1,0 +1,9 @@
+Import('env');
+
+env_gui_custom = env.Copy();
+env_gui_custom.target_list=[];
+
+
+env_gui_custom.find_source_files(env_gui_custom.target_list,"*.cpp");
+
+env.Library('gui_custom', env_gui_custom.target_list)

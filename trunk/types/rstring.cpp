@@ -9,16 +9,20 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+
+
 #include "rstring.h"
-#include <stdio.h>
+#include <stdlib.h>
 #include <wchar.h>
-#include "error_macros.h"
 #include <math.h>
+#include "base/defs.h"
+#include <stdio.h>
+#include "error_macros.h"
 
 
 #define MAX_DIGITS 6
 
-namespace ReShaked {
+#define UPPERCASE(m_c) (((m_c)>='a' && (m_c)<='z')?((m_c)-('a'-'A')):(m_c))
 
 
 void CharString::free_shared() {
@@ -123,7 +127,10 @@ void String::resize_shared(int p_newsize) {
 
 void String::create_shared(int p_length) {
 	
-	ERR_FAIL_COND(shared!=NULL);
+	if (shared!=NULL) {
+		ERR_PRINT(" Shared != NULL ");
+		return;
+	}
 	
 	shared = new Shared;
 	shared->len=p_length;
@@ -243,7 +250,12 @@ bool String::operator!=(String p_str) const {
 const String::CharType& String::operator[](int p_idx) const {
 	
 	static CharType errv=0;
-	ERR_FAIL_INDEX_V(p_idx,shared->len,errv);
+	if (p_idx <0 || p_idx>=shared->len) {
+		
+		ERR_PRINT("p_idx <0 || p_idx>=shared->len");
+		return errv;
+	};
+
 
 	return shared->data[p_idx];
 }
@@ -252,7 +264,12 @@ String::CharType& String::operator[](int p_idx) {
 	
 	static CharType errv=0;
 	errv=0; //dont change it, damnit
-	ERR_FAIL_INDEX_V(p_idx,shared->len,errv);
+	if (p_idx <0 || p_idx>=shared->len) {
+		
+		ERR_PRINT("p_idx <0 || p_idx>=shared->len");
+		return errv;
+	};
+	
 	copy_on_write();
 	return shared->data[p_idx];
 }
@@ -273,7 +290,7 @@ String String::operator+(CharType p_chr)  const {
 	
 String& String::operator+=(const String &p_str) {
 	
-	//printf("check empty for %lls, len is %i\n",p_str.c_str(),shared->len);	
+
 	if (p_str.empty()) {
 
 		return *this;
@@ -281,23 +298,23 @@ String& String::operator+=(const String &p_str) {
 
 	copy_on_write(); /* DATA IS MODIFIED, COPY ON WRITE! */
 	
-	//printf("1 %lls\n",shared->data);
+	
 	
 
 	int old_len=shared->len;
-	//printf("2 len is now %i\n",shared->len);
+	
 	resize_shared(p_str.shared->len+shared->len);
-	//printf("3 len is now %i\n",shared->len);
-	//printf("4 adding: ");
+	
+	
 	
 	for (int i=0;i<p_str.shared->len;i++) {
 		
 		shared->data[old_len+i]=p_str.shared->data[i];
-		//printf("%c ",shared->data[old_len+i]);
+
 		
 	}
 
-	//printf("5-result is %lls\n",shared->data);
+	
 
 	return *this;
 	
@@ -414,10 +431,165 @@ bool String::operator!=(const char *p_str) const {
 	
 	return (! ( *this==p_str ) );
 }
+
+
 bool String::operator!=(const CharType *p_str) const {
 	
 	return (! ( *this==p_str ) );
 	
+}
+
+bool String::operator<(const CharType *p_str) const {
+	
+	
+	const CharType *this_str=c_str();
+	while (true) {
+		
+		if (*p_str==0 && *this_str==0)
+			return false; //this can't be equal, sadly
+		else if (*this_str==0)
+			return true; //if this is empty, and the other one is not, then we're less.. I think?
+		else if (*p_str==0)
+			return false; //otherwise the other one is smaller..
+		else if (*this_str < *p_str ) //more than
+			return true;
+		else if (*this_str > *p_str ) //less than
+			return false;
+		
+		this_str++;
+		p_str++;
+	}
+	
+	return false; //should never reach here anyway	
+	
+}
+
+bool String::operator<(const char *p_str) const {
+	
+	const CharType *this_str=c_str();
+	while (true) {
+		
+		if (*p_str==0 && *this_str==0)
+			return false; //this can't be equal, sadly
+		else if (*this_str==0)
+			return true; //if this is empty, and the other one is not, then we're less.. I think?
+		else if (*p_str==0)
+			return false; //otherwise the other one is smaller..
+		else if (*this_str < *p_str ) //more than
+			return true;
+		else if (*this_str > *p_str ) //less than
+			return false;
+		
+		this_str++;
+		p_str++;
+	}
+	
+	return false; //should never reach here anyway	
+	
+}
+
+
+
+bool String::operator<(String p_str) const {
+	
+	return operator<(p_str.c_str());	
+}
+
+signed char String::nocasecmp_to(String p_str) const { ////strcmp like, <0 for we are less 0 for equal > 0 for we are greater
+
+	
+	const CharType *that_str=p_str.c_str();
+	const CharType *this_str=c_str();
+	while (true) {
+		
+		if (*that_str==0 && *this_str==0)
+			return 0; //we're equal
+		else if (*this_str==0)
+			return -1; //if this is empty, and the other one is not, then we're less.. I think?
+		else if (*that_str==0)
+			return 1; //otherwise the other one is smaller..
+		else if (UPPERCASE(*this_str) < UPPERCASE(*that_str) ) //more than
+			return -1;
+		else if (UPPERCASE(*this_str) > UPPERCASE(*that_str) ) //less than
+			return 1;
+		
+		this_str++;
+		that_str++;
+	}
+	
+	return 0; //should never reach anyway
+
+}
+
+void String::erase(int p_pos, int p_chars) {
+	
+	
+	*this=left(p_pos)+substr( p_pos + p_chars , length() - ( (p_pos+p_chars) ) );	
+	
+
+}
+
+
+int String::get_slice_count(String p_splitter) {
+	
+	int pos=0;
+	int slices=1;
+	
+	while ( (pos=find(p_splitter,pos))>=0) {
+		
+		slices++;
+		pos+=p_splitter.length();
+	}
+	
+	return slices;
+}
+
+String String::get_slice(String p_splitter, int p_slice) {
+	
+	int pos=0;
+	int prev_pos=0;
+	int slices=1;
+	if (p_slice<0)
+		return "";
+	if (find(p_splitter)==-1)
+		return *this;
+	
+	int i=0;
+	while(true) {
+		
+		pos=find(p_splitter,pos);
+		if (pos==-1)
+			pos=length(); //reached end
+		
+		int from=prev_pos;
+		int to=pos;
+		
+		if (p_slice==i) {
+			
+			return substr( from, pos-from );
+		}
+		
+		if (pos==length()) //reached end and no find
+			break;
+		pos+=p_splitter.length();
+		prev_pos=pos;
+		i++;
+	}
+	
+	return ""; //no find!
+	
+}
+
+String String::to_upper() {
+	
+	String upper=*this;
+	
+	for(int i=0;i<upper.size();i++) {
+		
+		upper[i]=UPPERCASE(upper[i]);
+	}
+	
+	return upper;
 }
 
 int String::length() const {
@@ -449,7 +621,7 @@ String String::num(double p_num,int p_digits) {
 	p_num=fabs(p_num);
 	int intn=(int)p_num;
 	
-	//printf("int - %lls\n",s.c_str());			
+
 	/* decimal part */
 
 	
@@ -471,7 +643,7 @@ String String::num(double p_num,int p_digits) {
 			dec_max=dec_max*10+9;
 			digit++;
 
-			//printf("s post %c\n",num);
+
 			
 			if (p_digits==-1) {
 				
@@ -489,7 +661,7 @@ String String::num(double p_num,int p_digits) {
 		}
 		dec*=10;
 		int last=(int)dec%10;
-	//	printf("last %i, dec_int %i, dec max %i - val %lg\n",last,dec_int,dec_max,p_num);
+
 		if (last>5) {
 			if (dec_int==dec_max) {
 				
@@ -521,7 +693,7 @@ String String::num(double p_num,int p_digits) {
 			CharType num='0'+(intn%10);
 			intn/=10;
 			
-			//printf("s pre %c\n",num);
+
 			s=num+s;
 			
 		}
@@ -560,6 +732,105 @@ CharString String::ascii(bool p_allow_extended) const {
 
 	
 }
+
+
+static int parse_utf8_char(const char *p_utf8,unsigned int *p_ucs4,int p_left) { //return len
+	
+	
+	int len=0;
+	
+/* Determine the number of characters in sequence */
+	if ((*p_utf8 & 0x80)==0)
+		len=1;
+	else if ((*p_utf8 & 0xE0)==0xC0)
+		len=2;
+	else if ((*p_utf8 & 0xF0)==0xE0)
+		len=3;
+	else if ((*p_utf8 & 0xF8)==0xF0)
+		len=4;
+	else if ((*p_utf8 & 0xFC)==0xF8)
+		len=5;
+	else if ((*p_utf8 & 0xFE)==0xFC)
+		len=6;
+	else
+		return -1; //invalid UTF8
+	
+	if (len>p_left)
+		return -1; //not enough space
+	
+	if (len==2 && (*p_utf8&0x1E)==0)
+		return -1; //reject overlong
+	
+	/* Convert the first character */
+	
+	unsigned int unichar=0;
+	
+	if (len == 1)
+		unichar=*p_utf8;
+	else {
+	
+		unichar=(0xFF >> (len +1)) & *p_utf8;;
+		
+		for (int i=1;i<len;i++) {
+			
+			if ((p_utf8[i] & 0xC0) != 0x80)
+				return -1; //invalid utf8
+			if (unichar==0 && i==2 && ((p_utf8[i] & 0x7F) >> (7 - len)) == 0)
+				return -1; //no overlong
+			unichar = (unichar << 6) | (p_utf8[i] & 0x3F);
+		}
+	}
+	
+	*p_ucs4=unichar;
+	
+	return len;
+	
+}
+
+bool String::parse_utf8(const char* p_utf8) {
+	
+	
+	String aux;
+	
+	int cstr_size=0;
+	
+	while (p_utf8[cstr_size])
+		cstr_size++;
+		
+	
+//	printf("Parsing %s\n",p_utf8);
+	while (cstr_size) {
+		
+		unsigned int unichar;
+		
+		int len=parse_utf8_char(p_utf8,&unichar,cstr_size);
+		if (len<0)
+			return true;
+		
+//		printf("char %i, len %i\n",unichar,len);
+		if (sizeof(wchar_t)==2) { //windows most certainly
+		
+			if (unichar<=0xFFFF) { //windows can't eat this
+				
+				aux+=unichar;
+			}
+			
+		} else {
+			
+			aux+=unichar;			
+		}
+		
+			
+		
+		cstr_size-=len;
+		p_utf8 += len;
+	}
+	
+	*this=aux;
+	return false;
+}
+	
+
 
 CharString String::utf8() const {
 	
@@ -642,6 +913,65 @@ String::String() {
 	create_shared();
 }
 
+int String::to_int() {
+	
+	if (length()==0)
+		return 0;
+	
+	int to=(find(".")>=0) ? find(".") : length() ;
+	
+	int integer=0;
+	
+	for (int i=0;i<to;i++) {
+		
+		CharType c=operator[](i);
+		if (c>='0' && c<='9') {
+			
+			integer*=10;
+			integer+=c-'0';
+			
+		}
+
+	}
+	
+	return integer;
+}
+
+double String::to_double() {
+	
+	if (length()==0)
+		return 0;
+	
+	int dot=find(".");
+	
+	if (dot<0)
+		dot=length();
+	
+	int integer=to_int();
+	
+	double decimal=0;
+	
+	if (dot<length()) { //has decimal part?
+		
+		
+		double multiplier=0.1;
+		
+		for (int i=(dot+1);i<length();i++) {
+			
+			CharType c=operator[](i);
+			
+			if (c>='0' && c<='9') {
+			
+				decimal+=(double)(c-'0')*multiplier;
+				multiplier*=0.1;
+			}
+		}
+	}
+	
+
+	return (double)integer+decimal;
+}
+
 String::~String() {
 	
 	free_shared();
@@ -666,6 +996,26 @@ String operator+(String::CharType p_chr, const String& p_str) {
 	
 }
 
+void String::insert(int p_at_pos,String p_string) {
+
+	if (p_at_pos<0)
+		return;
+
+	if (p_at_pos>length())
+		p_at_pos=length();
+
+	
+	String pre;
+	if (p_at_pos>0)
+		pre=substr( 0, p_at_pos );
+
+	String post;
+	if (p_at_pos<length())
+		post=substr( p_at_pos, length()-p_at_pos);
+
+	*this=pre+p_string+post;
+
+}
 String String::substr(int p_from,int p_chars) {
 	
 	if (p_from<0 || p_from>=length() || p_chars<=0)
@@ -695,8 +1045,60 @@ int String::find(String p_str,int p_from) {
 		for (int j=0;j<src_len;j++) {
 			
 			int read_pos=i+j;
-			ERR_FAIL_COND_V(read_pos>=length(),-1);	//test in case i made a mistake!			
+			
+			if (read_pos>=length()) {
+		
+				ERR_PRINT("read_pos>=length()");
+				return -1;
+			};
+
+	
 			if (shared->data[read_pos]!=p_str[j]) {
+				found=false;
+				break;
+			}
+		}
+		
+		if (found)
+			return i;
+	}
+	
+	return -1;
+}
+
+int String::findn(String p_str,int p_from) {
+	
+	if (p_from<0)
+		return -1;
+	
+	int src_len=p_str.length();
+	
+	if(src_len==0 || length()==0)
+		return -1; //wont find anything!
+	
+	for (int i=p_from;i<=(length()-src_len);i++) {
+		
+		bool found=true;
+		for (int j=0;j<src_len;j++) {
+			
+			int read_pos=i+j;
+			
+			if (read_pos>=length()) {
+		
+				ERR_PRINT("read_pos>=length()");
+				return -1;
+			};
+
+			
+			CharType src=shared->data[read_pos];
+			CharType dst=p_str[j];
+			
+			if (src>='a' && src<='z')
+				src-='a'-'A';
+			if (dst>='a' && dst<='z')
+				dst-='a'-'A';
+						
+			if (src!=dst) {
 				found=false;
 				break;
 			}
@@ -730,7 +1132,7 @@ void String::replace(String p_key,String p_with) {
 String String::left(int p_chars) {
 	
 	if (p_chars<=0)
-		return *this;
+		return "";
 	
 	if (p_chars>=length())
 		return *this;
@@ -740,6 +1142,3 @@ String String::left(int p_chars) {
 
 
 
-
-
-}

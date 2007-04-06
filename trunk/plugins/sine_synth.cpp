@@ -12,7 +12,7 @@
 //
 #include "sine_synth.h"
 #include "math.h"
-#include "pixmaps/synth_sine.xpm"
+#include "synth_sine.xpm"
 
 #define DEFAULT_AMP 0.1
 

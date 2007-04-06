@@ -16,7 +16,7 @@
 #include "dsp/resample.h"
 #include "dsp/formulas.h"
 #include "dsp/tree_helpers_dsp.h"
-#include "pixmaps/icon_trigger.xpm"
+#include "icon_trigger.xpm"
 
 
 

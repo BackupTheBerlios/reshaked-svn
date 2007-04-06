@@ -10,7 +10,7 @@
 //
 //
 #include "chionic.h"
-#include "pixmaps/icon_chionic_2.xpm"
+//#include "icon_chionic_2.xpm"
 
 #include "dsp/tree_helpers_dsp.h"
 
@@ -40,7 +40,7 @@ const SoundPluginInfo *Chionic::create_info() {
 	info.custom_channels.push_back(4);
 	info.has_internal_UI=false; 
 	info.is_synth=true;
-	info.xpm_preview=(const char**)icon_chionic_2_xpm;
+	info.xpm_preview=0; //(const char**)icon_chionic_2_xpm;
 	info.creation_func=&create_chionic;
 	info.version=1;
 	

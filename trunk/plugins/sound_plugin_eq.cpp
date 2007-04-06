@@ -13,8 +13,8 @@
 
 #include "dsp/formulas.h"
 
-#include "pixmaps/icon_eq_6.xpm"
-#include "pixmaps/icon_eq_10.xpm"
+#include "icon_eq_6.xpm"
+#include "icon_eq_10.xpm"
 
 namespace ReShaked {
 

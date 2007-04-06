@@ -12,7 +12,7 @@
 #include "moog_filter_plugin.h"
 
 #include <math.h>
-#include "pixmaps/icon_moog_svf.xpm"
+#include "icon_moog_svf.xpm"
 
 namespace ReShaked {
 
