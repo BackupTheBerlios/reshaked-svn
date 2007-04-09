@@ -44,6 +44,8 @@ struct Point { //used for point and size
 	Point operator/=(int p_v) { x/=p_v; y/=p_v; return *this; }
 	Point operator/(int p_v) const { Point aux=*this; aux/=p_v; return aux; }
 		
+	void swap_xy() { int aux=x; x=y; y=aux; }
+	
 	Point(const Point &p_from) : width(x) , height(y) { x=p_from.x; y=p_from.y; }
 	Point(int p_x=0,int p_y=0) : width(x) , height(y) { x=p_x; y=p_y; }
 };

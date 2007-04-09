@@ -39,6 +39,9 @@ public:
 	virtual void draw_bitmap(BitmapID p_bitmap,const Point &p_pos,const Color&p_color=Color(255,255,255) )=0;
 	virtual void draw_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect,const Color&p_color=Color(255,255,255) )=0;
 	
+	virtual void draw_bitmap(BitmapID p_bitmap,const Point &p_pos,Direction p_dir ,const Color&p_color=Color(255,255,255) )=0;
+	virtual void draw_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect,Direction p_dir,const Color&p_color=Color(255,255,255) )=0;
+	
 	virtual void draw_tiled_bitmap(BitmapID p_bitmap,const Rect& p_rect,const Point& p_origin,const Color&p_color=Color(255,255,255))=0;
 	virtual void draw_tiled_bitmap(BitmapID p_bitmap,const Rect& p_rect,const Color&p_color=Color(255,255,255));
 	
@@ -53,6 +56,7 @@ public:
 	 */
 	
 	virtual void draw_text(FontID p_font,const Point & p_pos,const String &p_string,const Color&p_color=Color(),int p_clip_w=-1);
+	virtual void draw_text(FontID p_font,const Point & p_pos,const String &p_string,Direction p_dir,const Color&p_color=Color(),int p_clip_w=-1);
 	
 	virtual int get_font_char_width(FontID p_font,unsigned int p_char);
 	virtual int get_font_string_width(FontID p_font,const String& p_string);

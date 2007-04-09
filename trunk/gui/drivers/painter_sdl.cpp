@@ -186,6 +186,12 @@ void PainterSDL::draw_bitmap(BitmapID p_bitmap,const Point &p_pos,const Color&p_
 
 }
 
+void PainterSDL::draw_bitmap(BitmapID p_bitmap,const Point &p_pos,Direction p_dir ,const Color&p_color ) {
+	
+	draw_bitmap( p_bitmap, p_pos, Rect( Point(), get_bitmap_size( p_bitmap )),p_dir,p_color );
+	
+}
+
 
 BitmapID PainterSDL::load_bitmap(String p_file) {
 	
@@ -298,6 +304,12 @@ void PainterSDL::set_bitmap_pixel(BitmapID p_bitmap,const Point& p_pos,const Col
 }
 
 void PainterSDL::draw_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect,const Color&p_color) {
+
+	
+	draw_bitmap(p_bitmap,p_pos,p_src_rect,RIGHT,p_color);
+}
+
+void PainterSDL::draw_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect,Direction p_dir,const Color&p_color) {
 	
 	if (!is_bitmap_valid(p_bitmap)) {
 
@@ -306,9 +318,9 @@ void PainterSDL::draw_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p
 	};	
 
 	
-	if (bitmaps[p_bitmap]->format->BytesPerPixel==1) {
+	if (bitmaps[p_bitmap]->format->BytesPerPixel==1 || p_dir!=RIGHT) {
 
-		draw_alphamask_bitmap( p_bitmap, p_pos, p_src_rect,p_color);
+		draw_custom_bitmap( p_bitmap, p_pos, p_src_rect,p_color,p_dir);
 		return;
 	}
 
@@ -355,11 +367,21 @@ void PainterSDL::draw_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p
 	
 }
 
-void PainterSDL::draw_alphamask_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect, const Color&p_color ) {
+void PainterSDL::draw_custom_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect, const Color&p_color, Direction p_dir ) {
 
+	
 	Uint32 color=SDL_MapRGB( surface->format,p_color.r, p_color.g, p_color.b);
 	SDL_Surface *src_surface=bitmaps[p_bitmap];
 
+	bool is_alphamask=src_surface->format->BytesPerPixel==1;
+	
+	if (!is_alphamask) {
+		
+		PRINT_ERROR("Only alphamask pixmaps supported as for now");
+		return;
+	}
+		
+			
 	Uint32 Rmask = surface->format->Rmask;
 	Uint32 Gmask = surface->format->Gmask;
 	Uint32 Bmask = surface->format->Bmask;
@@ -367,46 +389,57 @@ void PainterSDL::draw_alphamask_bitmap(BitmapID p_bitmap,const Point &p_pos, con
 	
 	Uint32 R = 0, G = 0, B = 0, A = 0;
 
-	Point pos=p_pos+rect.pos;
 	
-	/* Convert all to same coordinate space */
-	Rect write_rect=Rect(pos,p_src_rect.size);
-	Rect src_surface_rect=Rect(pos-p_src_rect.pos, Size( src_surface->w, src_surface->h ) ); //source rect in write coordinates
-	Rect dst_surface_rect=Rect(Point(), Size( surface->w, surface->h ) );
-
-	/* clip by both surfaces */
-
-	write_rect=src_surface_rect.clip( write_rect );
-	write_rect=rect.clip( write_rect );
-	write_rect=dst_surface_rect.clip( write_rect );
-	if (clip_rect_active)
-		write_rect=clip_rect.clip( write_rect );
+	/* CLIPPING, STEP 1 */
+	Rect global_rect=Rect( p_pos + rect.pos , p_src_rect.size ); //convert src rect to global screen coords
 	
-
-	if (write_rect.has_no_area()) {
+	/* CLIPPING, STEP2, Apply Rotation */
+	if (p_dir==DOWN) {
 		
+		global_rect.size.swap_xy();
+		
+	} else if (p_dir==LEFT || p_dir==UP) {
+		
+		PRINT_ERROR("Unsupported Direction in bitmap draw - only RIGHT and DOWN work ATM");
 		return;
-	} 
-
-	Rect read_rect( write_rect.pos-src_surface_rect.pos, write_rect.size );
-	/*	
-	SDL_Rect src_rect;
-	src_rect.x=read_rect.pos.x;
-	src_rect.y=read_rect.pos.y;
-	src_rect.w=read_rect.size.width;
-	src_rect.h=read_rect.size.height;
-	
-
-	
-	SDL_Rect dst_rect;
-	dst_rect.x=write_rect.pos.x;
-	dst_rect.y=write_rect.pos.y;
-	dst_rect.w=write_rect.size.width;
-	dst_rect.h=write_rect.size.height;
-			
-	SDL_BlitSurface(bitmaps[p_bitmap], &src_rect, surface, &dst_rect);
+	} // RIGHT is default
 		
-	return;	 */
+	/* CLIPPING Step 3 CLIP IT */
+	
+	
+	global_rect = rect.clip( global_rect ); //clip by local rect
+	if (clip_rect_active) // clip by clip rect, if enabled
+		global_rect=clip_rect.clip( global_rect );
+	
+	global_rect=Rect(rect.pos+p_pos-p_src_rect.pos, Size( src_surface->w, src_surface->h ) ).clip( global_rect ); // clip by src_surface
+	global_rect =  Rect(Point(), Size( surface->w, surface->h ) ).clip ( global_rect ); // clip by screen
+	
+	if (global_rect.has_no_area()) {
+		
+		return; //nothing to do, no area!
+	}
+	
+	
+	
+	/* CLIPPING Step 4 , Transform to local again */
+	Rect local_rect=Rect( global_rect.pos-(p_pos + rect.pos) , global_rect.size ); // first create, in local coords
+	Rect read_rect=Rect( local_rect.pos+p_src_rect.pos, local_rect.size );
+	
+	
+	/* CLIPPING Step 5, Deapply Rotation */
+	
+	if (p_dir==DOWN) {
+		
+		read_rect.size.swap_xy(); //adjust size
+		Point vec=read_rect.pos-p_src_rect.pos;
+		vec.swap_xy();
+		read_rect.pos=p_src_rect.pos+vec;
+	}
+		
+	/* Compute read/write rects */
+
+
+	Rect write_rect=Rect( local_rect.pos+rect.pos+p_pos, read_rect.size );
 
 	if (SDL_MUSTLOCK(src_surface)) {
 		
@@ -427,7 +460,19 @@ void PainterSDL::draw_alphamask_bitmap(BitmapID p_bitmap,const Point &p_pos, con
 
 			for (int iy=0;iy<read_rect.size.height;iy++) {
 
-				Uint16 *dst_line=(Uint16 *)surface->pixels + (write_rect.pos.y+iy) * surface->pitch / 2 + write_rect.pos.x;
+				Uint16 *dst_line;
+				
+				switch (p_dir) {
+					
+					case RIGHT: {
+						dst_line=(Uint16 *)surface->pixels + (write_rect.pos.y+iy) * surface->pitch / 2 + write_rect.pos.x;
+					} break;
+					case DOWN: {
+						dst_line=(Uint16 *)surface->pixels + (write_rect.pos.y) * surface->pitch / 2 + write_rect.pos.x+(read_rect.size.height-iy-1);
+					} break;
+					default: {};
+				}
+					
 				Uint8 *src_line=(Uint8 *)src_surface->pixels + (read_rect.pos.y+iy) * src_surface->pitch  + read_rect.pos.x;
 
 				int todo=read_rect.size.width;
@@ -452,7 +497,17 @@ void PainterSDL::draw_alphamask_bitmap(BitmapID p_bitmap,const Point &p_pos, con
 						*dst_line = R | G | B | A;
 					}
 					src_line++;
-					dst_line++;
+					switch (p_dir) {
+					
+						case RIGHT: {
+
+							dst_line++;
+						} break;
+						case DOWN: {
+
+							dst_line+=surface->pitch / 2;
+						} break;
+					}
 				}
 			}
 		
@@ -465,7 +520,18 @@ void PainterSDL::draw_alphamask_bitmap(BitmapID p_bitmap,const Point &p_pos, con
 			for (int iy=0;iy<read_rect.size.height;iy++) {
 
 				
-				Uint32 *dst_line=(Uint32 *)(surface->pixels) + (write_rect.pos.y+iy) * surface->pitch / 4 + write_rect.pos.x;
+				Uint32 *dst_line;
+				
+				switch (p_dir) {
+					
+					case RIGHT: {
+						dst_line=(Uint32 *)surface->pixels + (write_rect.pos.y+iy) * surface->pitch / 4 + write_rect.pos.x;
+					} break;
+					case DOWN: {
+						dst_line=(Uint32 *)surface->pixels + (write_rect.pos.y) * surface->pitch / 4 + write_rect.pos.x+(read_rect.size.height-iy-1);
+					} break;
+					default: {};
+				}
 				
 				Uint8 *src_line=(Uint8 *)(src_surface->pixels) + (read_rect.pos.y+iy) * src_surface->pitch  + read_rect.pos.x;
 
@@ -489,8 +555,20 @@ void PainterSDL::draw_alphamask_bitmap(BitmapID p_bitmap,const Point &p_pos, con
 						*dst_line = R | G | B | A;
 					}
 
-					dst_line++;
 					src_line++;
+					switch (p_dir) {
+					
+						case RIGHT: {
+
+							dst_line++;
+						} break;
+						case DOWN: {
+
+							dst_line+=surface->pitch / 4;
+						} break;
+					}
+					
+
 				}
 			}
 		} break;

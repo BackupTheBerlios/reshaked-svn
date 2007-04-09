@@ -21,6 +21,16 @@
 #include "widgets/tab_bar.h"
 #include "widgets/menu_button.h"
 
+#include "editor/editor.h"
+#include "editor/keyboard_input.h"
+#include "editor/midi_input_handler.h"
+
+#include "interface/gui_update_notify.h"
+#include "interface/global_view_frame.h"
+#include "engine/property_edit_updater.h"
+#include "engine/sound_driver_list.h"
+#include "engine/midi_driver_list.h"
+
 
 using namespace GUI;
 
@@ -61,6 +71,7 @@ class MainWindow : public VBoxContainer {
       		
 	};
 	
+	
 	void menu_callback(int p_option);
 		
 	
@@ -72,6 +83,35 @@ class MainWindow : public VBoxContainer {
 	
 	LineEdit *time_line;
 	
+	
+	/* Pages */
+	
+	GlobalViewFrame *global_view;
+	
+	/* Work */
+	
+	
+	
+	
+	String last_saved_file;
+	
+	String settings_dir;
+	String settings_file;
+	
+	GUI_UpdateNotify * update_notify;
+	
+	struct Data {
+
+		Keyboard_Input keyboard_codes;
+		Song song;
+		Editor *editor;
+		PropertyEditUpdater property_edit_updater;
+
+	} data;
+	
+	String current_file;
+	void create_keybindings();
+	
 public:
 	
 	bool must_quit();
@@ -79,7 +119,7 @@ public:
 	
 	void initialize();
 	
-	MainWindow();
+	MainWindow(String p_settings_dir,String p_settings_file);
 	~MainWindow();
 
 };

@@ -127,12 +127,30 @@ void MainWindow::initialize() {
 	time_line->set_minimum_size( Size(150,-1));
 	
 	
+	/* Pages */
+	
+	
+	global_view =main_stack->add( new GlobalViewFrame(data.editor) );
+	
+	
+	create_keybindings();	
 }
 	
-MainWindow::MainWindow() 
+MainWindow::MainWindow(String p_settings_dir,String p_settings_file) 
 {
 	
+	settings_dir=p_settings_dir;
+	settings_file=p_settings_file;
 
+	SoundDriverList::get_singleton()->set_song(&data.song);
+	MidiDriverList::get_singleton()->set_song_playback(&data.song.get_song_playback());
+	update_notify = new GUI_UpdateNotify;
+	
+	data.editor = new Editor( &data.song, update_notify );
+	
+	MidiInputHandler::get_singleton()->set_editor( data.editor );
+	
+	
 }
 
 

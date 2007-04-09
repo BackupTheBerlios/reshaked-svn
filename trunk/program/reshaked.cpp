@@ -287,7 +287,7 @@ int main_loop(Window& window,SDL_Surface *screen,TimerSDL *timer,unsigned int fl
 				
 			} break;
 				
-			case SDL_MOUSEMOTION:
+			case SDL_MOUSEMOTION: {
 
 				can_dblclick=false; //can't doubleclick! wah wah wah
 				/* Motion compensation, in case there are MANY motion events pending */
@@ -303,8 +303,24 @@ int main_loop(Window& window,SDL_Surface *screen,TimerSDL *timer,unsigned int fl
 				}
 
 				
-				window.mouse_motion( Point( event.motion.x, event.motion.y ), Point( event.motion.xrel, event.motion.yrel ), event.motion.state );
-				break;
+				int state=event.motion.state&0xFF;
+				SDLMod	mod_state=SDL_GetModState();
+
+				if (  mod_state & (KMOD_LSHIFT|KMOD_RSHIFT))
+					state|=KEY_MASK_SHIFT;
+				
+				if (  mod_state & (KMOD_LALT|KMOD_RALT))
+					state|=KEY_MASK_ALT;
+				
+				if (  mod_state & (KMOD_LCTRL|KMOD_RCTRL))
+					state|=KEY_MASK_CTRL;
+								
+				if (  mod_state & (KMOD_LMETA|KMOD_RMETA))
+					state|=KEY_MASK_META;
+
+				
+				window.mouse_motion( Point( event.motion.x, event.motion.y ), Point( event.motion.xrel, event.motion.yrel ), state );
+			} break;
 				
 			case SDL_USEREVENT: {
 				
@@ -467,7 +483,7 @@ int main(int argc, char *argv[]) {
 	
 	window.set_size( Size( DEFAULT_W,DEFAULT_H ) );
 	
-	ReShaked::MainWindow *interface = new ReShaked::MainWindow;
+	ReShaked::MainWindow *interface = new ReShaked::MainWindow(CONFIG_DIR_PATH+"/"+CONFIG_DIR,"reshaked.cfg");
 	window.set_root_frame(interface);
 	interface->initialize();
 	

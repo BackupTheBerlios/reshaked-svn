@@ -36,7 +36,7 @@ class PainterSDL : public Painter {
 	bool clip_rect_active;
 
 
-	void draw_alphamask_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect, const Color&p_color );
+	void draw_custom_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect, const Color&p_color,Direction p_dir );
 	
 	Size normal_mode;
 	
@@ -67,6 +67,10 @@ public:
 	virtual bool is_bitmap_valid(BitmapID p_bitmap);
 	virtual void draw_bitmap(BitmapID p_bitmap,const Point &p_pos,const Color&p_color=Color() );
 	virtual void draw_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect,const Color&p_color=Color());
+	
+	virtual void draw_bitmap(BitmapID p_bitmap,const Point &p_pos,Direction p_dir ,const Color&p_color=Color(255,255,255) );
+	virtual void draw_bitmap(BitmapID p_bitmap,const Point &p_pos, const Rect& p_src_rect,Direction p_dir,const Color&p_color=Color(255,255,255) );
+	
 	virtual void draw_tiled_bitmap(BitmapID p_bitmap,const Rect& p_rect,const Point& p_origin,const Color&p_color=Color());
 	
 	virtual void remove_bitmap(BitmapID p_bitmap);

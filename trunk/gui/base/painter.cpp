@@ -128,13 +128,18 @@ int Painter::get_font_string_width(FontID p_font,const String& p_string) {
 
 void Painter::draw_text(FontID p_font,const Point & p_pos,const String &p_string,const Color&p_color,int p_clip_w) {
 	
+	draw_text(p_font,p_pos,p_string,RIGHT,p_color,p_clip_w);
+}
+
+void Painter::draw_text(FontID p_font,const Point & p_pos,const String &p_string,Direction p_dir,const Color&p_color,int p_clip_w) {
+	
 	if (!is_font_valid( p_font )) {
 		
 		PRINT_ERROR("Invalid Font");
 		return ;
 	}	
 	Point pos=p_pos;
-	
+	int ofs=0;
 	for (int i=0;i<p_string.length();i++) {
 		
 		PainterPrivate::Font::Character * c = p->fonts[p_font].find_char(p_string[i]);
@@ -142,14 +147,32 @@ void Painter::draw_text(FontID p_font,const Point & p_pos,const String &p_string
 		if (!c)
 			continue;
 
-		if (p_clip_w>=0 && (pos.x+c->rect.size.width)>(p_pos.x+p_clip_w))
+		if (p_clip_w>=0 && (ofs+c->rect.size.width)>(ofs+p_clip_w))
 			break; //width exceeded
 		
-		Point cpos=pos;
-		cpos.y-=p->fonts[p_font].ascent;
-		cpos.y+=c->valign;
-		draw_bitmap( c->bitmap, cpos, c->rect, p_color );
-		pos.x+=c->rect.size.width;
+		switch (p_dir) {
+			
+			case RIGHT: {
+				Point cpos=pos;
+				cpos.x+=ofs;
+				cpos.y-=p->fonts[p_font].ascent;
+				cpos.y+=c->valign;
+				draw_bitmap( c->bitmap, cpos, c->rect, p_color );
+			} break;
+			case DOWN: {
+				Point cpos=pos;
+				cpos.y+=ofs;
+				cpos.x+=p->fonts[p_font].ascent;
+				cpos.x-=c->valign;
+				draw_bitmap( c->bitmap, cpos, c->rect, DOWN, p_color );
+			} break;
+			default: {
+				
+				PRINT_ERROR("Only drawing text right and down is supported as for now");
+			} break;
+		}
+		ofs+=c->rect.size.width;
+		
 		
 	}
 }
