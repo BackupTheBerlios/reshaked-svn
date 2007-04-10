@@ -134,6 +134,24 @@ void Container::skin_changed() {
 	
 }
 
+bool Container::is_child( Frame *p_frame) {
+	
+	Element * list = get_element_list();
+	
+	while(list) {
+		
+		if (list->frame == p_frame ) {
+			
+			return true;
+		}
+		
+		list = list->next;	
+		
+	}
+	
+	return false;
+}
+
 void Container::remove_frame( Frame * p_frame ) {
 	
 	

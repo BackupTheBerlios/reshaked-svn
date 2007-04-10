@@ -17,7 +17,7 @@
 #include "widgets/slider.h"
 #include "containers/grid_container.h"
 #include "containers/box_container.h"
-//#include "interface/global_beatbar_column.h"
+#include "interface/global_beatbar_column.h"
 #include "interface/global_view_cursor.h"
 
 using namespace GUI;
@@ -40,8 +40,10 @@ class GlobalViewFrame : public VBoxContainer {
 	
 //	GlobalBeatBarColumn *beat_bar_column;
 	//MarkerColumn *marker_column;
-	//LoopColumn *loop_column;
+	LoopColumn *loop_column;
 	
+	
+	void global_view_updated();
 public: // slots
 	void update_all();
 	void block_list_changed_slot();
@@ -52,6 +54,9 @@ public: // slots
 
 	Signal<> global_view_changed_blocks_signal;
 public:
+	
+	void global_view_update();		
+	
 	GlobalView *get_global_view();
 	GlobalViewFrame(Editor *p_editor);
 	~GlobalViewFrame();

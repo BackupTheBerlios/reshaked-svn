@@ -111,6 +111,11 @@ bool Frame::has_bg_on_updates() {
 	return _fp->bg_on_updates;
 }
 
+void Frame::update() {
+	
+	update(false);	
+}
+
 void Frame::update(bool p_only_rect,const Rect& p_rect) {
 
 	if (p_only_rect==false) {
@@ -359,6 +364,9 @@ String Frame::get_type() {
 }
 
 Frame::~Frame() {
+	
+	if (_fp->parent && _fp->parent->is_child(this))
+		_fp->parent->remove_frame(this);
 	
 	deleted_signal.call();
 	

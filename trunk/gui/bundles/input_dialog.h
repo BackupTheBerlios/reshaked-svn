@@ -1,0 +1,45 @@
+//
+// C++ Interface: input_dialog
+//
+// Description: 
+//
+//
+// Author: Juan Linietsky <reshaked@gmail.com>, (C) 2007
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+#ifndef GUIINPUT_DIALOG_H
+#define GUIINPUT_DIALOG_H
+
+#include "bundles/spin_box.h"
+#include "base/window.h"
+#include "bundles/margin_group.h"
+
+
+namespace GUI {
+
+/**
+	@author Juan Linietsky <reshaked@gmail.com>
+*/
+
+
+class NumericInputDialog : public Window {
+	
+	MarginGroup *mg;
+	SpinBox *sb;
+
+	void ok_pressed_text(String);
+	void ok_pressed();
+public:	
+	
+	Signal< Method1<double> > entered_number_signal;
+
+	void show(String p_question,double p_min,double p_max,double p_step,double p_default=0);
+	
+	NumericInputDialog(Window *p_parent);
+};
+
+}
+
+#endif

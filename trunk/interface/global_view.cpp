@@ -1011,7 +1011,6 @@ void GlobalView::paint_block(Painter& p,int p_x,int p_y,int p_list,int p_block,b
 
 void GlobalView::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 
-	drawing_signal.call();
 	
 	Painter& p=*get_painter();
 	p.draw_fill_rect( Point(), p_size, Color(0,0,0)); 

@@ -77,7 +77,6 @@ protected:
 	Element* get_element_list();	
 	Element* get_element_list_end();	
 	Element* add_frame_internal( Frame * p_frame, bool p_front=false );
-	void remove_frame( Frame * p_frame );
 
 	
 	/* Can be overrided */
@@ -98,6 +97,9 @@ protected:
 	void mouse_doubleclick(const Point& p_pos,int p_modifier_mask);
 
 	bool key(unsigned long p_unicode, unsigned long p_scan_code,bool p_press,bool p_repeat,int p_modifier_mask);
+	
+friend class Frame;	
+	void remove_frame( Frame * p_frame );
 	
 public:
 	
@@ -122,6 +124,8 @@ public:
 	ChildIterator first_child();
 	ChildIterator next_child(const ChildIterator& p_child);
 
+	bool is_child( Frame *p_frame);
+	
 	Container();
 	~Container();
 };

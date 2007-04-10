@@ -175,7 +175,8 @@ private:
 public: //signals
 	
 	Signal<> resized_signal;
-	Signal<> drawing_signal;
+	Signal<> update_called_signal;
+	
 public: //slots
 			
 	void set_edit_mode(int p_edit_mode);
@@ -189,6 +190,8 @@ public: //slots
 	void block_repeat_unset_slot();
 	
 public:
+	
+	virtual void update() { update_called_signal.call(); Frame::update(); }
 	
 	int get_height() { return size.height; }
 	int get_width() { return size.width; }

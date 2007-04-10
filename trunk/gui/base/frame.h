@@ -36,7 +36,9 @@ public:
 	
 	
 	
-	void update(bool p_only_rect=false,const Rect& p_rect=Rect()); ///< Call update. This means the frame will be redraw when IDLE (not when update called!). Alternative you can ask to update only a region.
+	
+	virtual	void update();
+	void update(bool p_only_rect,const Rect& p_rect=Rect()); ///< Call update. This means the frame will be redraw when IDLE (not when update called!). Alternative you can ask to update only a region.
 	bool child_needs_update(); ///< Returns true when some chidlren of this frame needs updating. used by container.
 	bool has_update_rect(); ///< Return wether an update rect has been set in update()
 	Rect get_update_rect(); ///< Return an udpate rect, empty rect if no update rect exists.

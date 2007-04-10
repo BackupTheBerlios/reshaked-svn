@@ -25,6 +25,7 @@ class VBoxContainer;
 class PopUpMenu : public Window {
 	
 	VBoxContainer *vbc;
+	VBoxContainer *main_vbc;
 	int id_count;
 	
 	void menu_button_selected(MenuButton*);

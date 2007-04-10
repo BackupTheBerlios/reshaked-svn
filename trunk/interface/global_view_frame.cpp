@@ -11,10 +11,20 @@
 //
 #include "global_view_frame.h"
 #include "widgets/label.h"
+#include <stdio.h>
 
 namespace ReShaked {
 
+void GlobalViewFrame::global_view_update() {
+	
+	global_view->update();
+}
 
+void GlobalViewFrame::global_view_updated() {
+	
+	
+	loop_column->update();
+}
 void GlobalViewFrame::h_scollbar_changed_slot(double p_new_idx) {
 	
 		
@@ -91,7 +101,7 @@ GlobalViewFrame::GlobalViewFrame(Editor *p_editor)  {
 
 	
 //	marker_column = hb->add( new MarkerColumn(editor) );
-	//loop_column = hb->add( new LoopColumn(editor) );
+	loop_column = hb->add( new LoopColumn(editor) );
 	//beat_bar_column = hb->add( new GlobalBeatBarColumn(editor) );
 	
 	VBoxContainer *gv_vbox = hb->add( new VBoxContainer,1 );
@@ -99,14 +109,16 @@ GlobalViewFrame::GlobalViewFrame(Editor *p_editor)  {
 	global_view = gv_vbox->add( new GlobalView( p_editor),1 );
 	
 //	marker_column->set_global_view( global_view );
-	//loop_column->set_global_view( global_view );
+	loop_column->set_global_view( global_view );
 	//beat_bar_column->set_global_view( global_view );
 
 
 	v_scroll = hb->add( new VScrollBar );
 	h_scroll = gv_vbox->add( new HScrollBar );
 	
+	loop_column->redraw_global_view_signal.connect(this,&GlobalViewFrame::global_view_update);
 	global_view->resized_signal.connect(this,&GlobalViewFrame::block_list_changed_slot);
+	global_view->update_called_signal.connect(this,&GlobalViewFrame::global_view_updated);
 	
 	h_scroll->get_range()->value_changed_signal.connect(this,&GlobalViewFrame::h_scollbar_changed_slot);
 	v_scroll->get_range()->value_changed_signal.connect(this,&GlobalViewFrame::v_scollbar_changed_slot);

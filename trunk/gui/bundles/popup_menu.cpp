@@ -317,7 +317,8 @@ bool PopUpMenu::has_ID(int p_ID) {
 
 void PopUpMenu::clear()  {
 	
-	
+	delete vbc;
+	vbc = main_vbc->add( new VBoxContainer );
 	
 }
 
@@ -338,17 +339,18 @@ void PopUpMenu::popup(const Point &p_pos) {
 void PopUpMenu::skin_changed() {
 	
 	Window::skin_changed();
-	vbc->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
+	main_vbc->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
 	
 }
 
 PopUpMenu::PopUpMenu(Window *p_parent) : Window(p_parent,MODE_POPUP) {
 	
 	id_count=0;
-	vbc = new VBoxContainer;
-	set_root_frame( vbc );
-	vbc->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
+	main_vbc = new VBoxContainer;
+	set_root_frame( main_vbc );
+	main_vbc->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
 	
+	vbc = main_vbc->add( new VBoxContainer );
 
 	
 }
