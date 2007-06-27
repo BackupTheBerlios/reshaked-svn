@@ -88,6 +88,7 @@ BitmapID PixmapData::create_bitmap_from_buffer(const unsigned char *p_png_buffer
 				default : break;
 			}
 			
+			printf("depth is %i\n",depth);
 			ERR_PRINT("Grayscale PNG not supproted!");
 			return -1;
 		break;
@@ -160,6 +161,7 @@ BitmapID PixmapData::get_pixmap(PixmapDataList p_pixmap) {
 	
 }
 
+
 void PixmapData::set_painter(Painter *p_painter) {
 	
 	painter=p_painter;
@@ -167,6 +169,8 @@ void PixmapData::set_painter(Painter *p_painter) {
 			
 		pixmap_id_list[i]=PixmapData::create_bitmap_from_buffer(pixmap_list[i]);
 	}
+	
+
 }
 	
 

@@ -45,7 +45,7 @@ void StackContainer::resize_internal(const Size& p_new_size) {
 		
 		e->rect.pos=Point();
 		e->rect.size=p_new_size;
-		e->frame->resize(p_new_size);
+		e->frame->resize_tree(p_new_size);
 		
 		e=e->next;
 	}

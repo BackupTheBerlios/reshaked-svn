@@ -24,10 +24,6 @@ Frame* Widget::find_closest_focusable_to(Point p_point,Direction p_dir,int &mind
 	return 0;
 }
 
-void Widget::check_for_updates(const Point& p_pos,const Size &p_size,const StyleBox& p_bg_style,const Rect& p_bg_rect) {
-	
-	
-}
 
 
 void Widget::set_minimum_size(const Size & p_size ) {
@@ -96,48 +92,10 @@ bool Widget::key(unsigned long p_unicode, unsigned long p_scan_code,bool p_press
 	return false;
 }
 
-bool Widget::draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed) {
-
-	Rect draw_rect=p_exposed;
-
-
-	if (needs_update() && has_update_rect()) {
-		
-		if (!p_exposed.intersects_with( get_update_rect() ))
-			return true; //dont even bother drawing, nothing should be seen
-		
-		draw_rect=get_update_rect().clip(draw_rect);
-
-	}
+void Widget::draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed) {
 
 	
-	draw(p_global, p_size, draw_rect);
-	
-	if (needs_update()) {
-
-		
-		if (has_update_rect() && !p_exposed.contains(get_update_rect()))
-			return true;
-
-		if (!has_update_rect() && !p_exposed.contains( Rect( Point(), p_size ) ) ) {
-
-			return true;
-
-		}
-		
-		cancel_update();
-		
-	} else if (child_needs_update()) { //just in case...
-		
-		cancel_update();
-	}
-	
-		
-
-
-	return false;
-	
-	
+	draw(p_global, p_size, p_exposed);
 }
 
 Widget::Widget() {

@@ -21,7 +21,7 @@ public:
 	virtual void set_local_rect(const Rect& p_rect)=0;
 	virtual Rect get_local_rect()=0;
 
-	virtual void set_clip_rect(bool p_enabled, const Rect& p_rect=Rect())=0;
+	virtual void set_clip_rect(bool p_enabled, const Rect& p_rect=Rect(),bool p_global=false)=0;
 	virtual bool has_clip_rect()=0;
 	virtual Rect get_clip_rect()=0;
 

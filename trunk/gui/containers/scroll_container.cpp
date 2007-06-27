@@ -178,7 +178,7 @@ void ScrollContainer::resize_internal(const Size& p_new_size) {
 	e->rect.pos.y=-(int)(v_scroll.get());
 
 	e->rect.size=minsize;
-	e->frame->resize( minsize );
+	e->frame->resize_tree( minsize );
 
 }
 

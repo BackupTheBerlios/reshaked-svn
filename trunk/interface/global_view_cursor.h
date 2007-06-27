@@ -62,6 +62,7 @@ public:
 
 //slots
 	void mode_selected(int p_mode);
+	void zoom_changed(double p_zoom);
 
 public:
 	

@@ -541,6 +541,7 @@ void Skin::set_default() {
 	SET_STYLEBOX( SB_LINE_EDIT_FOCUS, StyleBox( 1,  Color(0,0,0 ), Color( 255,80,80 ), Color( 255,80,80 ) ) );
 
 	SET_CONSTANT( C_LINE_EDIT_MARGIN, 2 );
+	SET_CONSTANT( C_LINE_EDIT_MIN_WIDTH, 70 );
 
 	SET_FONT( FONT_LINE_EDIT, 0 );
 	

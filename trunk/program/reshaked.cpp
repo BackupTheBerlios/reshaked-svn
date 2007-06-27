@@ -218,11 +218,11 @@ int main_loop(Window& window,SDL_Surface *screen,TimerSDL *timer,unsigned int fl
 				window.key( event.key.keysym.unicode, keycode_sdl_translator.get_code(event.key.keysym.sym), event.key.state==SDL_PRESSED,false, mod );
 				
 				
-				/*if (event.key.keysym.sym==SDLK_F1) {
+				if (event.key.keysym.sym==SDLK_F1) {
 
-					painter->draw_fill_rect( Point() , Size( screen->w , screen->h ), Color(100,20,33) );
+					window.get_painter()->draw_fill_rect( Point() , Size( screen->w , screen->h ), Color(100,20,33) );
 					SDL_UpdateRect(screen, 0,0,0,0);
-			}*/
+				}
 
 				//if (event.key.keysym.sym==SDLK_F2) {
 
@@ -476,19 +476,22 @@ int main(int argc, char *argv[]) {
 	
 	ReShaked::PixmapData::set_painter( painter ); //configure in-memory pixmaps
 	
-	ReShaked::RSSkin skin;		
+	
+	ReShaked::RSSkin skin(painter);		
+	
 	
 	Window window( painter, timer, &skin );
 	
 	
-	window.set_size( Size( DEFAULT_W,DEFAULT_H ) );
 	
 	ReShaked::MainWindow *interface = new ReShaked::MainWindow(CONFIG_DIR_PATH+"/"+CONFIG_DIR,"reshaked.cfg");
 	window.set_root_frame(interface);
 	interface->initialize();
 	
-	window.redraw_all();
+	window.set_size( Size( DEFAULT_W,DEFAULT_H ) );
 	window.update();
+	window.redraw_all();
+	painter->update_screen();
 			
 	/**** GUI AND SDL INIT END */
 	

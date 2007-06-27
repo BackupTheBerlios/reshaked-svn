@@ -16,8 +16,7 @@ class Widget : public Frame {
 
 	WidgetPrivate *_wp;
 	
-	void check_for_updates(const Point& p_pos,const Size &p_size,const StyleBox& p_bg_style,const Rect& p_bg_rect);
-	bool draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed);
+	void draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed);
 	
 	Frame* find_closest_focusable_to(Point p_point,Direction p_dir,int &mindist);
 	

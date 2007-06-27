@@ -129,7 +129,7 @@ void LoopColumn::draw(const Point& p_pos,const Size& p_size,const Rect& p_expose
 	}
 	
 	int line_pos=p_size.width-1;
-	p.draw_fill_rect(Point(0,line_pos),Size(1,p_size.height),color(COLOR_GLOBAL_VIEW_SEPARATOR));
+	p.draw_fill_rect(Point(line_pos,0),Size(1,p_size.height),color(COLOR_GLOBAL_VIEW_SEPARATOR));
 }
 
 void LoopColumn::mouse_motion(const Point& p_pos, const Point& p_rel, int p_button_mask) {
@@ -173,61 +173,50 @@ LoopColumn::~LoopColumn() {
 		delete input_dialog;
 }
 /***/
-/*
+
 void MarkerColumn::set_global_view(GlobalView *p_global_view) {
 	
 	
 	global_view=p_global_view;
-	QObject::connect(global_view,SIGNAL(drawing_signal()),this,SLOT(update()));
+
 	
 }
 
+Size MarkerColumn::get_minimum_size_internal() {
+	
+	int margin=constant(C_GLOBAL_VIEW_MARKER_COLUMN_MARGIN);
+	int font_h=get_painter()->get_font_height( font( FONT_GLOBAL_VIEW_MARKER ) );
+	return Size(margin*2+font_h,0);
+}
 
-void MarkerColumn::paint_marker(QPainter& p, int p_marker_idx) {
+void MarkerColumn::paint_marker(Painter& p, int p_marker_idx,int p_w) {
 	
 	String marker_text=marker_list->get_index_value(p_marker_idx);
+	
+	FontID fnt=font(FONT_GLOBAL_VIEW_MARKER);
+	Color col=color(COLOR_GLOBAL_VIEW_MARKER_FONT);
+	
+	
 	int beat=marker_list->get_index_pos(p_marker_idx);
-	int fontwidth=VisualSettings::get_singleton()->get_global_bar_font()->get_width();
 	int pos=global_view->get_beat_pixel( beat );
 	int beat_h=global_view->get_beat_pixel( beat+1 )-pos;
 	
-	p.save();
-	
-	QFont f;
-	f.setPixelSize(fontwidth*2);
-	QFontMetrics m(f);
 	
 	
-	
-	// Draw Arrow 
-	p.setPen(QColor(150,150,150));
-	p.setBrush(QColor(150,150,150));
-	QPolygon arrow;
-	arrow.push_back(QPoint(0,pos-beat_h/2));
-	arrow.push_back(QPoint(0,pos+beat_h/2));
-	arrow.push_back(QPoint(m.descent(),pos));
-	
-	p.drawPolygon(arrow,Qt::WindingFill);
+	int margin=constant(C_GLOBAL_VIEW_MARKER_COLUMN_MARGIN);
+	p.draw_arrow( Point(0,pos-p_w/2+constant(margin)), Size( p_w/2, p_w ), RIGHT, color( COLOR_GLOBAL_VIEW_LOOP));
 	
 	// Draw Text 
-	
-	
-	
-	p.setFont(f);
-	p.rotate(90.0); //90 degrees!
-	p.setPen(QColor(255,255,255));
-	p.drawText(pos+beat_h,-m.descent(), QStrify( marker_text ) );
-	
-	p.restore();
+	p.draw_text( fnt,Point(p.get_font_descent(fnt)+margin,pos+p_w/2), marker_text, DOWN, col );
 	
 }
 
-void MarkerColumn::mousePressEvent(QMouseEvent *e) {
+void MarkerColumn::mouse_button(const Point& p_pos, int p_button,bool p_press,int p_modifier_mask) {
 	
 	int beat=global_view->get_beat_at_pixel(p_pos.y+global_view->get_beat_pixel_size()/2);
 	int marker_idx=marker_list->get_exact_index( beat );
 	
-	if (p_button==BUTTON_RIGHT || (p_button==BUTTON_LEFT && e->modifiers()&Qt::ControlModifier)) {
+	if (p_button==BUTTON_RIGHT || (p_button==BUTTON_LEFT && p_modifier_mask&KEY_MASK_CTRL)) {
 		
 		if (marker_idx!=INVALID_STREAM_INDEX) {
 			
@@ -241,30 +230,37 @@ void MarkerColumn::mousePressEvent(QMouseEvent *e) {
 	
 	if (p_button==BUTTON_LEFT) {
 		
-		QString current_text=QStrify( (marker_idx>=0)?marker_list->get_index_value_w( marker_idx):"" );
-		QString text=QInputDialog::getText ( this,"Insert Marker", "Marker Text:", QLineEdit::Normal, current_text);
-		if (text=="")
-			return;
+		String current_text= String(marker_idx>=0?marker_list->get_index_value_w( marker_idx):"" );
 		
-		editor->marker_set(beat,DeQStrify(text));
-		update();
+		marker_beat=beat;
+		
+		
+		input_dialog->show(current_text==""?"Insert Marker:":"Rename Marker",current_text);
 	}
 	
 	
 }
 
-void MarkerColumn::paintEvent(QPaintEvent *pe) {
+void MarkerColumn::marker_edited(String p_text) {
 	
-	QPainter p(this);
-	p.fillRect(0,0,width(),height(),QColor(0,0,0));
+	if (p_text=="")
+		return;
+	
+	update();
+	editor->marker_set(marker_beat,p_text);
+
+	
+}
+
+
+void MarkerColumn::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
+	
+	
+	Painter &p=*get_painter();
+	p.draw_fill_rect(Point(),p_size,color(COLOR_GLOBAL_VIEW_BG));
 	int beat_from=global_view->get_beat_at_pixel(0);
-	int beat_to=global_view->get_beat_at_pixel(height());
+	int beat_to=global_view->get_beat_at_pixel(p_size.height);
 	
-	PixmapFont *pf=VisualSettings::get_singleton()->get_global_bar_font();
-	PixmapFont *bf=VisualSettings::get_singleton()->get_global_beat_font();
-	
-	
-		
 	
 	for (int i=beat_from;i<=beat_to;i++) {
 		
@@ -273,14 +269,15 @@ void MarkerColumn::paintEvent(QPaintEvent *pe) {
 					
 		if (i==inside_beat && inside) {
 			
-			p.setPen(QColor(20,180,100));
+			
 			int h=global_view->get_beat_pixel( i );
-			p.drawLine(0,h,width(),h);
+			p.draw_fill_rect(Point(0,h),Size(p_size.width,1),color(COLOR_GLOBAL_VIEW_MOUSE_OVER_BEAT));
+			
 		}
 		
 		int marker_idx=marker_list->get_exact_index( i );
 		if (marker_idx>=0) { //marker at pos
-			paint_marker(p,marker_idx);
+			paint_marker(p,marker_idx,p_size.width);
 			
 		}
 		
@@ -290,105 +287,119 @@ void MarkerColumn::paintEvent(QPaintEvent *pe) {
 	// Paint markers that may not be visible 
 	if (marker_list->get_exact_index( beat_from )==INVALID_STREAM_INDEX && marker_list->get_prev_index( beat_from )>=0) {
 		
-		paint_marker(p, marker_list->get_prev_index( beat_from ) );
+		paint_marker(p, marker_list->get_prev_index( beat_from ),p_size.width );
 		
 	}
 	
-	p.setPen(QColor(150,150,150));
-	int line_pos=width()-1;
-	p.drawLine(line_pos,0,line_pos,height());
+	int line_pos=p_size.width-1;
+	p.draw_fill_rect(Point(line_pos,0),Size(1,p_size.height),color(COLOR_GLOBAL_VIEW_SEPARATOR));
 }
 
-void MarkerColumn::mouseMoveEvent(QMouseEvent *e) {
+void MarkerColumn::mouse_motion(const Point& p_pos, const Point& p_rel, int p_button_mask) {
 	
 	inside_beat=global_view->get_beat_at_pixel(p_pos.y+global_view->get_beat_pixel_size()/2);
 
 	inside=true;
 	update();
 }
-void MarkerColumn::enterEvent(QEvent *ee) {
-	
-}
-void MarkerColumn::leaveEvent(QEvent *ee) {
+
+void MarkerColumn::mouse_leave() {
 	
 	inside=false;
 	update();
 	
 }
 
+void MarkerColumn::set_in_window() {
+	
+	input_dialog = new StringInputDialog(get_window());
+	input_dialog->entered_string_signal.connect(this,&MarkerColumn::marker_edited);
+}
 
-MarkerColumn::MarkerColumn(QWidget *p_parent,Editor *p_editor) : QWidget(p_parent) {
+MarkerColumn::MarkerColumn(Editor *p_editor)  {
 	
 	editor=p_editor;
 	bar_map=&p_editor->get_song()->get_bar_map();
 	marker_list = &p_editor->get_song()->get_marker_list();
-	setFixedWidth(VisualSettings::get_singleton()->get_global_bar_font()->get_width()*3);
-	setBackgroundRole(QPalette::NoRole);
-	setMouseTracking(true);
+	set_bg_on_updates(false);
 	//setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
-	setToolTip("Markers");
+//	setToolTip("Markers");
+	input_dialog=0;
 
 }
 
+MarkerColumn::~MarkerColumn()  {
+	
+	if (input_dialog)
+		delete input_dialog;
+}
 
+/*********************/
+/*********************/
+/*********************/
 
 void GlobalBeatBarColumn::set_global_view(GlobalView *p_global_view) {
 	
 	
 	global_view=p_global_view;
-	QObject::connect(global_view,SIGNAL(drawing_signal()),this,SLOT(update()));
 	
 }
 
-void GlobalBeatBarColumn::paintEvent(QPaintEvent *pe) {
+Size GlobalBeatBarColumn::get_minimum_size_internal() {
+
+	return Size(get_painter()->get_font_char_width(font( FONT_GLOBAL_VIEW_BAR ),'0')*9,0);
+}
+
+void GlobalBeatBarColumn::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 	
-	QPainter p(this);
-	p.fillRect(0,0,width(),height(),QColor(0,0,0));
+	Painter &p=*get_painter();
+	p.draw_fill_rect(Point(), p_size,color(COLOR_GLOBAL_VIEW_BG));
+	
 	int beat_from=global_view->get_beat_at_pixel(0);
-	int beat_to=global_view->get_beat_at_pixel(height());
+	int beat_to=global_view->get_beat_at_pixel(p_size.height);
 	
-	PixmapFont *pf=VisualSettings::get_singleton()->get_global_bar_font();
-	PixmapFont *bf=VisualSettings::get_singleton()->get_global_beat_font();
+	FontID barfont=font( FONT_GLOBAL_VIEW_BAR );
+	FontID beatfont=font( FONT_GLOBAL_VIEW_BEAT );
+	Color barcol=color( COLOR_GLOBAL_VIEW_BAR_FONT );
+	Color beatcol=color( COLOR_GLOBAL_VIEW_BEAT_FONT );
+	int bar_ascent=p.get_font_ascent( barfont );
+	int beat_ascent=p.get_font_ascent( beatfont );
 	
-	
-		
 	
 	for (int i=beat_from;i<=beat_to;i++) {
 		
 		// DRAW BEAT and optionally BAR *
 		
-		if (global_view->get_beat_pixel_size()>bf->get_height()) { //paint beat
+		if (global_view->get_beat_pixel_size()>p.get_font_height(beatfont)) { //paint beat
 
 				
-			QString s = QString::number( bar_map->get_bar_beat( i)+1 );
-			int ofs=width()-(s.length()+1)*bf->get_width();
-			bf->render_string( p, ofs, global_view->get_beat_pixel( i ), s.toAscii().data() );
+			String s = String::num( bar_map->get_bar_beat( i)+1 );
+			int ofs=p_size.width-(s.length()+1)*p.get_font_char_width(beatfont,'0');
+			
+			p.draw_text( beatfont, Point( ofs, global_view->get_beat_pixel( i )+beat_ascent ), s, beatcol );
 		}
 		
 		if (!bar_map->get_bar_beat( i )) { // paint bar
 			
-			QString s = QString::number(bar_map->get_bar_at_beat( i)+1 );
-			int ofs=width()-(s.length()+3)*pf->get_width();
-			pf->render_string( p, ofs, global_view->get_beat_pixel( i ), s.toAscii().data() );
+			String s = String::num(bar_map->get_bar_at_beat( i)+1 );
+			int ofs=p_size.width-(s.length()+3)*p.get_font_char_width(barfont,'0');
+			p.draw_text( barfont, Point(ofs, global_view->get_beat_pixel( i )+beat_ascent), s, barcol );
 		}
 		
 			
 	}
 	
 	
-	p.setPen(QColor(150,150,150));
-	int line_pos=width()-bf->get_width()*5/2;
-	p.drawLine(line_pos,0,line_pos,height());
+	int line_pos=p_size.width-1;
+	p.draw_fill_rect(Point(line_pos,0),Size(1,p_size.height),color(COLOR_GLOBAL_VIEW_SEPARATOR));
 }
 
-GlobalBeatBarColumn::GlobalBeatBarColumn(QWidget *p_parent,Editor *p_editor) : QWidget(p_parent) {
+GlobalBeatBarColumn::GlobalBeatBarColumn(Editor *p_editor)  {
 	
 	editor=p_editor;
 	bar_map=&p_editor->get_song()->get_bar_map();
-	setFixedWidth(VisualSettings::get_singleton()->get_global_bar_font()->get_width()*9);
-	setBackgroundRole(QPalette::NoRole);
-	//setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
-	setToolTip("Bar/Beat");
+	set_bg_on_updates(false);
+//	setToolTip("Bar/Beat");
 
 }
 
@@ -397,5 +408,5 @@ GlobalBeatBarColumn::~GlobalBeatBarColumn()
 {
 }
 
-*/
+
 }

@@ -33,29 +33,26 @@ void Window::set_focus(Frame *p_frame) {
 
 }
 
-void Window::draw_widgets_over_area(const Rect &p_rect) {
+void Window::redraw_screen_over_area(const Rect &p_rect) {
 
-	if (!visible)
-		return;
 
 	Window *c=childs;
 
+	redraw_contents_over_area(p_rect);
+	
 	while (c) {
 
-		Rect crect=p_rect;
-		crect.pos-=c->pos;
-			
-		
-		c->redraw_all_internal(crect);
-
+		if (c->visible) {
+			Rect crect=p_rect;
+			crect.pos-=c->pos;
+				
+			c->redraw_screen_over_area(crect);
+		}
+				
 		c=c->next;
 
 	}
 
-
-	
-	if (parent)
-		parent->redraw_all_internal( Rect(parent->get_global_pos()+p_rect.pos+pos,p_rect.size), this );
 
 }
 
@@ -71,12 +68,25 @@ void Window::set_tree_size_changed() {
 
 Timer *Window::get_timer() {
 	
-	return timer;
+	if (!root) {
+		
+		PRINT_ERROR("No root");
+		return 0;
+	}
+	
+	return root->root_data->timer;
 }
 
 Painter *Window::get_painter() {
 	
-	return painter;
+	if (!root) {
+		
+		PRINT_ERROR("No root");
+		return 0;
+	}
+	
+	return root->root_data->painter;
+
 }
 
 void Window::set_root_frame(Container *p_root_frame) {
@@ -90,7 +100,7 @@ void Window::set_root_frame(Container *p_root_frame) {
 	
 	if (mode==MODE_POPUP) {
 		
-		p_root_frame->set_style( skin->get_stylebox( SB_POPUP_BG ), true );
+		p_root_frame->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
 	}
 
 	set_size(size);
@@ -105,7 +115,7 @@ void Window::skin_changed() {
 		
 		if (mode==MODE_POPUP) {
 		
-			((Container*)root_frame)->set_style( skin->get_stylebox( SB_POPUP_BG ), true );
+			((Container*)root_frame)->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
 			
 			
 
@@ -140,13 +150,17 @@ Frame * Window::get_root_frame() {
 void Window::set_pos(const Point &p_pos) {
 
 	/* WARRRNING - moving stuff */
+	
+	update( Rect( get_global_pos(), size ) );
 	pos=p_pos;
+	update( Rect( get_global_pos(), size ) );
+	
 }
 
 void Window::top_frame_resized(const Size p_size) {
 	
 	set_size(p_size);
-	//printf("top frame resize!\n");
+	
 }
 
 void Window::set_size(const Size& p_size) {
@@ -156,6 +170,8 @@ void Window::set_size(const Size& p_size) {
 		size=p_size;
 		return;
 	}
+	
+	Rect size_update( get_global_pos(), size );
 	
 	Size new_size = root_frame->get_minimum_size();
 	
@@ -168,14 +184,14 @@ void Window::set_size(const Size& p_size) {
 	}
 	
 	
-	if (parent && visible)
-		hide();
 	
 	size=new_size;
-	root_frame->resize( new_size );
+	root_frame->resize_tree( new_size );
 	
-	if (parent && visible)
-		show();
+	size_update.merge( Rect( size_update.pos, new_size) );
+	
+	update( size_update );
+	
 	
 }
 
@@ -187,60 +203,25 @@ void Window::redraw_all(Rect p_custom_area) {
 
 
 	if (p_custom_area.has_no_area())
-		redraw_all_internal( Rect( get_global_pos(), size ) );
+		redraw_screen_over_area(p_custom_area);
 	else
-		redraw_all_internal( Rect( p_custom_area.pos, p_custom_area.size) );
-
+		redraw_screen_over_area(Rect( get_global_pos(), size ));
 }
 
 
-void Window::redraw_all_internal(const Rect& p_rect,Window *p_after_child,bool p_reset_clip_rect) {
+void Window::redraw_contents_over_area(const Rect& p_rect) {
 
 
 	/* Redrawing all should work fine */
 	
-	if (!root_frame)
-		return;
-	if (!visible)
-		return;
-
+	Rect local_rect=Rect( get_global_pos(), size );
+	get_painter()->set_local_rect( local_rect );
+	get_painter()->set_clip_rect( false ); //disable clip
 	
-	painter->set_local_rect( Rect( get_global_pos(), size ) );
-	if (p_reset_clip_rect)
-		painter->set_clip_rect( false );
-
-	if (!p_after_child) {
-
-		Rect global_rect;
-		global_rect.pos=get_global_pos();
-		global_rect.size=size;
-		
-		Rect expose_rect=global_rect.clip(p_rect);
-		expose_rect.pos-=global_rect.pos;
-		
-		root_frame->draw_tree( global_rect.pos, size, expose_rect );
-	}
-
-
-	Window *c=childs;
-
-	bool after_reached=p_after_child?false:true;
 	
-	while (c) {
+	Rect expose_rect = Rect( Point(),size ).clip( p_rect ); // create expose
 	
-		if (c->visible && after_reached) {
-
-
-			c->redraw_all_internal(p_rect,0,p_reset_clip_rect);
-			
-		}
-
-		if (c==p_after_child)
-			after_reached=true;
-			
-			
-		c=c->next;
-	}
+	root_frame->draw_tree( local_rect.pos, local_rect.size, expose_rect );
 }
 
 
@@ -277,42 +258,35 @@ void Window::check_for_updates() {
 
 	/* For now, if the window has a child, it wont redraw */
 
-	if (size_update_needed) {
-
-		if (root_frame) {
-
-			Size rootfmin=root_frame->get_minimum_size();
-			if (!no_stretch_root_frame) {
-				if (size.width<rootfmin.width)
-					size.width=rootfmin.width;
-				if (size.height<rootfmin.height)
-					size.height=rootfmin.height;
-			}
-
-			root_frame->resize( size );
-		}
+	if (!root || !root_data ) {
 		
-		size_update_needed=false;
+		PRINT_ERROR("Not Root!");
+		return;
 	}
-		
-	if (visible && !no_local_updates) {
-		painter->set_local_rect( Rect( get_global_pos(), size ) );
-		painter->set_clip_rect( false );
-		if (root_frame)
-			root_frame->check_for_updates( Point() ,  size, StyleBox(), Rect( Point(), size ) );
-	}	
-	Window *c=childs;
+
+	root_data->update_rect_list_locked=true;
 	
-	while (c) {
-
+	
+	//int found=0;
+	
+	while(root_data->update_rect_list) {
 		
-		c->check_for_updates();
-
-		c=c->next;
+		UpdateRectList *rect=root_data->update_rect_list;
+		
+		redraw_screen_over_area( rect->rect );
+		get_painter()->update_screen_rect( rect->rect );
+		
+		root_data->update_rect_list = root_data->update_rect_list->next;
+		delete rect;
+	//	found++;
 	}
 	
+	//if (found!=0)
+		//printf("have %i rects\n",found);
 	
+	root_data->update_rect_list_locked=false;
 	
+	root_data->update_rect_list=0;
 	
 }
 
@@ -395,15 +369,15 @@ void Window::mouse_button(const Point& p_pos, int p_button,bool p_press,int p_mo
 			Window *at_click=find_window_at_pos(p_pos);
 
 			bool post_popup_hide=false;
-			while (modal_stack) {
+			while (root->root_data->modal_stack) {
 
 
-				if (modal_stack->window->mode==MODE_POPUP && at_click!=modal_stack->window) {
+				if (root->root_data->modal_stack->window->mode==MODE_POPUP && at_click!=root->root_data->modal_stack->window) {
 					
 					/* good bye popup */
 						
-					modal_stack->window->popup_cancel_signal.call();
-					modal_stack->window->hide();
+					root->root_data->modal_stack->window->popup_cancel_signal.call();
+					root->root_data->modal_stack->window->hide();
 					
 
 					post_popup_hide=true;
@@ -413,9 +387,9 @@ void Window::mouse_button(const Point& p_pos, int p_button,bool p_press,int p_mo
 				
 				/* ok, found modal, and has all the right to keep the event */
 
-				Point pos=p_pos-modal_stack->window->get_global_pos();
-				root->focus=modal_stack->window; //in case there is any doubt or the user did something stupid
-				modal_stack->window->mouse_button( pos, p_button, p_press, p_modifier_mask );
+				Point pos=p_pos-root->root_data->modal_stack->window->get_global_pos();
+				root->focus=root->root_data->modal_stack->window; //in case there is any doubt or the user did something stupid
+				root->root_data->modal_stack->window->mouse_button( pos, p_button, p_press, p_modifier_mask );
 				
 				
 				return;
@@ -699,7 +673,7 @@ void Window::key(unsigned long p_unicode, unsigned long p_scan_code,bool p_press
 		
 	}
 	
-	if (p_press && p_scan_code==KEY_ESCAPE && parent && mode==MODE_POPUP && root->modal_stack && root->modal_stack->window==this) {
+	if (p_press && p_scan_code==KEY_ESCAPE && parent && mode==MODE_POPUP && root->root_data->modal_stack && root->root_data->modal_stack->window==this) {
 		
 		popup_cancel_signal.call();
 		hide();
@@ -759,22 +733,96 @@ void Window::frame_deleted_notify(Frame *p_frame) {
 	
 }
 
+void Window::update_rect_merge(UpdateRectList **p_rect) {
+	
+	
+	UpdateRectList **ur=&root_data->update_rect_list;
+	Rect testrect=(*p_rect)->rect;
+	
+	while (*ur) {
+	
+		
+		if ((*ur!=*p_rect) && (*ur)->rect.intersects_with(testrect)) {
+			//they intersect
+			/* erase src rect from list */				UpdateRectList *to_erase=*p_rect;		
+										
+			//printf("ERASED %p, now %p points to %p\n",to_erase,p_rect,(*p_rect)->next);
+			*p_rect=(*p_rect)->next;
+			
+			if (ur==&to_erase->next) { // in this case, ur will be invalidated
+				
+				ur=p_rect;
+			}
+			    
+			delete to_erase;
+			/* Test wether a merge must be done */
+			
+			if ((*ur)->rect.contains( testrect ) ) //need to merge?
+				return; //no.. nothing else needs to be done		
+			(*ur)->rect= (*ur)->rect.merge( testrect );
+			
+			/* Once Merged, repeat update_rect_merge */
+			//printf("MERGED %p\n",*ur);
+			update_rect_merge(ur);
+			//printf("MERGE END\n");
+			return;
+		}
+		
+		ur=&((*ur)->next);
+	}
+	
+}
+
+void Window::add_update_rect(const Rect& p_rect) {
+	
+	if (!root) {
+		
+		PRINT_ERROR("Not Root!");
+		return;
+	};
+	
+	if (root_data->update_rect_list_locked) {
+		
+		PRINT_ERROR("update rect list locked");
+		return;
+	}
+	
+	UpdateRectList *ur= new UpdateRectList;
+	ur->rect=p_rect;
+	ur->next=root->root_data->update_rect_list;
+	root->root_data->update_rect_list=ur;
+	
+	
+	update_rect_merge(&root->root_data->update_rect_list);
+	
+}
+
+
 void Window::update(const Rect& p_rect) {
 
+	if (no_local_updates)
+		return;
 	
+	Rect r=p_rect;
+	if (parent) {
+		
+		r.pos+=get_global_pos();
+	}
+	
+	root->add_update_rect( r );
+	
+/*	
 	draw_widgets_over_area( p_rect );
 	Rect global=p_rect;
 	global.pos+=get_global_pos();
 	
-	painter->update_screen_rect( global );
-
-	
-
+	get_painter()->update_screen_rect( global );	
+*/
 }
 
 void Window::update() {
 	
-	painter->update_screen();
+	get_painter()->update_screen();
 }
 
 Frame * Window::get_focused_child() {
@@ -795,7 +843,7 @@ void Window::initialize() {
 
 	parent=0;
 	
-	painter=0;
+	
 	root_frame=0;
 	focus_child=0;
 	last_under_cursor=0;
@@ -809,11 +857,13 @@ void Window::initialize() {
 	childs=0;
 	root=this;
 	focus=this;
-	modal_stack=0;
-	skin=0;
+	
+	
 	size_update_needed=true;
 	no_local_updates=false;
 	no_stretch_root_frame=false;
+	
+	root_data=0;
 }
 
 void Window::set_no_local_updates(bool p_disable) {
@@ -833,14 +883,14 @@ void Window::adjust_size_type() {
 		case SIZE_CENTER: {
 			
 			set_size( root_frame->get_minimum_size() );
-			pos=(painter->get_display_size()-size)/2;
+			pos=(get_painter()->get_display_size()-size)/2;
 			
 		} break;
 		case SIZE_TOPLEVEL_CENTER: {
 			
-			set_size( painter->get_display_size()*3/4 );
+			set_size( get_painter()->get_display_size()*3/4 );
 	
-			pos=(painter->get_display_size()-size)/2;
+			pos=(get_painter()->get_display_size()-size)/2;
 			
 		} break;
 		case SIZE_NORMAL: {
@@ -848,7 +898,7 @@ void Window::adjust_size_type() {
 			/* Adjust so it doesnt show out of window */
 			
 			Point glob_pos=get_global_pos();
-			Point root_size=painter->get_display_size(); //more reliable than window
+			Point root_size=get_painter()->get_display_size(); //more reliable than window
 			
 			if ( glob_pos.y<0 )				
 				pos.y-=glob_pos.y;
@@ -884,8 +934,8 @@ void Window::show() {
 		root->focus=this;
 		ModalStack * ms = new ModalStack;
 		ms->window=this;
-		ms->next=root->modal_stack;
-		root->modal_stack=ms;
+		ms->next=root->root_data->modal_stack;
+		root->root_data->modal_stack=ms;
 		raise();
 	}
 
@@ -911,8 +961,8 @@ void Window::show() {
 			
 		}	
 	}
-	redraw_all();
-	painter->update_screen_rect( Rect(get_global_pos(), size) );
+	
+	update( Rect( Point(), size) );
 	
 }
 
@@ -985,8 +1035,8 @@ void Window::remove_from_modal_stack() {
 		return; //otherwise it will never be in the modal stack
 	
 
-	ModalStack * m = root->modal_stack;
-	ModalStack ** mr = &root->modal_stack;
+	ModalStack * m = root->root_data->modal_stack;
+	ModalStack ** mr = &root->root_data->modal_stack;
 
 
 	while (m) {
@@ -1008,8 +1058,8 @@ void Window::remove_from_modal_stack() {
 	}
 
 	if (root->focus==this) {
-		if (root->modal_stack)
-			root->focus=root->modal_stack->window;
+		if (root->root_data->modal_stack)
+			root->focus=root->root_data->modal_stack->window;
 		else if (parent)
 			root->focus=parent;
 
@@ -1023,11 +1073,9 @@ void Window::hide() {
 	visible=false;
 	if (!parent)
 		return;
-	Rect global_update_rect=Rect( get_global_pos(),size );
-	painter->set_clip_rect(true, global_update_rect );
-	root->redraw_all_internal(global_update_rect,0,false);
-	painter->update_screen_rect( global_update_rect );
-	painter->set_clip_rect(false);
+
+	update( Rect( Point(), size) );
+
 	if (focus_child)
 		focus_child->window_hid();
 
@@ -1036,7 +1084,14 @@ void Window::hide() {
 
 Skin *Window::get_skin() {
 	
-	return skin;
+	if (!root) {
+		
+		PRINT_ERROR("No root");
+		return NULL;
+	}
+		
+	return root->root_data->skin;	
+	
 }
 
 Window::Window(Window *p_parent,Mode p_mode, SizeMode p_size_mode) {
@@ -1060,10 +1115,7 @@ Window::Window(Window *p_parent,Mode p_mode, SizeMode p_size_mode) {
 	next=p_parent->childs;
 	p_parent->childs=this;
 
-	painter=p_parent->painter;
-	timer=p_parent->timer;
-	skin=p_parent->skin;
-
+	
 }
 
 
@@ -1078,9 +1130,11 @@ Window::Window(Painter *p_painter,Timer *p_timer,Skin *p_skin) {
 	
 	initialize();
 
-	painter=p_painter;
-	skin=p_skin;
-	timer=p_timer;
+	root=this;
+	root_data = new RootWindowData;
+	root_data->painter=p_painter;
+	root_data->skin=p_skin;
+	root_data->timer=p_timer;
 
 }
 
@@ -1100,6 +1154,9 @@ Window::~Window() {
 		delete root_frame;
 	
 	root_frame=0;
+	
+	if (root_data)
+		delete root_data;
 }
 
 

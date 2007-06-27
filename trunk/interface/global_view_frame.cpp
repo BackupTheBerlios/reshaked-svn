@@ -24,6 +24,8 @@ void GlobalViewFrame::global_view_updated() {
 	
 	
 	loop_column->update();
+	marker_column->update();
+	beat_bar_column->update();
 }
 void GlobalViewFrame::h_scollbar_changed_slot(double p_new_idx) {
 	
@@ -95,22 +97,24 @@ GlobalViewFrame::GlobalViewFrame(Editor *p_editor)  {
 	
 	cursor_op= add(new GlobalViewCursor);
 	
+
 	
 	HBoxContainer *hb = add( new HBoxContainer, 1 );
+	hb->set_separation(0);
 	
 
 	
-//	marker_column = hb->add( new MarkerColumn(editor) );
+	marker_column = hb->add( new MarkerColumn(editor) );
 	loop_column = hb->add( new LoopColumn(editor) );
-	//beat_bar_column = hb->add( new GlobalBeatBarColumn(editor) );
+	beat_bar_column = hb->add( new GlobalBeatBarColumn(editor) );
 	
 	VBoxContainer *gv_vbox = hb->add( new VBoxContainer,1 );
 	
 	global_view = gv_vbox->add( new GlobalView( p_editor),1 );
 	
-//	marker_column->set_global_view( global_view );
+	marker_column->set_global_view( global_view );
 	loop_column->set_global_view( global_view );
-	//beat_bar_column->set_global_view( global_view );
+	beat_bar_column->set_global_view( global_view );
 
 
 	v_scroll = hb->add( new VScrollBar );

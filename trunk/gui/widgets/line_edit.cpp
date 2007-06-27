@@ -468,6 +468,9 @@ Size LineEdit::get_minimum_size_internal() {
 		get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_RIGHT ) +
 		constant( C_LINE_EDIT_MARGIN )*2;
 	
+	if (min.width<constant( C_LINE_EDIT_MIN_WIDTH ))
+		min.width=constant( C_LINE_EDIT_MIN_WIDTH );
+	
 	return min;
 }
 

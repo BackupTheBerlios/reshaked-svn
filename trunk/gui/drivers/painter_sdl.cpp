@@ -88,7 +88,7 @@ void SDL_PutPixel(SDL_Surface *surface, int x, int y, const Color& p_color,Uint8
 			break;
 	}
 }
-void PainterSDL::set_clip_rect(bool p_enabled, const Rect& p_rect) {
+void PainterSDL::set_clip_rect(bool p_enabled, const Rect& p_rect,bool p_global) {
 	
 	if (!p_enabled || p_rect.has_no_area()) {
 		
@@ -98,17 +98,21 @@ void PainterSDL::set_clip_rect(bool p_enabled, const Rect& p_rect) {
 		return;
 	}
 	
+	Rect global_rect=p_rect;
+	if (p_global)
+		global_rect.pos+=rect.pos;
+	
 	SDL_Rect dst_rect;
 	
-	dst_rect.x=p_rect.pos.x;
-	dst_rect.y=p_rect.pos.y;
-	dst_rect.w=p_rect.size.width;
-	dst_rect.h=p_rect.size.height;
+	dst_rect.x=global_rect.pos.x;
+	dst_rect.y=global_rect.pos.y;
+	dst_rect.w=global_rect.size.width;
+	dst_rect.h=global_rect.size.height;
 
 
 	SDL_SetClipRect(surface, &dst_rect);
 	
-	clip_rect=p_rect;
+	clip_rect=global_rect;
 	clip_rect_active=true;
 
 }
@@ -440,6 +444,9 @@ void PainterSDL::draw_custom_bitmap(BitmapID p_bitmap,const Point &p_pos, const 
 
 
 	Rect write_rect=Rect( local_rect.pos+rect.pos+p_pos, read_rect.size );
+
+//	draw_fill_rect(p_pos,p_src_rect.size,Color(233,233,233));
+//	draw_fill_rect(write_rect.pos-rect.pos,write_rect.size,Color(233,233,233));
 
 	if (SDL_MUSTLOCK(src_surface)) {
 		

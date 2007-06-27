@@ -39,11 +39,6 @@ public:
 	
 	virtual	void update();
 	void update(bool p_only_rect,const Rect& p_rect=Rect()); ///< Call update. This means the frame will be redraw when IDLE (not when update called!). Alternative you can ask to update only a region.
-	bool child_needs_update(); ///< Returns true when some chidlren of this frame needs updating. used by container.
-	bool has_update_rect(); ///< Return wether an update rect has been set in update()
-	Rect get_update_rect(); ///< Return an udpate rect, empty rect if no update rect exists.
-	bool needs_update(); ///< Return wether this frame needs update.
-	void cancel_update(); ///< Cancel the need for update of the frame.
 	
 	void set_fill_vertical(bool p_fill=true); ///< This sets wether the frame will fill up it's assigned horizontal space, or will just remain as small as possible inside a bigger space.
 	void set_fill_horizontal(bool p_fill=true); ///< This sets wether the frame will fill up it's assigned vertical space, or will just remain as small as possible inside a bigger space.
@@ -63,13 +58,14 @@ public:
 	virtual void set_minimum_size(const Size & p_size )=0; ///force a CUSTOM mimimum size for a frame. Almost all the time, frames already compute their minimum size by themselves, but this is just to override it.
 	
 	virtual Size get_minimum_size()=0; ///< return the minimum size for a frame.
-	virtual void resize(const Size& p_new_size)=0; ///< This is just an event to mention that the frame was resized. The size of the frame will not change with this function. Remember, that a frame will not store position/size inside, so this is just a "notification" (size is stored at the parent, in the container.
-	
-	virtual void check_for_updates(const Point& p_global,const Size &p_size,const StyleBox& p_bg_style,const Rect& p_bg_rect)=0; ///< This will check for updates in frames and childs of it, recursively. pos and size are the "sub area" for which updates will be checked. To redraw the background properly for that widget, the "upper" background in the hieararchy is checked, saved and passed.
-	
+	virtual void resize(const Size& p_new_size); ///< This is just an event to mention that the frame was resized. The size of the frame will not change with this function. Remember, that a frame will not store position/size inside, so this is just a "notification" (size is stored at the parent, in the container.
+	Size get_size_cache();
+		
 	virtual Frame* get_child_at_pos(const Point& p_point,const Size &p_size,Point *p_frame_local_pos=0); ///< Get a Child at a specific position, closest to the pointer
 
-	virtual bool draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed)=0; ///< Draw frame and child subrames, at a global pos and size
+	virtual void draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed)=0; ///< Draw frame and child subrames, at a global pos and size
+	virtual void resize_tree(const Size& p_new_size); ///< resize tree frame and child subframes -- call back this on override
+	
 	
 	/* Events */
 	

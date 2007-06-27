@@ -13,6 +13,7 @@
 #define GUIINPUT_DIALOG_H
 
 #include "bundles/spin_box.h"
+#include "widgets/line_edit.h"
 #include "base/window.h"
 #include "bundles/margin_group.h"
 
@@ -38,6 +39,23 @@ public:
 	void show(String p_question,double p_min,double p_max,double p_step,double p_default=0);
 	
 	NumericInputDialog(Window *p_parent);
+};
+
+
+class StringInputDialog : public Window {
+	
+	MarginGroup *mg;
+	LineEdit *le;
+
+	void ok_pressed_text(String);
+	void ok_pressed();
+public:	
+	
+	Signal< Method1<String> > entered_string_signal;
+
+	void show(String p_question,String p_current);
+	
+	StringInputDialog(Window *p_parent);
 };
 
 }

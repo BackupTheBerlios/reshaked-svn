@@ -48,12 +48,11 @@ public:
 private:
 
 	ContainerPrivate *_cp;
-	
-	virtual void check_for_updates(const Point& p_pos,const Size &p_size,const StyleBox& p_bg_style,const Rect& p_bg_rect); 
+
 	
 	virtual void draw(const Point& p_pos,const Size &p_size,const Rect& p_exposed); ///< Draw the container
 	
-	bool draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed);
+	void draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed);
 	
 	
 	Point get_margin_offset();
@@ -87,7 +86,7 @@ protected:
 	
 	virtual Element *create_new_element();
 	
-	virtual void resize(const Size& p_new_size); /// OVerride WITH CARE (call this back in the override as Container::resize()
+	virtual void resize_tree(const Size& p_new_size); /// OVerride WITH CARE (call this back in the override as Container::resize_tree(). It is better to just override resize()
 
 	
 	/* Default Input Event Handlers */	

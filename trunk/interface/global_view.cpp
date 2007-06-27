@@ -956,7 +956,13 @@ void GlobalView::paint_name(Painter&p, int p_blocklist,int p_ofs) {
 	if (h>24)
 		h=24; //dont let it be THAT big
 	
-	p.draw_text(font(FONT_GLOBAL_VIEW),Point(p_ofs+p.get_font_descent(font(FONT_GLOBAL_VIEW))),name,DOWN,color(COLOR_GLOBAL_VIEW_FONT));
+	
+	int hofs=10;
+	p.draw_text(font(FONT_GLOBAL_VIEW),Point(-1,-1)+Point(p_ofs+p.get_font_descent(font(FONT_GLOBAL_VIEW)),hofs),name,DOWN,color(COLOR_GLOBAL_VIEW_FONT_SHADOW));
+	
+	p.draw_text(font(FONT_GLOBAL_VIEW),Point(1,1)+Point(p_ofs+p.get_font_descent(font(FONT_GLOBAL_VIEW)),hofs),name,DOWN,color(COLOR_GLOBAL_VIEW_FONT_SHADOW));
+	
+	p.draw_text(font(FONT_GLOBAL_VIEW),Point(p_ofs+p.get_font_descent(font(FONT_GLOBAL_VIEW)),hofs),name,DOWN,color(COLOR_GLOBAL_VIEW_FONT));
 		
 }
 

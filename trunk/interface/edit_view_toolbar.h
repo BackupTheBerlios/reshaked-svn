@@ -1,0 +1,88 @@
+//
+// C++ Interface: edit_view_toolbar
+//
+// Description: 
+//
+//
+// Author: Juan Linietsky <reshaked@gmail.com>, (C) 2007
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+#ifndef RESHAKEDEDIT_VIEW_TOOLBAR_H
+#define RESHAKEDEDIT_VIEW_TOOLBAR_H
+
+#include "containers/box_container.h"
+#include "bundles/menu_box.h"
+#include "bundles/combo_box.h"
+#include "bundles/spin_box.h"
+#include "widgets/menu_button.h"
+
+#include "interface/gui_update_notify.h"
+#include "editor/editor.h"
+
+using namespace GUI;
+
+namespace ReShaked {
+
+/**
+	@author Juan Linietsky <reshaked@gmail.com>
+*/
+class EditViewToolbar : public HBoxContainer {
+	
+	
+	enum Action {
+			
+		PLAY_FROM_CURSOR,
+		PLAY_BLOCK_LOOPED,
+  		SELECTION_BEGIN,
+    		SELECTION_END,
+		SELECTION_BLOCK_COLUMN,
+		SELECTION_CLEAR,
+		SELECTION_CREATE_BLOCKS,
+		SELECTION_MAKE_LOOP,
+		SELECTION_SCALE_VOLUMES,
+		SELECTION_APPLY_VOLUME_MASK,
+		SELECTION_QUANTIZE_UP,
+		SELECTION_QUANTIZE_NEAREST,
+		SELECTION_QUANTIZE_DOWN,
+		EDIT_COPY,
+		EDIT_CUT,
+		EDIT_PASTE, // paste overwrite
+		EDIT_PASTE_INSERT,
+		EDIT_PASTE_MIX,
+		EDIT_MARKER,
+		EDIT_BAR_LENTH,
+		EDIT_SET_LOOP_BEGIN,
+		EDIT_SET_LOOP_END,
+		EDIT_TRANSPOSE_UP_SEMITONE,
+		EDIT_TRANSPOSE_DOWN_SEMITONE,
+		EDIT_TRANSPOSE_UP_OCTAVE,
+		EDIT_TRANSPOSE_DOWN_OCTAVE,
+	};
+	
+	
+	Editor *editor;
+	
+	MenuBox *selection_menu;
+	MenuBox *edit_menu;
+	
+	MenuButton *volume_mask_enabled;
+	SpinBox *volume_mask;
+	ComboBox *cursor_step;
+	ComboBox *midi_mode;
+	
+	void set_in_window();
+	
+	void action_callback(int p_action);
+	
+public:
+	EditViewToolbar(GUI_UpdateNotify *p_notifier,Editor *p_editor);
+	
+	~EditViewToolbar();
+
+};
+
+}
+
+#endif

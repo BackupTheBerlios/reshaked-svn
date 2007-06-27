@@ -27,6 +27,9 @@
 
 #include "interface/gui_update_notify.h"
 #include "interface/global_view_frame.h"
+#include "interface/edit_view_frame.h"
+#include "interface/new_track_dialog.h"
+
 #include "engine/property_edit_updater.h"
 #include "engine/sound_driver_list.h"
 #include "engine/midi_driver_list.h"
@@ -86,10 +89,12 @@ class MainWindow : public VBoxContainer {
 	
 	/* Pages */
 	
-	GlobalViewFrame *global_view;
+	GlobalViewFrame *global_view_frame;
+	EditViewFrame *edit_view_frame;
 	
 	/* Work */
 	
+	NewTrackDialog *new_track_dialog;
 	
 	
 	
@@ -112,6 +117,14 @@ class MainWindow : public VBoxContainer {
 	String current_file;
 	void create_keybindings();
 	
+	void new_track_callback();
+	void set_in_window();
+	
+	void rebuild_track_lists();
+	
+protected: //slots	
+	
+	void notify_action_slot(String p_action);
 public:
 	
 	bool must_quit();

@@ -162,7 +162,7 @@ void Painter::draw_text(FontID p_font,const Point & p_pos,const String &p_string
 			case DOWN: {
 				Point cpos=pos;
 				cpos.y+=ofs;
-				cpos.x+=p->fonts[p_font].ascent;
+				cpos.x-=p->fonts[p_font].height-p->fonts[p_font].ascent; //descent
 				cpos.x-=c->valign;
 				draw_bitmap( c->bitmap, cpos, c->rect, DOWN, p_color );
 			} break;

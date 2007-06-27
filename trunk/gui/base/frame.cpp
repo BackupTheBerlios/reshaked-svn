@@ -13,17 +13,15 @@ struct FramePrivate {
 	bool can_fill_vertical;	
 	bool can_fill_horizontal;	
 	Container *parent;	
-	bool update_needed;
-	bool child_needs_update;
 	bool has_update_rect;
-	Rect update_rect;
 	Window *window;
 	FocusMode focus_mode;
 	bool visible;
 	bool clipping;
 	bool bg_on_updates;
 	Skin *skin;	
-	FramePrivate() { can_fill_vertical=true; can_fill_horizontal=true; parent=0; window=0; update_needed=false; child_needs_update=false; focus_mode=FOCUS_NONE; visible=true; skin=0; has_update_rect=false; clipping=false; bg_on_updates=true; }
+	Size size_cache;
+	FramePrivate() { can_fill_vertical=true; can_fill_horizontal=true; parent=0; window=0; focus_mode=FOCUS_NONE; visible=true; skin=0;  clipping=false; bg_on_updates=true; }
 };
 
 
@@ -92,15 +90,6 @@ void Frame::skin_changed() {
 	
 }
 
-bool Frame::has_update_rect() {
-
-	return _fp->has_update_rect;
-}
-
-Rect Frame::get_update_rect() {
-
-	return _fp->update_rect;
-}
 
 void Frame::set_bg_on_updates(bool p_draw) {
 	
@@ -118,51 +107,30 @@ void Frame::update() {
 
 void Frame::update(bool p_only_rect,const Rect& p_rect) {
 
-	if (p_only_rect==false) {
-		_fp->has_update_rect=false;
-	}
-	
-	if (_fp->update_needed && !_fp->has_update_rect && p_only_rect)
-		return; //already know that, and cant upgrade to a rect
-
-
-	if (p_only_rect) {
-
-		_fp->has_update_rect=true;
-		_fp->update_rect=p_rect; //merge with previous ones?
-	}
-		   
-	_fp->update_needed=true;	
-	
-	/* Create Update Tree, propagating the "Child Needs Update" */
-	
-	Frame *f = _fp->parent;
-	
-	while (f) {
+	if (!get_window()) {
 		
-		f->_fp->child_needs_update=true;
-		f=f->_fp->parent;		
+		return;
 	}
-}
-
-bool Frame::child_needs_update() {
 	
-	return _fp->child_needs_update;
-}
-
-
-bool Frame::needs_update() {
+	Rect update_rect;
 	
-	return _fp->update_needed;	
+	if (p_only_rect && !p_rect.has_no_area()) {
+		
+		Rect r=p_rect;
+		r.pos+=get_global_pos();
+		update_rect=r;
+	} else {
+		
+		
+		update_rect=Rect( get_global_pos() , _fp->size_cache );
+	}
+	
+	if (update_rect.has_no_area())
+		return; //pointless
+	
+	_fp->window->update( update_rect );
 }
-void Frame::cancel_update() {
 
-
-	_fp->update_needed=false;	
-	_fp->child_needs_update=false;
-	_fp->has_update_rect=false;
-
-}
 
 FocusMode Frame::get_focus_mode() {
 	
@@ -344,6 +312,21 @@ Point Frame::get_global_pos() {
 
 	return Point();
 
+}
+
+Size Frame::get_size_cache() {
+	
+	return _fp->size_cache;
+}
+void Frame::resize_tree(const Size& p_new_size) {
+	
+	_fp->size_cache=p_new_size;
+	resize(p_new_size);
+}
+
+void Frame::resize(const Size& p_new_size) {
+	
+	//left empty
 }
 
 bool Frame::is_far_parent_of(Frame *p_frame) {

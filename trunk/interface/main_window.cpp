@@ -32,11 +32,73 @@ void MainWindow::quit_request() {
 
 }
 	
+void MainWindow::new_track_callback() {
+	
+	data.editor->add_track(TRACK_TYPE_PATTERN,new_track_dialog->get_channels(),new_track_dialog->get_name()); 
+
+ 	global_view_frame->update_all();
+
+}
 	
 void MainWindow::menu_callback(int p_option) {
 		
 	
+	switch (p_option) {
+		
+		case FILE_NEW_SONG:  {} break;
+  		case FILE_OPEN_SONG:  {} break;
+    		case FILE_SAVE_SONG:  {} break;
+      		case FILE_SAVE_SONG_AS:  {} break;
+      		case FILE_IMPORT_MIDI:  {} break;
+      		case FILE_EXPORT_MIDI:  {} break;
+      		case FILE_EXPORT_WAV:  {} break;
+		case FILE_QUIT:  {} break;
+  		case TRACK_ADD_PATTERN:  {
+		
+			new_track_dialog->show("New Track");
+		
+		} break;
+  		case TRACK_ADD_AUDIO:  {} break;
+    		case TRACK_MIXER:  {} break;
+      		case EDIT_UNDO:  {} break;
+      		case EDIT_REDO:  {} break;
+		case CONTROL_PLAY:  {} break;
+		case CONTROL_LOOP:  {} break;
+		case CONTROL_PAUSE:  {} break;
+		case CONTROL_STOP:  {} break;
+		case CONTROL_FF:  {} break;
+		case CONTROL_RW:  {} break;
+		case CONTROL_REC:  {} break;
+		case CONTROL_REC_AUTO:  {} break;
+      		case TOOL_SETTINGS:  {} break;
+		case TOOL_MIDI_OUTPUT_ASSIGN:  {} break;
+  		case HELP_HELP:  {} break;
+    		case HELP_ABOUT:  {} break;		
+		
+	}
 	
+	
+}
+	
+void MainWindow::rebuild_track_lists() {
+		
+	edit_view_frame->rebuild();
+	global_view_frame->update_all();
+}
+	
+	
+void MainWindow::notify_action_slot(String p_action) {
+		
+	if (info_line->get_text()!=p_action)
+		info_line->set_text(p_action);
+	
+	
+}
+	
+void MainWindow::set_in_window() {
+	
+	new_track_dialog = new NewTrackDialog(get_window());
+	new_track_dialog->track_create_signal.connect(this,&MainWindow::new_track_callback);
 }
 	
 void MainWindow::initialize() {
@@ -130,8 +192,14 @@ void MainWindow::initialize() {
 	/* Pages */
 	
 	
-	global_view =main_stack->add( new GlobalViewFrame(data.editor) );
+	global_view_frame =main_stack->add( new GlobalViewFrame(data.editor) );
+	edit_view_frame =main_stack->add( new EditViewFrame(update_notify,data.editor) );
 	
+	tab_bar->tab_changed_signal.connect( main_stack, &StackContainer::raise );
+	
+	/* UPDATE NOTIFY ASSIGN */
+	update_notify->notify_action_signal.connect(this, &MainWindow::notify_action_slot);
+	update_notify->track_list_changed_signal.connect(this,&MainWindow::rebuild_track_lists);
 	
 	create_keybindings();	
 }

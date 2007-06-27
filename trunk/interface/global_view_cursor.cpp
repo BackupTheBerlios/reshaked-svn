@@ -38,6 +38,10 @@ void GlobalViewCursor::mode_selected(int p_mode) {
 }
 
 
+void GlobalViewCursor::zoom_changed(double p_zoom) {
+	
+	zoom_changed_signal.call(p_zoom);
+}
 
 void GlobalViewCursor::set_in_window() {
 	
@@ -68,6 +72,7 @@ void GlobalViewCursor::set_in_window() {
 	zoom->get_range()->set_step(0.001);
 	zoom->get_range()->set_max(1.0);
 	zoom->get_range()->set(0.35);
+	zoom->get_range()->value_changed_signal.connect( this, &GlobalViewCursor::zoom_changed );
 	
 	add ( new Icon( bitmap(BITMAP_GLOBAL_TOOLBAR__ZOOM) ) );
 	

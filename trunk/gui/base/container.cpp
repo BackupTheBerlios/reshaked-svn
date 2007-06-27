@@ -337,112 +337,13 @@ const StyleBox & Container::get_stylebox() {
 
 	return _cp->style;
 }
-void Container::check_for_updates(const Point& p_global,const Size &p_size,const StyleBox& p_bg_style,const Rect& p_bg_rect) {
 
-	Element * list = get_element_list();
-	
-	/* If this container can draw backgrounds, use it as BG Style */
-	const StyleBox& bg_style=get_parent()?((get_stylebox().mode != StyleBox::MODE_NONE) ? get_stylebox() : p_bg_style):( ( get_stylebox().mode == StyleBox::MODE_NONE )?stylebox( SB_ROOT_CONTAINER ):(get_stylebox()) );
-	  	
-	
-	Rect bg_rect=p_bg_rect;
-	
-	Point margin_ofs=get_margin_offset();
-	
-	/* Also, If this container can draw backgrounds, set background rect to this! */
-	if (_cp->draw_bg || !get_parent() ) {
-		
-		//printf("draw bg?\n");
-		bg_rect.pos=Point();
-		bg_rect.size=p_size;
-	}
-	
-	while(list) {
-		
-		if (!list->frame->is_visible()) {
-			
-			list=list->next;
-			continue;
-		}
-		
-		Rect element_rect=list->rect;
-		element_rect.pos+=margin_ofs;
-
-		Rect element_global_rect(get_global_pos()+element_rect.pos, element_rect.size );
-			
-		Rect child_bg_rect=bg_rect;
-		child_bg_rect.pos-=element_rect.pos;
-		
-		/* SET PAINTER LOCAL RECT (widget local coordinates */
-		Rect saved_rect=get_window()->get_painter()->get_local_rect();
-		Rect painter_global_rect( Rect( saved_rect.pos+element_rect.pos , element_rect.size ) );
-		
-		get_window()->get_painter()->set_local_rect(painter_global_rect);
-		
-		/* SET PAINTER CLIP RECT (if requested */
-		
-		bool save_using_clip=get_window()->get_painter()->has_clip_rect();
-		Rect save_clip=get_window()->get_painter()->get_clip_rect();
-
-		if (list->frame->is_clipping())
-			get_window()->get_painter()->set_clip_rect( list->frame->is_clipping(), painter_global_rect );
-		
-		/* CHECK CHILD FRAME FOR UPDATES */
-		
-		if ( list->frame->needs_update() ) {
-			
-			/* Draw Background First! */
-			if (list->frame->has_bg_on_updates())
-				get_window()->get_painter()->draw_style_box( bg_style, child_bg_rect.pos, child_bg_rect.size , Rect( Point() , element_rect.size ) );
-			//printf("RECT: %i,%i , %i,%i\n",element_global_rect.pos.x,element_global_rect.pos.y,element_global_rect.size.x,element_global_rect.size.y);
-			/* Draw Child */
-			
-
-			list->frame->draw_tree(element_global_rect.pos,element_rect.size,Rect( Point(), element_rect.size) );
-
-			
-
-
-			/** TODO, scrolling support here */
-			get_window()->update( Rect( element_global_rect.pos, element_rect.size ) );
-			
-			
-		} else if ( list->frame->child_needs_update() ) {
-			
-			list->frame->check_for_updates( element_global_rect.pos, element_global_rect.size, bg_style, child_bg_rect );
-			list->frame->cancel_update();
-		}
-		
-		/* RESTORE LOCAL & CLIP RECTS */
-		get_window()->get_painter()->set_local_rect(saved_rect);
-		if (list->frame->is_clipping())
-			get_window()->get_painter()->set_clip_rect( save_using_clip, save_clip );
-		
-		list = list->next;
-	}
-
-	if (!get_parent() && (needs_update() || child_needs_update()))
-		cancel_update();
-}
-
-bool Container::draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed) {
-
-	bool needed_update=(needs_update() || child_needs_update());
-	bool do_cancel_update=needed_update;
+void Container::draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed) {
 
 	draw(p_global, p_size, p_exposed);
 	
 	//if what is asked to draw is not inside what
 	Rect exposed=p_exposed;
-	
-	if (needs_update() && has_update_rect()) {
-		if (!get_update_rect().contains( p_exposed ))  {
-
-			do_cancel_update=false;
-		}
-		exposed=get_update_rect().clip( p_exposed );
-	}
-	//there was an attempt to update the widget, but the update rect does not cover all that is attempted to be updated... update should not be cancelled, then
 
 	Element * list = get_element_list();
 	
@@ -482,25 +383,20 @@ bool Container::draw_tree(const Point& p_global,const Size& p_size,const Rect& p
 			Rect save_clip=get_window()->get_painter()->get_clip_rect();
 
 			if (list->frame->is_clipping())
-				get_window()->get_painter()->set_clip_rect( list->frame->is_clipping(), painter_global_rect );
+				get_window()->get_painter()->set_clip_rect( list->frame->is_clipping(), painter_global_rect ,true);
 			
 			/* ELEMENT */
 			Rect element_exposed=element_rect.clip(exposed);
 			element_exposed.pos-=element_rect.pos;
 
 			if (!element_exposed.has_no_area()) {
-				if (list->frame->draw_tree(element_global_rect.pos,element_rect.size,element_exposed)) {
+				list->frame->draw_tree(element_global_rect.pos,element_rect.size,element_exposed);
 					
-					do_cancel_update=false;
-				}
-			} else {
-				
-				do_cancel_update=false;
-			}
+			} 
 			
 			get_window()->get_painter()->set_local_rect(saved_rect);
 			if (list->frame->is_clipping())
-				get_window()->get_painter()->set_clip_rect( save_using_clip, save_clip );
+				get_window()->get_painter()->set_clip_rect( save_using_clip, save_clip,true );
 			
 		} else {
 			
@@ -510,11 +406,6 @@ bool Container::draw_tree(const Point& p_global,const Size& p_size,const Rect& p
 		list = list->next;
 	}
 
-	if (do_cancel_update)
-		cancel_update();
-
-
-	return (needed_update && !do_cancel_update);
 }
 
 
@@ -551,7 +442,7 @@ Size Container::get_minimum_size() {
 	return minsize;
 }
 
-void Container::resize(const Size& p_new_size) {
+void Container::resize_tree(const Size& p_new_size) {
 	
 	// this limit avoids infinite loop
 	// this is needed, because sometimes,
@@ -561,6 +452,8 @@ void Container::resize(const Size& p_new_size) {
 	// so we need to try and resize again..
 	// however, the user may do something too complex for this too handle,
 	// and may cause this to recurse forever, so the limit exists.
+	
+	Frame::resize_tree(p_new_size); //call back frame
 	
 	int max_recursive_attempt_limit=5; 
 	
@@ -601,13 +494,13 @@ void Container::adjust_minimum_size() {
 			get_parent()->adjust_minimum_size();
 		} else {
 			
-			resize( ms );
+			resize_tree( ms );
 			top_size_adjust_signal.call( ms );
 		}
 		
 	} else {
 		
-		resize( _cp->size_cache );
+		resize_tree( _cp->size_cache );
 	}
 	
 	update();
@@ -633,7 +526,7 @@ void Container::set_minimum_size_changed() {
 			get_parent()->adjust_minimum_size();
 		} else {
 			
-			resize( ms );
+			resize_tree( ms );
 			top_size_adjust_signal.call( ms );
 		}
 		

@@ -26,6 +26,7 @@ class Container;
 	@author Juan Linietsky <reduzio@gmail.com>
 */
 
+
 class Window : public SignalTarget {
 	
 public:
@@ -47,7 +48,38 @@ public:
 
 private:
 	
-	Skin *skin;
+	struct ModalStack {
+		
+		ModalStack *next;
+		Window *window;
+		
+		ModalStack() { next=0; window=0; }
+	};
+	
+	struct UpdateRectList {
+		
+		Rect rect;	
+		UpdateRectList *next;
+		
+		UpdateRectList() { next=0; }
+	};
+	
+	struct RootWindowData {
+			
+		
+		Skin *skin;
+		ModalStack *modal_stack;
+		Painter *painter;
+		Timer *timer;
+		UpdateRectList *update_rect_list;
+		bool update_rect_list_locked;
+		
+		RootWindowData() { skin=0; modal_stack=0; painter=0; timer=0; update_rect_list=0; update_rect_list_locked=false; }
+	
+	};
+	
+	RootWindowData *root_data;
+	
 	
 	Frame *root_frame;
 	Frame *last_under_cursor;
@@ -58,8 +90,6 @@ private:
 		Point pos;
 	} drag;
 	
-	Painter *painter;
-	Timer *timer;
 
 	bool visible;
 	Point pos;
@@ -81,25 +111,19 @@ private:
 	Window *focus; //focused window , only the tree root can use this
 	Window *root; //pointer to tree root
 	
-	struct ModalStack {
-		
-		ModalStack *next;
-		Window *window;
-		
-		ModalStack() { next=0; window=0; }
-	};
 	
-	ModalStack *modal_stack;
-	
+
+	void update_rect_merge(UpdateRectList **p_rect);
+	void add_update_rect(const Rect& p_rect);
+
 
 	void remove_from_modal_stack();
 	void raise_window(Window *p_child);
 	Window *find_window_at_pos(const Point& p_point);
 	void initialize();
 	
-	void draw_widgets_over_area(const Rect &p_rect);
-
-	void redraw_all_internal(const Rect& p_rect,Window *p_after_child=0,bool p_reset_clip_rect=true);
+	void redraw_screen_over_area(const Rect &p_rect);
+	void redraw_contents_over_area(const Rect& p_rect);
 
 	void top_frame_resized(const Size p_size);
 	

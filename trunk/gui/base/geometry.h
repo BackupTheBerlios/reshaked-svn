@@ -83,7 +83,7 @@ struct Rect {
 		return (size.x<=0 || size.y<=0);
 
 	}
-	inline Rect clip(const Rect& p_rect) const {
+	inline Rect clip(const Rect& p_rect) const { /// return a clipped rect
 		
 		Rect new_rect=p_rect;
 		
@@ -102,6 +102,21 @@ struct Rect {
 		return new_rect;
 	}
 	
+	inline Rect merge(const Rect& p_rect) const { ///< return a merged rect
+		
+		Rect new_rect;
+		
+		new_rect.pos.x=MIN( p_rect.pos.x , pos.x );
+		new_rect.pos.y=MIN( p_rect.pos.y , pos.y );
+		
+		
+		new_rect.size.x = MAX( p_rect.pos.x+p_rect.size.x , pos.x+size.x );
+		new_rect.size.y = MAX( p_rect.pos.y+p_rect.size.y , pos.y+size.y );
+		
+		new_rect.size = new_rect.size - new_rect.pos; //make relative again
+		
+		return new_rect;
+	};
 	bool has_point(const Point& p_point) { 
 		if (p_point.x < pos.x)
 			return false; 

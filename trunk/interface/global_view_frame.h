@@ -38,8 +38,8 @@ class GlobalViewFrame : public VBoxContainer {
 	VScrollBar *v_scroll;
 	GlobalViewCursor *cursor_op;
 	
-//	GlobalBeatBarColumn *beat_bar_column;
-	//MarkerColumn *marker_column;
+	GlobalBeatBarColumn *beat_bar_column;
+	MarkerColumn *marker_column;
 	LoopColumn *loop_column;
 	
 	

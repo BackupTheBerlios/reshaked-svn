@@ -38,7 +38,7 @@ void CenterContainer::resize_internal(const Size& p_new_size) {
 		Size min;
 		min=e->frame->get_minimum_size();
 		e->rect=Rect( (p_new_size-min)/2 , min );
-		e->frame->resize(min);
+		e->frame->resize_tree(min);
 	}
 	
 }

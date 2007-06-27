@@ -63,7 +63,7 @@ void FixedContainer::resize_internal(const Size& p_new_size) {
 		fe->rect.size=elem_min;
 		fe->rect.pos=fe->desired_pos;
 		
-		fe->frame->resize( fe->rect.size );
+		fe->frame->resize_tree( fe->rect.size );
 		
 		fe=(FixedElement*)fe->next;
 	}

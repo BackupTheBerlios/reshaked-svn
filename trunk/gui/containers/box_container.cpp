@@ -75,6 +75,8 @@ void BoxContainer::add_frame(Frame *p_frame,int p_stretch) {
 	if (!e)
 		return;
 	e->stretch=p_stretch;
+	
+	set_minimum_size_changed();
 }
 
 
@@ -328,7 +330,7 @@ void BoxContainer::resize_internal(const Size& p_new_size) {
 		}
 		
 		
-		e->frame->resize( e->rect.size );
+		e->frame->resize_tree( e->rect.size );
 		
 		e=(BoxElement*)e->next; //speed cast
 	}	
