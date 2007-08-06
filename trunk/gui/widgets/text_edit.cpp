@@ -9,7 +9,7 @@ namespace GUI {
 
 Size TextEdit::get_minimum_size_internal() {
 
-	return get_painter()->get_style_box_min_size( stylebox( SB_TEXT_EDIT ) );
+	return get_painter()->get_stylebox_min_size( stylebox( SB_TEXT_EDIT ) );
 }
 int TextEdit::get_visible_rows() {
 
@@ -17,7 +17,7 @@ int TextEdit::get_visible_rows() {
 		return 0;
 
 	int total=size.height;
-	total-=get_painter()->get_style_box_min_size( stylebox( SB_TEXT_EDIT ) ).height;
+	total-=get_painter()->get_stylebox_min_size( stylebox( SB_TEXT_EDIT ) ).height;
 	total/=get_row_height();
 	return total;
 }
@@ -30,7 +30,7 @@ void TextEdit::adjust_viewport_to_cursor() {
 	if (!get_painter())
 		return;
 	
-	int total_width=size.width-get_painter()->get_style_box_min_size( stylebox( SB_TEXT_EDIT ) ).width;
+	int total_width=size.width-get_painter()->get_stylebox_min_size( stylebox( SB_TEXT_EDIT ) ).width;
 	
 	//printf("rowofs %i, visrows %i, cursor.y %i\n",cursor.row_ofs,get_visible_rows(),cursor.y);
 	
@@ -171,13 +171,13 @@ void TextEdit::mouse_button(const Point& p_pos, int p_button,bool p_press,int p_
 
 	if (p_button==BUTTON_LEFT ) {
 		int row=p_pos.y;
-		row-=get_painter()->get_style_box_margin( stylebox( SB_TEXT_EDIT ), MARGIN_TOP );
+		row-=get_painter()->get_stylebox_margin( stylebox( SB_TEXT_EDIT ), MARGIN_TOP );
 		row/=get_row_height();
 		if (row<0 || row>=get_visible_rows())
 			return;
 		row+=cursor.row_ofs;
 	
-		int col=p_pos.x-get_painter()->get_style_box_margin( stylebox( SB_TEXT_EDIT ), MARGIN_LEFT );;
+		int col=p_pos.x-get_painter()->get_stylebox_margin( stylebox( SB_TEXT_EDIT ), MARGIN_LEFT );;
 		col+=cursor.x_ofs;
 		col=get_char_pos_for( col, get_line(row) );
 	
@@ -325,10 +325,10 @@ int TextEdit::get_pixel_pos_for(int p_char,String p_str) {
 void TextEdit::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 
 
-	get_painter()->draw_style_box( stylebox(SB_TEXT_EDIT), Point(0,0),size);
+	get_painter()->draw_stylebox( stylebox(SB_TEXT_EDIT), Point(0,0),size);
 
-	int xmargin_beg=get_painter()->get_style_box_margin( stylebox(SB_TEXT_EDIT), MARGIN_LEFT );
-	int xmargin_end=size.width-get_painter()->get_style_box_margin( stylebox(SB_TEXT_EDIT), MARGIN_RIGHT );
+	int xmargin_beg=get_painter()->get_stylebox_margin( stylebox(SB_TEXT_EDIT), MARGIN_LEFT );
+	int xmargin_end=size.width-get_painter()->get_stylebox_margin( stylebox(SB_TEXT_EDIT), MARGIN_RIGHT );
 	//let's do it easy for now:
 
 	int ascent=get_painter()->get_font_ascent( font(FONT_TEXT_EDIT ) );

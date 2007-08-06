@@ -26,6 +26,7 @@ namespace GUI {
 class TabBox : public VBoxContainer {
 	
 	TabBar *tabs;
+	
 	StackContainer *stack;
 	
 	void set_in_window();

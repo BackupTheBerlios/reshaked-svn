@@ -298,7 +298,7 @@ void EditViewPattern::paint_cursor(Painter &p,int p_row) {
 		} break;
 	}
 
-	p.draw_style_box( stylebox( SB_EDIT_VIEW_CURSOR ), Point(xofs,textofs), Size( get_font_width(), get_font_height() ) );
+	p.draw_stylebox( stylebox( SB_EDIT_VIEW_CURSOR ), Point(xofs,textofs), Size( get_font_width(), get_font_height() ) );
 	
 }
 
@@ -398,11 +398,11 @@ void EditViewPattern::paint_frames(Painter& p) {
 			int len_h=(i-begin_pos)*row_size;
 
 			
-			p.draw_style_box(sb, Point(0,begin_h),Size(size.width,len_h));
+			p.draw_stylebox(sb, Point(0,begin_h),Size(size.width,len_h));
 			
 			if (last_block_idx!=-1 && track->get_block(last_block_idx)->is_shared()) {
 
-				p.draw_style_box(sb_shared, Point(0,begin_h),Size(size.width,len_h));
+				p.draw_stylebox(sb_shared, Point(0,begin_h),Size(size.width,len_h));
 			}
 		
 
@@ -492,7 +492,7 @@ void EditViewPattern::draw(const Point& p_pos,const Size& p_size,const Rect& p_e
 		
 	Painter &p=*get_painter();
 
-	p.set_clip_rect(false,p_exposed);
+	//p.push_clip_rect(p_exposed);
 	//p.set_clip_rect(true,p_exposed);
 	
 	p.draw_fill_rect(Point(0,0),size,color(COLOR_PATTERN_BG));
@@ -574,8 +574,7 @@ void EditViewPattern::draw(const Point& p_pos,const Size& p_size,const Rect& p_e
 	}
 	
 
-	p.set_clip_rect(false);	
-	
+
 
 }
 
@@ -607,11 +606,12 @@ void EditViewPattern::get_row_column_and_field(Point p_pos,int *p_row,int *p_col
 void EditViewPattern::get_pos_at_pointer(Point p_pointer, int *p_blocklist,int *p_column, int *p_row) {
 	
 	
+	
 	int field;
 	get_row_column_and_field( p_pointer, p_row, p_column, &field );
 	*p_row+=editor->get_cursor().get_window_offset();
 	*p_blocklist=editor->find_blocklist( track );
-	
+		
 }
 
 void EditViewPattern::focus_enter() {
@@ -646,7 +646,7 @@ void EditViewPattern::mouse_button(const Point& p_pos, int p_button,bool p_press
 
 void EditViewPattern::mouse_motion(const Point& p_pos, const Point& p_rel, int p_button_mask) {
 
-	mouse_selection_update_check();
+	mouse_selection_update_check(p_pos);
 }
 
 bool EditViewPattern::key(unsigned long p_unicode, unsigned long p_scan_code,bool p_press,bool p_repeat,int p_modifier_mask) {
@@ -654,11 +654,8 @@ bool EditViewPattern::key(unsigned long p_unicode, unsigned long p_scan_code,boo
 	
 
 	int key_value=p_scan_code;
-
-	if (key_value!=KEY_TAB) { //ruins things otherwise
 	
-		key_value|=p_modifier_mask;
-	}
+	key_value|=p_modifier_mask;
 	
 	if (p_press && editor->pattern_edit_key_press(key_value)) {
 		

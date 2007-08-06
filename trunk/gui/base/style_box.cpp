@@ -1,5 +1,5 @@
 //
-// C++ Implementation: style_box
+// C++ Implementation: stylebox
 //
 // Description: 
 //
@@ -23,9 +23,26 @@ StyleBox::StyleBox()
 		margins[i]=-1; //dont use forced margin
 	
 	mode=MODE_NONE;
-	flat.margin=3;
+	flat.margin=1;
 	flat.blend=false;
 	draw_center=true;
+}
+
+StyleBox::StyleBox(int p_margin,Color p_upleft,Color p_downright) {
+	
+	for (int i=0;i<POS_MAX;i++) 
+		bitmaps[i]=-1; 
+	
+	mode=MODE_FLAT;
+	flat.blend=false;
+	flat.margin=p_margin;
+	flat.border_upleft=p_upleft;
+	flat.border_downright=p_downright;
+	draw_center=false;
+	
+	for (int i=0;i<4;i++)
+		margins[i]=p_margin;
+	
 }
 
 StyleBox::StyleBox(int p_margin,Color p_center,Color p_upleft,Color p_downright,bool p_blend) {

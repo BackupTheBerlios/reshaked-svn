@@ -289,7 +289,7 @@ void LineEdit::set_cursor_at_pixel_pos(int p_x) {
 
 
 	int ofs=window_pos;
-	int pixel_ofs=get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_LEFT )+constant( C_LINE_EDIT_MARGIN );
+	int pixel_ofs=get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_LEFT )+constant( C_LINE_EDIT_MARGIN );
 	
 	while (ofs<text.length()) {
 
@@ -395,7 +395,7 @@ void LineEdit::set_cursor_pos(int p_pos) {
 		set_window_pos(cursor_pos);
 	} else if (cursor_pos>window_pos) {
 		/* Adjust window if cursor goes too much to the right */
-		int window_width=size.width-(constant( C_LINE_EDIT_MARGIN )*2+get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_LEFT ) +	get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_RIGHT ) );
+		int window_width=size.width-(constant( C_LINE_EDIT_MARGIN )*2+get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_LEFT ) +	get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_RIGHT ) );
 
 		if (window_width<0)
 			return;
@@ -459,13 +459,13 @@ Size LineEdit::get_minimum_size_internal() {
 	
 	Size min;
 	
-	min.height=get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_TOP ) +
-		get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_BOTTOM ) +
+	min.height=get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_TOP ) +
+		get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_BOTTOM ) +
 		constant( C_LINE_EDIT_MARGIN )*2 +
 		get_painter()->get_font_height( font( FONT_LINE_EDIT ) );
  
-	min.width=get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_LEFT ) +
-		get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_RIGHT ) +
+	min.width=get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_LEFT ) +
+		get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ), MARGIN_RIGHT ) +
 		constant( C_LINE_EDIT_MARGIN )*2;
 	
 	if (min.width<constant( C_LINE_EDIT_MIN_WIDTH ))
@@ -481,19 +481,19 @@ void LineEdit::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed)
 	width=p_size.width;
 	height=p_size.height;
 	
-	get_painter()->draw_style_box( stylebox( SB_LINE_EDIT_NORMAL ) , Point() , p_size, p_exposed );
+	get_painter()->draw_stylebox( stylebox( SB_LINE_EDIT_NORMAL ) , Point() , p_size, p_exposed );
 	if (has_focus())
-		get_painter()->draw_style_box( stylebox( SB_LINE_EDIT_FOCUS )  , Point() , p_size, p_exposed, false );
+		get_painter()->draw_stylebox( stylebox( SB_LINE_EDIT_FOCUS )  , Point() , p_size, p_exposed);
 	
 	
 	
-	int ofs=get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_LEFT )+constant( C_LINE_EDIT_MARGIN );
-	int ofs_max=width-(ofs+get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_RIGHT )+constant( C_LINE_EDIT_MARGIN ));
+	int ofs=get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_LEFT )+constant( C_LINE_EDIT_MARGIN );
+	int ofs_max=width-(ofs+get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_RIGHT )+constant( C_LINE_EDIT_MARGIN ));
 	int char_ofs=window_pos;
 
 
-	int y_area=height-(get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_TOP ) + get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_BOTTOM ) + constant( C_LINE_EDIT_MARGIN )*2 );
-	int y_ofs=(y_area-get_painter()->get_font_height( font( FONT_LINE_EDIT ) ))/2 + get_painter()->get_style_box_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_TOP ) + constant( C_LINE_EDIT_MARGIN );
+	int y_area=height-(get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_TOP ) + get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_BOTTOM ) + constant( C_LINE_EDIT_MARGIN )*2 );
+	int y_ofs=(y_area-get_painter()->get_font_height( font( FONT_LINE_EDIT ) ))/2 + get_painter()->get_stylebox_margin( stylebox( SB_LINE_EDIT_NORMAL ) , MARGIN_TOP ) + constant( C_LINE_EDIT_MARGIN );
 	
 	int font_ascent=get_painter()->get_font_ascent( font( FONT_LINE_EDIT ) );
 	

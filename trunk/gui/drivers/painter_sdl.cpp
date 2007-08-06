@@ -88,7 +88,7 @@ void SDL_PutPixel(SDL_Surface *surface, int x, int y, const Color& p_color,Uint8
 			break;
 	}
 }
-void PainterSDL::set_clip_rect(bool p_enabled, const Rect& p_rect,bool p_global) {
+void PainterSDL::set_clip_rect(bool p_enabled, const Rect& p_rect) {
 	
 	if (!p_enabled || p_rect.has_no_area()) {
 		
@@ -99,8 +99,6 @@ void PainterSDL::set_clip_rect(bool p_enabled, const Rect& p_rect,bool p_global)
 	}
 	
 	Rect global_rect=p_rect;
-	if (p_global)
-		global_rect.pos+=rect.pos;
 	
 	SDL_Rect dst_rect;
 	
@@ -184,7 +182,6 @@ void PainterSDL::draw_bitmap(BitmapID p_bitmap,const Point &p_pos,const Color&p_
 	};	
 
 
-	
 	
 	draw_bitmap( p_bitmap, p_pos, Rect( Point(), get_bitmap_size( p_bitmap )),p_color );
 

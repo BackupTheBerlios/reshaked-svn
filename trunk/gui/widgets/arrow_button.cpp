@@ -25,7 +25,7 @@ void ArrowButton::set_dir(Direction p_dir) {
 
 Size ArrowButton::get_minimum_size_internal() {
 	
-	Size min=get_painter()->get_style_box_min_size( stylebox( SB_ARROWBUTTON_NORMAL ) );
+	Size min=get_painter()->get_stylebox_min_size( stylebox( SB_ARROWBUTTON_NORMAL ) );
 	
 	if (constant( C_ARROWBUTTON_ARROW_SIZE )>0 && !no_minsize ) {
 		
@@ -55,20 +55,20 @@ void ArrowButton::draw(const Point& p_pos,const Size& p_size,const Rect& p_expos
 			
 			if (stylebox( SB_ARROWBUTTON_HOVER ).mode!=StyleBox::MODE_NONE) {
 				
-				p->draw_style_box( stylebox( SB_ARROWBUTTON_HOVER ) , Point() , p_size, p_exposed );
+				p->draw_stylebox( stylebox( SB_ARROWBUTTON_HOVER ) , Point() , p_size, p_exposed );
 				break;
 			}
 		}
 		
 		case DRAW_NORMAL: {
 			
-			p->draw_style_box( stylebox( SB_ARROWBUTTON_NORMAL ) , Point() , p_size, p_exposed );
+			p->draw_stylebox( stylebox( SB_ARROWBUTTON_NORMAL ) , Point() , p_size, p_exposed );
 			
 		} break;
 		
 		case DRAW_PRESSED: {
 			
-			p->draw_style_box( stylebox( SB_ARROWBUTTON_PRESSED ) , Point() , p_size, p_exposed );
+			p->draw_stylebox( stylebox( SB_ARROWBUTTON_PRESSED ) , Point() , p_size, p_exposed );
 			draw_displaced=true;			
 		} break;
 		
@@ -79,12 +79,12 @@ void ArrowButton::draw(const Point& p_pos,const Size& p_size,const Rect& p_expos
 	
 
 	
-	area_rect.pos.x=p->get_style_box_margin( stylebox( SB_ARROWBUTTON_NORMAL ), MARGIN_LEFT );
-	area_rect.pos.y=p->get_style_box_margin( stylebox( SB_ARROWBUTTON_NORMAL ), MARGIN_TOP );
+	area_rect.pos.x=p->get_stylebox_margin( stylebox( SB_ARROWBUTTON_NORMAL ), MARGIN_LEFT );
+	area_rect.pos.y=p->get_stylebox_margin( stylebox( SB_ARROWBUTTON_NORMAL ), MARGIN_TOP );
 	area_rect.size-=area_rect.pos;
 	
-	area_rect.size.x-=p->get_style_box_margin( stylebox( SB_ARROWBUTTON_NORMAL ), MARGIN_RIGHT );
-	area_rect.size.y-=p->get_style_box_margin( stylebox( SB_ARROWBUTTON_NORMAL ), MARGIN_BOTTOM );
+	area_rect.size.x-=p->get_stylebox_margin( stylebox( SB_ARROWBUTTON_NORMAL ), MARGIN_RIGHT );
+	area_rect.size.y-=p->get_stylebox_margin( stylebox( SB_ARROWBUTTON_NORMAL ), MARGIN_BOTTOM );
 	
 	area_rect.size.x-=constant( C_ARROWBUTTON_DISPLACEMENT );
 	area_rect.size.y-=constant( C_ARROWBUTTON_DISPLACEMENT );
@@ -101,7 +101,7 @@ void ArrowButton::draw(const Point& p_pos,const Size& p_size,const Rect& p_expos
 	}
 
 	if (has_focus())
-		p->draw_style_box( stylebox( SB_ARROWBUTTON_FOCUS ) , Point() , p_size, p_exposed, false);
+		p->draw_stylebox( stylebox( SB_ARROWBUTTON_FOCUS ) , Point() , p_size, p_exposed );
 	
 	
 }

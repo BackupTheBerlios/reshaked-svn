@@ -95,11 +95,11 @@ Size Button::get_minimum_size_internal() {
 		min.width+=constant( C_BUTTON_SEPARATION );
 	}
 
-	min.width+=p->get_style_box_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_LEFT );
-	min.width+=p->get_style_box_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_RIGHT );
+	min.width+=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_LEFT );
+	min.width+=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_RIGHT );
 
-	min.height+=p->get_style_box_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_TOP );
-	min.height+=p->get_style_box_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_BOTTOM );
+	min.height+=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_TOP );
+	min.height+=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_BOTTOM );
 
 	min.width+=constant( C_BUTTON_EXTRA_MARGIN )*2+constant( C_BUTTON_DISPLACEMENT ); //both margins and displacement
 	min.height+=constant( C_BUTTON_EXTRA_MARGIN )*2+constant( C_BUTTON_DISPLACEMENT ); //both margins and displacement
@@ -123,7 +123,7 @@ void Button::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 
 		if (stylebox( SB_BUTTON_HOVER ).mode!=StyleBox::MODE_NONE && (!is_toggle_mode() || (is_toggle_mode() && !is_pressed()))) {
 
-			p->draw_style_box( stylebox( SB_BUTTON_HOVER ) , Point() , p_size, p_exposed );
+			p->draw_stylebox( stylebox( SB_BUTTON_HOVER ) , Point() , p_size, p_exposed );
 
 		} else
 			draw_mode=is_pressed()?DRAW_PRESSED:DRAW_NORMAL;
@@ -131,13 +131,13 @@ void Button::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 
 	if (draw_mode==DRAW_NORMAL) {
 
-		p->draw_style_box( stylebox( SB_BUTTON_NORMAL ) , Point() , p_size, p_exposed );
+		p->draw_stylebox( stylebox( SB_BUTTON_NORMAL ) , Point() , p_size, p_exposed );
 
 	}
 
 	if (draw_mode==DRAW_PRESSED) {
 
-		p->draw_style_box( stylebox( SB_BUTTON_PRESSED ) , Point() , p_size, p_exposed );
+		p->draw_stylebox( stylebox( SB_BUTTON_PRESSED ) , Point() , p_size, p_exposed );
 		draw_displaced=true;
 
 	}
@@ -145,12 +145,12 @@ void Button::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 
 	Rect area_rect=Rect( p_pos, p_size );
 
-	area_rect.pos.x=p->get_style_box_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_LEFT );
-	area_rect.pos.y=p->get_style_box_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_TOP );
+	area_rect.pos.x=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_LEFT );
+	area_rect.pos.y=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_TOP );
 	area_rect.size-=area_rect.pos;
 
-	area_rect.size.x-=p->get_style_box_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_RIGHT );
-	area_rect.size.y-=p->get_style_box_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_BOTTOM );
+	area_rect.size.x-=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_RIGHT );
+	area_rect.size.y-=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_BOTTOM );
 
 	area_rect.size.x-=constant( C_BUTTON_EXTRA_MARGIN )*2;
 	area_rect.pos.x+=constant( C_BUTTON_EXTRA_MARGIN );
@@ -182,7 +182,7 @@ void Button::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 
 		if ( constant( C_BUTTON_CHECKBOX_SIZE )>0 ) {
 
-			p->draw_style_box( stylebox( is_pressed() ? SB_BUTTON_CHECKED : SB_BUTTON_UNCHECKED ) , check_pos , cbsize);
+			p->draw_stylebox( stylebox( is_pressed() ? SB_BUTTON_CHECKED : SB_BUTTON_UNCHECKED ) , check_pos , cbsize);
 		} else {
 
 			p->draw_bitmap( bitmap( is_pressed() ? BITMAP_BUTTON_CHECKED : BITMAP_BUTTON_UNCHECKED ), check_pos );
@@ -229,7 +229,7 @@ void Button::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 	};
 
 	if (has_focus())
-		p->draw_style_box( stylebox( SB_BUTTON_FOCUS ) , Point() , p_size, p_exposed, false);
+		p->draw_stylebox( stylebox( SB_BUTTON_FOCUS ) , Point() , p_size, p_exposed);
 
 }
 

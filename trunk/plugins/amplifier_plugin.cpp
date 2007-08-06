@@ -12,6 +12,7 @@
 #include "amplifier_plugin.h"
 #include <math.h>
 #include "effect_amplifier.xpm"
+
 namespace ReShaked {
 
 static SoundPlugin* create_amplifier(const SoundPluginInfo *p_info,int p_channels) {

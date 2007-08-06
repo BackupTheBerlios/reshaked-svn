@@ -16,6 +16,7 @@
 #include "bundles/menu_box.h"
 #include "bundles/combo_box.h"
 #include "bundles/spin_box.h"
+#include "bundles/input_dialog.h"
 #include "widgets/menu_button.h"
 
 #include "interface/gui_update_notify.h"
@@ -60,7 +61,7 @@ class EditViewToolbar : public HBoxContainer {
 		EDIT_TRANSPOSE_UP_OCTAVE,
 		EDIT_TRANSPOSE_DOWN_OCTAVE,
 	};
-	
+		
 	
 	Editor *editor;
 	
@@ -71,12 +72,34 @@ class EditViewToolbar : public HBoxContainer {
 	SpinBox *volume_mask;
 	ComboBox *cursor_step;
 	ComboBox *midi_mode;
+	ComboBox *snap;
+	
+	NumericInputDialog *input_bar_len;
+	NumericInputDialog *input_volume_scale;
+	StringInputDialog *input_marker;
+	
+	
+	double last_scale;
 	
 	void set_in_window();
 	
 	void action_callback(int p_action);
+	void cursor_set_step_callback(int p_step);
+	void volume_set_mask_callback(double p_mask);
+	void snap_changed_callback(int p_step);
 	
+	void marker_changed_callback(String p_text);
+	void volume_scale_callback(double p_val);
+	void bar_len_changed_callback(double p_val);
+	
+	bool updating;
 public:
+	void update_components();
+	
+	void scale_volumes();
+	void edit_marker_at_cursor();
+	void change_bar_len_at_cursor();
+	
 	EditViewToolbar(GUI_UpdateNotify *p_notifier,Editor *p_editor);
 	
 	~EditViewToolbar();

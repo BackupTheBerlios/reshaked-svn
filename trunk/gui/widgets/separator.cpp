@@ -20,7 +20,7 @@ void Separator::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed
 
 	Size size=p_size;
 	Point ofs=Point();
-	Size minsize=get_painter()->get_style_box_min_size( stylebox( SB_SEPARATOR ) );
+	Size minsize=get_painter()->get_stylebox_min_size( stylebox( SB_SEPARATOR ) );
 
 	if (dir==VERTICAL) {
 		size.height-=constant( C_SEPARATOR_EXTRA_MARGIN )*2;
@@ -32,16 +32,16 @@ void Separator::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed
 	}
 
 	if (dir==VERTICAL)
-		get_painter()->draw_style_box( stylebox( SB_SEPARATOR ), ofs+Point( (size.width-minsize.width)/2, 0), Size( minsize.width, size.height ) );
+		get_painter()->draw_stylebox( stylebox( SB_SEPARATOR ), ofs+Point( (size.width-minsize.width)/2, 0), Size( minsize.width, size.height ) );
 	else
-		get_painter()->draw_style_box( stylebox( SB_SEPARATOR ), ofs+Point( 0, (size.height-minsize.height)/2), Size( size.width, minsize.height ) );
+		get_painter()->draw_stylebox( stylebox( SB_SEPARATOR ), ofs+Point( 0, (size.height-minsize.height)/2), Size( size.width, minsize.height ) );
 
 
 }
 Size Separator::get_minimum_size_internal() {
 
 
-	Size minsize=get_painter()->get_style_box_min_size( stylebox( SB_SEPARATOR ) );
+	Size minsize=get_painter()->get_stylebox_min_size( stylebox( SB_SEPARATOR ) );
 
 	if (dir==VERTICAL)
 		minsize.width+=constant( C_SEPARATOR_EXTRA_MARGIN )*2;

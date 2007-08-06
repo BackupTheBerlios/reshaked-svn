@@ -22,7 +22,7 @@ Size ProgressBar::get_minimum_size_internal() {
 	if (!p)
 		return Size(0,0);
 	
-	Size minsize = p->get_style_box_min_size( stylebox( SB_PROGRESSBAR_FRAME ) );
+	Size minsize = p->get_stylebox_min_size( stylebox( SB_PROGRESSBAR_FRAME ) );
 	minsize.height+=p->get_font_height( font( FONT_PROGRESSBAR ) );
 	minsize.height+=constant( C_PROGRESSBAR_MARGIN ) *2;
 	
@@ -41,18 +41,18 @@ void ProgressBar::draw(const Point& p_global,const Size& p_size,const Rect& p_ex
 	if (!p)
 		return;
 	
-	get_painter()->draw_style_box( stylebox( SB_PROGRESSBAR_FRAME ), Point(), p_size );
-	Size inside_area=p_size-p->get_style_box_min_size( stylebox( SB_PROGRESSBAR_FRAME ) );
+	get_painter()->draw_stylebox( stylebox( SB_PROGRESSBAR_FRAME ), Point(), p_size );
+	Size inside_area=p_size-p->get_stylebox_min_size( stylebox( SB_PROGRESSBAR_FRAME ) );
 	Point ofs( 
-			p->get_style_box_margin( stylebox( SB_PROGRESSBAR_FRAME ), MARGIN_LEFT ), 
-			p->get_style_box_margin( stylebox( SB_PROGRESSBAR_FRAME ), MARGIN_TOP ) 
+			p->get_stylebox_margin( stylebox( SB_PROGRESSBAR_FRAME ), MARGIN_LEFT ), 
+			p->get_stylebox_margin( stylebox( SB_PROGRESSBAR_FRAME ), MARGIN_TOP ) 
 	 );
 	
 	double unit_size=get_range()->get_unit_value();
 	if (unit_size>0) {
 		Size progress_area=inside_area;
 		progress_area.width = (int)((double)progress_area.width*unit_size);
-		get_painter()->draw_style_box( stylebox( SB_PROGRESSBAR_PROGRESS ), ofs, progress_area );
+		get_painter()->draw_stylebox( stylebox( SB_PROGRESSBAR_PROGRESS ), ofs, progress_area );
 	}
 	
 	String string=get_range()->get_as_text()+suffix;

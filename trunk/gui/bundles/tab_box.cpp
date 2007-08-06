@@ -14,6 +14,19 @@
 
 namespace GUI {
 
+	
+class TabBoxContainer : public StackContainer { 
+	
+	
+	const StyleBox& stylebox(int p_which) { 
+			
+		if ( p_which == SB_CONTAINER )
+			return Frame::stylebox( SB_TABBOX );
+		
+		return Frame::stylebox( p_which );
+	}
+};
+	
 void TabBox::add_frame(String p_label,Frame *p_child,bool p_at_top) {
 	
 	tabs->add_tab(p_label,p_at_top);
@@ -34,20 +47,19 @@ void TabBox::skin_changed() {
 	
 //	printf("Skinchange in tabbox\n");
 	set_separation( constant( C_TABBOX_SEPARATION ) );
-	stack->set_style( stylebox( SB_TABBOX ), true );
 	Container::skin_changed();	
 }
 
 void TabBox::set_in_window() {
 	
 	set_separation( constant( C_TABBOX_SEPARATION ) );
-	stack->set_style( stylebox( SB_TABBOX ), true );
+
 	
 }
 TabBox::TabBox() {
 	
 	tabs=BoxContainer::add( new TabBar );
-	stack=BoxContainer::add( new StackContainer,1 );
+	stack=BoxContainer::add( new TabBoxContainer,1 );
 	tabs->tab_changed_signal.connect( stack, &StackContainer::raise );
 	
 }

@@ -143,6 +143,7 @@ public:
 	/* complex helpers */
 	String substr(int p_from,int p_chars);
 	int find(String p_str,int p_from=0); ///< return <0 if failed
+	int find_last(String p_str); ///< return <0 if failed
 	int findn(String p_str,int p_from=0); ///< return <0 if failed, case insensitive
 	void replace(String p_key,String p_with);
 	void insert(int p_at_pos,String p_string);
@@ -156,6 +157,7 @@ public:
 	String to_upper();
 	
 	String left(int p_chars);
+	String right(int p_chars);
 
 	void erase(int p_pos, int p_chars);
 	

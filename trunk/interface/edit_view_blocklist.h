@@ -37,7 +37,7 @@ protected:
 	virtual void get_pos_at_pointer(Point p_pointer, int *p_blocklist,int *p_column, int *p_row)=0;
 	
 	void mouse_selection_begin(Point p_pos);
-	void mouse_selection_update_check();
+	void mouse_selection_update_check(const Point& p_pos);
 	void mouse_selection_end();
 	
 	int get_row_height();
@@ -49,7 +49,7 @@ protected:
 	virtual bool can_scroll();
 	
 public: //signals
-	Signal< Method1<EditViewBlockList*> > blocklist_ui_under_cursor_request_signal;
+	Signal< Method2<EditViewBlockList*,const Point&> > blocklist_ui_under_cursor_request_signal;
 	
 public:
 	void set_blocklist_ui_under_cursor(EditViewBlockList *p_ui, Point p_pos);

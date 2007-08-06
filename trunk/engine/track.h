@@ -39,7 +39,7 @@ public:
 		bool visible;
 		int property_idx;
 	public:
-		TrackAutomation(Property *p_property) : Automation(p_property) { private_data=NULL; visible=true; }
+		TrackAutomation(Property *p_property) : Automation(p_property) { private_data=NULL; visible=false; }
 	};
 	
 	

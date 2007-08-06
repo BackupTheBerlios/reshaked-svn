@@ -41,7 +41,7 @@ void WindowButton::pressed() {
 
 Size WindowButton::get_minimum_size_internal() {
 	
-	Size min=get_painter()->get_style_box_min_size( stylebox( SB_WINDOWBUTTON_NORMAL ) );
+	Size min=get_painter()->get_stylebox_min_size( stylebox( SB_WINDOWBUTTON_NORMAL ) );
 	
 	BitmapID bmp=-1;
 	
@@ -94,20 +94,20 @@ void WindowButton::draw(const Point& p_pos,const Size& p_size,const Rect& p_expo
 			
 			if (stylebox( SB_WINDOWBUTTON_HOVER ).mode!=StyleBox::MODE_NONE) {
 				
-				p->draw_style_box( stylebox( SB_WINDOWBUTTON_HOVER ) , Point() , p_size, p_exposed );
+				p->draw_stylebox( stylebox( SB_WINDOWBUTTON_HOVER ) , Point() , p_size, p_exposed );
 				break;
 			}
 		}
 		
 		case DRAW_NORMAL: {
 			
-			p->draw_style_box( stylebox( SB_WINDOWBUTTON_NORMAL ) , Point() , p_size, p_exposed );
+			p->draw_stylebox( stylebox( SB_WINDOWBUTTON_NORMAL ) , Point() , p_size, p_exposed );
 			
 		} break;
 		
 		case DRAW_PRESSED: {
 			
-			p->draw_style_box( stylebox( SB_WINDOWBUTTON_PRESSED ) , Point() , p_size, p_exposed );
+			p->draw_stylebox( stylebox( SB_WINDOWBUTTON_PRESSED ) , Point() , p_size, p_exposed );
 			draw_displaced=true;			
 		} break;
 		
@@ -118,12 +118,12 @@ void WindowButton::draw(const Point& p_pos,const Size& p_size,const Rect& p_expo
 	
 
 	
-	area_rect.pos.x=p->get_style_box_margin( stylebox( SB_WINDOWBUTTON_NORMAL ), MARGIN_LEFT );
-	area_rect.pos.y=p->get_style_box_margin( stylebox( SB_WINDOWBUTTON_NORMAL ), MARGIN_TOP );
+	area_rect.pos.x=p->get_stylebox_margin( stylebox( SB_WINDOWBUTTON_NORMAL ), MARGIN_LEFT );
+	area_rect.pos.y=p->get_stylebox_margin( stylebox( SB_WINDOWBUTTON_NORMAL ), MARGIN_TOP );
 	area_rect.size-=area_rect.pos;
 	
-	area_rect.size.x-=p->get_style_box_margin( stylebox( SB_WINDOWBUTTON_NORMAL ), MARGIN_RIGHT );
-	area_rect.size.y-=p->get_style_box_margin( stylebox( SB_WINDOWBUTTON_NORMAL ), MARGIN_BOTTOM );
+	area_rect.size.x-=p->get_stylebox_margin( stylebox( SB_WINDOWBUTTON_NORMAL ), MARGIN_RIGHT );
+	area_rect.size.y-=p->get_stylebox_margin( stylebox( SB_WINDOWBUTTON_NORMAL ), MARGIN_BOTTOM );
 	
 	area_rect.size.x-=constant( C_WINDOWBUTTON_DISPLACEMENT );
 	area_rect.size.y-=constant( C_WINDOWBUTTON_DISPLACEMENT );
@@ -173,7 +173,7 @@ void WindowButton::draw(const Point& p_pos,const Size& p_size,const Rect& p_expo
 	}
 
 	if (has_focus())
-		p->draw_style_box( stylebox( SB_WINDOWBUTTON_FOCUS ) , Point() , p_size, p_exposed, false);
+		p->draw_stylebox( stylebox( SB_WINDOWBUTTON_FOCUS ) , Point() , p_size, p_exposed);
 	
 	
 }

@@ -29,6 +29,9 @@
 #include "interface/global_view_frame.h"
 #include "interface/edit_view_frame.h"
 #include "interface/new_track_dialog.h"
+#include "interface/track_dialog.h"
+#include "interface/automation_dialog.h"
+#include "interface/automation_editor.h"
 
 #include "engine/property_edit_updater.h"
 #include "engine/sound_driver_list.h"
@@ -96,7 +99,10 @@ class MainWindow : public VBoxContainer {
 	
 	NewTrackDialog *new_track_dialog;
 	
+	/* popups */
 	
+	TrackDialog *track_dialog;
+	AutomationEditor *automation_editor;
 	
 	String last_saved_file;
 	
@@ -122,6 +128,8 @@ class MainWindow : public VBoxContainer {
 	
 	void rebuild_track_lists();
 	
+	
+	void show_automation_editor(Track *p_track);
 protected: //slots	
 	
 	void notify_action_slot(String p_action);

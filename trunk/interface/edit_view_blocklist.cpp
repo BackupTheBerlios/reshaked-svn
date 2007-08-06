@@ -30,11 +30,12 @@ void EditViewBlockList::pre_parse_mouse_button_event(const Point& p_pos, int p_b
 	
 	if (!p_press)
 		return;
-	
-	if (p_button==BUTTON_WHEEL_UP)
+
+	if (p_button==BUTTON_WHEEL_UP) {
 		_editor->get_cursor().set_window_offset( _editor->get_cursor().get_window_offset() -1 );
-	else if (p_button==BUTTON_WHEEL_UP)
+	} else if (p_button==BUTTON_WHEEL_DOWN) {
 		_editor->get_cursor().set_window_offset( _editor->get_cursor().get_window_offset() +1 );
+	}
 	
 }
 
@@ -68,12 +69,12 @@ void EditViewBlockList::mouse_selection_begin(Point p_pos) {
 }
 
 
-void EditViewBlockList::mouse_selection_update_check() {
+void EditViewBlockList::mouse_selection_update_check(const Point& p_pos) {
 	
 	if (!_mouse_selecting)
 		return;
 	
-	blocklist_ui_under_cursor_request_signal.call(this);
+	blocklist_ui_under_cursor_request_signal.call(this,get_global_pos()+p_pos);
 	_editor->get_ui_update_notify()->block_layout_changed();	
 	
 

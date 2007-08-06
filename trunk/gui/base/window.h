@@ -184,6 +184,8 @@ public:
 
 	Skin *get_skin();
 	virtual void skin_changed();
+	
+	Mode get_mode();
 	//void queue_delete(); //queue deletion until next "check for updates"
 
 	//void check_for_deletes();

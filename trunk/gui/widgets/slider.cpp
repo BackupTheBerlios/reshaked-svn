@@ -41,10 +41,10 @@ int Slider::get_margins_size() {
 	
 	const StyleBox &sb_slider_normal=(orientation==VERTICAL)?stylebox(SB_SLIDER_NORMAL_V):stylebox(SB_SLIDER_NORMAL_H);
 	return (orientation==VERTICAL)?
-			( get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_TOP ) +
-			get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_BOTTOM ) ):
-			( get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_LEFT ) +
-			get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_RIGHT ) );
+			( get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_TOP ) +
+			get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_BOTTOM ) ):
+			( get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_LEFT ) +
+			get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_RIGHT ) );
 	
 }
 
@@ -88,9 +88,9 @@ Size Slider::get_minimum_size_internal() {
 	
 	Size min;
 	
-	min.width=get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_LEFT )+get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_RIGHT );
+	min.width=get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_LEFT )+get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_RIGHT );
 	
-	min.height=get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_TOP )+get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_BOTTOM );
+	min.height=get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_TOP )+get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_BOTTOM );
 	
 	if (constant( C_SLIDER_GRABBER_SIZE )>0) {
 		
@@ -114,28 +114,28 @@ void Slider::draw(const Point& p_global,const Size& p_size,const Rect& p_exposed
 	const StyleBox &sb_slider_grabber=(orientation==VERTICAL)?stylebox(SB_SLIDER_GRABBER_V):stylebox(SB_SLIDER_GRABBER_H);
 	
 	
-	get_painter()->draw_style_box( sb_slider_normal, Point() , p_size );
+	get_painter()->draw_stylebox( sb_slider_normal, Point() , p_size );
 	
 	if (has_focus())
-		get_painter()->draw_style_box( stylebox( SB_SLIDER_FOCUS ), Point() , p_size, false );
+		get_painter()->draw_stylebox( stylebox( SB_SLIDER_FOCUS ), Point() , p_size );
 	
 //	int grabber_size=get_grabber_size();
-	int grabber_ofs=get_grabber_offset()+ ((orientation==VERTICAL)?( get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_TOP )):( get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_LEFT )));
+	int grabber_ofs=get_grabber_offset()+ ((orientation==VERTICAL)?( get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_TOP )):( get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_LEFT )));
 
 
 	Point pos;
 
 	if (orientation==VERTICAL) {
 		
-		pos=Point( get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_LEFT ), grabber_ofs );
+		pos=Point( get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_LEFT ), grabber_ofs );
 		
 	} else {
-		pos=Point( grabber_ofs, get_painter()->get_style_box_margin( sb_slider_normal , MARGIN_TOP ) );
+		pos=Point( grabber_ofs, get_painter()->get_stylebox_margin( sb_slider_normal , MARGIN_TOP ) );
 	}
 	
 	if (constant( C_SLIDER_GRABBER_SIZE )>0) { //paint using stylebox
 			
-		get_painter()->draw_style_box( sb_slider_grabber , pos , Size( constant( C_SLIDER_GRABBER_SIZE ), constant( C_SLIDER_GRABBER_SIZE ) ) );
+		get_painter()->draw_stylebox( sb_slider_grabber , pos , Size( constant( C_SLIDER_GRABBER_SIZE ), constant( C_SLIDER_GRABBER_SIZE ) ) );
 			
 	} else {
 			

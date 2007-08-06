@@ -112,7 +112,7 @@ void PopUpMenu::add_item(BitmapID p_icon, String p_text, const Method& p_method)
 		
 void PopUpMenu::add_check_item(String p_text, int p_ID, bool p_checked,void *p_userdata) {
 	
-	MenuButton *mb  = vbc->add( new MenuButton(p_text,true), 0 );
+	MenuButton *mb  = vbc->add( new MenuButton(p_text,-1,true), 0 );
 	
 	mb->set_id( p_ID );
 	mb->set_userdata( p_userdata );
@@ -126,7 +126,7 @@ void PopUpMenu::add_check_item(String p_text, int p_ID, bool p_checked,void *p_u
 }
 void PopUpMenu::add_check_item(String p_text, bool p_checked,void *p_userdata) {
 	
-	MenuButton *mb  = vbc->add( new MenuButton(p_text,true), 0 );
+	MenuButton *mb  = vbc->add( new MenuButton(p_text,-1,true), 0 );
 	
 	mb->set_id( id_count++ );
 	mb->set_userdata( p_userdata );
@@ -169,7 +169,7 @@ void PopUpMenu::add_check_item(BitmapID p_icon, String p_text,bool p_checked,voi
 
 void PopUpMenu::add_check_item(String p_text, const Method1<bool>& p_method, bool p_checked) {
 	
-	MenuButton *mb  = vbc->add( new MenuButton(p_text,true), 0 );
+	MenuButton *mb  = vbc->add( new MenuButton(p_text,-1,true), 0 );
 	
 	mb->set_id( id_count++ );
 	mb->toggled_signal.connect( p_method );
@@ -319,6 +319,7 @@ void PopUpMenu::clear()  {
 	
 	delete vbc;
 	vbc = main_vbc->add( new VBoxContainer );
+	set_size(Size(1,1));
 	
 }
 
@@ -336,19 +337,12 @@ void PopUpMenu::popup(const Point &p_pos) {
 	
 }
 
-void PopUpMenu::skin_changed() {
-	
-	Window::skin_changed();
-	main_vbc->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
-	
-}
 
 PopUpMenu::PopUpMenu(Window *p_parent) : Window(p_parent,MODE_POPUP) {
 	
 	id_count=0;
 	main_vbc = new VBoxContainer;
 	set_root_frame( main_vbc );
-	main_vbc->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
 	
 	vbc = main_vbc->add( new VBoxContainer );
 

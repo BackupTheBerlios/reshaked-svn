@@ -25,6 +25,7 @@ namespace GUI {
 enum StyleBoxList{
 	
 	SB_ROOT_CONTAINER,
+ 	SB_CONTAINER,
 	SB_POPUP_BG,
 				
 	SB_SEPARATOR,
@@ -77,6 +78,12 @@ enum StyleBoxList{
 	SB_LIST_CURSOR,
 	SB_LIST_EDITOR_BG,
 		
+	SB_TREE_NORMAL,
+	SB_TREE_FOCUS,
+	SB_TREE_SELECTED,
+	SB_TREE_CURSOR,
+	SB_TREE_EDITOR_BG,
+  
 	SB_SLIDER_NORMAL_H,
 	SB_SLIDER_NORMAL_V,
 	SB_SLIDER_FOCUS,
@@ -127,6 +134,10 @@ enum ColorList {
 	COLOR_TEXT_EDIT_FONT_SELECTED,
 	COLOR_LIST_FONT,
 	COLOR_LIST_FONT_SELECTED,
+	COLOR_TREE_FONT,
+	COLOR_TREE_FONT_SELECTED,
+	COLOR_TREE_GUIDES,
+ 
 	COLOR_PROGRESSBAR_FONT,
 	COLOR_PROGRESSBAR_FONT_PROGRESS,
 	
@@ -169,7 +180,12 @@ enum ConstantList {
 	C_ARROWBUTTON_DISPLACEMENT,
 	C_LABEL_MARGIN,
 	C_LIST_SPACING,
-	C_LIST_HMARGIN,
+	C_LIST_HMARGIN, 
+	C_TREE_HSPACING,
+	C_TREE_VSPACING,
+	C_TREE_GUIDE_WIDTH,
+	C_TREE_CHECK_SIZE,
+	C_TREE_GUIDE_BOX_SIZE, 
 	C_LINE_EDIT_MARGIN,
 	C_LINE_EDIT_MIN_WIDTH,
 	C_TEXT_EDIT_LINE_SPACING,
@@ -197,6 +213,7 @@ enum FontList {
 	FONT_OPTIONBUTTON,
 	FONT_MENUBOX,
 	FONT_LIST,
+	FONT_TREE,
 	FONT_LINE_EDIT,
 	FONT_TEXT_EDIT,
 	FONT_PROGRESSBAR,
@@ -229,9 +246,9 @@ class Color;
 
 class Skin{
 	
-	StyleBox *style_box_array;
-	const char **style_box_name;
-	int style_box_count;
+	StyleBox *stylebox_array;
+	const char **stylebox_name;
+	int stylebox_count;
 	
 	int *constant_array;
 	const char **constant_name;
@@ -276,7 +293,7 @@ public:
 	int find_font(String p_by_name);
 	int find_color(String p_by_name);
 	
-	int get_stylebox_count() { return style_box_count; }
+	int get_stylebox_count() { return stylebox_count; }
 	int get_constant_count() { return constant_count; }
 	int get_bitmap_count() { return bitmap_count; }
 	int get_font_count() { return font_count; }

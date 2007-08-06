@@ -98,11 +98,6 @@ void Window::set_root_frame(Container *p_root_frame) {
 	p_root_frame->top_size_adjust_signal.connect( this, &Window::top_frame_resized );
 	set_root_frame_internal(p_root_frame);
 	
-	if (mode==MODE_POPUP) {
-		
-		p_root_frame->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
-	}
-
 	set_size(size);
 
 }
@@ -113,14 +108,7 @@ void Window::skin_changed() {
 	
 	if (root_frame) {
 		
-		if (mode==MODE_POPUP) {
-		
-			((Container*)root_frame)->set_style( get_skin()->get_stylebox( SB_POPUP_BG ), true );
-			
-			
 
-		}
-		
 		root_frame->skin_changed();
 		
 		adjust_size_type();
@@ -202,6 +190,9 @@ Size Window::get_size() {
 void Window::redraw_all(Rect p_custom_area) {
 
 
+	get_painter()->reset_clip_rect_stack();
+	get_painter()->reset_local_rect_stack();
+	
 	if (p_custom_area.has_no_area())
 		redraw_screen_over_area(p_custom_area);
 	else
@@ -215,13 +206,15 @@ void Window::redraw_contents_over_area(const Rect& p_rect) {
 	/* Redrawing all should work fine */
 	
 	Rect local_rect=Rect( get_global_pos(), size );
-	get_painter()->set_local_rect( local_rect );
-	get_painter()->set_clip_rect( false ); //disable clip
+	get_painter()->push_local_rect( local_rect );
 	
 	
 	Rect expose_rect = Rect( Point(),size ).clip( p_rect ); // create expose
 	
 	root_frame->draw_tree( local_rect.pos, local_rect.size, expose_rect );
+	
+	get_painter()->pop_local_rect();
+	
 }
 
 
@@ -258,14 +251,18 @@ void Window::check_for_updates() {
 
 	/* For now, if the window has a child, it wont redraw */
 
+	
 	if (!root || !root_data ) {
 		
 		PRINT_ERROR("Not Root!");
 		return;
 	}
 
+	
 	root_data->update_rect_list_locked=true;
 	
+	get_painter()->reset_clip_rect_stack();
+	get_painter()->reset_local_rect_stack();
 	
 	//int found=0;
 	
@@ -1119,6 +1116,10 @@ Window::Window(Window *p_parent,Mode p_mode, SizeMode p_size_mode) {
 }
 
 
+Window::Mode Window::get_mode() {
+		
+	return mode;	
+}
 
 bool Window::is_visible() {
 	

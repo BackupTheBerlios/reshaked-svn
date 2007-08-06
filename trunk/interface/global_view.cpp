@@ -993,9 +993,9 @@ void GlobalView::paint_block(Painter& p,int p_x,int p_y,int p_list,int p_block,b
 		sb=stylebox(get_block_list_skinbox( blocklist, false ));
 	
 	
-	void draw_style_box(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size,bool p_draw_center=true);
+	void draw_stylebox(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size,bool p_draw_center=true);
 	
-	p.draw_style_box(sb,Point(p_x,p_y),Size((int)f_width,(int)f_height));
+	p.draw_stylebox(sb,Point(p_x,p_y),Size((int)f_width,(int)f_height));
 	
 	if (!p_no_contents) {
 		
@@ -1007,10 +1007,10 @@ void GlobalView::paint_block(Painter& p,int p_x,int p_y,int p_list,int p_block,b
 	BlockList::Block *blb=blocklist->get_block(p_block);
 	
 	if (blb && blb->is_active_shared())
-		p.draw_style_box(stylebox(SB_GLOBAL_VIEW_LINKED),Point(p_x,p_y),Size((int)f_width,(int)f_height));
+		p.draw_stylebox(stylebox(SB_GLOBAL_VIEW_LINKED),Point(p_x,p_y),Size((int)f_width,(int)f_height));
 	
 	if (p_notpossible) {
-		p.draw_style_box(stylebox(SB_GLOBAL_VIEW_FORBIDDEN),Point(p_x,p_y),Size((int)f_width,(int)f_height));
+		p.draw_stylebox(stylebox(SB_GLOBAL_VIEW_FORBIDDEN),Point(p_x,p_y),Size((int)f_width,(int)f_height));
 	}
 
 }

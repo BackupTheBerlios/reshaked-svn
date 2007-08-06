@@ -95,11 +95,19 @@ void MainWindow::notify_action_slot(String p_action) {
 	
 }
 	
+void MainWindow::show_automation_editor(Track *p_track) {
+	
+	automation_editor->show(p_track);
+}
 void MainWindow::set_in_window() {
 	
 	new_track_dialog = new NewTrackDialog(get_window());
 	new_track_dialog->track_create_signal.connect(this,&MainWindow::new_track_callback);
+	track_dialog = new TrackDialog(get_window(),data.editor);
+	track_dialog->request_automation_editor_signal.connect(this,&MainWindow::show_automation_editor);
+	automation_editor = new AutomationEditor(get_window(),data.editor);	
 }
+	
 	
 void MainWindow::initialize() {
 		
@@ -200,6 +208,8 @@ void MainWindow::initialize() {
 	/* UPDATE NOTIFY ASSIGN */
 	update_notify->notify_action_signal.connect(this, &MainWindow::notify_action_slot);
 	update_notify->track_list_changed_signal.connect(this,&MainWindow::rebuild_track_lists);
+	
+	edit_view_frame->show_track_dialog_signal.connect( track_dialog, &TrackDialog::show );
 	
 	create_keybindings();	
 }

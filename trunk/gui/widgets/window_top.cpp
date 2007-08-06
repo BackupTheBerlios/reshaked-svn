@@ -31,7 +31,7 @@ Size WindowTop::get_minimum_size_internal() {
 	
 	Size min;
 
-	min.height=get_painter()->get_font_height( font(FONT_WINDOWTOP) ) + get_painter()->get_style_box_min_size( stylebox( SB_WINDOWTOP ) ).height;
+	min.height=get_painter()->get_font_height( font(FONT_WINDOWTOP) ) + get_painter()->get_stylebox_min_size( stylebox( SB_WINDOWTOP ) ).height;
 	
 	return min;
 	
@@ -41,12 +41,12 @@ Size WindowTop::get_minimum_size_internal() {
 void WindowTop::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 	
 	
-	get_painter()->draw_style_box( stylebox( SB_WINDOWTOP ), Point(), p_size );
+	get_painter()->draw_stylebox( stylebox( SB_WINDOWTOP ), Point(), p_size );
 	
-	Point ofs=Point (get_painter()->get_style_box_margin( stylebox( SB_WINDOWTOP ) , MARGIN_LEFT ) , 
-			 get_painter()->get_style_box_margin( stylebox( SB_WINDOWTOP ) , MARGIN_TOP ) );
+	Point ofs=Point (get_painter()->get_stylebox_margin( stylebox( SB_WINDOWTOP ) , MARGIN_LEFT ) , 
+			 get_painter()->get_stylebox_margin( stylebox( SB_WINDOWTOP ) , MARGIN_TOP ) );
 	ofs.y+=get_painter()->get_font_ascent(font(FONT_WINDOWTOP));
-	int theight=p_size.height-get_painter()->get_style_box_min_size( stylebox( SB_WINDOWTOP ) ).height;
+	int theight=p_size.height-get_painter()->get_stylebox_min_size( stylebox( SB_WINDOWTOP ) ).height;
 	ofs.y+=(theight-get_painter()->get_font_height( font(FONT_WINDOWTOP) ) ) /2;
 	
 	get_painter()->draw_text( font(FONT_WINDOWTOP), ofs, text, color(COLOR_WINDOWTOP_FONT) );

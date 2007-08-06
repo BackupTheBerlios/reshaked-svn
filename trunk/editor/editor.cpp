@@ -20,6 +20,7 @@ namespace ReShaked {
 void Editor::marker_set(int p_beat,String p_text) {
 	
 	d->song->get_marker_list().insert(p_beat,p_text);
+	d->ui_update_notify->track_list_changed();
 	
 }
 void Editor::marker_remove(int p_index) {

@@ -1,5 +1,5 @@
 //
-// C++ Interface: style_box
+// C++ Interface: stylebox
 //
 // Description: 
 //
@@ -62,6 +62,7 @@ struct StyleBox {
 
 	StyleBox();
 	StyleBox(int p_margin,Color p_center,Color p_upleft,Color p_downright,bool p_blend=true);
+	StyleBox(int p_margin,Color p_upleft,Color p_downright); /* no center */
 
 	
 };

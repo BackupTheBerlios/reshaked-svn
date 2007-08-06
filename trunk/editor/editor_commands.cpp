@@ -1,4 +1,4 @@
-//
+// //
 // C++ Implementation: editor_commands
 //
 // Description: 

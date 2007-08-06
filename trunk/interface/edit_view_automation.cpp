@@ -153,18 +153,18 @@ void EditViewAutomation::paint_frames(Painter& p,int p_from_row,int p_to_row) {
 		int from_y=block_from_row*get_row_height();
 		int height_y=(block_to_row-block_from_row)*get_row_height();
 		
-		p.draw_style_box(sb, Point(0,from_y), Size(size.width, height_y) );
+		p.draw_stylebox(sb, Point(0,from_y), Size(size.width, height_y) );
 				
 		if (i>=0 && automation->get_block( i )->is_shared() ) 
-			p.draw_style_box(sb_shared,Point(0,from_y), Size(size.width, height_y) );
+			p.draw_stylebox(sb_shared,Point(0,from_y), Size(size.width, height_y) );
 		
 		
 		
-		p.draw_fill_rect(Point(margin_w,from_y),Size(1,height_y-from_y),color(COLOR_AUTOMATION_BEAT_LINE));
-		p.draw_fill_rect(Point(size.width-margin_w,from_y),Size(size.width-margin_w,height_y-from_y),color(COLOR_AUTOMATION_BEAT_LINE));
+		p.draw_fill_rect(Point(margin_w,from_y),Size(1,height_y),color(COLOR_AUTOMATION_BEAT_LINE));
+		p.draw_fill_rect(Point(size.width-margin_w,from_y),Size(1,height_y),color(COLOR_AUTOMATION_BEAT_LINE));
 	
 		
-		p.draw_fill_rect(Point(size.width/2,from_y),Size(size.width/2,height_y-from_y),color(COLOR_AUTOMATION_BEAT_LINE));		
+		p.draw_fill_rect(Point(size.width/2,from_y),Size(1,height_y),color(COLOR_AUTOMATION_BEAT_LINE));		
 	
 	}
 	
@@ -254,7 +254,9 @@ void EditViewAutomation::paint_envelopes(Painter &p,int p_from_row, int p_to_row
 		return;
 			
 	BitmapID pointpixmap=bitmap(BITMAP_AUTOMATION_POINT);
+	
 	Size pixmapsize=p.get_bitmap_size(pointpixmap);
+
 	
 	for (int i=from_block;i<=to_block;i++) {
 			
@@ -274,7 +276,6 @@ void EditViewAutomation::paint_envelopes(Painter &p,int p_from_row, int p_to_row
 			
 			int line=line_from+(tick-from_tick)*(lines)/(to_tick-from_tick); //convert to pixel
 			int x_ofs=margin_width+lrintf(val*(float)(size.width-margin_width*2));
-			
 			
 			p.draw_bitmap(pointpixmap,Point(x_ofs-pixmapsize.width/2, line-pixmapsize.height/2));
 			
@@ -307,7 +308,7 @@ void EditViewAutomation::paint_cursor(Painter &p) {
 	int xofs=constant(C_AUTOMATION_MARGIN_WIDTH);
 	
 	
-	p.draw_style_box(stylebox(SB_EDIT_VIEW_CURSOR),Point(xofs,yofs),Size(size.width-(xofs*2),rowsize));
+	p.draw_stylebox(stylebox(SB_EDIT_VIEW_CURSOR),Point(xofs,yofs),Size(size.width-(xofs*2),rowsize));
 }
 
 void EditViewAutomation::paint_selection(Painter&p,int p_clip_from,int p_clip_to) {
@@ -524,7 +525,7 @@ void EditViewAutomation::mouse_motion(const Point& p_pos, const Point& p_rel, in
 	
 	
 	/* track to point over */
-	mouse_selection_update_check();
+	mouse_selection_update_check(p_pos);
 
 	compute_point_over(p_pos.x,p_pos.y);
 	
@@ -842,11 +843,8 @@ bool EditViewAutomation::key(unsigned long p_unicode, unsigned long p_scan_code,
 		
 
 		unsigned int key_value=p_scan_code;
-
-		if (key_value!=KEY_TAB) { //ruins things otherwise
 		
-			key_value=key_value|p_modifier_mask;
-		}
+		key_value=key_value|p_modifier_mask;
 		
 		if (editor->automation_edit_key_press(key_value)) {
 			

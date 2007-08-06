@@ -44,7 +44,7 @@ class PainterSDL : public Painter {
 	int delay;
 public:
 	
-	virtual void set_clip_rect(bool p_enabled, const Rect& p_rect=Rect(),bool p_global=false);
+	virtual void set_clip_rect(bool p_enabled, const Rect& p_rect=Rect());
 	virtual bool has_clip_rect();
 	virtual Rect get_clip_rect();
 	

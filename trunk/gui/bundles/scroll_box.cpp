@@ -52,6 +52,10 @@ bool ScrollBox::get_scroll_v() {
 	
 }
 
+ScrollContainer * ScrollBox::get_scroll_container() {
+	
+	return scroll;
+}
 
 Range* ScrollBox::get_h_range() {
 	

@@ -12,7 +12,9 @@ struct PainterPrivate {
 	
 	enum {
 		
-		MAX_FONTS=32
+		MAX_FONTS=32,
+		MAX_LOCAL_RECT_STACK=128,
+  		MAX_CLIP_RECT_STACK=128,
 	};
 	
 	struct Font {
@@ -55,23 +57,21 @@ struct PainterPrivate {
 		
 		void add_char(unsigned int p_char,BitmapID p_bitmap,const Rect& p_rect,unsigned int p_valign=0) {
 			
+			Character *c=find_char( p_char);
 			
-			if ( find_char( p_char) ) {
-				PRINT_ERROR("Char already exists.");
-				return;
+			if ( !c ) {
+				
+				c = new Character;
+				int bucket=p_char&HASHTABLE_MASK;
+				c->next=characters[bucket]; //should be added at the end for speed...
+				characters[bucket]=c;			
 			}
 			
 			
-				
-			int bucket=p_char&HASHTABLE_MASK;
-			
-			Character *nc = new Character;
-			nc->bitmap=p_bitmap;
-			nc->unicode=p_char;
-			nc->rect=p_rect;
-			nc->next=characters[bucket]; //should be added at the end for speed...
-			nc->valign=p_valign;
-			characters[bucket]=nc;			
+			c->bitmap=p_bitmap;
+			c->unicode=p_char;
+			c->rect=p_rect;
+			c->valign=p_valign;		
 		}
 		
 		Font() { in_use=false; ascent=0; height=0; for (int i=0;i<HASHTABLE_SIZE;i++) characters[i]=0; }
@@ -100,7 +100,112 @@ struct PainterPrivate {
 	};
 	
 	Font fonts[MAX_FONTS];
+	Rect clip_rect_stack[MAX_CLIP_RECT_STACK];
+	int clip_rect_count;
+	Rect local_rect_stack[MAX_CLIP_RECT_STACK];
+	int local_rect_count;
+	
+	PainterPrivate() { 
+		clip_rect_count=0;
+		local_rect_count=0;
+	}
 };
+
+
+
+void Painter::push_clip_rect(const Rect &p_rect) {
+	
+	if (p->clip_rect_count>=PainterPrivate::MAX_CLIP_RECT_STACK) {
+		
+		PRINT_ERROR("Clip Rect stack is Full!");
+		return;
+	}
+	
+	Rect local_rect = p->local_rect_count ? p->local_rect_stack[ p->local_rect_count -1 ] : Rect( Point() , get_display_size() );
+	
+	Rect clip_rect = p_rect;
+	clip_rect.pos += local_rect.pos;
+	clip_rect = local_rect.clip( clip_rect );
+	
+	set_clip_rect(true, clip_rect);
+	
+	p->clip_rect_stack[ p->clip_rect_count++ ] = clip_rect;
+	
+}
+void Painter::pop_clip_rect()  {
+	
+	if (p->clip_rect_count==0) {
+		
+		PRINT_ERROR("Clip Rect stack is Empty!");
+		return;
+	}
+	
+	p->clip_rect_count--;
+	
+	if ( p->clip_rect_count ) {
+		
+		Rect clip_rect = p->clip_rect_stack[ p->clip_rect_count - 1 ];
+		set_clip_rect(true, clip_rect);
+		
+	} else {
+		
+		set_clip_rect(false);
+	}
+	
+}
+
+void Painter::reset_clip_rect_stack()  {
+	
+	p->clip_rect_count=0;
+	set_clip_rect(false);
+}
+
+void Painter::push_local_rect(const Rect &p_rect)  {
+	
+	if (p->local_rect_count>=PainterPrivate::MAX_LOCAL_RECT_STACK) {
+		
+		PRINT_ERROR("Clip Rect stack is Full!");
+		return;
+	}
+	
+	Rect local_rect = p->local_rect_count ? p->local_rect_stack[ p->local_rect_count -1 ] : Rect( Point() , get_display_size() );
+	
+	Rect new_local_rect=p_rect;
+	new_local_rect.pos+=local_rect.pos;
+	
+	
+	set_local_rect( new_local_rect );
+	
+	p->local_rect_stack[ p->local_rect_count++ ] = new_local_rect;
+	
+}
+void Painter::pop_local_rect()  {
+	
+	if (p->local_rect_count==0) {
+		
+		PRINT_ERROR("Local Rect stack is Empty!");
+		return;
+	}
+	
+	p->local_rect_count--;
+	
+	if ( p->local_rect_count ) {
+		
+		Rect local_rect = p->local_rect_stack[ p->local_rect_count - 1 ];
+		set_local_rect(local_rect);
+		
+	} else {
+		
+		set_local_rect(Rect( Point() , get_display_size() ));
+	}
+	
+}
+void Painter::reset_local_rect_stack()  {
+	
+	p->local_rect_count=0;
+	set_local_rect(Rect( Point() , get_display_size() ));
+}	
+
 
 
 int Painter::get_font_string_width(FontID p_font,const String& p_string) {
@@ -303,11 +408,11 @@ void Painter::draw_tiled_bitmap(BitmapID p_bitmap,const Rect& p_rect,const Color
 }
 
 
-void Painter::draw_style_box(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size,bool p_draw_center) {
+void Painter::draw_stylebox(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size) {
 	
-	draw_style_box( p_stylebox, p_pos, p_size, Rect( p_pos, p_size ), p_draw_center );
+	draw_stylebox( p_stylebox, p_pos, p_size, Rect( p_pos, p_size ));
 }
-void Painter::draw_style_box(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size,const Rect &p_clip,bool p_draw_center) {
+void Painter::draw_stylebox(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size,const Rect &p_clip) {
 	
 	if (!p_clip.intersects_with( Rect( p_pos, p_size ) ))
 		    return;
@@ -351,7 +456,7 @@ void Painter::draw_style_box(const StyleBox& p_stylebox,const Point& p_pos, cons
 				r.size.y-=2;
 			}
 			
-			if (p_draw_center && p_stylebox.draw_center)
+			if (p_stylebox.draw_center)
 				draw_fill_rect( r.pos, r.size , p_stylebox.flat.center, p_clip );
 			
 		} break;
@@ -384,7 +489,7 @@ void Painter::draw_style_box(const StyleBox& p_stylebox,const Point& p_pos, cons
 			}
 			
 			//expandable
-			if (p_draw_center && p_stylebox.draw_center && p_stylebox.mode==StyleBox::MODE_BITMAP && is_bitmap_valid( p_stylebox.bitmaps[StyleBox::POS_CENTER] )) {
+			if (p_stylebox.draw_center && p_stylebox.mode==StyleBox::MODE_BITMAP && is_bitmap_valid( p_stylebox.bitmaps[StyleBox::POS_CENTER] )) {
 			
 				
 				Point pos=p_pos+get_bitmap_size( p_stylebox.bitmaps[StyleBox::POS_TOPLEFT] );
@@ -396,7 +501,7 @@ void Painter::draw_style_box(const StyleBox& p_stylebox,const Point& p_pos, cons
 				
 			}			
 			
-			if (p_draw_center && p_stylebox.draw_center && p_stylebox.mode==StyleBox::MODE_FLAT_BITMAP) {
+			if (p_stylebox.draw_center && p_stylebox.mode==StyleBox::MODE_FLAT_BITMAP) {
 			
 				
 				Point pos=p_pos+get_bitmap_size( p_stylebox.bitmaps[StyleBox::POS_TOPLEFT] );
@@ -476,7 +581,7 @@ void Painter::draw_style_box(const StyleBox& p_stylebox,const Point& p_pos, cons
 	}
 }
 
-int Painter::get_style_box_margin(const StyleBox& p_stylebox,const Margin& p_margin) {
+int Painter::get_stylebox_margin(const StyleBox& p_stylebox,const Margin& p_margin) {
 	
 	
 	
@@ -516,12 +621,12 @@ int Painter::get_style_box_margin(const StyleBox& p_stylebox,const Margin& p_mar
 
 }
 
-Size Painter::get_style_box_min_size(const StyleBox& p_stylebox,bool p_with_center) {
+Size Painter::get_stylebox_min_size(const StyleBox& p_stylebox,bool p_with_center) {
 	
-	Size min=Size( 	get_style_box_margin( p_stylebox, MARGIN_LEFT) + 
-			get_style_box_margin( p_stylebox, MARGIN_RIGHT), 
-			get_style_box_margin( p_stylebox, MARGIN_TOP) + 
-			get_style_box_margin( p_stylebox, MARGIN_BOTTOM ) );
+	Size min=Size( 	get_stylebox_margin( p_stylebox, MARGIN_LEFT) + 
+			get_stylebox_margin( p_stylebox, MARGIN_RIGHT), 
+			get_stylebox_margin( p_stylebox, MARGIN_TOP) + 
+			get_stylebox_margin( p_stylebox, MARGIN_BOTTOM ) );
 	
 	if (p_stylebox.mode==StyleBox::MODE_BITMAP && p_with_center) {
 		

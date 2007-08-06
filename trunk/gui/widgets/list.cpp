@@ -60,8 +60,8 @@ int List::get_visible_lines() {
 
 	
 	int space=size.height;
-	space-=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
-	space-=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_BOTTOM );
+	space-=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
+	space-=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_BOTTOM );
 
 	int line_size=get_line_size();
 
@@ -76,8 +76,8 @@ int List::get_min_total_height() {
 	
 	int h=0;
 	
-	h+=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
-	h+=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_BOTTOM );
+	h+=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
+	h+=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_BOTTOM );
 	
 	h+=get_line_size()*get_size();
 	
@@ -86,7 +86,7 @@ int List::get_min_total_height() {
 	
 Size List::get_minimum_size_internal() {
 	
-	Size min=get_painter()->get_style_box_min_size( stylebox( SB_LIST_NORMAL ) );
+	Size min=get_painter()->get_stylebox_min_size( stylebox( SB_LIST_NORMAL ) );
 
 	return min;
 	
@@ -96,16 +96,16 @@ Size List::get_minimum_size_internal() {
 void List::draw(const Point& p_global,const Size& p_size,const Rect& p_exposed) {
 
 
-	get_painter()->draw_style_box( stylebox( SB_LIST_NORMAL ), Point() , p_size, p_exposed );
+	get_painter()->draw_stylebox( stylebox( SB_LIST_NORMAL ), Point() , p_size, p_exposed );
 	if (has_focus())
-		get_painter()->draw_style_box( stylebox( SB_LIST_FOCUS ), Point() , p_size, p_exposed, false );
+		get_painter()->draw_stylebox( stylebox( SB_LIST_FOCUS ), Point() , p_size, p_exposed );
 	
 
 	Element *l=list;
 	int idx=0;
-	int margin_top=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
-	int margin_left=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_LEFT );
-	int area_width=size.width-margin_left-get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_RIGHT );
+	int margin_top=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
+	int margin_left=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_LEFT );
+	int area_width=size.width-margin_left-get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_RIGHT );
 	int text_margin=margin_left+constant( C_LIST_HMARGIN );
 	int text_width=area_width-constant( C_LIST_HMARGIN )*2;
 	int font_ascent=get_painter()->get_font_ascent( font( FONT_LIST ) )+constant( C_LIST_SPACING )/2;
@@ -134,7 +134,7 @@ void List::draw(const Point& p_global,const Size& p_size,const Rect& p_exposed) 
 		}
 		if (l->selected) {
 
-			get_painter()->draw_style_box( stylebox( SB_LIST_SELECTED ), Point( margin_left, ofs ), Size( area_width, get_line_size() ), p_exposed );
+			get_painter()->draw_stylebox( stylebox( SB_LIST_SELECTED ), Point( margin_left, ofs ), Size( area_width, get_line_size() ), p_exposed );
 			get_painter()->draw_text( font( FONT_LIST ) , Point( text_margin, ofs+font_ascent ) , text, color(COLOR_LIST_FONT_SELECTED),text_width );
 
 		} else {
@@ -144,7 +144,7 @@ void List::draw(const Point& p_global,const Size& p_size,const Rect& p_exposed) 
 		}
 
 		if ((allow_multiple && idx==cursor && has_focus()) || (!allow_multiple && cursor_hint && mouse_over_item==idx))
-			get_painter()->draw_style_box( stylebox( SB_LIST_CURSOR ), Point( text_margin, ofs+constant( C_LIST_SPACING )/2 ), Size( text_width, get_line_size()-constant( C_LIST_SPACING ) ), p_exposed, false );
+			get_painter()->draw_stylebox( stylebox( SB_LIST_CURSOR ), Point( text_margin, ofs+constant( C_LIST_SPACING )/2 ), Size( text_width, get_line_size()-constant( C_LIST_SPACING ) ), p_exposed );
 
 
 
@@ -163,7 +163,7 @@ void List::mouse_doubleclick(const Point& p_pos, int p_modifier_mask) {
 
 	
 	int y=p_pos.y;
-	y-=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
+	y-=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
 	
 
 	if (y<0)
@@ -204,7 +204,7 @@ void List::mouse_button(const Point& p_pos, int p_button,bool p_press,int p_modi
 		return;
 
 	int y=p_pos.y;
-	y-=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
+	y-=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
 
 	if (y<0)
 		return;
@@ -249,14 +249,14 @@ void List::mouse_button(const Point& p_pos, int p_button,bool p_press,int p_modi
 void List::create_editor(int p_for_element) {
 
 	Point ofs;
-	ofs.y+=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
+	ofs.y+=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
 	ofs.y+=(p_for_element-offset)*get_line_size();
-	ofs.x+=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_LEFT );
+	ofs.x+=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_LEFT );
 
 	
 	Size sz;
 
-	sz.width=size.width-ofs.x-get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_RIGHT );
+	sz.width=size.width-ofs.x-get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_RIGHT );
 	sz.height=get_line_size();
 			
 	ofs+=get_global_pos();
@@ -315,7 +315,7 @@ void List::mouse_motion(const Point& p_pos, const Point& p_rel, int p_button_mas
 	
 	if (cursor_hint) {
 		int y=p_pos.y;
-		y-=get_painter()->get_style_box_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
+		y-=get_painter()->get_stylebox_margin( stylebox( SB_LIST_NORMAL ) , MARGIN_TOP );
 	
 		if (y<0)
 			return;
@@ -1006,7 +1006,12 @@ void List::clear() {
 
 class VBC : public VBoxContainer{
 public:
-	const StyleBox & get_stylebox() { return stylebox(SB_LIST_EDITOR_BG); }
+	const StyleBox & stylebox(int p_which) { 
+		if (p_which==SB_POPUP_BG)
+			return Frame::stylebox(SB_LIST_EDITOR_BG);
+		
+		return Frame::stylebox(p_which);
+	}
 	
 };
 
@@ -1018,7 +1023,6 @@ void List::set_in_window() {
 
 	VBoxContainer *vbc = new VBC;
 	editor_window->set_root_frame( vbc );
-	vbc->set_style( stylebox(SB_LIST_EDITOR_BG), true );
 	editor= vbc->add(new LineEdit(),1);
 	editor->get_focus();
 	editor->set_max_length( max_string_len );

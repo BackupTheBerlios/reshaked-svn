@@ -42,12 +42,12 @@ int Skin::find_stylebox(String p_by_name) {
 	String upper_name=p_by_name.to_upper();
 	
 	
-	for (int i=0;i<style_box_count;i++) {
+	for (int i=0;i<stylebox_count;i++) {
 		
-		if (!style_box_name[i])
+		if (!stylebox_name[i])
 			continue;
 
-		if (style_box_name[i]==upper_name)
+		if (stylebox_name[i]==upper_name)
 			return i;
 		
 	}
@@ -126,10 +126,10 @@ int Skin::find_color(String p_by_name) {
 
 void Skin::set_stylebox_name(int p_which,const char* p_name) {
 	
-	if (p_which<0 || p_which>=style_box_count)
+	if (p_which<0 || p_which>=stylebox_count)
 		return;
 	
-	style_box_name[p_which]=p_name;
+	stylebox_name[p_which]=p_name;
 }
 void Skin::set_constant_name(int p_which,const char* p_name){
 	
@@ -171,11 +171,11 @@ const StyleBox& Skin::get_stylebox(unsigned int p_which) {
 	
 	static StyleBox error;
 
-	if (p_which<0 || p_which>=style_box_count)
+	if (p_which<0 || p_which>=stylebox_count)
 		return error;
 	
 
-	return style_box_array[p_which];
+	return stylebox_array[p_which];
 }
 int Skin::get_constant(unsigned int p_which){
 	
@@ -216,10 +216,10 @@ const Color& Skin::get_color(unsigned int p_which){
 void Skin::set_stylebox(int p_which,const StyleBox& p_style) {
 	
 
-	if (p_which<0 || p_which>=style_box_count)
+	if (p_which<0 || p_which>=stylebox_count)
 		return;
 	
-	style_box_array[p_which]=p_style;
+	stylebox_array[p_which]=p_style;
 	
 }
 void Skin::set_constant(int p_which,int p_constant){
@@ -274,12 +274,12 @@ Skin::Skin(int p_stylebox_max,int p_constant_max,int p_bitmap_max,int p_font_max
 		p_color_max=COLOR_MAX;
 				
 	
-	style_box_array = new StyleBox[p_stylebox_max];
-	style_box_name = new const char*[p_stylebox_max];
+	stylebox_array = new StyleBox[p_stylebox_max];
+	stylebox_name = new const char*[p_stylebox_max];
 	for (int i=0;i<p_stylebox_max;i++) {
-		style_box_name[i]=0;
+		stylebox_name[i]=0;
 	}
-	style_box_count=p_stylebox_max;
+	stylebox_count=p_stylebox_max;
 	
 
 	constant_array = new int[p_constant_max];
@@ -317,12 +317,12 @@ Skin::Skin(int p_stylebox_max,int p_constant_max,int p_bitmap_max,int p_font_max
 }
 Skin::~Skin(){
 	
-	delete[] style_box_array;
+	delete[] stylebox_array;
 	delete[] constant_array;
 	delete[] bitmap_array;
 	delete[] font_array;
 	delete[] color_array;
-	delete[] style_box_name;
+	delete[] stylebox_name;
 	delete[] constant_name;
 	delete[] bitmap_name;
 	delete[] font_name;
@@ -340,6 +340,7 @@ void Skin::set_default() {
 	/* Base Container */
 	
 	SET_STYLEBOX( SB_ROOT_CONTAINER, StyleBox( 0, Color(200,200,200),Color(250,250,250),Color(90,90,90) ) );
+	SET_STYLEBOX( SB_CONTAINER, StyleBox() );
 	
 	/* Box Container */
 	
@@ -354,14 +355,14 @@ void Skin::set_default() {
 	
 	SET_STYLEBOX( SB_POPUP_BG, StyleBox( 2, Color(200,200,200),Color(250,250,250),Color(90,90,90) ) );
 	for(int i=0;i<4;i++)
-		style_box_array[SB_POPUP_BG].margins[i]=10;
+		stylebox_array[SB_POPUP_BG].margins[i]=10;
 	
 	
 	/* WindowTop */
 	
 	
 	SET_STYLEBOX( SB_WINDOWTOP,StyleBox( 0, Color( 20,50,255 ), Color( 0 ), Color( 0 ) ));
-	style_box_array[SB_WINDOWTOP].margins[MARGIN_LEFT]=4;
+	stylebox_array[SB_WINDOWTOP].margins[MARGIN_LEFT]=4;
 	
 	SET_COLOR( COLOR_WINDOWTOP_FONT, Color(255) );
 	SET_FONT( FONT_WINDOWTOP, 0 );
@@ -385,7 +386,7 @@ void Skin::set_default() {
 	SET_STYLEBOX( SB_BUTTON_NORMAL, StyleBox( 2, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	SET_STYLEBOX( SB_BUTTON_PRESSED, StyleBox( 2, Color( 110,110,110 ), Color( 50,50,50 ), Color( 200,200,200 ) ) );
 	SET_STYLEBOX( SB_BUTTON_HOVER, StyleBox( 2, Color( 190,190,190 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
-	SET_STYLEBOX( SB_BUTTON_FOCUS, StyleBox( 1, Color( 0,0,0 ), Color( 255,50,50 ), Color( 255,50,50 ) ) );
+	SET_STYLEBOX( SB_BUTTON_FOCUS, StyleBox( 1, Color( 255,50,50 ), Color( 255,50,50 ) ) );
 	
 	SET_STYLEBOX( SB_BUTTON_CHECKED, StyleBox() ); //of no use here by default
 	SET_STYLEBOX( SB_BUTTON_UNCHECKED, StyleBox() ); //of no use here by default
@@ -410,7 +411,7 @@ void Skin::set_default() {
 	SET_STYLEBOX( SB_CHECKBUTTON_NORMAL, StyleBox() ); //of no use here by default
 	SET_STYLEBOX( SB_CHECKBUTTON_PRESSED, StyleBox() ); //of no use here by default
 	SET_STYLEBOX( SB_CHECKBUTTON_HOVER, StyleBox( 0, Color( 190,190,190 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
-	SET_STYLEBOX( SB_CHECKBUTTON_FOCUS, StyleBox( 1, Color( 0,0,0 ), Color( 255,50,50 ), Color( 255,50,50 ) ) );
+	SET_STYLEBOX( SB_CHECKBUTTON_FOCUS, StyleBox( 1,  Color( 255,50,50 ), Color( 255,50,50 ) ) );
 	
 	SET_STYLEBOX( SB_CHECKBUTTON_CHECKED, StyleBox( 2, Color( 0,0,0 ), Color( 240,240,240 ), Color( 240,240,240 ) ) ); 
 	SET_STYLEBOX( SB_CHECKBUTTON_UNCHECKED, StyleBox( 1, Color( 240,240,240 ), Color( 0,0,0 ), Color( 0,0,0 ) ) ); 
@@ -433,7 +434,7 @@ void Skin::set_default() {
 	SET_STYLEBOX( SB_MENUBUTTON_PRESSED, StyleBox( 2, Color( 110,110,110 ), Color( 50,50,50 ), Color( 200,200,200 ) ) );
 	
 	SET_STYLEBOX( SB_MENUBUTTON_HOVER, StyleBox( 0, Color( 190,190,190 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
-	SET_STYLEBOX( SB_MENUBUTTON_FOCUS, StyleBox( 1, Color( 0,0,0 ), Color( 255,50,50 ), Color( 255,50,50 ) ) );
+	SET_STYLEBOX( SB_MENUBUTTON_FOCUS, StyleBox( 1,  Color( 255,50,50 ), Color( 255,50,50 ) ) );
 	
 	SET_STYLEBOX( SB_MENUBUTTON_CHECKED, StyleBox( 2, Color( 0,0,0 ), Color( 240,240,240 ), Color( 240,240,240 ) ) ); 
 	SET_STYLEBOX( SB_MENUBUTTON_UNCHECKED, StyleBox( 1, Color( 240,240,240 ), Color( 0,0,0 ), Color( 0,0,0 ) ) ); 
@@ -462,7 +463,7 @@ void Skin::set_default() {
 	SET_STYLEBOX( SB_WINDOWBUTTON_NORMAL, StyleBox( 2, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	SET_STYLEBOX( SB_WINDOWBUTTON_PRESSED, StyleBox( 2, Color( 110,110,110 ), Color( 50,50,50 ), Color( 200,200,200 ) ) );
 	SET_STYLEBOX( SB_WINDOWBUTTON_HOVER, StyleBox( 2, Color( 190,190,190 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
-	SET_STYLEBOX( SB_WINDOWBUTTON_FOCUS, StyleBox( 1, Color( 0,0,0 ), Color( 255,50,50 ), Color( 255,50,50 ) ) );
+	SET_STYLEBOX( SB_WINDOWBUTTON_FOCUS, StyleBox( 1,  Color( 255,50,50 ), Color( 255,50,50 ) ) );
 	
 	
 	SET_COLOR(COLOR_WINDOWBUTTON_FONT,0);
@@ -471,7 +472,7 @@ void Skin::set_default() {
 	SET_STYLEBOX( SB_OPTIONBUTTON_NORMAL, StyleBox( 2, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	SET_STYLEBOX( SB_OPTIONBUTTON_PRESSED, StyleBox( 2, Color( 110,110,110 ), Color( 50,50,50 ), Color( 200,200,200 ) ) );
 	SET_STYLEBOX( SB_OPTIONBUTTON_HOVER, StyleBox( 2, Color( 190,190,190 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
-	SET_STYLEBOX( SB_OPTIONBUTTON_FOCUS, StyleBox( 1, Color( 0,0,0 ), Color( 255,50,50 ), Color( 255,50,50 ) ) );
+	SET_STYLEBOX( SB_OPTIONBUTTON_FOCUS, StyleBox( 1,  Color( 255,50,50 ), Color( 255,50,50 ) ) );
 
 	SET_CONSTANT( C_OPTIONBUTTON_SEPARATION, 2 );
 	SET_CONSTANT( C_OPTIONBUTTON_EXTRA_MARGIN, 2 );
@@ -486,7 +487,7 @@ void Skin::set_default() {
 	SET_STYLEBOX( SB_MENUBOX_NORMAL, StyleBox( 1, Color( 190,190,190  ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	SET_STYLEBOX( SB_MENUBOX_PRESSED, StyleBox( 1, Color( 110,110,110 ), Color( 50,50,50 ), Color( 200,200,200 ) ) );
 	SET_STYLEBOX( SB_MENUBOX_HOVER, StyleBox( 1, Color( 220,220,220 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
-	SET_STYLEBOX( SB_MENUBOX_FOCUS, StyleBox( 1, Color( 0,0,0 ), Color( 255,50,50 ), Color( 255,50,50 ) ) );
+	SET_STYLEBOX( SB_MENUBOX_FOCUS, StyleBox( 1,  Color( 255,50,50 ), Color( 255,50,50 ) ) );
 
 	SET_CONSTANT( C_MENUBOX_SEPARATION, 2 );
 	SET_CONSTANT( C_MENUBOX_EXTRA_MARGIN, 2 );
@@ -500,7 +501,7 @@ void Skin::set_default() {
 
 	SET_STYLEBOX( SB_SLIDER_NORMAL_H, StyleBox( 2, Color(120,120,120), Color(60,60,60) ,Color(180,180,180) ) );
 	SET_STYLEBOX( SB_SLIDER_NORMAL_V, StyleBox( 2, Color(120,120,120), Color(60,60,60) ,Color(180,180,180) ) );
-	SET_STYLEBOX( SB_SLIDER_FOCUS, StyleBox( 1,  Color(0,0,0 ), Color( 255,80,80 ), Color( 255,80,80 ) ) );
+	SET_STYLEBOX( SB_SLIDER_FOCUS, StyleBox( 1,  Color( 255,80,80 ), Color( 255,80,80 ) ) );
 	SET_STYLEBOX( SB_SLIDER_GRABBER_H, StyleBox( 2, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50) ) );
 	SET_STYLEBOX( SB_SLIDER_GRABBER_V, StyleBox( 2, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	SET_CONSTANT( C_SLIDER_GRABBER_SIZE, 14 );
@@ -511,7 +512,7 @@ void Skin::set_default() {
 
 	SET_STYLEBOX( SB_SCROLLBAR_NORMAL_H, StyleBox( 2, Color(120,120,120), Color(60,60,60) ,Color(180,180,180) ) );
 	SET_STYLEBOX( SB_SCROLLBAR_NORMAL_V, StyleBox( 2, Color(120,120,120), Color(60,60,60) ,Color(180,180,180) ) );
-	SET_STYLEBOX( SB_SCROLLBAR_FOCUS, StyleBox( 1,  Color(0,0,0 ), Color( 255,80,80 ), Color( 255,80,80 ) ) );
+	SET_STYLEBOX( SB_SCROLLBAR_FOCUS, StyleBox( 1,  Color( 255,80,80 ), Color( 255,80,80 ) ) );
 	SET_STYLEBOX( SB_SCROLLBAR_GRABBER_H, StyleBox( 2, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	SET_STYLEBOX( SB_SCROLLBAR_GRABBER_V, StyleBox( 2, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	SET_CONSTANT( C_SCROLLBAR_GRABBER_SIZE, 10 );
@@ -520,7 +521,7 @@ void Skin::set_default() {
 
 	SET_STYLEBOX( SB_LIST_SELECTED, StyleBox( 0,  Color( 70,100,255 ), Color( 70,100,255 ), Color( 70,100,255 ) ) );
 	SET_STYLEBOX( SB_LIST_NORMAL, StyleBox( 2,  Color(240,240,240 ), Color( 60,60,60 ), Color( 150,150,150 ) ) );
-	SET_STYLEBOX( SB_LIST_FOCUS, StyleBox( 1,  Color(0,0,0 ), Color( 255,80,80 ), Color( 255,80,80 ) ) );
+	SET_STYLEBOX( SB_LIST_FOCUS, StyleBox( 1,  Color( 255,80,80 ), Color( 255,80,80 ) ) );
 	SET_STYLEBOX( SB_LIST_CURSOR, StyleBox( 1,  Color(0,0,0 ), Color(0,0,0 ), Color(0,0,0 ) ) );
 
 	SET_STYLEBOX(SB_LIST_EDITOR_BG,StyleBox( 0, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ));
@@ -533,12 +534,33 @@ void Skin::set_default() {
 	SET_CONSTANT( C_LIST_SPACING, 2 );
 	SET_CONSTANT( C_LIST_HMARGIN, 3 );
 	
+	/* Tree */
+
+	SET_STYLEBOX( SB_TREE_SELECTED, StyleBox( 0,  Color( 70,100,255 ), Color( 70,100,255 ), Color( 70,100,255 ) ) );
+	SET_STYLEBOX( SB_TREE_NORMAL, StyleBox( 2,  Color(240,240,240 ), Color( 60,60,60 ), Color( 150,150,150 ) ) );
+	SET_STYLEBOX( SB_TREE_FOCUS, StyleBox( 1,  Color(0,0,0 ), Color( 255,80,80 ), Color( 255,80,80 ) ) );
+	stylebox_array[SB_TREE_FOCUS].draw_center=false;
+	SET_STYLEBOX( SB_TREE_CURSOR, StyleBox( 1,  Color(0,0,0 ), Color(0,0,0 ), Color(0,0,0 ) ) );
+
+	SET_STYLEBOX(SB_TREE_EDITOR_BG,StyleBox( 0, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ));
+	
+	SET_FONT( FONT_TREE, 0 );
+	
+	SET_COLOR(COLOR_TREE_FONT,Color(0));
+	SET_COLOR(COLOR_TREE_FONT_SELECTED,Color(255));
+	SET_COLOR(COLOR_TREE_GUIDES,Color(0));
+	SET_CONSTANT( C_TREE_HSPACING, 2 );
+	SET_CONSTANT( C_TREE_VSPACING, 2 );
+	SET_CONSTANT(C_TREE_GUIDE_WIDTH, 15 );
+	SET_CONSTANT(C_TREE_CHECK_SIZE, 9 );
+	SET_CONSTANT(C_TREE_GUIDE_BOX_SIZE,8);
+	
 	/* Line Edit */
 
 	SET_COLOR( COLOR_LINE_EDIT_CURSOR, Color( 0,0,0 ) );
 	SET_COLOR( COLOR_LINE_EDIT_SELECTION, Color( 70,100,255 ) );
 	SET_STYLEBOX( SB_LINE_EDIT_NORMAL, StyleBox( 2,  Color(240,240,240 ), Color( 60,60,60 ), Color( 150,150,150 ) ) );
-	SET_STYLEBOX( SB_LINE_EDIT_FOCUS, StyleBox( 1,  Color(0,0,0 ), Color( 255,80,80 ), Color( 255,80,80 ) ) );
+	SET_STYLEBOX( SB_LINE_EDIT_FOCUS, StyleBox( 1,  Color( 255,80,80 ), Color( 255,80,80 ) ) );
 
 	SET_CONSTANT( C_LINE_EDIT_MARGIN, 2 );
 	SET_CONSTANT( C_LINE_EDIT_MIN_WIDTH, 70 );
@@ -553,7 +575,7 @@ void Skin::set_default() {
 	SET_COLOR( COLOR_TEXT_EDIT_CURSOR, Color( 0,0,0 ) );
 	SET_COLOR( COLOR_TEXT_EDIT_SELECTION, Color( 70,100,255 ) );
 	SET_STYLEBOX( SB_TEXT_EDIT, StyleBox( 2,  Color(240,240,240 ), Color( 60,60,60 ), Color( 150,150,150 ) ) );
-	SET_STYLEBOX( SB_TEXT_EDIT_FOCUS, StyleBox( 1,  Color(0,0,0 ), Color( 255,80,80 ), Color( 255,80,80 ) ) );
+	SET_STYLEBOX( SB_TEXT_EDIT_FOCUS, StyleBox( 1,  Color( 255,80,80 ), Color( 255,80,80 ) ) );
 
 	SET_CONSTANT(C_TEXT_EDIT_LINE_SPACING,1);
 	SET_FONT( FONT_TEXT_EDIT, 0 );
@@ -566,7 +588,7 @@ void Skin::set_default() {
 	SET_STYLEBOX( SB_ARROWBUTTON_NORMAL, StyleBox( 2, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	SET_STYLEBOX( SB_ARROWBUTTON_PRESSED, StyleBox( 2, Color( 110,110,110 ), Color( 50,50,50 ), Color( 200,200,200 ) ) );
 	SET_STYLEBOX( SB_ARROWBUTTON_HOVER, StyleBox( 2, Color( 190,190,190 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
-	SET_STYLEBOX( SB_ARROWBUTTON_FOCUS, StyleBox( 1, Color( 0,0,0 ), Color( 255,50,50 ), Color( 255,50,50 ) ) );
+	SET_STYLEBOX( SB_ARROWBUTTON_FOCUS, StyleBox( 1,  Color( 255,50,50 ), Color( 255,50,50 ) ) );
 	SET_CONSTANT( C_ARROWBUTTON_DISPLACEMENT, 0 );
 	
 	SET_CONSTANT( C_ARROWBUTTON_ARROW_SIZE, 12);
@@ -593,18 +615,18 @@ void Skin::set_default() {
 	/* Tab Bar */
 	
 	SET_STYLEBOX( SB_TABBAR_LEFT, StyleBox() );
-	style_box_array[SB_TABBAR_LEFT].margins[MARGIN_LEFT]=5; //little margin
+	stylebox_array[SB_TABBAR_LEFT].margins[MARGIN_LEFT]=5; //little margin
 	SET_STYLEBOX( SB_TABBAR_RIGHT, StyleBox() );
 	SET_STYLEBOX( SB_TABBAR_TAB,StyleBox( 1, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	for(int i=0;i<4;i++)
-		style_box_array[SB_TABBAR_TAB].margins[i]=3;
+		stylebox_array[SB_TABBAR_TAB].margins[i]=3;
 	
 	SET_STYLEBOX( SB_TABBAR_RAISED,StyleBox( 2, Color( 190,190,190 ), Color( 250,250,250 ), Color( 50,50,50 ) )  );
 
-	SET_STYLEBOX( SB_TABBAR_FOCUS, StyleBox( 1, Color( 0,0,0 ), Color( 255,50,50 ), Color( 255,50,50 ) ) );
-	style_box_array[SB_TABBAR_FOCUS].draw_center=false;
+	SET_STYLEBOX( SB_TABBAR_FOCUS, StyleBox( 1, Color( 255,50,50 ), Color( 255,50,50 ) ) );
+
 	for(int i=0;i<4;i++)
-		style_box_array[SB_TABBAR_RAISED].margins[i]=4;
+		stylebox_array[SB_TABBAR_RAISED].margins[i]=4;
 		
 	SET_FONT(FONT_TABBAR,0);
 	SET_CONSTANT(C_TABBAR_CENTERED,0);
@@ -618,7 +640,7 @@ void Skin::set_default() {
 	SET_STYLEBOX(SB_TABBOX, StyleBox( 2, Color( 150,150,150 ), Color( 250,250,250 ), Color( 50,50,50 ) ) );
 	
 	for(int i=0;i<4;i++)
-		style_box_array[SB_TABBOX].margins[i]=4;
+		stylebox_array[SB_TABBOX].margins[i]=4;
 	
 	SET_CONSTANT( C_TABBOX_SEPARATION, 0 );
 	

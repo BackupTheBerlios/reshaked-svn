@@ -41,8 +41,7 @@ private:
 	
 	class HBCCombo : public HBoxContainer{
 	public:
-		const StyleBox & get_stylebox();
-	
+		virtual const StyleBox & stylebox(int p_which);		
 	};
 	
 	HBCCombo *hbc;

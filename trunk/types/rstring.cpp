@@ -1066,6 +1066,22 @@ int String::find(String p_str,int p_from) {
 	return -1;
 }
 
+int String::find_last(String p_str) {
+	
+	
+	int idx=find(p_str);
+	
+	if (idx==-1)
+		return -1;
+	
+	while (true) {
+		
+		int res=find(p_str,idx+1);
+		if (res==-1)
+			return idx;
+		idx=res;
+	}
+}
 int String::findn(String p_str,int p_from) {
 	
 	if (p_from<0)
@@ -1140,5 +1156,13 @@ String String::left(int p_chars) {
 	return substr(0,p_chars);
 }
 
-
+String String::right(int p_chars) {
+	
+	int from=(int)length()-p_chars;
+	if (from<0)
+		return "";
+	int len=p_chars;
+	
+	return substr(from,p_chars);
+}
 

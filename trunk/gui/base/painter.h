@@ -10,21 +10,31 @@ namespace GUI {
 
 class PainterPrivate;
 
+
+
 class Painter {
 
 	
 	
 	PainterPrivate * p;
-
-public:
-
+protected:
 	virtual void set_local_rect(const Rect& p_rect)=0;
 	virtual Rect get_local_rect()=0;
 
-	virtual void set_clip_rect(bool p_enabled, const Rect& p_rect=Rect(),bool p_global=false)=0;
+	virtual void set_clip_rect(bool p_enabled, const Rect& p_rect=Rect())=0;
 	virtual bool has_clip_rect()=0;
 	virtual Rect get_clip_rect()=0;
+	
+public:
 
+	void push_clip_rect(const Rect &p_rect); /// Pushes a clip rect, relative to the local rect
+	void pop_clip_rect(); /// pops a clip rect, reverts to previous one
+	void reset_clip_rect_stack();  /// reset the clip rect stack
+
+	void push_local_rect(const Rect &p_rect); /// push a local rect, relative to the previous one, all drawing will be performed relative tot his rect
+	void pop_local_rect(); /// pop a local rect, revert to previous one
+	void reset_local_rect_stack(); /// reset the local rect stack
+	
 	virtual void draw_rect(const Point & p_from,const Size & p_size,const Color& p_color)=0;
 	
 	virtual void draw_fill_rect(const Point & p_from,const Size & p_size,const Color& p_color)=0;
@@ -73,11 +83,11 @@ public:
 	
 	/** Style Box Painting **/		
 	
-	void draw_style_box(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size,bool p_draw_center=true);
-	void draw_style_box(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size,const Rect &p_clip,bool p_draw_center=true);
+	void draw_stylebox(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size);
+	void draw_stylebox(const StyleBox& p_stylebox,const Point& p_pos, const Size& p_size,const Rect &p_clip);
 	
-	int get_style_box_margin(const StyleBox& p_stylebox,const Margin& p_margin);
-	Size get_style_box_min_size(const StyleBox& p_stylebox,bool p_with_center=false);
+	int get_stylebox_margin(const StyleBox& p_stylebox,const Margin& p_margin);
+	Size get_stylebox_min_size(const StyleBox& p_stylebox,bool p_with_center=false);
 	
 	void draw_arrow( const Point& p_pos, const Size& p_size, Direction p_dir, const Color& p_color,bool p_trianglify=true);
 	/** Updating **/

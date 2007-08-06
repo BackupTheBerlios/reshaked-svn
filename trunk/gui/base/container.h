@@ -48,11 +48,12 @@ public:
 private:
 
 	ContainerPrivate *_cp;
-
 	
 	virtual void draw(const Point& p_pos,const Size &p_size,const Rect& p_exposed); ///< Draw the container
 	
 	void draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed);
+	
+	const StyleBox& container_stylebox();
 	
 	
 	Point get_margin_offset();
@@ -67,7 +68,6 @@ friend struct ContainerPrivate;
 
 protected:	
 
-	virtual const StyleBox & get_stylebox();
 	virtual void skin_changed();	
 	virtual void set_minimum_size_changed();
 	
@@ -117,9 +117,7 @@ public:
 	
 	virtual void set_minimum_size(const Size & p_size );
 	virtual Size get_minimum_size();
-	
-	void set_style( const StyleBox& p_style, bool p_draw_background=false);
-	
+		
 	ChildIterator first_child();
 	ChildIterator next_child(const ChildIterator& p_child);
 

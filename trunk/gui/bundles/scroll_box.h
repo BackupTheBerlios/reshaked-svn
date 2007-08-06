@@ -47,6 +47,8 @@ public:
 	
 	void set_frame(Frame *p_frame);
 	
+	ScrollContainer * get_scroll_container();
+	
 	template<class T>
 	T* set( T*p_frame) {
 		

@@ -33,9 +33,12 @@ void ComboBox::skin_changed() {
 }
 
 
-const StyleBox & ComboBox::HBCCombo::get_stylebox() {
+const StyleBox & ComboBox::HBCCombo::stylebox(int p_which) {
 
-	return stylebox(SB_COMBO_POPUP);
+	if (p_which == SB_POPUP_BG)
+		return Frame::stylebox(SB_COMBO_POPUP);
+	
+	return Frame::stylebox(p_which);	
 }
 
 void ComboBox::button_clicked() {
@@ -45,7 +48,7 @@ void ComboBox::button_clicked() {
 	
 	Point global=get_global_pos();
 	popup->set_pos( Point( global.x , global.y+size.height) );
-	int mins=list->get_min_total_height()+get_window()->get_painter()->get_style_box_min_size(hbc->get_stylebox()).height;
+	int mins=list->get_min_total_height()+get_window()->get_painter()->get_stylebox_min_size(hbc->stylebox(SB_COMBO_POPUP)).height;
 	if (mins>constant( C_COMBOBOX_POPUP_MAX_HEIGHT ) )
 		mins=constant( C_COMBOBOX_POPUP_MAX_HEIGHT );
 	popup->set_size( Size( size.width, mins) ); 
@@ -195,7 +198,6 @@ void ComboBox::set_in_window() {
 	
 	hbc = new HBCCombo;
 	popup->set_root_frame( hbc );
-	hbc->set_style( stylebox(SB_COMBO_POPUP), true );
 	hbc->add( list, 1);
 	list->set_cursor_hint( true );	
 	ScrollBar *sb = hbc->add( new ScrollBar(VERTICAL), 0);

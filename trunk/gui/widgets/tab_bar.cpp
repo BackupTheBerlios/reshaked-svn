@@ -98,7 +98,7 @@ void TabBar::mouse_button(const Point& p_pos, int p_button,bool p_press,int p_mo
 	
 	while(l) {
 		
-		int width=p->get_style_box_min_size( stylebox( (idx==selected)?COLOR_TABBAR_FONT_RAISED:COLOR_TABBAR_FONT )).width;
+		int width=p->get_stylebox_min_size( stylebox( (idx==selected)?COLOR_TABBAR_FONT_RAISED:COLOR_TABBAR_FONT )).width;
 		
 		width+=p->get_font_string_width( font( FONT_TABBAR ), l->text );
 		
@@ -130,12 +130,12 @@ Size TabBar::get_minimum_size_internal() {
 	Size min;
 	Painter *p=get_painter();
 	
-	min.width+=p->get_style_box_min_size( stylebox(SB_TABBAR_LEFT) ).width;
-	min.width+=p->get_style_box_min_size( stylebox(SB_TABBAR_RIGHT) ).width;
+	min.width+=p->get_stylebox_min_size( stylebox(SB_TABBAR_LEFT) ).width;
+	min.width+=p->get_stylebox_min_size( stylebox(SB_TABBAR_RIGHT) ).width;
 	
 	if (list) {
-		min.width+=(get_tab_count()-1)*p->get_style_box_min_size( stylebox(SB_TABBAR_TAB) ).width;
-		min.height=MAX(p->get_style_box_min_size( stylebox(SB_TABBAR_RAISED) ).height,p->get_style_box_min_size( stylebox(SB_TABBAR_TAB) ).height);
+		min.width+=(get_tab_count()-1)*p->get_stylebox_min_size( stylebox(SB_TABBAR_TAB) ).width;
+		min.height=MAX(p->get_stylebox_min_size( stylebox(SB_TABBAR_RAISED) ).height,p->get_stylebox_min_size( stylebox(SB_TABBAR_TAB) ).height);
 		
 		min.height+=p->get_font_height( font( FONT_TABBAR ) );
 		
@@ -167,14 +167,14 @@ void TabBar::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 	Painter *p=get_painter();
 	
 	int center_w=get_minimum_size().width;
-	center_w-=p->get_style_box_min_size( stylebox(SB_TABBAR_LEFT) ).width; 
-	center_w-=p->get_style_box_min_size( stylebox(SB_TABBAR_RIGHT) ).width; 
+	center_w-=p->get_stylebox_min_size( stylebox(SB_TABBAR_LEFT) ).width; 
+	center_w-=p->get_stylebox_min_size( stylebox(SB_TABBAR_RIGHT) ).width; 
 	
-	int center_ofs=constant(C_TABBAR_CENTERED)?( (p_size.width-center_w)/2 ):p->get_style_box_min_size( stylebox(SB_TABBAR_LEFT) ).width;
+	int center_ofs=constant(C_TABBAR_CENTERED)?( (p_size.width-center_w)/2 ):p->get_stylebox_min_size( stylebox(SB_TABBAR_LEFT) ).width;
 	
 	int ofs=0;
 	
-	p->draw_style_box( stylebox(SB_TABBAR_LEFT), Point(0,0), Size(center_ofs,p_size.height) );
+	p->draw_stylebox( stylebox(SB_TABBAR_LEFT), Point(0,0), Size(center_ofs,p_size.height) );
 	
 	ofs+=center_ofs;
 		
@@ -207,18 +207,18 @@ void TabBar::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 		
 		int string_w=p->get_font_string_width( font( FONT_TABBAR) ,l->text);
 		
-		Size sbmin=p->get_style_box_min_size( sb );
+		Size sbmin=p->get_stylebox_min_size( sb );
 		
 		sbmin.width+=string_w;
 		sbmin.height+=font_h;
 		
 		Point sbpos=Point( ofs, p_size.height-sbmin.height );
 		
-		p->draw_style_box( sb , sbpos, sbmin );
+		p->draw_stylebox( sb , sbpos, sbmin );
 		if (has_focus() && (idx==selected))
-			p->draw_style_box( stylebox(SB_TABBAR_FOCUS) , sbpos, sbmin );
+			p->draw_stylebox( stylebox(SB_TABBAR_FOCUS) , sbpos, sbmin );
 		
-		Point txtpos=sbpos+Point( p->get_style_box_margin( sb, MARGIN_LEFT), p->get_style_box_margin( sb, MARGIN_TOP)+p->get_font_ascent( font(FONT_TABBAR) ) );
+		Point txtpos=sbpos+Point( p->get_stylebox_margin( sb, MARGIN_LEFT), p->get_stylebox_margin( sb, MARGIN_TOP)+p->get_font_ascent( font(FONT_TABBAR) ) );
 		
 		p->draw_text( font(FONT_TABBAR), txtpos, l->text,col);
 		
@@ -231,7 +231,7 @@ void TabBar::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 		idx++;
 	}
 	
-	p->draw_style_box( stylebox(SB_TABBAR_RIGHT), Point(ofs,0), Size(p_size.width-ofs,p_size.height) );
+	p->draw_stylebox( stylebox(SB_TABBAR_RIGHT), Point(ofs,0), Size(p_size.width-ofs,p_size.height) );
 }
 
 void TabBar::add_tab(String p_text,bool p_front) {

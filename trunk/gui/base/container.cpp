@@ -12,13 +12,11 @@ struct ContainerPrivate {
 	Container::Element * element_list;
 	Container::Element * element_list_end;
 	Size minimum_size;
-	StyleBox style;
-	bool draw_bg;
 	Size size_cache; //size cache
 	bool resizing; /// flag to tell we are currently resizing
 	bool recursive_resize_attempt; ///something decided on size, while we were resizing it..
 	
-	ContainerPrivate() { element_list = 0; element_list_end=0; draw_bg=false; resizing=false; recursive_resize_attempt=false; }
+	ContainerPrivate() { element_list = 0; element_list_end=0; resizing=false; recursive_resize_attempt=false; }
 
 };
 
@@ -333,12 +331,10 @@ bool Container::key(unsigned long p_unicode, unsigned long p_scan_code,bool p_pr
 }
 
 
-const StyleBox & Container::get_stylebox() {
 
-	return _cp->style;
-}
 
 void Container::draw_tree(const Point& p_global,const Size& p_size,const Rect& p_exposed) {
+
 
 	draw(p_global, p_size, p_exposed);
 	
@@ -365,38 +361,31 @@ void Container::draw_tree(const Point& p_global,const Size& p_size,const Rect& p
 
 		if ( exposed.intersects_with( element_rect) ) {
 
-			
-			
-			Rect element_global_rect=element_rect;
-			element_global_rect.pos+=p_global;
-			
+						
 			/* PAINTER LOCAL RECT */
-			Rect saved_rect=get_window()->get_painter()->get_local_rect();
-
-			Rect painter_global_rect=Rect( saved_rect.pos+element_rect.pos , element_rect.size );
-
-			get_window()->get_painter()->set_local_rect(painter_global_rect);
 			
+			get_window()->get_painter()->push_local_rect( element_rect );
+						
 			/* SET PAINTER CLIP RECT (if requested */
 		
-			bool save_using_clip=get_window()->get_painter()->has_clip_rect();
-			Rect save_clip=get_window()->get_painter()->get_clip_rect();
-
-			if (list->frame->is_clipping())
-				get_window()->get_painter()->set_clip_rect( list->frame->is_clipping(), painter_global_rect ,true);
+			bool clipped=false;
+			if (list->frame->is_clipping()) {
+				get_window()->get_painter()->push_clip_rect( Rect( Point(), element_rect.size) );
+				clipped=true;
+			}
 			
 			/* ELEMENT */
 			Rect element_exposed=element_rect.clip(exposed);
 			element_exposed.pos-=element_rect.pos;
 
 			if (!element_exposed.has_no_area()) {
-				list->frame->draw_tree(element_global_rect.pos,element_rect.size,element_exposed);
+				list->frame->draw_tree(p_global+element_rect.pos,element_rect.size,element_exposed);
 					
 			} 
 			
-			get_window()->get_painter()->set_local_rect(saved_rect);
-			if (list->frame->is_clipping())
-				get_window()->get_painter()->set_clip_rect( save_using_clip, save_clip,true );
+			get_window()->get_painter()->pop_local_rect();
+			if (clipped)
+				get_window()->get_painter()->pop_clip_rect();
 			
 		} else {
 			
@@ -409,13 +398,23 @@ void Container::draw_tree(const Point& p_global,const Size& p_size,const Rect& p
 }
 
 
+const StyleBox& Container::container_stylebox() {
+	
+	if (!get_parent()) { /* Is Root Container */
+		
+		return stylebox( (get_window()->get_mode() == Window::MODE_POPUP) ? SB_POPUP_BG : SB_ROOT_CONTAINER );
+	} else { /* is regular container */
+		
+		return stylebox( SB_CONTAINER );
+	}
+
+}
+
+
 void Container::draw(const Point& p_pos,const Size &p_size,const Rect& p_exposed) {
 	
-	if ( get_stylebox().mode == StyleBox::MODE_NONE && !get_parent())
-		get_window()->get_painter()->draw_style_box( stylebox( SB_ROOT_CONTAINER ) , Point(), p_size,p_exposed,true );
-	else
-		get_window()->get_painter()->draw_style_box( get_stylebox(), Point(), p_size,p_exposed,get_parent()?_cp->draw_bg:true );
-
+	get_window()->get_painter()->draw_stylebox( container_stylebox() , Point(), p_size,p_exposed );
+	
 }
 
 void Container::set_minimum_size(const Size & p_size ) {
@@ -430,7 +429,7 @@ Size Container::get_minimum_size() {
 	
 	if (get_window()->get_painter()) {
 	
-		minsize+=get_window()->get_painter()->get_style_box_min_size( get_stylebox() );
+		minsize+=get_window()->get_painter()->get_stylebox_min_size( container_stylebox() );
 	};
 	
 	if (_cp->minimum_size.width > minsize.width )
@@ -464,7 +463,7 @@ void Container::resize_tree(const Size& p_new_size) {
 		
 		if (get_window()->get_painter()) {
 		
-			new_size-=get_window()->get_painter()->get_style_box_min_size( get_stylebox() );
+			new_size-=get_window()->get_painter()->get_stylebox_min_size( container_stylebox() );
 		};
 		
 		_cp->resizing=true;
@@ -540,21 +539,14 @@ Point Container::get_margin_offset() {
 		
 		
 		return Point(
-			get_window()->get_painter()->get_style_box_margin( get_stylebox(), MARGIN_LEFT ),
-			get_window()->get_painter()->get_style_box_margin( get_stylebox(), MARGIN_TOP) 
+			get_window()->get_painter()->get_stylebox_margin( container_stylebox(), MARGIN_LEFT ),
+			get_window()->get_painter()->get_stylebox_margin( container_stylebox(), MARGIN_TOP) 
 		);
 		
 	} 
 		
 	return Point();
 		
-}
-
-void Container::set_style( const StyleBox& p_style, bool p_draw_background) {
-	
-	_cp->style=p_style;
-	_cp->draw_bg=p_draw_background;
-	set_minimum_size_changed();
 }
 
 Frame *Container::next_in_focus( Frame *p_from ) {
@@ -736,9 +728,6 @@ Container::Container() {
 	
 	
 	_cp = new ContainerPrivate;
-	//_cp->style=StyleBox( 3, Color(200,200,200),Color(250,250,250),Color(90,90,90) );
-	_cp->draw_bg=false;
-
 	
 }
 

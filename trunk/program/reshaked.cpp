@@ -214,7 +214,7 @@ int main_loop(Window& window,SDL_Surface *screen,TimerSDL *timer,unsigned int fl
 					mod|=KEY_MASK_META;
 #endif
 				}
-				
+			
 				window.key( event.key.keysym.unicode, keycode_sdl_translator.get_code(event.key.keysym.sym), event.key.state==SDL_PRESSED,false, mod );
 				
 				
