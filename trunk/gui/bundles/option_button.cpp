@@ -46,6 +46,7 @@ const Color& OptionButton::color(int p_which) {
 	switch (p_which) {
 		
 		case COLOR_BUTTON_FONT: return Frame::color(COLOR_OPTIONBUTTON_FONT); break;
+		case COLOR_BUTTON_SHORTCUT_FONT: return Frame::color(COLOR_OPTIONBUTTON_SHORTCUT_FONT); break;
 		
 	}
 	

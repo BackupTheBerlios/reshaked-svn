@@ -404,6 +404,7 @@ void Skin::set_default() {
 	SET_FONT( FONT_BUTTON, 0 );
 	
 	SET_COLOR(COLOR_BUTTON_FONT,Color(0));
+	SET_COLOR(COLOR_BUTTON_SHORTCUT_FONT,Color(110));
 	
 	/* CheckButton */
 	
@@ -427,6 +428,7 @@ void Skin::set_default() {
 	SET_FONT( FONT_CHECKBUTTON, 0 );
 	
 	SET_COLOR(COLOR_CHECKBUTTON_FONT,Color(0));
+	SET_COLOR(COLOR_CHECKBUTTON_SHORTCUT_FONT,Color(110));
 	
 	/* MenuButton */
 	
@@ -450,6 +452,7 @@ void Skin::set_default() {
 	SET_FONT( FONT_MENUBUTTON, 0 );
 	
 	SET_COLOR(COLOR_MENUBUTTON_FONT,Color(0));
+	SET_COLOR(COLOR_MENUBUTTON_SHORTCUT_FONT,Color(110));
 
 	
 	/* WindowButton */
@@ -481,6 +484,7 @@ void Skin::set_default() {
 	SET_FONT( FONT_OPTIONBUTTON, 0 );
 
 	SET_COLOR(COLOR_OPTIONBUTTON_FONT,Color(0));
+	SET_COLOR(COLOR_OPTIONBUTTON_SHORTCUT_FONT,Color(110));
 	
 	/* Menu Box */
 

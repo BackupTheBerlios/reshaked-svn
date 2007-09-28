@@ -93,6 +93,9 @@ class EditViewToolbar : public HBoxContainer {
 	void bar_len_changed_callback(double p_val);
 	
 	bool updating;
+	
+	void selection_menu_show();
+	void edit_menu_show();
 public:
 	void update_components();
 	

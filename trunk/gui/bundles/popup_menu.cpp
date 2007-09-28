@@ -31,12 +31,13 @@ void PopUpMenu::menu_button_toggled(MenuButton*p_mb,bool p_toggle) {
 }
 
 
-void PopUpMenu::add_item(String p_text, int p_ID, void *p_userdata) {
+void PopUpMenu::add_item(String p_text, int p_ID, void *p_userdata,int p_shortcut,bool p_shortcut_active) {
 	
 	MenuButton *mb  = vbc->add( new MenuButton(p_text), 0 );
 	
 	mb->set_id( p_ID );
 	mb->set_userdata( p_userdata );
+	mb->set_shurtcut( p_shortcut, p_shortcut_active );
 	id_count=p_ID+1;
 	
 	vbc->adjust_minimum_size();
@@ -44,12 +45,13 @@ void PopUpMenu::add_item(String p_text, int p_ID, void *p_userdata) {
 	mb->menubutton_pressed_signal.connect( this,  &PopUpMenu::menu_button_selected );
 }
 
-void PopUpMenu::add_item(String p_text, void *p_userdata) {
+void PopUpMenu::add_item(String p_text, void *p_userdata,int p_shortcut,bool p_shortcut_active) {
 	
 	MenuButton *mb  = vbc->add( new MenuButton(p_text), 0 );
 	
 	mb->set_id( id_count++ );
 	mb->set_userdata( p_userdata );
+	mb->set_shurtcut( p_shortcut, p_shortcut_active );
 
 	vbc->adjust_minimum_size();
 	
@@ -57,13 +59,14 @@ void PopUpMenu::add_item(String p_text, void *p_userdata) {
 	
 }
 		
-void PopUpMenu::add_item(BitmapID p_icon, String p_text, int p_ID, void *p_userdata) {
+void PopUpMenu::add_item(BitmapID p_icon, String p_text, int p_ID, void *p_userdata,int p_shortcut,bool p_shortcut_active) {
 	
 	
 	MenuButton *mb  = vbc->add( new MenuButton(p_text,p_icon), 0 );
 	
 	mb->set_id( p_ID );
 	mb->set_userdata( p_userdata );
+	mb->set_shurtcut( p_shortcut, p_shortcut_active );
 	id_count=p_ID+1;
 	
 	vbc->adjust_minimum_size();
@@ -71,43 +74,78 @@ void PopUpMenu::add_item(BitmapID p_icon, String p_text, int p_ID, void *p_userd
 	mb->menubutton_pressed_signal.connect( this,  &PopUpMenu::menu_button_selected );
 	
 }
-void PopUpMenu::add_item(BitmapID p_icon, String p_text, void *p_userdata) {
+void PopUpMenu::add_item(BitmapID p_icon, String p_text, void *p_userdata,int p_shortcut,bool p_shortcut_active) {
 	
 	
 	MenuButton *mb  = vbc->add( new MenuButton(p_text,p_icon), 0 );
 	
 	mb->set_id( id_count++ );
 	mb->set_userdata( p_userdata );
+	mb->set_shurtcut( p_shortcut, p_shortcut_active );
 	
 	vbc->adjust_minimum_size();
 	
 	mb->menubutton_pressed_signal.connect( this,  &PopUpMenu::menu_button_selected );
 	
+}
+		
+void PopUpMenu::add_item(String p_text, const Method& p_method,int p_shortcut,bool p_shortcut_active) {
+	
+	MenuButton *mb  = vbc->add( new MenuButton(p_text), 0 );
+	
+	mb->set_id( id_count++ );
+	mb->pressed_signal.connect( p_method );
+	mb->set_shurtcut( p_shortcut, p_shortcut_active );
+	
+	vbc->adjust_minimum_size();
+	
+	mb->menubutton_pressed_signal.connect( this,  &PopUpMenu::menu_button_selected );
+	
+}
+void PopUpMenu::add_item(BitmapID p_icon, String p_text, const Method& p_method,int p_shortcut,bool p_shortcut_active) {
+	
+	MenuButton *mb  = vbc->add( new MenuButton(p_text,p_icon), 0 );
+	
+	mb->set_id( id_count++ );
+	mb->pressed_signal.connect( p_method );
+	mb->set_shurtcut( p_shortcut, p_shortcut_active );
+	
+	vbc->adjust_minimum_size();
+	
+	mb->menubutton_pressed_signal.connect( this,  &PopUpMenu::menu_button_selected );
+	
+}
+		
+		
+void PopUpMenu::add_item(String p_text, int p_ID, void *p_userdata) {
+
+	add_item(p_text,p_ID,p_userdata,0,false);
+}
+void PopUpMenu::add_item(String p_text, void *p_userdata) {
+
+	add_item(p_text,p_userdata,0,false);
+
+}
+void PopUpMenu::add_item(BitmapID p_icon, String p_text, int p_ID, void *p_userdata) {
+
+	add_item(p_icon,p_text,p_ID,p_userdata,0,false);
+
+}
+void PopUpMenu::add_item(BitmapID p_icon, String p_text, void *p_userdata) {
+
+	add_item(p_icon,p_text,p_userdata,0,false);
+
 }
 		
 void PopUpMenu::add_item(String p_text, const Method& p_method) {
-	
-	MenuButton *mb  = vbc->add( new MenuButton(p_text), 0 );
-	
-	mb->set_id( id_count++ );
-	mb->pressed_signal.connect( p_method );
-	
-	vbc->adjust_minimum_size();
-	
-	mb->menubutton_pressed_signal.connect( this,  &PopUpMenu::menu_button_selected );
-	
+
+	add_item(p_text,p_method,0,false);
+
 }
 void PopUpMenu::add_item(BitmapID p_icon, String p_text, const Method& p_method) {
-	
-	MenuButton *mb  = vbc->add( new MenuButton(p_text,p_icon), 0 );
-	
-	mb->set_id( id_count++ );
-	mb->pressed_signal.connect( p_method );
-	
-	vbc->adjust_minimum_size();
-	
-	mb->menubutton_pressed_signal.connect( this,  &PopUpMenu::menu_button_selected );
-	
+
+	add_item(p_icon,p_text,p_method,0,false);
+
 }
 		
 void PopUpMenu::add_check_item(String p_text, int p_ID, bool p_checked,void *p_userdata) {
@@ -320,6 +358,7 @@ void PopUpMenu::clear()  {
 	delete vbc;
 	vbc = main_vbc->add( new VBoxContainer );
 	set_size(Size(1,1));
+	id_count=0;
 	
 }
 

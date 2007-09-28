@@ -41,6 +41,15 @@ public:
 	Signal<> pre_show_signal; ///< Pre-show signal, called before popping up (becoming visible)
 	
 	
+	
+	void add_item(String p_text, int p_ID, void *p_userdata,int p_shortcut,bool p_shortcut_active); 
+	void add_item(String p_text, void *p_userdata,int p_shortcut,bool p_shortcut_active);
+	void add_item(BitmapID p_icon, String p_text, int p_ID, void *p_userdata,int p_shortcut,bool p_shortcut_active); 
+	void add_item(BitmapID p_icon, String p_text, void *p_userdata,int p_shortcut,bool p_shortcut_active);
+			
+	void add_item(String p_text, const Method& p_method,int p_shortcut,bool p_shortcut_active); 
+	void add_item(BitmapID p_icon, String p_text, const Method& p_method,int p_shortcut,bool p_shortcut_active);
+	
 	void add_item(String p_text, int p_ID, void *p_userdata=0); 
 	void add_item(String p_text, void *p_userdata=0);
 	void add_item(BitmapID p_icon, String p_text, int p_ID, void *p_userdata=0); 

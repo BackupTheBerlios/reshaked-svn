@@ -16,7 +16,7 @@
 #include "widgets/icon.h"
 #include "gui_custom/pixmap_data.h"
 #include "containers/center_container.h"
-
+#include "editor/keyboard_input.h"
 namespace ReShaked {
 
 	
@@ -219,6 +219,47 @@ void EditViewToolbar::bar_len_changed_callback(double p_val) {
 	
 }
 
+void EditViewToolbar::selection_menu_show() {
+
+	selection_menu->clear();
+	selection_menu->add_item("Block Begin",SELECTION_BEGIN,KEYBIND("editor/selection_begin"),false);
+	selection_menu->add_item("Block end",SELECTION_END,KEYBIND("editor/selection_end"),false);
+	selection_menu->add_item("Block/Column",SELECTION_BLOCK_COLUMN,KEYBIND("editor/select_column_block"),false);
+	selection_menu->add_item("Clear",SELECTION_CLEAR,KEYBIND("editor/selection_disable"),false);
+	selection_menu->add_separator();
+	selection_menu->add_item("Create Block",SELECTION_CREATE_BLOCKS,KEYBIND("editor/selection_create_blocks"),false);
+	selection_menu->add_item("Set to Loop Begin/End",SELECTION_MAKE_LOOP,KEYBIND("editor/selection_to_loop"),false);
+	selection_menu->add_separator();
+	selection_menu->add_item("Scale Volumes",SELECTION_SCALE_VOLUMES,KEYBIND("editor/selection_scale_volumes"),false);
+	selection_menu->add_item("Apply Volume Mask",SELECTION_APPLY_VOLUME_MASK,KEYBIND("editor/selection_apply_volume_mask"),false);
+	selection_menu->add_separator();
+	selection_menu->add_item("Quantize Up",SELECTION_QUANTIZE_UP,KEYBIND("editor/quantize_up"),false);
+	selection_menu->add_item("Quantize Nearest",SELECTION_QUANTIZE_NEAREST,KEYBIND("editor/quantize_nearest"),false);
+	selection_menu->add_item("Quantize Down",SELECTION_QUANTIZE_DOWN,KEYBIND("editor/quantize_down"),false);
+
+}
+void EditViewToolbar::edit_menu_show() {
+
+	edit_menu->clear();
+	edit_menu->add_item("Copy",EDIT_COPY,KEYBIND("editor/selection_copy"),false);
+	edit_menu->add_item("Cut",EDIT_CUT,KEYBIND("editor/selection_zap"),false);
+	edit_menu->add_item("Paste",EDIT_PASTE,KEYBIND("editor/selection_paste_overwrite"),false);
+	edit_menu->add_item("Paste Insert",EDIT_PASTE_INSERT,KEYBIND("editor/selection_paste_insert"),false);
+	edit_menu->add_item("Paste Mix",EDIT_PASTE_MIX,KEYBIND("editor/selection_paste_mix"),false);
+	edit_menu->add_separator();
+	edit_menu->add_item("Marker",EDIT_MARKER,KEYBIND("editor/edit_marker"),false);
+	edit_menu->add_item("Bar Length",EDIT_BAR_LENTH,KEYBIND("editor/bar_length_at_pos"),false);
+	edit_menu->add_separator();
+	edit_menu->add_item("Set Loop Begin",EDIT_SET_LOOP_BEGIN,KEYBIND("editor/set_loop_begin"),false);
+	edit_menu->add_item("Set Loop End",EDIT_SET_LOOP_END,KEYBIND("editor/set_loop_end"),false);
+	edit_menu->add_separator();
+	edit_menu->add_item("Transpose Up Semitone",EDIT_TRANSPOSE_UP_SEMITONE,KEYBIND("editor/transpose_up"),false);
+	edit_menu->add_item("Transpose Down Semitone",EDIT_TRANSPOSE_DOWN_SEMITONE,KEYBIND("editor/transpose_down"),false);
+	edit_menu->add_item("Transpose Up Octave",EDIT_TRANSPOSE_UP_OCTAVE);
+	edit_menu->add_item("Transpose Down Octave",EDIT_TRANSPOSE_DOWN_OCTAVE);
+
+
+}
 
 void EditViewToolbar::set_in_window() {
 		
@@ -238,42 +279,13 @@ void EditViewToolbar::set_in_window() {
 	selection_menu = hb->add( new MenuBox("Selection" ) );
 	selection_menu->set_focus_mode( FOCUS_NONE );
 	
-	selection_menu->add_item("Block Begin",SELECTION_BEGIN);
-	selection_menu->add_item("Block end",SELECTION_END);
-	selection_menu->add_item("Block/Column",SELECTION_BLOCK_COLUMN);
-	selection_menu->add_item("Clear",SELECTION_CLEAR);
-	selection_menu->add_separator();
-	selection_menu->add_item("Create Block",SELECTION_CREATE_BLOCKS);
-	selection_menu->add_item("Set to Loop Begin/End",SELECTION_MAKE_LOOP);
-	selection_menu->add_separator();
-	selection_menu->add_item("Scale Volumes",SELECTION_SCALE_VOLUMES);
-	selection_menu->add_item("Apply Volume Mask",SELECTION_APPLY_VOLUME_MASK);
-	selection_menu->add_separator();
-	selection_menu->add_item("Quantize Up",SELECTION_QUANTIZE_UP);
-	selection_menu->add_item("Quantize Nearest",SELECTION_QUANTIZE_NEAREST);
-	selection_menu->add_item("Quantize Down",SELECTION_QUANTIZE_DOWN);
 	selection_menu->item_selected_signal.connect(this,&EditViewToolbar::action_callback);
+	selection_menu->pre_show_signal.connect(this,&EditViewToolbar::selection_menu_show);
 	
 	edit_menu = hb->add( new MenuBox("Edit" ) );
 	
-	
-	edit_menu->add_item("Copy",EDIT_COPY);
-	edit_menu->add_item("Cut",EDIT_CUT);
-	edit_menu->add_item("Paste",EDIT_PASTE);
-	edit_menu->add_item("Paste Insert",EDIT_PASTE_INSERT);
-	edit_menu->add_item("Paste Mix",EDIT_PASTE_MIX);
-	edit_menu->add_separator();
-	edit_menu->add_item("Marker",EDIT_MARKER);
-	edit_menu->add_item("Bar Length",EDIT_BAR_LENTH);
-	edit_menu->add_separator();
-	edit_menu->add_item("Set Loop Begin",EDIT_SET_LOOP_BEGIN);
-	edit_menu->add_item("Set Loop End",EDIT_SET_LOOP_END);
-	edit_menu->add_separator();
-	edit_menu->add_item("Transpose Up Semitone",EDIT_TRANSPOSE_UP_SEMITONE);
-	edit_menu->add_item("Transpose Down Semitone",EDIT_TRANSPOSE_DOWN_SEMITONE);
-	edit_menu->add_item("Transpose Up Octave",EDIT_TRANSPOSE_UP_OCTAVE);
-	edit_menu->add_item("Transpose Down Octave",EDIT_TRANSPOSE_DOWN_OCTAVE);
 	edit_menu->item_selected_signal.connect(this,&EditViewToolbar::action_callback);
+	edit_menu->pre_show_signal.connect(this,&EditViewToolbar::edit_menu_show);
 	                      
 	edit_menu->set_focus_mode( FOCUS_NONE );
 	

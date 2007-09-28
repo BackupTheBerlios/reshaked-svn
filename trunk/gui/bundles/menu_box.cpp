@@ -13,6 +13,7 @@
 #include "base/skin.h"
 
 
+
 namespace GUI {
 
 
@@ -74,6 +75,8 @@ void MenuBox::resize(const Size& p_new_size) {
 
 void MenuBox::pressed() {
 	
+	pre_show_signal.call();
+	
 	popup->set_size( Size( size.width, 0 ) );
 	popup->popup( get_global_pos()+Point( 0, size.height) );
 }
@@ -84,33 +87,38 @@ void MenuBox::item_activated(int p_which) {
 	
 }
 
-void MenuBox::add_item(const String& p_str,int p_id) {
+void MenuBox::add_item(const String& p_str,int p_id,unsigned int p_shortcut,bool p_shortcut_active) {
 
 	if (!popup) {
 
-		add_to_defered_list( new DeferredAdd( p_str, p_id, -1 ) );
+		add_to_defered_list( new DeferredAdd( p_str, p_id, -1,p_shortcut,p_shortcut_active ) );
 		return;
 
 	}
+	
+	
 	if (p_id!=-1)
-		popup->add_item( p_str,p_id );
+		popup->add_item( p_str,p_id,NULL,p_shortcut,p_shortcut_active );
 	else
-		popup->add_item( p_str );
+		popup->add_item( p_str,NULL,p_shortcut,p_shortcut_active );
 	
 }
-void MenuBox::add_item(BitmapID p_ID,const String& p_str,int p_id) {
+void MenuBox::add_item(BitmapID p_ID,const String& p_str,int p_id,unsigned int p_shortcut,bool p_shortcut_active) {
 	
 	if (!popup) {
 
 
-		add_to_defered_list( new DeferredAdd( p_str, p_id, p_ID ) );
+		add_to_defered_list( new DeferredAdd( p_str, p_id, p_ID,p_shortcut,p_shortcut_active ) );
 		return;
 
 	}
+	
+	
+	
 	if (p_id!=-1)
-		popup->add_item( p_ID, p_str);
+		popup->add_item( p_ID, p_str,NULL,p_shortcut,p_shortcut_active);
 	else
-		popup->add_item( p_ID, p_str,p_id );
+		popup->add_item( p_ID, p_str,p_id,NULL,p_shortcut,p_shortcut_active );
 
 }
 void MenuBox::add_separator() {
@@ -172,9 +180,9 @@ void MenuBox::set_in_window() {
 		if (l->is_sep)
 			add_separator();
 		else if (l->bitmap<0)
-			add_item( l->text, l->id );
+			add_item( l->text, l->id,l->shortcut, l->shortcut_active );
 		else
-			add_item( l->bitmap, l->text, l->id );
+			add_item( l->bitmap, l->text, l->id,l->shortcut, l->shortcut_active );
 		
 		l=l->next;		
 	}

@@ -95,14 +95,25 @@ Size Button::get_minimum_size_internal() {
 		min.width+=constant( C_BUTTON_SEPARATION );
 	}
 
+	if (shortcut!=0) {
+	
+		String s_str = Keyboard::get_code_name( shortcut );
+		min.width+=constant( C_BUTTON_SEPARATION );
+		min.width+=p->get_font_string_width( font(FONT_BUTTON), s_str );
+		
+	}
+
 	min.width+=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_LEFT );
 	min.width+=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_RIGHT );
 
 	min.height+=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_TOP );
 	min.height+=p->get_stylebox_margin( stylebox( SB_BUTTON_NORMAL ), MARGIN_BOTTOM );
 
+
 	min.width+=constant( C_BUTTON_EXTRA_MARGIN )*2+constant( C_BUTTON_DISPLACEMENT ); //both margins and displacement
 	min.height+=constant( C_BUTTON_EXTRA_MARGIN )*2+constant( C_BUTTON_DISPLACEMENT ); //both margins and displacement
+
+	
 
 	return min;
 
@@ -163,7 +174,6 @@ void Button::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 		area_rect.pos+=Point( constant( C_BUTTON_DISPLACEMENT ), constant( C_BUTTON_DISPLACEMENT ) );
 
 
-
 	if (constant(C_BUTTON_HAS_CHECKBOX)) {
 
 		Size cbsize;
@@ -210,6 +220,23 @@ void Button::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 
 	}
 
+	if (shortcut!=0) {
+	
+
+		String s_str = Keyboard::get_code_name( shortcut );
+		int w = p->get_font_string_width( font(FONT_BUTTON), s_str );
+		
+		Point shrc_ofs= area_rect.pos;
+		
+		shrc_ofs.y+=(area_rect.size.height-p->get_font_height( font( FONT_BUTTON ) ))/2+p->get_font_ascent( font( FONT_BUTTON ) );
+		shrc_ofs.x = (area_rect.pos.x+area_rect.size.x)-w;
+		
+		p->draw_text( font( FONT_BUTTON ) ,  shrc_ofs, s_str, color(COLOR_BUTTON_SHORTCUT_FONT) );
+		
+		area_rect.size.x-=w;
+		
+	}
+
 	Point label_ofs=area_rect.pos;
 	if (constant(C_BUTTON_LABEL_ALIGN_CENTER)) {
 
@@ -227,6 +254,7 @@ void Button::draw(const Point& p_pos,const Size& p_size,const Rect& p_exposed) {
 		};
 		p->draw_text( font( FONT_BUTTON ) ,  label_ofs + Point(width, 0), "_", color(COLOR_BUTTON_FONT) );
 	};
+
 
 	if (has_focus())
 		p->draw_stylebox( stylebox( SB_BUTTON_FOCUS ) , Point() , p_size, p_exposed);
@@ -249,6 +277,16 @@ void Button::parse_accelerator() {
 };
 
 
+void Button::set_shurtcut(unsigned int p_shortcut,bool p_active) {
+
+	shortcut=p_shortcut;
+	shortcut_active=p_active;
+	set_minimum_size_changed();
+	update();
+	
+}
+
+
 String::CharType Button::get_accelerator() {
 
 	if (accel_char < 0 || accel_char >= label_text.size()) return 0;
@@ -260,6 +298,8 @@ Button::Button(BitmapID p_icon) {
 
 	icon=p_icon;
 	accel_char = -1;
+	shortcut=0;
+	shortcut_active=false;
 }
 
 Button::Button(String p_text,BitmapID p_icon) {
@@ -268,6 +308,8 @@ Button::Button(String p_text,BitmapID p_icon) {
 	label_text=p_text;
 	parse_accelerator();
 	icon=p_icon;
+	shortcut=0;
+	shortcut_active=false;
 }
 
 

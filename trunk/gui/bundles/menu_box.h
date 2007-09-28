@@ -45,8 +45,10 @@ class MenuBox : public Button {
 		int id;
 		BitmapID bitmap;
 		bool is_sep;
+		unsigned int shortcut;
+		bool shortcut_active;
 
-		DeferredAdd( String p_text, int p_id, BitmapID p_bid) { next=0; text=p_text; id=p_id; bitmap=p_bid; is_sep=false; }
+		DeferredAdd( String p_text, int p_id, BitmapID p_bid,unsigned int p_shortcut,bool p_shr_active) { next=0; text=p_text; id=p_id; bitmap=p_bid; is_sep=false; shortcut=p_shortcut; shortcut_active=p_shr_active; }
 		DeferredAdd() { next=0; is_sep=true; }
 	};
 
@@ -56,9 +58,10 @@ class MenuBox : public Button {
 public:
 
 	Signal< Method1<int> > item_selected_signal;
+	Signal<> pre_show_signal;
 
-	void add_item(const String& p_str,int p_id=-1);
-	void add_item(BitmapID p_bitmap_ID,const String& p_str="",int p_id=-1);
+	void add_item(const String& p_str,int p_id=-1,unsigned int p_shortcut=0,bool p_shortcut_active=true);
+	void add_item(BitmapID p_bitmap_ID,const String& p_str="",int p_id=-1,unsigned int p_shortcut=0,bool p_shortcut_active=true);
 	void add_separator();
 	
 	void clear(); ///< Clear the list

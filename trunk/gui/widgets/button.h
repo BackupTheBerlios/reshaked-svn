@@ -27,6 +27,8 @@ protected:
 	BitmapID icon;
 	String label_text;
 	int accel_char;
+	unsigned int shortcut;
+	bool shortcut_active;
 
 	void parse_accelerator();
 
@@ -45,6 +47,8 @@ public:
 	String get_text();
 	bool has_icon();
 	BitmapID get_icon();
+	
+	void set_shurtcut(unsigned int p_shortcut,bool p_active=true);
 
 	Button(BitmapID p_icon);
 	Button(String p_text="",BitmapID p_icon=-1);
