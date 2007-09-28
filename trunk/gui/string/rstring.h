@@ -14,7 +14,7 @@
 
 #ifndef GUI_EXTERNAL_STRING
 
-
+#include <wchar.h>
 
 namespace GUI {
 
@@ -49,8 +49,9 @@ public:
 
 class String {
 public:			    
-//	typedef wchar_t CharType; -- standard
-	typedef unsigned short CharType; // ucs16 
+	typedef wchar_t CharType; // -- standard
+//	typedef unsigned short CharType; // ucs16
+
 private:
 			    
 	struct Shared {

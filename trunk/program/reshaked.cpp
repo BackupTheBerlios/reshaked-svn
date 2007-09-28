@@ -164,7 +164,7 @@ static void test_config_dir() {
 
 #define DEFAULT_H 550
 #define DEFAULT_W 750
-
+#define interface interface
 int main_loop(Window& window,SDL_Surface *screen,TimerSDL *timer,unsigned int flags,ReShaked::MainWindow *interface) {
 	KeycodesSDL keycode_sdl_translator;
 	

@@ -80,7 +80,7 @@ Property::DisplayMode VST_Plugin::Parameter::get_display_mode(){
 }
 
 /* helpers */	
-String VST_Plugin::Parameter::get_text_value(bool p_no_suffix) l{
+String VST_Plugin::Parameter::get_text_value(bool p_no_suffix) {
 
 	resbuff[0]=0;
 	ptrPlug->dispatcher (ptrPlug, effGetParamDisplay, index, 0, resbuff, 0);	
@@ -367,7 +367,8 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 			//NB - idle routine should also call effEditIdle for all open editors
 			break;
 
-		case audioMasterPinConnected:
+		// Deprecated since VST 2.4
+		/*case audioMasterPinConnected:
 			//Input values:
 			//<index> pin to be checked
 			//<value> 0=input pin, non-zero value=output pin
@@ -377,7 +378,7 @@ VstIntPtr VSTCALLBACK VST_Plugin::host(AEffect *effect, VstInt32 opcode, VstInt3
 //			std::cout << "plug called audioMasterPinConnected" << std::endl;
 			
 			break;
-
+		*/
 		//VST 2.0 opcodes
 
 		case audioMasterGetTime:

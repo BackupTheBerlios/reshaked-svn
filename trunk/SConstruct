@@ -9,15 +9,22 @@ import detect
 import version
 
 palmos=False;
-win32=False
 
-win32cross=True
+
+win32cross=False
 win32msvc=False
+
+win32=(os.name == 'nt' or win32cross)
+
 #env = Environment(CC='arm-palmos-gcc',CXX='arm-palmos-g++' , RANLIB='arm-palmos-ranlib', AR='arm-palmos-ar', CPPPATH=['#/types','#.']);
 
 
 if (win32 and win32cross):
 	env = Environment(CPPPATH=['#/types','#gui','#.'],CPPFLAGS=['-DANSIC_LIBS_ENABLED','-g3','-Wall','-fstrict-aliasing'],CXX='i586-mingw32msvc-g++',RANLIB='i586-mingw32msvc-ranlib',LD='i586-mingw32msvc-ld',CC='i586-mingw32msvc-gcc',AR='i586-mingw32msvc-ar' );
+	version.enables+=['WIN32_ENABLED'];
+	version.enables+=['VST_ENABLED'];
+elif(win32):
+	env = Environment(CPPPATH=['#/types','#gui','#.','#drivers/vst'],CPPFLAGS=['-DANSIC_LIBS_ENABLED','-g3','-Wall','-fstrict-aliasing'],ENV=os.environ);
 	version.enables+=['WIN32_ENABLED'];
 	version.enables+=['VST_ENABLED'];
 else:
@@ -47,19 +54,20 @@ elif (win32cross and win32):
 
 	env.Append(CPPFLAGS=['-I/usr/i586-mingw32msvc/include/SDL','-D_REENTRANT','-DWINDOWS_ENABLED','-Wno-sign-compare']);
 	env.Append(LINKFLAGS=['-L/usr/i586-mingw32msvc/lib','-mwindows']);
-	env.Append(LIBS=['mingw32','SDLmain','SDL']);
+	env.Append(LIBS=['mingw32','SDLmain','SDL','png','winmm','ole32']);
 
 elif (win32):
 	if (win32msvc):
-
 		env.Append(CPPFLAGS=['/IC:\Program Files\Microsoft Visual Studio 8\VC\include\SDL','/D_REENTRANT','/DWINDOWS_ENABLED','/Zi','/Yd','/MT','/Gd']);
-	        env.Append(LIBS=['SDLmain','SDL']);
+	        env.Append(LIBS=['SDLmain','SDL','png','winmm','ole32']);
 		env.Append(LINKFLAGS=['/FORCE:MULTIPLE','/DEBUG']);
         else:
 		env.Append(CPPFLAGS=['-IC:\\MingW\\include\\SDL','-D_REENTRANT','-DWINDOWS_ENABLED']);
 		env.Append(LINKFLAGS=['-mwindows']);
-	        env.Append(LIBS=['mingw32','SDLmain','SDL']);
+	        env.Append(LIBS=['mingw32','SDLmain','SDL','png','winmm','ole32']);
 		env.icon_obj="cticon.o"
+		# prefer mingw
+		Tool('mingw')(env)
 
 else:
 	#UNIX, needs some detection, detect SDL
