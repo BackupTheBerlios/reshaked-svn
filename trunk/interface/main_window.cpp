@@ -202,6 +202,7 @@ void MainWindow::initialize() {
 	
 	global_view_frame =main_stack->add( new GlobalViewFrame(data.editor) );
 	edit_view_frame =main_stack->add( new EditViewFrame(update_notify,data.editor) );
+	rack_view_frame =main_stack->add( new RackViewFrame(update_notify, data.editor) );
 	
 	tab_bar->tab_changed_signal.connect( main_stack, &StackContainer::raise );
 	

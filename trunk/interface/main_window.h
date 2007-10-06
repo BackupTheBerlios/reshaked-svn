@@ -28,6 +28,7 @@
 #include "interface/gui_update_notify.h"
 #include "interface/global_view_frame.h"
 #include "interface/edit_view_frame.h"
+#include "interface/rack_view_frame.h"
 #include "interface/new_track_dialog.h"
 #include "interface/track_dialog.h"
 #include "interface/automation_dialog.h"
@@ -94,6 +95,7 @@ class MainWindow : public VBoxContainer {
 	
 	GlobalViewFrame *global_view_frame;
 	EditViewFrame *edit_view_frame;
+	RackViewFrame *rack_view_frame;
 	
 	/* Work */
 	
