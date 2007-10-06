@@ -77,9 +77,42 @@ PluginChooser::PluginItem::PluginItem( int p_index,PluginItem ** p_current ) {
 }
 
 
-void PluginChooser::item_selected(PluginItem*) {
+void PluginChooser::item_selected(PluginItem*p_item) {
 
+	static const char *instance_chan_names[9]={"None","Mono","Stereo","3","Quad","5","6","7","Octo"};
 
+	const SoundPluginInfo *info=SoundPluginList::get_singleton()->get_plugin_info( p_item->get_index() );
+	ERR_FAIL_COND(!info);
+	
+	
+	channels->clear();
+	int select=-1;
+	
+	int current_chans = editor->get_song()->get_track(current_track)->get_channels();
+	
+	if (info->custom_channels.size()) {
+	
+		for (int i=0;i<info->custom_channels.size();i++) {
+		
+			if (info->custom_channels[i]==current_chans)
+				select=i;
+						
+			channels->add_string(instance_chan_names[info->custom_channels[i]]);
+		}
+	} else {
+	
+		for (int i=1;i<=8;i++) {
+		
+			if (i==current_chans)
+				select=i-1;
+						
+			channels->add_string(instance_chan_names[i]);
+		}
+	
+	}
+	
+	if (select!=-1)
+		channels->select( select );
 }
 
 void PluginChooser::choose_plugin(int p_current_track) {
@@ -106,12 +139,15 @@ void PluginChooser::choose_plugin(int p_current_track) {
 		pi->selected_signal.connect(this, &PluginChooser::item_selected);
 	}
 	
+	channels->clear();
+	
 	show();
 }
 	
 
 PluginChooser::PluginChooser(Window *p_parent,Editor *p_editor) : Window(p_parent,Window::MODE_POPUP,Window::SIZE_TOPLEVEL_CENTER) {
 
+	editor=p_editor;
 	WindowBox *wb = new WindowBox("Sound Plugin List");
 	set_root_frame(wb);
 	

@@ -29,6 +29,7 @@ namespace ReShaked {
 */
 class PluginChooser : public Window {
 	
+	Editor *editor;
 	ScrollBox *scroll_box;
 	int current_track;
 	
