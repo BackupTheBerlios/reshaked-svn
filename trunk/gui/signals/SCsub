@@ -1,6 +1,0 @@
-Import('env');
-Export('env');
-
-targets=['signals.cpp'];
-
-env.Library('gui_signals', targets);
