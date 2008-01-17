@@ -69,6 +69,9 @@ class CommandFunc1 : public CommandFunc {
 		}
 };
 
+template<class T, class M, class P1>
+CommandFunc * Command1(
+
 #define Command1(m_self,m_method,m_p1) new CommandFunc1<typeof(*m_self),typeof(m_p1)>(m_self,m_method,m_p1)
 
 

@@ -167,6 +167,9 @@ public:
 	/**
 	 * The constructors must not depend on other overloads
 	 */
+	 
+	String strip_edges();
+	 
 	String();
 	String(CharType p_char);
 	String(const char *p_str);

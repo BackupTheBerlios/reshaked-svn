@@ -37,28 +37,6 @@ set_color_name(m_which,#m_which);\
 set_color(m_which,m_color);
 	
 	
-static StyleBox build_pixmap_style(PixmapDataList p_topleft,PixmapDataList p_top, PixmapDataList p_topright, PixmapDataList p_left, PixmapDataList p_center, PixmapDataList p_right, PixmapDataList p_bottomleft, PixmapDataList p_bottom, PixmapDataList p_bottomright,bool p_has_center) {
-	
-	
-	StyleBox sb;
-
-	sb.mode=p_has_center?StyleBox::MODE_FLAT_BITMAP:StyleBox::MODE_BITMAP;
-	
-	sb.bitmaps[StyleBox::POS_TOPLEFT]=PixmapData::get_pixmap(p_topleft);
-	sb.bitmaps[StyleBox::POS_TOPRIGHT]=PixmapData::get_pixmap(p_topright);
-	sb.bitmaps[StyleBox::POS_BOTTOMLEFT]=PixmapData::get_pixmap(p_bottomleft);
-	sb.bitmaps[StyleBox::POS_BOTTOMRIGHT]=PixmapData::get_pixmap(p_bottomright);
-	
-	sb.bitmaps[StyleBox::POS_LEFT]=PixmapData::get_pixmap(p_left);
-	sb.bitmaps[StyleBox::POS_RIGHT]=PixmapData::get_pixmap(p_right);
-	
-	sb.bitmaps[StyleBox::POS_TOP]=PixmapData::get_pixmap(p_top);
-	sb.bitmaps[StyleBox::POS_BOTTOM]=PixmapData::get_pixmap(p_bottom);
-	sb.bitmaps[StyleBox::POS_CENTER]=p_has_center?PixmapData::get_pixmap(p_center):-1;
-	
-	return sb;
-
-}
 	
 void RSSkin::set_default_extra() {
 		
@@ -133,18 +111,7 @@ void RSSkin::set_default_extra() {
 	
 		forbid_sb.mode=StyleBox::MODE_BITMAP;
 		
-		forbid_sb.bitmaps[StyleBox::POS_TOPLEFT]=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_CORNER);
-		forbid_sb.bitmaps[StyleBox::POS_TOPRIGHT]=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_CORNER);
-		forbid_sb.bitmaps[StyleBox::POS_BOTTOMLEFT]=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_CORNER);
-		forbid_sb.bitmaps[StyleBox::POS_BOTTOMRIGHT]=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_CORNER);
-		
-		forbid_sb.bitmaps[StyleBox::POS_LEFT]=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_V);
-		forbid_sb.bitmaps[StyleBox::POS_RIGHT]=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_V);
-		
-		forbid_sb.bitmaps[StyleBox::POS_TOP]=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_H);
-		forbid_sb.bitmaps[StyleBox::POS_BOTTOM]=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_H);
-		
-		forbid_sb.bitmaps[StyleBox::POS_CENTER]=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_CENTER);
+		forbid_sb.bitmap=PixmapData::get_pixmap( PIXMAP_STYLE_FORBID_CENTER );
 		
 		SET_STYLEBOX(SB_GLOBAL_VIEW_FORBIDDEN,forbid_sb);
 	}
@@ -153,7 +120,7 @@ void RSSkin::set_default_extra() {
 		
 		StyleBox linked_sb;
 	
-		linked_sb.mode=StyleBox::MODE_FLAT_BITMAP;
+		/* linked_sb.mode=StyleBox::MODE_FLAT_BITMAP;
 		
 		linked_sb.bitmaps[StyleBox::POS_TOPLEFT]=PixmapData::get_pixmap( PIXMAP_STYLE_LINKED_CHAIN_CORNER);
 		linked_sb.bitmaps[StyleBox::POS_TOPRIGHT]=PixmapData::get_pixmap( PIXMAP_STYLE_LINKED_CHAIN_CORNER);
@@ -166,7 +133,7 @@ void RSSkin::set_default_extra() {
 		linked_sb.bitmaps[StyleBox::POS_TOP]=PixmapData::get_pixmap( PIXMAP_STYLE_LINKED_CHAIN_CORNER);
 		linked_sb.bitmaps[StyleBox::POS_BOTTOM]=PixmapData::get_pixmap( PIXMAP_STYLE_LINKED_CHAIN_CORNER);
 		
-		linked_sb.draw_center=false;
+		linked_sb.draw_center=false; */
 		
 		SET_STYLEBOX(SB_GLOBAL_VIEW_LINKED,linked_sb);
 	}
@@ -193,7 +160,8 @@ void RSSkin::set_default_extra() {
 	/* EDIT VIEW */
 	
 	
-	StyleBox cursor_sb = build_pixmap_style(PIXMAP_STYLE_CURSOR_TOPLEFT,PIXMAP_STYLE_CURSOR_EMPTY,PIXMAP_STYLE_CURSOR_TOPRIGHT,PIXMAP_STYLE_CURSOR_LEFT,PIXMAP_STYLE_CURSOR_EMPTY,PIXMAP_STYLE_CURSOR_RIGHT,PIXMAP_STYLE_CURSOR_BOTTOMLEFT,PIXMAP_STYLE_CURSOR_EMPTY,PIXMAP_STYLE_CURSOR_BOTTOMRIGHT,false);
+	StyleBox cursor_sb = StyleBox(1,Color(255),Color(255),Color(255));
+	cursor_sb.draw_center=false;
 
 	SET_STYLEBOX(SB_EDIT_VIEW_CURSOR,cursor_sb);
 	SET_CONSTANT(C_EDITOR_ROW_MARGIN,3);

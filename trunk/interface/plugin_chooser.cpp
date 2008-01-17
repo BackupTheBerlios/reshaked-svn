@@ -159,6 +159,7 @@ PluginChooser::PluginChooser(Window *p_parent,Editor *p_editor) : Window(p_paren
 	
 	
 	append_to_out = wb->add( new CheckButton("Auto-Connect to Output"));
+	append_to_out->set_checked( true );
 	HBoxContainer *hb = wb->add( new HBoxContainer );
 	hb->add(new Label("Channels to Instance"),1);
 	
