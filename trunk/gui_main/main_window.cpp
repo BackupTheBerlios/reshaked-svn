@@ -52,7 +52,7 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 	GUI::HBoxContainer *hb = main_vbc->add(new GUI::HBoxContainer);
 	
 	
-	GUI::MenuBox * file_menu = hb->add( new GUI::MenuBox( p_skin->get_bitmap( BITMAP_ICON_FILE_DISK) ) );
+	GUI::MenuBox * file_menu = hb->add( new GUI::MenuBox( "", p_skin->get_bitmap( BITMAP_ICON_FILE_DISK) ) );
 	
 	file_menu->add_item("New Song",FILE_NEW_SONG);
 	file_menu->add_item("Open Song",FILE_OPEN_SONG);
@@ -76,7 +76,7 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 		
 	hb->add( new GUI::VSeparator );
 	
-	GUI::Button * add_button = hb->add( new GUI::MenuButton( p_skin->get_bitmap( BITMAP_ICON_ADD) )  );
+	GUI::MenuButton * add_button = hb->add( new GUI::MenuButton( p_skin->get_bitmap( BITMAP_ICON_ADD) )  );
 
 	hb->add( new GUI::VSeparator );
 
@@ -89,12 +89,15 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 	hb->add( new GUI::MenuButton(get_skin()->get_bitmap(BITMAP_CONTROL_REC)) )->pressed_signal.connect( GUI::Method( GUI::Method1<int>(this, &MainWindow::control_callback), (int)CONTROL_REC ));
 	hb->add( new GUI::MenuButton(get_skin()->get_bitmap(BITMAP_CONTROL_REC_AUTO)) )->pressed_signal.connect( GUI::Method( GUI::Method1<int>(this, &MainWindow::control_callback), (int)CONTROL_REC_AUTO ));
 	
-	hb->add( new GUI::VSeparator );
+//	hb->add( new GUI::VSeparator );
 	
 	hb->add( new GUI::Widget, 1 ); //expand
 	
 	hb->add( new GUI::VSeparator );
 		
+		
+	GUI::MenuButton * preferences = hb->add( new GUI::MenuButton( p_skin->get_bitmap( BITMAP_ICON_PREFERENCES) )  );
+	GUI::MenuButton * help = hb->add( new GUI::MenuButton( p_skin->get_bitmap( BITMAP_ICON_HELP) )  );
 		
 	main_stack = main_vbc->add( new GUI::StackContainer, 1 );
 	

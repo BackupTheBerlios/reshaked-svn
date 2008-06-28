@@ -58,6 +58,7 @@ void CommonSkin::set_default_extra() {
 	SET_BITMAP(BITMAP_CONTROL_REC,PixmapData::get_pixmap(	PIXMAP_CONTROL_REC));
 	SET_BITMAP(BITMAP_CONTROL_REC_AUTO,PixmapData::get_pixmap(	PIXMAP_CONTROL_REC_AUTO));
 	
+	SET_BITMAP(BITMAP_ICON_PREFERENCES,PixmapData::get_pixmap(	PIXMAP_ICON_PREFERENCES));
 	
 
 	/* GLOBAL VIEW */
