@@ -1,0 +1,169 @@
+
+EnsureSConsVersion(0,14);
+
+import os
+
+# Helpers
+
+def find_source_files(self, source_list,filetype):
+	import glob;
+	import string;
+	dir = self.Dir('.').abspath
+	sources = glob.glob(dir + "/"+filetype);
+	source_list+=sources;
+
+
+win32=(os.name == 'nt')
+win32_paths=win32
+win32_msvc=False
+
+env=Environment();
+
+opts=Options()
+opts.Add('optimize', 'Optimize (0|1).', 0)
+opts.Add('debug', 'Add debug symbols (0|1).', 1)
+opts.Add('prefix', 'The installation prefix', '/usr/local/')
+opts.Add('SDL','Enable SDL (0|1).',1)
+if (not win32):
+	opts.Add('jack','Enable JACK connection kit (0|1).',1)
+opts.Add('PNG','Enable LibPNG (0|1).',1)
+opts.Add('vst_enabled', 'Enable VST Support (win32 and win32_cross) (0|1).', 1)
+
+win32_cross=False
+# add the cross compiler option
+if (not win32):
+	opts.Add('win32_cross', 'Cross-Compile using mingw32 under unix (0|1). ', 0)
+
+opts.Update(env) # update environment
+Help(opts.GenerateHelpText(env)) # generate help
+
+
+if (not win32):
+	win32_cross = env['win32_cross']
+
+# Set the win32 cross compiler if requested
+if (win32_cross):
+
+        env.Append(CPPFLAGS=['-DANSIC_LIBS_ENABLED','-fstrict-aliasing'])
+        env['CXX']='i586-mingw32msvc-g++'
+        env['RANLIB']='i586-mingw32msvc-ranlib'
+        env['LD']='i586-mingw32msvc-ld'
+        env['CC']='i586-mingw32msvc-gcc'
+        env['AR']='i586-mingw32msvc-ar'
+        win32_paths=true
+
+# More win32 stuff
+
+if (win32_paths):
+	env.Append(CPPPATH=['#drivers/vst'])
+        
+
+if (win32 or win32_cross):
+
+	if (win32_msvc):
+        	env.Append(CPPFLAGS=['/DWIN32_ENABLED'])
+        else:
+        	env.Append(CPPFLAGS=['-DWIN32_ENABLED'])
+        if (env['vst_enabled']):
+		if (win32_msvc):
+			env.Append(CPPFLAGS=['/DVST_ENABLED'])
+                else:
+			env.Append(CPPFLAGS=['-DVST_ENABLED'])
+
+# Not Win32
+
+if (not win32 or not win32_cross): 
+
+       	env.Append(CPPFLAGS=['-DPOSIX_ENABLED'])
+	
+        # Under Win32, Assume it exists.
+	errorval=os.system("pkg-config --version > /dev/null");
+
+	if (errorval):
+		print "**Error: cant execute pkg-config, please install pkg-config!"
+		sys.exit(1);
+     
+# SDL
+
+if (env['SDL']):
+
+	errorval=os.system("sdl-config --version");
+
+        if (errorval):
+                print "Error: cant execute sdl-config, make sure SDL is installed";
+                exit(255);
+
+	env.ParseConfig('sdl-config --cflags --libs')
+        env.Append(CPPFLAGS=['-DSDL_ENABLED'])
+
+# PNG
+
+if (env['PNG']):
+
+	errorval=os.system("pkg-config libpng --modversion");
+
+        if (errorval):
+                print "Error: cant execute pkg-config to check for libpng, make sure pkg-config and libpng are installed";
+                exit(255);
+
+	env.ParseConfig('pkg-config libpng --cflags --libs')
+       
+
+# JACK
+
+if (not win32 and not win32_cross and env['jack']):
+
+	errorval=os.system("pkg-config jack --modversion");
+
+        if (errorval):
+                print "Error: cant execute pkg-config to check for JACK, make sure pkg-config and JACK are installed";
+                exit(255);
+
+	env.ParseConfig('pkg-config jack --cflags --libs')
+	env.Append(CPPFLAGS=['-DJACK_ENABLED']);
+
+# Common Variables        
+
+env.Append(CPPPATH=['#types','#gui','#'])
+
+if (not win32_msvc):
+
+	if (env['debug']):
+       		env.Append(CPPFLAGS=['-g3','-Wall'])
+	if (env['optimize']):
+       		env.Append(CPPFLAGS=['-O2','-ffast-math'])
+                
+        # get rid of annoying warning
+	env.Append(CPPFLAGS=['-fno-exceptions','-Wno-sign-compare']);
+        	
+# TODO
+        
+
+# Libraties to be generated
+
+env.Append(LIBS=['gui_main','gui_common','editor','plugins','engine','gui','types']);
+env.Append(LIBPATH=['#gui_main','#gui_common','#editor','#plugins','#engine','#gui','#types']);
+
+env.__class__.find_source_files = find_source_files
+
+env.Append(CXXFLAGS=['-DGUI_EXTERNAL_STRING="\\\"types/rstring.h\\\""']);
+
+env.bin_targets=[]
+
+Export('env');
+
+SConscript('types/SCsub');
+SConscript('engine/SCsub');
+SConscript('editor/SCsub');
+SConscript('drivers/SCsub');
+SConscript('plugins/SCsub');
+SConscript('gui/SCsub');
+SConscript('gui_common/SCsub');
+SConscript('gui_main/SCsub');
+SConscript('bin/SCsub');
+
+
+if (env['prefix']):
+        dst_target = env.Install(env['prefix']+'/bin', env.bin_targets)
+        env.Alias('install', dst_target )
+

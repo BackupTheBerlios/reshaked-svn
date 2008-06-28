@@ -1,0 +1,5 @@
+Import('env')
+
+res = env.Program('reshaked2', ['reshaked2.cpp']);
+env.bin_targets+=[res]
+

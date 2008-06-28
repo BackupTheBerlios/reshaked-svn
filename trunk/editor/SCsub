@@ -1,0 +1,9 @@
+Import('env');
+
+env_editor = env.Copy();
+env_editor.target_list=[];
+
+
+env_editor.find_source_files(env_editor.target_list,"*.cpp");
+
+env.Library('editor', env_editor.target_list)
