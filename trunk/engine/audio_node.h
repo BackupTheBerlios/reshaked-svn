@@ -24,7 +24,7 @@ struct AudioNodeInfo {
 	String icon_string;
 	int version; ///node_version, use any scheme you feel like inside
 	
-	AudioNode* (*creation_func)(const AudioNodeInfo *,int);  ///< creation func (info,desired channels)
+	AudioNode* (*creation_func)(int,const AudioNodeInfo *);  ///< creation func (desired channels, info)
 	
 };
 

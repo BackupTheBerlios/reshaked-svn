@@ -19,6 +19,45 @@
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
+
+class HL_ControlPort : public ControlPort {
+
+	bool visible;
+	String max_string;
+	String min_string;
+	float min,max,step,def;	
+	float val;
+	
+	Hint hint;
+	
+	String name;
+	String caption;
+public:
+
+
+	virtual String get_name() const;
+	virtual String get_caption() const;
+
+	virtual float get_min() const;
+	virtual float get_max() const;
+	virtual float get_step() const;
+	virtual float get_default() const;
+	virtual float get() const;
+	inline float operator()() const { return val; } // quick get
+	
+	virtual void set(float p_val,bool p_make_default=false); //set, optionally make the value the default too
+	
+	virtual String get_value_as_text(float p_value) const;
+	virtual Hint get_hint() const;
+	
+	void set_all(float p_val, float p_min, float p_max, float p_default, float p_step, Hint p_hint, String p_name, String p_caption,String p_min_str="",String p_max_str="");
+		
+		
+	HL_ControlPort();
+	virtual ~HL_ControlPort();
+};
+
+
 class HL_AudioNode : public AudioNode {
 
 	struct _AudioPort {

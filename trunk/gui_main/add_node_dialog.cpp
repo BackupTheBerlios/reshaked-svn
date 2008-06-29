@@ -16,6 +16,7 @@
 #include "bundles/margin_group.h"
 #include "widgets/button.h"
 #include "containers/center_container.h"
+#include "engine/audio_node_registry.h"
 
 static const char* _chan_names[8]={"Mono","Stereo","3","Quad","5","6","7","Octo"};
 
@@ -166,6 +167,15 @@ AddNodeDialog::AddNodeDialog(GUI::Window *p_parent,Song *p_song) : GUI::Window(p
 	GUI::ScrollBox *scroll_box = mg->add( new GUI::ScrollBox,1 );
 	scroll_box->set_expand_h(true);
 	GUI::VBoxContainer * vbox = scroll_box->set( new GUI::VBoxContainer );
+				
+	for (int i=0;i<AudioNodeRegistry::get_node_info_count();i++) {
+	
+		NodeInfoItem *nii = new NodeInfoItem( AudioNodeRegistry::get_node_info(i) );
+		nii->current=&selected;
+		vbox->add( nii );
+		nii->selected.connect( this, &AddNodeDialog::node_selected_callback );
+	}
+				
 				
 	GUI::HBoxContainer * hbc = wb->add( new GUI::HBoxContainer );
 				

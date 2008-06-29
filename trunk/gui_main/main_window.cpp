@@ -16,7 +16,7 @@
 #include "bundles/menu_box.h"
 #include "gui_common/common_skin.h"
 
-
+#include "nodes/register_nodes.h"
 
 void MainWindow::init(String p_config_file) {
 
@@ -49,6 +49,7 @@ bool MainWindow::must_quit() {
 
 MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_skin) : GUI::Window(p_painter,p_timer,p_skin) {
 
+	register_nodes();
 
 
 	GUI::VBoxContainer * main_vbc = new GUI::VBoxContainer;

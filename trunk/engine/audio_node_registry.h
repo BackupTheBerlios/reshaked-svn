@@ -24,7 +24,7 @@ public:
 
 	static void add_node_info(const AudioNodeInfo *p_info);
 	static int get_node_info_count();
-	const AudioNodeInfo *get_node_info(int p_index);
+	static const AudioNodeInfo *get_node_info(int p_index);
 
 };
 

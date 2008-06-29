@@ -10,6 +10,104 @@
 //
 //
 #include "hl_audio_node.h"
+#include <cmath>
+
+String HL_ControlPort::get_name() const {
+
+	return name;
+}
+
+String HL_ControlPort::get_caption() const {
+
+	return caption;
+}
+
+float HL_ControlPort::get_min() const {
+
+	return min;
+}
+float HL_ControlPort::get_max() const {
+
+	return max;
+}
+float HL_ControlPort::get_step() const {
+
+	return step;
+}
+float HL_ControlPort::get_default() const {
+
+	return def;
+}
+float HL_ControlPort::get() const {
+
+	return val;
+}
+
+void HL_ControlPort::set(float p_val,bool p_make_default) {
+
+	if (p_val<min)
+		p_val=min;
+	if (p_val>max)
+		p_val=max;
+	val=p_val;
+	
+	if (step!=0) {
+
+		val=floor( val / step + 0.5 ) * step;
+	}
+	
+	if (p_make_default)
+		def=val;
+	
+}
+String HL_ControlPort::get_value_as_text(float p_value) const {
+
+	if (p_value==min && min_string!="")
+		return min_string;
+	if (p_value==max && max_string!="")
+		return max_string;
+		
+	
+}
+ControlPort::Hint HL_ControlPort::get_hint() const {
+
+	return hint;
+}
+
+void HL_ControlPort::set_all(float p_val, float p_min, float p_max, float p_default, float p_step, Hint p_hint, String p_name, String p_caption,String p_min_str,String p_max_str )  {
+
+	val=p_val;
+	min=p_min;
+	max=p_max;	
+	def=p_default;
+	step=p_step;
+	hint=p_hint;
+	name=p_name;
+	caption=p_caption;
+	min_string=p_min_str;
+	max_string=p_max_str;		
+
+}
+
+		
+HL_ControlPort::HL_ControlPort(){ 
+
+	min=0;
+	max=1;
+	val=0;
+	step=0.01;
+	def=0;
+	hint=HINT_RANGE;
+	
+}
+
+
+HL_ControlPort::~HL_ControlPort()
+{
+}
+
+
+/****************/
 
 const AudioNodeInfo *HL_AudioNode::get_info() const {
 
