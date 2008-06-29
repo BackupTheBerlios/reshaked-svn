@@ -156,7 +156,7 @@ SConscript('types/SCsub');
 SConscript('engine/SCsub');
 SConscript('editor/SCsub');
 SConscript('drivers/SCsub');
-SConscript('plugins/SCsub');
+SConscript('nodes/SCsub');
 SConscript('gui/SCsub');
 SConscript('gui_common/SCsub');
 SConscript('gui_main/SCsub');
