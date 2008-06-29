@@ -141,8 +141,8 @@ if (not win32_msvc):
 
 # Libraties to be generated
 
-env.Append(LIBS=['gui_main','gui_common','editor','plugins','engine','gui','types']);
-env.Append(LIBPATH=['#gui_main','#gui_common','#editor','#plugins','#engine','#gui','#types']);
+env.Append(LIBS=['gui_main','gui_common','editor','nodes','engine','gui','types']);
+env.Append(LIBPATH=['#gui_main','#gui_common','#editor','#nodes','#engine','#gui','#types']);
 
 env.__class__.find_source_files = find_source_files
 
