@@ -99,12 +99,14 @@ public:
 	};
 	
 	virtual int get_port_count( PortType p_type, PortFlow p_flow ) const=0;
-	virtual int get_audio_port_channel_count( PortFlow p_flow, int p_channel) const=0;
+	virtual int get_audio_port_channel_count( PortFlow p_flow, int p_port) const=0;
+	
+	virtual String get_port_name( PortType p_type, PortFlow p_flow,int p_port ) const;
 	
 	virtual void connect_audio_buffer( PortFlow p_flow, int p_port, int p_channel, sample_t *p_buffer )=0;
 	virtual void connect_event_buffer( PortFlow p_flow, int p_port, MusicEvent *p_buffer )=0;
 
-	virtual ControlPort* get_control_port( PortFlow p_flow )=0;
+	virtual ControlPort* get_control_port( PortFlow p_flow,int p_port )=0;
 	
 	/* AudioNode Info */
 	

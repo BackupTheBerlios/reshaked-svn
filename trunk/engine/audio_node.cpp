@@ -49,6 +49,54 @@ ControlPort::~ControlPort() {
 
 /*****************/
 
+String AudioNode::get_port_name( PortType p_type, PortFlow p_flow,int p_port ) const {
+
+	String str;
+	
+	switch (p_type) {
+	
+		case PORT_AUDIO: {
+			
+			str="Audio";			
+		} break;
+		case PORT_EVENT: {
+			
+			str="Event";			
+		} break;
+		case PORT_CONTROL: {
+			
+			if (p_port>=0 && p_port<get_port_count( PORT_CONTROL, p_flow )) {
+			
+				AudioNode *an=(AudioNode*)this;
+			
+				ControlPort *cp=an->get_control_port( p_flow, p_port );
+				ERR_FAIL_COND_V( !cp, "");
+				
+				return cp->get_name();
+			
+			}
+			str="Control";			
+		} break;
+	}
+	
+	switch (p_flow) {
+	
+		case PORT_IN: {
+		
+			str+=" IN";
+		} break;
+		case PORT_OUT: {
+		
+			str+=" OUT";
+		} break;
+	}
+	
+	
+	str+=" #"+String::num(p_port);
+	
+	return str;
+}
+
 void AudioNode::graph_enter() {
 
 }

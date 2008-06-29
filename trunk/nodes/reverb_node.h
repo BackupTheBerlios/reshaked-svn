@@ -17,9 +17,9 @@
 */
 class ReverbNode{
 public:
-    ReverbNode();
 
-    ~ReverbNode();
+	ReverbNode();	
+	~ReverbNode();
 
 };
 
