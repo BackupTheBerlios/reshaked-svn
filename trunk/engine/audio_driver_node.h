@@ -13,11 +13,12 @@
 #define AUDIO_DRIVER_NODE_H
 
 #include "engine/audio_node.h"
-#include <list.h>
+#include <list>
 
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
+
 class AudioDriverNode : public AudioNode {
 public:
 

@@ -75,7 +75,11 @@ class AudioNode {
 	int _x,_y; // coordinates in graph
 	unsigned int _layer; // layer in graph, <0 means all layers
 	String _name;
+protected:
+friend class AudioGraph;	
 	
+	virtual void graph_enter();
+	virtual void graph_exit();	
 public:
 	
 	/* Audio Port API */

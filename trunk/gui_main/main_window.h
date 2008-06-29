@@ -24,6 +24,11 @@
 
 #include "widgets/tab_bar.h"
 #include "widgets/menu_button.h"
+#include "engine/song.h"
+#include "gui_main/gui_update_notify.h"
+#include "gui_main/add_node_dialog.h"
+
+#include "gui_main/audio_graph_screen.h"
 
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
@@ -65,8 +70,16 @@ class MainWindow : public GUI::Window {
 	
 	void file_menu_callback(int p_option);
 	void control_callback(int p_option);
+	void add_node_callback();
 		
 	bool quit;
+	
+	Song song;
+	GUI_UpdateNotify gui_update_notify;
+	
+	AudioGraphScreen *audio_graph_screen;
+	
+	AddNodeDialog *add_node_dialog;
 	
 public:
 	

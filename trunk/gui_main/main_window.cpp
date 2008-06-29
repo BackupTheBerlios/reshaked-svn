@@ -31,6 +31,11 @@ void MainWindow::control_callback(int p_option) {
 
 }
 
+void MainWindow::add_node_callback() {
+
+	add_node_dialog->show();
+}
+
 void MainWindow::quit_request() {
 
 	quit=true;
@@ -77,6 +82,7 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 	hb->add( new GUI::VSeparator );
 	
 	GUI::MenuButton * add_button = hb->add( new GUI::MenuButton( p_skin->get_bitmap( BITMAP_ICON_ADD) )  );
+	add_button->pressed_signal.connect( this, &MainWindow::add_node_callback );
 
 	hb->add( new GUI::VSeparator );
 
@@ -101,7 +107,7 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 		
 	main_stack = main_vbc->add( new GUI::StackContainer, 1 );
 	
-	//graph_screen = main_stack->add(new GraphScreen(song.get_audio_graph()) );	
+	audio_graph_screen = main_stack->add(new AudioGraphScreen(&song) );	
 	
 	hb = main_vbc->add( new GUI::HBoxContainer );
 	
@@ -116,6 +122,8 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 	
 	/* Pages */
 
+	add_node_dialog = new AddNodeDialog(this,&song);
+	add_node_dialog->hide();
 	quit=false;
 }
 

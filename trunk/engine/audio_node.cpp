@@ -49,6 +49,13 @@ ControlPort::~ControlPort() {
 
 /*****************/
 
+void AudioNode::graph_enter() {
+
+}
+void AudioNode::graph_exit() {
+
+}
+
 String AudioNode::get_name() const {
 	
 	return _name;
