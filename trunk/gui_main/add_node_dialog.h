@@ -46,6 +46,9 @@ class AddNodeDialog : public GUI::Window {
 	NodeInfoItem *selected;
 	void node_selected_callback(NodeInfoItem *p_item);
 	void default_channels_changed(int p_to);
+	
+	void create_node();
+	
 	GUI::LineEdit *name;
 	GUI::ComboBox *channels;
 	int default_channels;

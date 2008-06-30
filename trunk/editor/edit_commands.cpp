@@ -166,13 +166,14 @@ void EditCommands::audio_graph_swap_nodes(AudioGraph *p_graph,int p_node_idx,int
 
 void EditCommands::_audio_graph_add_node_helper(AudioGraph* p_graph, AudioNode* p_node,int p_at_pos) {
 
-
+	p_graph->add_node( p_node, p_at_pos );
+	UpdateNotify::get_singleton()->audio_graph_changed();
 } 
 	
 void EditCommands::_audio_graph_remove_node_helper(AudioGraph* p_graph, int p_node_idx) {
 
-
-
+	p_graph->erase_node( p_node_idx );
+	UpdateNotify::get_singleton()->audio_graph_changed();
 }
 	
 void EditCommands::audio_graph_add_node(AudioGraph *p_graph,AudioNode *p_node) {

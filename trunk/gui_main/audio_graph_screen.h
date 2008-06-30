@@ -14,6 +14,7 @@
 
 #include "gui_main/audio_graph_widget.h"
 #include "bundles/scroll_box.h"
+#include "widgets/button_group.h"
 
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
@@ -22,11 +23,14 @@ class AudioGraphScreen : public GUI::VBoxContainer {
 
 	Song *song;
 
+
+	GUI::ButtonGroup layer_group;
+
 	AudioGraphWidget *audio_graph_widget;
 	GUI::ScrollBox *scroll_box;
 
 public:
-	AudioGraphScreen(Song *p_song);	
+	AudioGraphScreen(GUI_UpdateNotify *p_update_notify,Song *p_song);	
 	~AudioGraphScreen();
 
 };

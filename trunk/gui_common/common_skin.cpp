@@ -60,6 +60,22 @@ void CommonSkin::set_default_extra() {
 	
 	SET_BITMAP(BITMAP_ICON_PREFERENCES,PixmapData::get_pixmap(	PIXMAP_ICON_PREFERENCES));
 	
+// tired of that
+#define SET_BM( m_name )\
+	SET_BITMAP( BITMAP_##m_name,PixmapData::get_pixmap( PIXMAP_##m_name ));
+	
+	SET_BM(GRAPH_JACK);
+	SET_BM(GRAPH_NODE_EDIT);
+	SET_BM(GRAPH_NODE_EDIT_HOVER);
+	SET_BM(GRAPH_NODE_CLOSE);
+	SET_BM(GRAPH_NODE_CLOSE_HOVER);
+	SET_BM(GRAPH_NODE_OPTIONS);
+	SET_BM(GRAPH_NODE_OPTIONS_HOVER);
+	SET_BM(GRAPH_NODE_PRESET);
+	SET_BM(GRAPH_NODE_RENAME);
+	SET_BM(GRAPH_NODE_CONTROL_EDIT);
+	SET_BM(GRAPH_NODE_SKIP);
+	SET_BM(GRAPH_NODE_LAYERS);
 
 	/* NODE CHOOSER */
 	
@@ -75,9 +91,109 @@ void CommonSkin::set_default_extra() {
 	SET_COLOR( COLOR_NODE_CHOOSER_SEPARATOR, GUI::Color (190 ) );
 	
 
-	/* GLOBAL VIEW */
+	/* GRAPH VIEW */
+	
+#define MAX_LOCAL_COLORS 8
+	static const GUI::Color layer_colors[MAX_LOCAL_COLORS]={
+		GUI::Color(0xc9,0x5f,0x5f),
+		GUI::Color(0xf0,0x96,0xd8),
+		GUI::Color(0x61,0x5f,0xc9),
+		GUI::Color(0x5f,0xbb,0xc9),
+		GUI::Color(0x5f,0xc9,0x5f),
+		GUI::Color(0xc9,0xc6,0x5f),
+		GUI::Color(0xc9,0x91,0x5f),
+		GUI::Color(0xaf,0x96,0xf0)
+	};
+	
+	static const GUI::Color gray_color(0xc9,0xc9,0xc9);
+	
+	static const int button_pixmap_id[MAX_LOCAL_COLORS]={
+	
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_0),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_1),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_2),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_3),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_4),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_5),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_6),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_7)
+	};
+	
+	static const int button_pixmap_hover_id[MAX_LOCAL_COLORS]={
+	
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_0_HOVER),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_1_HOVER),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_2_HOVER),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_3_HOVER),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_4_HOVER),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_5_HOVER),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_6_HOVER),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_7_HOVER)
+	};
+	
+	static const int button_pixmap_pressed_id[MAX_LOCAL_COLORS]={
+	
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_0_PRESSED),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_1_PRESSED),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_2_PRESSED),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_3_PRESSED),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_4_PRESSED),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_5_PRESSED),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_6_PRESSED),
+		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_7_PRESSED)
+	};
+	
+#define COL( m_col ) m_col
+#define COL_DARK( m_col ) GUI::Color( m_col.r/2, m_col.g/2, m_col.b/2 )
+#define COL_LIGHT( m_col ) GUI::Color( (((int)m_col.r)*2 > 255?255:m_col.r*2), (((int)m_col.g)*2 > 255?255:m_col.g*2), (((int)m_col.b)*2 > 255?255:m_col.b*2) )
+
+
+	for(int i=0;i<MAX_LAYER_COLORS;i++) {
+	
+		set_stylebox( SB_LAYER_STYLE_NODE_0+i, GUI::StyleBox( 1, COL( layer_colors[i%MAX_LOCAL_COLORS] ), COL_LIGHT( layer_colors[i%MAX_LOCAL_COLORS]), COL_LIGHT( layer_colors[i%MAX_LOCAL_COLORS] ) ) );
+		set_stylebox_name( SB_LAYER_STYLE_NODE_0+i,"SB_LAYER_STYLE_NODE_"+String::num(i) );
+		
+		set_stylebox( SB_LAYER_STYLE_BG_0+i, GUI::StyleBox( 1, COL_DARK( layer_colors[i%MAX_LOCAL_COLORS] ), COL( layer_colors[i%MAX_LOCAL_COLORS]), COL( layer_colors[i%MAX_LOCAL_COLORS] ) ) );
+		set_stylebox_name( SB_LAYER_STYLE_BG_0+i,"SB_LAYER_STYLE_BG_"+String::num(i) );
+		
+		set_bitmap( BITMAP_LAYER_BUTTON_0+i, button_pixmap_id[i%MAX_LOCAL_COLORS] );
+		set_bitmap_name( BITMAP_LAYER_BUTTON_0+i, "BITMAP_LAYER_BUTTON_"+String::num(i) );
+		
+		set_bitmap( BITMAP_LAYER_BUTTON_0_HOVER+i, button_pixmap_hover_id[i%MAX_LOCAL_COLORS] );
+		set_bitmap_name( BITMAP_LAYER_BUTTON_0_HOVER+i, "BITMAP_LAYER_BUTTON_"+String::num(i)+"_HOVER" );
+			
+		set_bitmap( BITMAP_LAYER_BUTTON_0_PRESSED+i, button_pixmap_pressed_id[i%MAX_LOCAL_COLORS] );
+		set_bitmap_name( BITMAP_LAYER_BUTTON_0_PRESSED+i, "BITMAP_LAYER_BUTTON_"+String::num(i)+"_PRESSED" );
+	
+	}	
+
+	SET_BM(LAYER_BUTTON_ALL);
+	SET_BM(LAYER_BUTTON_ALL_HOVER);
+	SET_BM(LAYER_BUTTON_ALL_PRESSED);
+	SET_STYLEBOX( SB_LAYER_STYLE_NODE_ALL, GUI::StyleBox( 1, COL( gray_color ), COL_LIGHT( gray_color ), COL_LIGHT( gray_color ) ) );
+	SET_STYLEBOX( SB_LAYER_STYLE_BG_ALL, GUI::StyleBox( 1, COL( gray_color ), COL_LIGHT( gray_color ), COL_LIGHT( gray_color ) ) );
+
+	GUI::StyleBox sb;
+	sb = GUI::StyleBox( 1, GUI::Color(0x99,0x5c,0x5c),GUI::Color(0xF1,0x6c,0x6c),GUI::Color(0xF1,0x6c,0x6c)); 
+	sb.margins[0]=2; sb.margins[1]=2; sb.margins[2]=2; sb.margins[3]=2;
+     	SET_STYLEBOX( SB_GRAPH_AUDIO_PORT, sb );
+	sb = GUI::StyleBox( 1, GUI::Color(0x5c,0x5c,0x99), GUI::Color(0x6c,0x6c,0xF1), GUI::Color(0x6c,0x6c,0xF1) );
+	sb.margins[0]=2; sb.margins[1]=2; sb.margins[2]=2; sb.margins[3]=2;
+     	SET_STYLEBOX( SB_GRAPH_EVENT_PORT, sb);
+	sb = GUI::StyleBox( 1, GUI::Color(0x99,0x98,0x5c),GUI::Color(0xf1,0xef,0x6c),GUI::Color(0xf1,0xef,0x6c)); 
+	sb.margins[0]=2; sb.margins[1]=2; sb.margins[2]=2; sb.margins[3]=2;
+     	SET_STYLEBOX( SB_GRAPH_CONTROL_PORT, GUI::StyleBox( 1, GUI::Color(0x99,0x98,0x5c),GUI::Color(0xf1,0xef,0x6c),GUI::Color(0xf1,0xef,0x6c)) );
 	
 	
+	SET_FONT(FONT_GRAPH_NODE_PORT,0);
+	SET_FONT(FONT_GRAPH_NODE_NAME,0);
+	SET_COLOR(COLOR_GRAPH_NODE_AUDIO_PORT_FONT,GUI::Color(0));
+	SET_COLOR(COLOR_GRAPH_NODE_EVENT_PORT_FONT,GUI::Color(0));
+	SET_COLOR(COLOR_GRAPH_NODE_CONTROL_PORT_FONT,GUI::Color(0));
+	SET_CONSTANT(C_GRAPH_NODE_VSPACING,1);
+	SET_CONSTANT(C_GRAPH_NODE_HSPACING,1);
+
+
 }
 	
 	

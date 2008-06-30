@@ -108,7 +108,7 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 		
 	main_stack = main_vbc->add( new GUI::StackContainer, 1 );
 	
-	audio_graph_screen = main_stack->add(new AudioGraphScreen(&song) );	
+	audio_graph_screen = main_stack->add(new AudioGraphScreen(&gui_update_notify,&song) );	
 	
 	hb = main_vbc->add( new GUI::HBoxContainer );
 	

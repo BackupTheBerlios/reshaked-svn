@@ -18,6 +18,9 @@
 #include "containers/center_container.h"
 #include "engine/audio_node_registry.h"
 
+#include "editor/edit_commands.h"
+
+
 static const char* _chan_names[8]={"Mono","Stereo","3","Quad","5","6","7","Octo"};
 
 void AddNodeDialog::NodeInfoItem::mouse_button(const GUI::Point& p_pos, int p_button,bool p_press,int p_modifier_mask) {
@@ -40,7 +43,7 @@ GUI::Size AddNodeDialog::NodeInfoItem::get_minimum_size_internal() {
 	
 	minsize.height+=constant(C_NODE_CHOOSER_ITEM_INTERNAL_SEPARATION);
 	
-	return minsize;		 	
+	return minsize;
 }
 
 
@@ -154,6 +157,66 @@ void AddNodeDialog::default_channels_changed(int p_to) {
 	}		
 }
 
+void AddNodeDialog::create_node() {
+
+	if (!selected)
+		return;
+		
+	int chans = -1;
+			
+	String sel_str = channels->get_line_edit()->get_text();
+	
+	for (int i=1;i<8;i++) {
+	
+		if (sel_str==_chan_names[i-1])
+			chans=i;
+	}
+		
+	if (chans==-1)
+		return;
+		
+	AudioNode *anode = selected->info->creation_func( chans, selected->info );
+	
+	/* make sure it doesn't appear overlappign another node */
+	
+	int x=20,y=20;
+	
+	while(true) {
+		
+		bool overlaps=false;
+	
+		for (int i=0;i<song->get_audio_graph()->get_node_count();i++) {
+		
+			int nx,ny;
+			AudioNode *an=song->get_audio_graph()->get_node(i);
+			nx=an->get_x();
+			ny=an->get_y();
+		
+			if (x==nx && y==ny) {
+			
+				overlaps=true;
+				break;
+			}			
+		}
+		
+		if (overlaps) {
+		
+			x+=20;
+			y+=20;
+			continue;
+		}
+		
+		break;
+	}
+	
+	anode->set_x(x);
+	anode->set_y(y);
+	
+	EditCommands::get_singleton()->audio_graph_add_node( song->get_audio_graph(), anode );
+
+	hide();
+}
+
 AddNodeDialog::AddNodeDialog(GUI::Window *p_parent,Song *p_song) : GUI::Window(p_parent,GUI::Window::MODE_POPUP,GUI::Window::SIZE_TOPLEVEL_CENTER) {
 
 	song=p_song;
@@ -189,6 +252,8 @@ AddNodeDialog::AddNodeDialog(GUI::Window *p_parent,Song *p_song) : GUI::Window(p
 	default_channels=2;
 	
 	GUI::Button *add = wb->add( new GUI::CenterContainer )->set( new GUI::Button("Add") );
+	
+	add->pressed_signal.connect( this, &AddNodeDialog::create_node );
 		
 }
 

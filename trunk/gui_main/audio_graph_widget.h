@@ -15,7 +15,7 @@
 
 #include "engine/song.h"
 #include "base/widget.h"
-
+#include "gui_main/gui_update_notify.h"
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -23,11 +23,23 @@ class AudioGraphWidget : public GUI::Widget{
 
 	Song *song;
 
+	int current_layer;
+
+	GUI::Size get_node_size(AudioNode *p_node);
+
+	void draw_node(const GUI::Rect& p_rect,AudioNode *p_node);
 	virtual void draw(const GUI::Point& p_pos,const GUI::Size& p_size,const GUI::Rect& p_exposed);
 
 public:
 
-	AudioGraphWidget(Song *p_song);
+	enum {
+	
+		SHOW_ALL_LAYERS=-1
+	};
+
+	void redraw();
+
+	AudioGraphWidget(GUI_UpdateNotify *p_update_notify,Song *p_song);
 	~AudioGraphWidget();
 
 };
