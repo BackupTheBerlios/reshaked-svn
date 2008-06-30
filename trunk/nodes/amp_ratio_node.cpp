@@ -1,5 +1,5 @@
 //
-// C++ Interface: amp_gain_node
+// C++ Implementation: amp_gain_node
 //
 // Description: 
 //
@@ -9,30 +9,54 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef AMP_GAIN_NODE_H
-#define AMP_GAIN_NODE_H
+#include "amp_gain_node.h"
 
-#include "engine/hl_audio_node.h"
 
-/**
-	@author Juan Linietsky <reduzio@gmail.com>
-*/
-class AmpGainNode : public HL_AudioNode {
+AudioNode *AmpGainNode::creation_func(int p_channels,const AudioNodeInfo *p_info) {
 
-	HL_ControlPort amp;
+	return new AmpGainNode(p_channels,p_info);
+}
 
-	virtual void process(const ProcessInfo& p_info);
 
-	AmpGainNode(int p_instanced_channels,const AudioNodeInfo *p_info);	
+const AudioNodeInfo *AmpGainNode::get_creation_info() {
+
+	static AudioNodeInfo _info;
+	_info.caption="Amplification (gain)";
+	_info.description="Gain-Based Amplification";
+	_info.unique_ID="INTERNAL: AmpGainNode";
+	_info.creation_func=&AmpGainNode::creation_func;
+	_info.category="Effects";
+
+	return &_info;
+}
+
+void AmpGainNode::process(const ProcessInfo& p_info) {
+
+	for(int i=0;i<get_channels();i++) {
 	
-public:
+		const sample_t *src = get_audio_buffer( PORT_IN, 0, i );
+		sample_t *dst = get_audio_buffer( PORT_OUT, 0, i );
+		
+		for (int j=0;j<p_info.audio_buffer_size;j++) {
+		
+			dst[j]=src[j]*amp();
+		}
+	}
+}
 
-	static AudioNode *creation_func(int p_channels,const AudioNodeInfo *p_info);
-	static const AudioNodeInfo *get_creation_info();
+AmpGainNode::AmpGainNode(int p_instanced_channels,const AudioNodeInfo *p_info) : HL_AudioNode(p_instanced_channels,p_info) {
+
+	amp.set_all( 1.0, 0.0, 8.0, 1.0, 0.01, ControlPort::HINT_RANGE, "AmpRatio","Amp (Ratio)","Mute");
+
+	add_audio_port("In",PORT_IN);
+	add_audio_port("AmpOut",PORT_OUT);
+	
+	add_control_port( PORT_IN, &amp );
+	
+}
+
+AmpGainNode::~AmpGainNode()
+{
+}
 
 
-	~AmpGainNode();
-
-};
-
-#endif
