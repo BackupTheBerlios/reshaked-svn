@@ -1,5 +1,5 @@
 //
-// C++ Interface: amp_gain_node
+// C++ Interface: amp_ratio_node
 //
 // Description: 
 //
@@ -17,13 +17,13 @@
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
-class AmpGainNode : public HL_AudioNode {
+class AmpRatioNode : public HL_AudioNode {
 
 	HL_ControlPort amp;
 
 	virtual void process(const ProcessInfo& p_info);
 
-	AmpGainNode(int p_instanced_channels,const AudioNodeInfo *p_info);	
+	AmpRatioNode(int p_instanced_channels,const AudioNodeInfo *p_info);	
 	
 public:
 
@@ -31,7 +31,7 @@ public:
 	static const AudioNodeInfo *get_creation_info();
 
 
-	~AmpGainNode();
+	~AmpRatioNode();
 
 };
 

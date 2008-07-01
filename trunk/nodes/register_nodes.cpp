@@ -13,10 +13,10 @@
 #include "engine/audio_node_registry.h"
 
 
-#include "amp_gain_node.h"
+#include "amp_ratio_node.h"
 
 void register_nodes() {
 
-	AudioNodeRegistry::add_node_info( AmpGainNode::get_creation_info() );
+	AudioNodeRegistry::add_node_info( AmpRatioNode::get_creation_info() );
 }
 

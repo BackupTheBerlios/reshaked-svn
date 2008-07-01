@@ -16,6 +16,7 @@ struct AudioNodeInfo {
 	
 	
 	String caption; ///< Caption of the Node
+	String short_caption; ///< Caption of the Node
 	String description; ///< Short description of the node
 	String long_description; ///< Long description of the node
 	String unique_ID; ///< Unique String ID of node

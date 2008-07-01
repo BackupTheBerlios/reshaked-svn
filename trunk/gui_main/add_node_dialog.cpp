@@ -137,6 +137,36 @@ void AddNodeDialog::node_selected_callback(NodeInfoItem *p_item) {
 			
 	updating_default_channels=false;;
 	
+	/* update name */
+	
+	
+	String base_name = p_item->info->short_caption;
+	
+	int attempt=1;
+	while(true) {
+	
+		bool exists=false;
+		String intended_name=attempt==1?base_name:base_name+" "+String::num(attempt);
+		
+		for (int i=0;i<song->get_audio_graph()->get_node_count();i++) {
+		
+			if (song->get_audio_graph()->get_node(i)->get_name()==intended_name) {
+				
+				exists=true;
+				break;
+			}
+		}
+		
+		if (exists) {
+		
+			attempt++;
+			continue;
+		}
+	
+		name->set_text( intended_name );
+		break;	
+	}
+	
 }
 
 
@@ -211,6 +241,7 @@ void AddNodeDialog::create_node() {
 	
 	anode->set_x(x);
 	anode->set_y(y);
+	anode->set_name( name->get_text() );
 	
 	EditCommands::get_singleton()->audio_graph_add_node( song->get_audio_graph(), anode );
 
@@ -254,6 +285,7 @@ AddNodeDialog::AddNodeDialog(GUI::Window *p_parent,Song *p_song) : GUI::Window(p
 	GUI::Button *add = wb->add( new GUI::CenterContainer )->set( new GUI::Button("Add") );
 	
 	add->pressed_signal.connect( this, &AddNodeDialog::create_node );
+	
 		
 }
 

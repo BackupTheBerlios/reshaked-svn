@@ -1,5 +1,5 @@
 //
-// C++ Implementation: amp_gain_node
+// C++ Implementation: amp_ratio_node
 //
 // Description: 
 //
@@ -9,28 +9,29 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "amp_gain_node.h"
+#include "amp_ratio_node.h"
 
 
-AudioNode *AmpGainNode::creation_func(int p_channels,const AudioNodeInfo *p_info) {
+AudioNode *AmpRatioNode::creation_func(int p_channels,const AudioNodeInfo *p_info) {
 
-	return new AmpGainNode(p_channels,p_info);
+	return new AmpRatioNode(p_channels,p_info);
 }
 
 
-const AudioNodeInfo *AmpGainNode::get_creation_info() {
+const AudioNodeInfo *AmpRatioNode::get_creation_info() {
 
 	static AudioNodeInfo _info;
-	_info.caption="Amplification (gain)";
-	_info.description="Gain-Based Amplification";
-	_info.unique_ID="INTERNAL: AmpGainNode";
-	_info.creation_func=&AmpGainNode::creation_func;
+	_info.caption="Amplification (ratio)";
+	_info.short_caption="Amp";
+	_info.description="Ratio-Based Amplification";
+	_info.unique_ID="INTERNAL: AmpRatioNode";
+	_info.creation_func=&AmpRatioNode::creation_func;
 	_info.category="Effects";
 
 	return &_info;
 }
 
-void AmpGainNode::process(const ProcessInfo& p_info) {
+void AmpRatioNode::process(const ProcessInfo& p_info) {
 
 	for(int i=0;i<get_channels();i++) {
 	
@@ -44,7 +45,7 @@ void AmpGainNode::process(const ProcessInfo& p_info) {
 	}
 }
 
-AmpGainNode::AmpGainNode(int p_instanced_channels,const AudioNodeInfo *p_info) : HL_AudioNode(p_instanced_channels,p_info) {
+AmpRatioNode::AmpRatioNode(int p_instanced_channels,const AudioNodeInfo *p_info) : HL_AudioNode(p_instanced_channels,p_info) {
 
 	amp.set_all( 1.0, 0.0, 8.0, 1.0, 0.01, ControlPort::HINT_RANGE, "AmpRatio","Amp (Ratio)","Mute");
 
@@ -55,7 +56,7 @@ AmpGainNode::AmpGainNode(int p_instanced_channels,const AudioNodeInfo *p_info) :
 	
 }
 
-AmpGainNode::~AmpGainNode()
+AmpRatioNode::~AmpRatioNode()
 {
 }
 

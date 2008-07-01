@@ -140,7 +140,7 @@ int HL_AudioNode::get_port_count( PortType p_type, PortFlow p_flow ) const {
 		};
 		case PORT_CONTROL: {
 		
-			return _event_buffers[p_flow].size();
+			return _control_ports[p_flow].size();
 		};
 	}
 	

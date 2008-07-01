@@ -143,14 +143,19 @@ void CommonSkin::set_default_extra() {
 		PixmapData::get_pixmap( PIXMAP_LAYER_BUTTON_7_PRESSED)
 	};
 	
-#define COL( m_col ) m_col
+#define GRAY( m_col ) 	(((int)m_col.r + (int)m_col.g + (int) m_col.b)/3)
+#define GRAYED( m_col,m_comp ) ((GRAY(m_col) + (int)m_col.m_comp)/3)
+#define COL( m_col ) GUI::Color( GRAYED(m_col,r), GRAYED(m_col,g), GRAYED(m_col,b) )
 #define COL_DARK( m_col ) GUI::Color( m_col.r/2, m_col.g/2, m_col.b/2 )
 #define COL_LIGHT( m_col ) GUI::Color( (((int)m_col.r)*2 > 255?255:m_col.r*2), (((int)m_col.g)*2 > 255?255:m_col.g*2), (((int)m_col.b)*2 > 255?255:m_col.b*2) )
 
 
 	for(int i=0;i<MAX_LAYER_COLORS;i++) {
 	
-		set_stylebox( SB_LAYER_STYLE_NODE_0+i, GUI::StyleBox( 1, COL( layer_colors[i%MAX_LOCAL_COLORS] ), COL_LIGHT( layer_colors[i%MAX_LOCAL_COLORS]), COL_LIGHT( layer_colors[i%MAX_LOCAL_COLORS] ) ) );
+		GUI::StyleBox sb = GUI::StyleBox( 1, COL( layer_colors[i%MAX_LOCAL_COLORS] ), COL_LIGHT( layer_colors[i%MAX_LOCAL_COLORS]), COL_LIGHT( layer_colors[i%MAX_LOCAL_COLORS] ) );
+		sb.margins[0]=3; sb.margins[1]=3; sb.margins[2]=3; sb.margins[3]=3;
+		
+		set_stylebox( SB_LAYER_STYLE_NODE_0+i, sb );
 		set_stylebox_name( SB_LAYER_STYLE_NODE_0+i,"SB_LAYER_STYLE_NODE_"+String::num(i) );
 		
 		set_stylebox( SB_LAYER_STYLE_BG_0+i, GUI::StyleBox( 1, COL_DARK( layer_colors[i%MAX_LOCAL_COLORS] ), COL( layer_colors[i%MAX_LOCAL_COLORS]), COL( layer_colors[i%MAX_LOCAL_COLORS] ) ) );
@@ -182,16 +187,23 @@ void CommonSkin::set_default_extra() {
      	SET_STYLEBOX( SB_GRAPH_EVENT_PORT, sb);
 	sb = GUI::StyleBox( 1, GUI::Color(0x99,0x98,0x5c),GUI::Color(0xf1,0xef,0x6c),GUI::Color(0xf1,0xef,0x6c)); 
 	sb.margins[0]=2; sb.margins[1]=2; sb.margins[2]=2; sb.margins[3]=2;
-     	SET_STYLEBOX( SB_GRAPH_CONTROL_PORT, GUI::StyleBox( 1, GUI::Color(0x99,0x98,0x5c),GUI::Color(0xf1,0xef,0x6c),GUI::Color(0xf1,0xef,0x6c)) );
+     	SET_STYLEBOX( SB_GRAPH_CONTROL_PORT, GUI::StyleBox( 1, GUI::Color(0x79,0x78,0x3c),GUI::Color(0xf1,0xef,0x6c),GUI::Color(0xf1,0xef,0x6c)) );
 	
 	
 	SET_FONT(FONT_GRAPH_NODE_PORT,0);
 	SET_FONT(FONT_GRAPH_NODE_NAME,0);
-	SET_COLOR(COLOR_GRAPH_NODE_AUDIO_PORT_FONT,GUI::Color(0));
-	SET_COLOR(COLOR_GRAPH_NODE_EVENT_PORT_FONT,GUI::Color(0));
-	SET_COLOR(COLOR_GRAPH_NODE_CONTROL_PORT_FONT,GUI::Color(0));
+	SET_COLOR(COLOR_GRAPH_NODE_AUDIO_PORT_FONT,GUI::Color(255));
+	SET_COLOR(COLOR_GRAPH_NODE_EVENT_PORT_FONT,GUI::Color(255));
+	SET_COLOR(COLOR_GRAPH_NODE_CONTROL_PORT_FONT,GUI::Color(255));
+	SET_COLOR(COLOR_GRAPH_NODE_NAME_FONT,GUI::Color(255));
+	SET_COLOR(COLOR_GRAPH_AUDIO_CABLE, GUI::Color(0xF1,0x6c,0x6c) );
+	SET_COLOR(COLOR_GRAPH_EVENT_CABLE, GUI::Color(0x6c,0x6c,0xF1) );
+	SET_COLOR(COLOR_GRAPH_CONTROL_CABLE, GUI::Color(0xf1,0xef,0x6c) );
+	SET_COLOR(COLOR_GRAPH_CONNECTING_CABLE, GUI::Color(0xff,0xff,0xff) );
+	
 	SET_CONSTANT(C_GRAPH_NODE_VSPACING,1);
 	SET_CONSTANT(C_GRAPH_NODE_HSPACING,1);
+	
 
 
 }

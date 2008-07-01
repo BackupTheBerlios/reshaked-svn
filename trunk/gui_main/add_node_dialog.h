@@ -53,6 +53,7 @@ class AddNodeDialog : public GUI::Window {
 	GUI::ComboBox *channels;
 	int default_channels;
 	bool updating_default_channels;
+
 public:
 	AddNodeDialog(GUI::Window *p_parent, Song *p_song);
 	~AddNodeDialog();
