@@ -87,7 +87,39 @@ AddNodeDialog::NodeInfoItem::NodeInfoItem(const AudioNodeInfo *p_node_info) {
 
 /******************/
 
+void AddNodeDialog::fix_name() {
 
+	if (!selected)
+		return;
+	
+	String base_name = selected->info->short_caption;
+	
+	int attempt=1;
+	while(true) {
+	
+		bool exists=false;
+		String intended_name=attempt==1?base_name:base_name+" "+String::num(attempt);
+		
+		for (int i=0;i<song->get_audio_graph()->get_node_count();i++) {
+		
+			if (song->get_audio_graph()->get_node(i)->get_name()==intended_name) {
+				
+				exists=true;
+				break;
+			}
+		}
+		
+		if (exists) {
+		
+			attempt++;
+			continue;
+		}
+	
+		name->set_text( intended_name );
+		break;	
+	}
+
+}
 
 void AddNodeDialog::node_selected_callback(NodeInfoItem *p_item) {
 
@@ -139,34 +171,7 @@ void AddNodeDialog::node_selected_callback(NodeInfoItem *p_item) {
 	
 	/* update name */
 	
-	
-	String base_name = p_item->info->short_caption;
-	
-	int attempt=1;
-	while(true) {
-	
-		bool exists=false;
-		String intended_name=attempt==1?base_name:base_name+" "+String::num(attempt);
-		
-		for (int i=0;i<song->get_audio_graph()->get_node_count();i++) {
-		
-			if (song->get_audio_graph()->get_node(i)->get_name()==intended_name) {
-				
-				exists=true;
-				break;
-			}
-		}
-		
-		if (exists) {
-		
-			attempt++;
-			continue;
-		}
-	
-		name->set_text( intended_name );
-		break;	
-	}
-	
+	fix_name();	
 }
 
 
@@ -246,6 +251,12 @@ void AddNodeDialog::create_node() {
 	EditCommands::get_singleton()->audio_graph_add_node( song->get_audio_graph(), anode );
 
 	hide();
+}
+
+void AddNodeDialog::show() {
+
+	Window::show();
+	fix_name();
 }
 
 AddNodeDialog::AddNodeDialog(GUI::Window *p_parent,Song *p_song) : GUI::Window(p_parent,GUI::Window::MODE_POPUP,GUI::Window::SIZE_TOPLEVEL_CENTER) {

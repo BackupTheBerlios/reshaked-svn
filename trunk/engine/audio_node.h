@@ -74,7 +74,7 @@ public:
 class AudioNode {
 
 	int _x,_y; // coordinates in graph
-	unsigned int _layer; // layer in graph, <0 means all layers
+	int _layer; // layer in graph, <0 means all layers
 	String _name;
 protected:
 friend class AudioGraph;	
@@ -139,8 +139,14 @@ public:
 	int get_x() const;
 	void set_y(int p_y);
 	int get_y() const;
-	void set_layer(unsigned int p_layer);
-	unsigned int get_layer() const;
+	
+	enum {
+	
+		LAYER_ALWAYS_VISIBLE=-1
+	};
+	
+	void set_layer(int p_layer);
+	virtual int get_layer() const;
 			
 		
 	AudioNode();

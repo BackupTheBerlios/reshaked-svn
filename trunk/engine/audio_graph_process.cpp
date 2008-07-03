@@ -65,7 +65,7 @@ void AudioGraphProcess::add_node(AudioNode *p_node) {
 		
 		for (int j=0;j<port_channels;j++) {
 		
-			printf("connecting %s , chan %i to silence\n",p_node->get_name().ascii().get_data(),j);
+			//printf("connecting %s , chan %i to silence\n",p_node->get_name().ascii().get_data(),j);
 			p_node->connect_audio_buffer( AudioNode::PORT_IN, i,j,&audio_silence_buffer[0]);
 		}
 				

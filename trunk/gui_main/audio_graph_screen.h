@@ -24,12 +24,16 @@ class AudioGraphScreen : public GUI::VBoxContainer {
 	Song *song;
 
 
+	void layer_group_changed(int p_to);
+
 	GUI::ButtonGroup layer_group;
 
 	AudioGraphWidget *audio_graph_widget;
 	GUI::ScrollBox *scroll_box;
 
 public:
+
+
 	AudioGraphScreen(GUI_UpdateNotify *p_update_notify,Song *p_song);	
 	~AudioGraphScreen();
 

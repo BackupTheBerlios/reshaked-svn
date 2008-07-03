@@ -24,6 +24,11 @@ GUI::Point AudioGraphWidget::get_node_and_port_pos(int p_node,AudioNode::PortTyp
 	AudioNode *an = song->get_audio_graph()->get_node(p_node);
 
 	GUI::Rect node_rect( GUI::Point( an->get_x(), an->get_y() ), get_node_size( an ) );
+	
+	if (task.type==Task::MOVING && task.moving_idx==p_node) {	
+	
+		node_rect.pos+=(task.moving_pos - task.moving_click);
+	}
 			
 	int y=node_rect.pos.y;
 								
@@ -75,7 +80,7 @@ GUI::Point AudioGraphWidget::get_node_and_port_pos(int p_node,AudioNode::PortTyp
 					
 						case AudioNode::PORT_IN: {
 						
-							result=GUI::Point( left_margin, y+(port_h-plug_size.height)/2);
+							result=GUI::Point( node_rect.pos.x+left_margin, y+(port_h-plug_size.height)/2);
 						} break;
 						case AudioNode::PORT_OUT: {
 						
@@ -109,6 +114,9 @@ bool AudioGraphWidget::get_node_and_port_at_pos(const GUI::Point& p_pos,int& r_n
 	for (int i=song->get_audio_graph()->get_node_count()-1;i>=0;i--) {
 	
 		AudioNode *an = song->get_audio_graph()->get_node(i);
+	
+		if (!(current_layer==AudioNode::LAYER_ALWAYS_VISIBLE || an->get_layer()==AudioNode::LAYER_ALWAYS_VISIBLE || (an->get_layer() & (1<<current_layer))))
+			continue;
 	
 		GUI::Rect node_rect( GUI::Point( an->get_x(), an->get_y() ), get_node_size( an ) );
 				
@@ -185,7 +193,7 @@ bool AudioGraphWidget::get_node_and_port_at_pos(const GUI::Point& p_pos,int& r_n
 					if (h<port_h) {
 					
 						r_type=port_types[i];
-						r_flow=port_flows[i];
+						r_flow=port_flows[j];
 						r_port=k;
 						return true;
 					}
@@ -405,7 +413,7 @@ void AudioGraphWidget::draw(const GUI::Point& p_pos,const GUI::Size& p_size,cons
 		
 		AudioNode *an = song->get_audio_graph()->get_node(i);
 		
-		if (!(current_layer==SHOW_ALL_LAYERS || an->get_layer()==0 || (an->get_layer() & (1<<layer_idx))))
+		if (!(current_layer==AudioNode::LAYER_ALWAYS_VISIBLE || an->get_layer()==AudioNode::LAYER_ALWAYS_VISIBLE || (an->get_layer() & (1<<current_layer))))
 			continue;
 			
 		GUI::Rect node_rect( GUI::Point(an->get_x(), an->get_y() ), get_node_size(an) );
@@ -426,8 +434,24 @@ void AudioGraphWidget::draw(const GUI::Point& p_pos,const GUI::Size& p_size,cons
 	
 		const AudioConnection &c=*song->get_audio_graph()->get_connection(i);
 		
+		// make sure both nodes are in this layer
+		
+		AudioNode *node_from=song->get_audio_graph()->get_node( c.from_node );
+		ERR_CONTINUE(!node_from);
+		if (!(current_layer==AudioNode::LAYER_ALWAYS_VISIBLE || node_from->get_layer()==AudioNode::LAYER_ALWAYS_VISIBLE || (node_from->get_layer() & (1<<current_layer))))
+			continue;
+		
+		AudioNode *node_to=song->get_audio_graph()->get_node( c.to_node );
+		ERR_CONTINUE(!node_to);
+		if (!(current_layer==AudioNode::LAYER_ALWAYS_VISIBLE || node_to->get_layer()==AudioNode::LAYER_ALWAYS_VISIBLE || (node_to->get_layer() & (1<<current_layer))))
+			continue;
+		
+		// compute points and color
+		
 		GUI::Point from = get_node_and_port_pos(c.from_node,c.type,AudioNode::PORT_OUT,c.from_port);
 		GUI::Point to = get_node_and_port_pos(c.to_node,c.type,AudioNode::PORT_IN,c.to_port);
+		
+		
 		
 		GUI::Color col;
 		
@@ -437,6 +461,8 @@ void AudioGraphWidget::draw(const GUI::Point& p_pos,const GUI::Size& p_size,cons
 			case AudioNode::PORT_EVENT: col=color( COLOR_GRAPH_EVENT_CABLE ); break;
 			case AudioNode::PORT_CONTROL: col=color( COLOR_GRAPH_CONTROL_CABLE ); break;
 		}
+		
+		// plot connection
 		
 		draw_connection(from,to,col);
 	}
@@ -451,7 +477,9 @@ void AudioGraphWidget::draw(const GUI::Point& p_pos,const GUI::Size& p_size,cons
 		
 		if (get_node_and_port_at_pos(task.moving_pos,node_idx,port_type,port_flow,port_idx)) {
 		
-			if (node_idx!=-1 && node_idx!=task.moving_idx && port_type == task.port_type && port_flow!=task.port_flow) {
+			//printf("connecting from type: %i flow %i port %i\n",port_type,port_flow, port_idx);
+		
+			if (node_idx!=-1 && port_idx>=0 && node_idx!=task.moving_idx && port_type == task.port_type && port_flow!=task.port_flow) {
 			
 				switch(port_type) {
 				
@@ -504,7 +532,7 @@ void AudioGraphWidget::mouse_button(const GUI::Point& p_pos, int p_button,bool p
 						node_popup->clear();
 						
 						AudioNode *an=song->get_audio_graph()->get_node(node_idx);
-						node_menu.node=an;
+						node_menu.node_idx=node_idx;
 						
 						node_popup->add_item( bitmap( BITMAP_GRAPH_NODE_RENAME ), "Rename",NODE_MENU_RENAME);
 						
@@ -539,7 +567,7 @@ void AudioGraphWidget::mouse_button(const GUI::Point& p_pos, int p_button,bool p
 					} break;
 					case CLICK_CLOSE: {
 					
-						/* wait.. */
+						EditCommands::get_singleton()->audio_graph_remove_node( song->get_audio_graph(), node_idx );
 					} break;
 					case CLICK_NODE: {
 					
@@ -563,11 +591,13 @@ void AudioGraphWidget::mouse_button(const GUI::Point& p_pos, int p_button,bool p
 				task.type=Task::CONNECTING;
 				task.moving_click=p_pos;
 				task.moving_pos=p_pos;
-				EditCommands::get_singleton()->audio_graph_swap_nodes(song->get_audio_graph(),node_idx,song->get_audio_graph()->get_node_count()-1);
-				task.moving_idx=song->get_audio_graph()->get_node_count()-1;
+				//EditCommands::get_singleton()->audio_graph_swap_nodes(song->get_audio_graph(),node_idx,song->get_audio_graph()->get_node_count()-1);
+				task.moving_idx=node_idx; //song->get_audio_graph()->get_node_count()-1;
 				task.port_type=port_type;
 				task.port_flow=port_flow;
 				task.port_idx=port_idx;
+				
+							
 				
 			}
 			if (p_button==GUI::BUTTON_RIGHT) {
@@ -575,16 +605,66 @@ void AudioGraphWidget::mouse_button(const GUI::Point& p_pos, int p_button,bool p
 				node_popup->clear();
 				
 				AudioNode *an=song->get_audio_graph()->get_node(node_idx);
-				node_menu.node=an;
+				node_menu.node_idx=node_idx;
 				node_menu.port_type=port_type;
 				node_menu.port_flow=port_flow;
 				node_menu.port_idx=port_idx;
 				
-				if (task.port_type==AudioNode::PORT_CONTROL) {
+				if (port_type==AudioNode::PORT_CONTROL) {
 				
-					//node_popup->add_item("Automate",NODE_MENU_ASSIGN_OUTPUT );
+					node_popup->add_item("Automate",NODE_MENU_AUTOMATE_PORT );
+					node_popup->add_separator();
 					// if no connections node_popup->add_item("Hide",PORT_MENU_CONTROL_HIDE);
 				
+				}
+				
+				int idx=0;
+				
+				for (int i=0;i<song->get_audio_graph()->get_connection_count();i++) {
+				
+					const AudioConnection &c=*song->get_audio_graph()->get_connection(i);
+										
+					String other_end;
+					
+					if (c.type!=port_type)
+						continue;
+					
+					if (port_flow==AudioNode::PORT_IN) {
+					
+						if (c.to_node!=node_idx)
+							continue;
+						if (c.to_port!=port_idx)
+							continue;
+							
+						AudioNode *another=song->get_audio_graph()->get_node(c.from_node);
+						
+						ERR_FAIL_COND(!another);
+						other_end=another->get_name()+"::"+another->get_port_name( port_type, AudioNode::PORT_OUT, c.from_port);
+					} else {
+					
+						if (c.from_node!=node_idx)
+							continue;
+						if (c.from_port!=port_idx)
+							continue;
+							
+						AudioNode *another=song->get_audio_graph()->get_node(c.to_node);
+		
+						ERR_FAIL_COND(!another);
+						other_end=another->get_name()+"::"+			other_end=another->get_port_name( port_type, AudioNode::PORT_OUT, c.to_port);
+					
+					}
+						
+					
+					node_popup->add_item("Disconnect: "+other_end,NODE_MENU_DISCONNECT_PORTS+idx );
+					
+					idx++;
+						
+				}
+				
+				if (idx>1) {
+					node_popup->add_separator();
+					node_popup->add_item("Disconnect All",NODE_MENU_DISCONNECT_PORT_ALL );
+
 				}
 				
 //				node_popup->add_item( "Disconnect All",PORT_MENU_DISCONNECT);
@@ -615,6 +695,7 @@ void AudioGraphWidget::mouse_button(const GUI::Point& p_pos, int p_button,bool p
 			
 			if (get_node_and_port_at_pos(task.moving_pos,node_idx,port_type,port_flow,port_idx)) {
 			
+				printf("attempt to connect over node %i, port %i, flow %i\n",node_idx, port_idx, port_flow);
 				if (node_idx!=-1 && node_idx!=task.moving_idx && port_type == task.port_type && port_flow!=task.port_flow) {
 				
 					printf("actual connect!\n");
@@ -624,6 +705,11 @@ void AudioGraphWidget::mouse_button(const GUI::Point& p_pos, int p_button,bool p
 					ac.from_node=task.moving_idx;
 					ac.to_node=node_idx;
 					ac.to_port=port_idx;
+					
+					printf("connect type %i\n",ac.type);
+					printf("from_node: %i, to_node: %i\n",ac.from_node,ac.to_node);
+					printf("from_port: %i, to_port: %i\n",ac.from_port,ac.to_port);
+					printf("from_flow: %i\n",task.port_flow);
 					
 					if (task.port_flow==AudioNode::PORT_IN) {
 					
@@ -646,14 +732,12 @@ void AudioGraphWidget::mouse_motion(const GUI::Point& p_pos, const GUI::Point& p
 	if (p_button_mask&GUI::BUTTON_MASK_LEFT) {
 	
 		if (task.type==Task::MOVING) {
-			printf("moving\n");
 			task.moving_pos=p_pos;
 			update();
 		}
 		
 		if (task.type==Task::CONNECTING) {
 		
-			printf("connecting\n");
 			task.moving_pos=p_pos;
 			update();
 		}		
@@ -672,13 +756,89 @@ void AudioGraphWidget::redraw() {
 
 void AudioGraphWidget::node_menu_callback(int p_option) {
 
+	switch(p_option) {
+		case NODE_MENU_CONTROLS: {
+		
+			control_port_editor->edit( song->get_audio_graph()->get_node( node_menu.node_idx ) );
+		} break;
+		case NODE_MENU_LAYERS: {
+		
+			node_layer_editor->edit( song->get_audio_graph()->get_node( node_menu.node_idx ) );
+		} break;
+		case NODE_MENU_AUTOMATE_PORT: {
+		
+			
+		} break;
+		case NODE_MENU_DISCONNECT_PORT_ALL: {
+		
+			EditCommands::get_singleton()->audio_graph_disconnect_port( song->get_audio_graph(), node_menu.node_idx, node_menu.port_type, node_menu.port_flow, node_menu.port_idx );
+		} break;
+		default: {
+			if (p_option>=NODE_MENU_DISCONNECT_PORTS) {
+		
+				int idx_disconnect=p_option-NODE_MENU_DISCONNECT_PORTS;
+				
+				int idx=0;
+				
+				for (int i=0;i<song->get_audio_graph()->get_connection_count();i++) {
+				
+					const AudioConnection &c=*song->get_audio_graph()->get_connection(i);
+										
+					String other_end;
+					
+					if (c.type!=node_menu.port_type)
+						continue;
+					
+					if (node_menu.port_flow==AudioNode::PORT_IN) {
+					
+						if (c.to_node!=node_menu.node_idx)
+							continue;
+						if (c.to_port!=node_menu.port_idx)
+							continue;							
+						if (idx==idx_disconnect) {							
+							EditCommands::get_singleton()->audio_graph_disconnect( song->get_audio_graph(), c );
+							return;
+						}
+						
+					} else {
+					
+						if (c.from_node!=node_menu.node_idx)
+							continue;
+						if (c.from_port!=node_menu.port_idx)
+							continue;
+							
+						if (idx==idx_disconnect) {							
+							EditCommands::get_singleton()->audio_graph_disconnect( song->get_audio_graph(), c );
+							return;
+						}
+					
+					}
+					
+					idx++;
+						
+				}
+				
+			}
+		} break;
+	}
 
+
+}
+
+void AudioGraphWidget::set_current_layer(int p_layer) {
+
+	current_layer=p_layer;
+	update();
 }
 
 void AudioGraphWidget::set_in_window() {
 
 	node_popup = new GUI::PopUpMenu( get_window() );
 	node_popup->selected_id_signal.connect(this, &AudioGraphWidget::node_menu_callback );
+	
+	control_port_editor = new ControlPortVisibilityEditor( song->get_audio_graph(), get_window() 
+	);	
+	node_layer_editor = new NodeLayerEditor( song->get_audio_graph(), get_window() );
 	
 }
 

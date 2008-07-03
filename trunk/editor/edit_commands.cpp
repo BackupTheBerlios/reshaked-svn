@@ -187,7 +187,7 @@ void EditCommands::audio_graph_add_node(AudioGraph *p_graph,AudioNode *p_node) {
 	
 	add_action("Audio Graph - Add Node: '"+p_node->get_info()->caption+"'",cmd_do,cmd_undo);
 }
-void EditCommands::audio_graph_remove_node(AudioGraph *p_graph,AudioNode *p_node,int p_node_idx) {
+void EditCommands::audio_graph_remove_node(AudioGraph *p_graph,int p_node_idx) {
 
 	
 	
@@ -210,9 +210,99 @@ void EditCommands::audio_graph_remove_node(AudioGraph *p_graph,AudioNode *p_node
 
 }
 	
+void  EditCommands::_control_port_set_visibility_helper( ControlPort *p_port, bool p_visible) {
+
+	p_port->set_visible( p_visible );
+	UpdateNotify::get_singleton()->audio_graph_changed();	
+}
+
+void  EditCommands::audio_graph_set_control_port_visibility( AudioGraph *p_graph,int p_node_idx, AudioNode::PortFlow p_flow, int p_port, bool p_visible) {
+
+	AudioNode *an = p_graph->get_node( p_node_idx );
+	ERR_FAIL_COND (!an);
+	ControlPort *cp = an->get_control_port( p_flow, p_port );	
+	ERR_FAIL_COND(!cp);
+
+	if (cp->is_visible()==p_visible)
+		return; // don't bother
+
+	begin_group("Control Port '"+cp->get_name()+"' - Toggle "+String( p_visible?"Visible":"Invisible") );
+
+	if (!p_visible)
+		audio_graph_disconnect_port(p_graph,p_node_idx,AudioNode::PORT_CONTROL,p_flow,p_port);
+	
+	CommandBase *cmd_do=command( this, &EditCommands::_control_port_set_visibility_helper, cp, p_visible);
+	CommandBase *cmd_undo=command( this, &EditCommands::_control_port_set_visibility_helper, cp, !p_visible);
+			
+	add_action("set_node_visibility",cmd_do,cmd_undo);
+	
+	end_group();
+
+}
+
 
 void EditCommands::audio_node_set_name(AudioNode *p_node, String p_name) {
 
+
+}
+void EditCommands::_audio_node_set_layer_helper(AudioNode *p_node,int p_layer) {
+
+	p_node->set_layer(p_layer);
+	UpdateNotify::get_singleton()->audio_graph_changed();	
+}
+
+void EditCommands::audio_graph_set_node_layer(AudioGraph *p_graph,AudioNode *p_node,int p_layer) {
+
+	if (p_layer==p_node->get_layer())
+		return; // pointless
+
+	int node_idx=p_graph->get_node_index(p_node);
+	
+	ERR_FAIL_COND(node_idx<0);
+
+	begin_group("Audio Node - Change Layer");
+
+	
+	// all connections no longer valid that involve this node must be erased
+	
+	if (p_layer!=AudioNode::LAYER_ALWAYS_VISIBLE) {
+		
+		std::list<AudioConnection> conns;
+			
+		for (int i=0;i<p_graph->get_connection_count();i++) {
+		
+			AudioConnection ac=*p_graph->get_connection(i);
+			
+			if (ac.from_node!=node_idx && ac.to_node!=node_idx)
+				continue; // doesn't invovle this node
+			
+			AudioNode *node_b=p_graph->get_node( ac.from_node==node_idx?ac.to_node:ac.from_node);
+			
+			
+			if (node_b->get_layer()==AudioNode::LAYER_ALWAYS_VISIBLE)
+				continue;
+					
+			if (node_b->get_layer() & p_layer)
+				continue; // share soem bit, means still connected
+	
+			conns.push_back(ac);
+		
+		}
+		
+		for( std::list<AudioConnection>::iterator I = conns.begin() ; I != conns.end() ; I++) {
+		
+			audio_graph_disconnect( p_graph, *I );
+		}
+		
+	}
+
+
+	CommandBase *cmd_do=command( this, &EditCommands::_audio_node_set_layer_helper, p_node, p_layer );
+	CommandBase *cmd_undo=command( this, &EditCommands::_audio_node_set_layer_helper, p_node, p_node->get_layer() );
+
+	add_action("change_layer",cmd_do,cmd_undo);
+	
+	end_group();
 
 }
 
@@ -225,5 +315,6 @@ EditCommands::EditCommands()
 EditCommands::~EditCommands()
 {
 }
+
 
 

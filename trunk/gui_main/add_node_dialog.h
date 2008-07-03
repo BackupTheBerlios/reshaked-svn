@@ -43,6 +43,8 @@ class AddNodeDialog : public GUI::Window {
 		NodeInfoItem(const AudioNodeInfo *p_node_info);
 	};
 	
+	void fix_name();
+	
 	NodeInfoItem *selected;
 	void node_selected_callback(NodeInfoItem *p_item);
 	void default_channels_changed(int p_to);
@@ -55,6 +57,9 @@ class AddNodeDialog : public GUI::Window {
 	bool updating_default_channels;
 
 public:
+
+	void show();
+
 	AddNodeDialog(GUI::Window *p_parent, Song *p_song);
 	~AddNodeDialog();
 

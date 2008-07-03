@@ -1,5 +1,6 @@
+
 //
-// C++ Implementation: audio_graph_screen
+// C++ Implementation: node_layer_editor
 //
 // Description: 
 //
@@ -9,11 +10,14 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "audio_graph_screen.h"
+#include "node_layer_editor.h"
 #include "widgets/bitmap_button.h"
 #include "gui_common/common_skin.h"
 #include "containers/center_container.h"
 #include "containers/grid_container.h"
+#include "containers/box_container.h"
+#include "audio_graph_widget.h"
+#include "editor/edit_commands.h"
 
 static void create_buttons(GUI::BoxContainer *p_container,GUI::ButtonGroup *p_group,int p_offset,int p_count) {
 
@@ -34,16 +38,48 @@ static void create_buttons(GUI::BoxContainer *p_container,GUI::ButtonGroup *p_gr
 
 }
 
-void AudioGraphScreen::layer_group_changed(int p_to) {
+void NodeLayerEditor::group_changed(int p_layer) {
 
-	audio_graph_widget->set_current_layer(p_to>=16?AudioNode::LAYER_ALWAYS_VISIBLE:p_to);
+	if (updating_layer)
+		return;
+
+	if (p_layer<16) {
+	
+		EditCommands::get_singleton()->audio_graph_set_node_layer(audio_graph,node,1<<p_layer);
+	} else {
+	
+		EditCommands::get_singleton()->audio_graph_set_node_layer(audio_graph,node,AudioNode::LAYER_ALWAYS_VISIBLE);
+	
+	}
 }
 
-AudioGraphScreen::AudioGraphScreen(GUI_UpdateNotify *p_update_notify,Song *p_song) {
+void NodeLayerEditor::edit( AudioNode *p_node ) {
 
-	song=p_song;
+	node=p_node;
+	updating_layer=true;
+	int layer=p_node->get_layer();
+	
+	if (layer<0 || layer>=16)
+		layer_group.set_current(16);
+	else {
+	
+		for (int i=0;i<16;i++)
+			if (layer&(1<<i))
+				layer_group.set_current(i);
+			
+	}
+	
+	show();
+	updating_layer=false;
+}
 
-	GUI::HBoxContainer *hbc = add( new GUI::CenterContainer )->set(new GUI::HBoxContainer );
+NodeLayerEditor::NodeLayerEditor(AudioGraph *p_audio_graph,GUI::Window *p_parent) : GUI::Window(p_parent,GUI::Window::MODE_POPUP,GUI::Window::SIZE_CENTER) {
+
+	audio_graph=p_audio_graph;
+	
+	GUI::HBoxContainer *hbc = new GUI::HBoxContainer;
+	
+	set_root_frame(hbc);
 		
 	GUI::BitmapButton *bb_all = new GUI::BitmapButton;
 		
@@ -65,24 +101,18 @@ AudioGraphScreen::AudioGraphScreen(GUI_UpdateNotify *p_update_notify,Song *p_son
 	create_buttons(vbc2,&layer_group,8,4);
 	create_buttons(vbc2,&layer_group,12,4);
 	
-	hbc->set_separation(0);
-		
 	layer_group.add_button( bb_all );
 		
-
-	scroll_box = add( new GUI::ScrollBox, 1 );
-	audio_graph_widget = scroll_box->set( new AudioGraphWidget(p_update_notify,p_song) );
-	scroll_box->set_expand_h(true);
-	scroll_box->set_expand_v(true);
-	scroll_box->set_scroll_h(true);
-	scroll_box->set_scroll_v(true);	
+	hbc->set_separation(0);
+		
+	layer_group.current_button_changed_signal.connect( this, &NodeLayerEditor::group_changed );
 	
-	layer_group.current_button_changed_signal.connect(this, &AudioGraphScreen::layer_group_changed );
+	updating_layer=false;
 }
 
 
-AudioGraphScreen::~AudioGraphScreen()
-{
+NodeLayerEditor::~NodeLayerEditor() {
+
 }
 
 

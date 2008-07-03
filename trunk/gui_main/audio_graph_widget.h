@@ -17,6 +17,9 @@
 #include "base/widget.h"
 #include "bundles/popup_menu.h"
 #include "gui_main/gui_update_notify.h"
+#include "gui_main/control_port_visibility_editor.h"
+#include "gui_main/node_layer_editor.h"
+
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -82,16 +85,17 @@ class AudioGraphWidget : public GUI::Widget{
 	 
 	struct NodeMenu {
 	
-		AudioNode *node;
+		int node_idx;
 		AudioNode::PortType port_type;
 		AudioNode::PortFlow port_flow;
 		int port_idx;
-		bool input;
 		
-		NodeMenu() { node=NULL; }
+		NodeMenu() { node_idx=-1; }
 	} node_menu;
 		 
 	 GUI::PopUpMenu *node_popup;
+	 ControlPortVisibilityEditor *control_port_editor;
+	 NodeLayerEditor *node_layer_editor;
 	 
 	 enum NodeMenuOption {
 	 
@@ -99,6 +103,9 @@ class AudioGraphWidget : public GUI::Widget{
 	 	NODE_MENU_CONTROLS,
 	 	NODE_MENU_LAYERS,
 	 	NODE_MENU_PRESETS,	 	
+	 	NODE_MENU_AUTOMATE_PORT,
+	 	NODE_MENU_DISCONNECT_PORT_ALL,
+	 	NODE_MENU_DISCONNECT_PORTS=100
 	 };
 	 
 	 void node_menu_callback(int p_option);
@@ -106,10 +113,7 @@ class AudioGraphWidget : public GUI::Widget{
 	 
 public:
 
-	enum {
-	
-		SHOW_ALL_LAYERS=-1
-	};
+	void set_current_layer(int p_layer);
 
 	void redraw();
 

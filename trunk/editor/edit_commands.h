@@ -31,6 +31,8 @@ class EditCommands : public UndoRedo {
 	void _audio_graph_swap_nodes_helper(AudioGraph *p_graph,int p_node_idx,int p_with_node_idx);
 	void _audio_graph_add_node_helper(AudioGraph* p_graph, AudioNode* p_node,int p_at_pos);
 	void _audio_graph_remove_node_helper(AudioGraph* p_graph, int p_node_idx);
+	void _control_port_set_visibility_helper( ControlPort *p_port, bool p_visible);
+	void _audio_node_set_layer_helper(AudioNode *p_node,int p_layer);
 	
 public:
 
@@ -45,10 +47,14 @@ public:
 	void audio_graph_swap_nodes(AudioGraph *p_graph,int p_node_idx,int p_with_node_idx);	
 	
 	void audio_graph_add_node(AudioGraph *p_graph,AudioNode *p_node);
-	void audio_graph_remove_node(AudioGraph *p_graph,AudioNode *p_node,int p_node_idx);
+	void audio_graph_remove_node(AudioGraph *p_graph,int p_node_idx);
+	
+	void audio_graph_set_control_port_visibility( AudioGraph *p_graph,int p_node_idx, AudioNode::PortFlow p_flow, int p_port, bool p_visible);
+	void audio_graph_set_node_layer(AudioGraph *p_graph,AudioNode *p_node,int p_layer);
 		
 	
 	void audio_node_set_name(AudioNode *p_node, String p_name);
+
 
 	EditCommands();
 	

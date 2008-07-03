@@ -133,13 +133,13 @@ int AudioNode::get_y() const {
 }
 
 
-void AudioNode::set_layer(unsigned int p_layer) {
+void AudioNode::set_layer(int p_layer) {
 
 	if (p_layer==0)
 		return; // don't let it dissapear
 	_layer=p_layer;
 }
-unsigned int AudioNode::get_layer() const {
+int AudioNode::get_layer() const {
 
 	return _layer;
 }
