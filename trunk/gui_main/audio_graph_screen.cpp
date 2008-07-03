@@ -22,6 +22,7 @@ static void create_buttons(GUI::BoxContainer *p_container,GUI::ButtonGroup *p_gr
 	for(int i=0;i<p_count;i++) {
 		
 		GUI::BitmapButton *bb = hbc->add( new GUI::BitmapButton );
+		bb->set_tooltip( "Layer "+String::num(p_offset+i) );
 		
 		bb->add_bitmap_override( GUI::BITMAP_BUTTON_NORMAL, BITMAP_LAYER_BUTTON_0 + i + p_offset );
 		bb->add_bitmap_override( GUI::BITMAP_BUTTON_HOVER, BITMAP_LAYER_BUTTON_0_HOVER + i + p_offset);
