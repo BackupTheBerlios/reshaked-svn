@@ -1,0 +1,9 @@
+Import('env');
+
+env_gui_nodes = env.Copy();
+env_gui_nodes.target_list=[];
+
+
+env_gui_nodes.find_source_files(env_gui_nodes.target_list,"*.cpp");
+
+env.Library('gui_nodes', env_gui_nodes.target_list)

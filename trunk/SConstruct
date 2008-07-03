@@ -141,8 +141,8 @@ if (not win32_msvc):
 
 # Libraties to be generated
 
-env.Append(LIBS=['gui_main','gui_common','editor','nodes','engine','gui','dsp','types']);
-env.Append(LIBPATH=['#gui_main','#gui_common','#editor','#nodes','#engine','#gui','#dsp','#types']);
+env.Append(LIBS=['gui_nodes','gui_main','gui_common','editor','nodes','engine','gui','dsp','types']);
+env.Append(LIBPATH=['#gui_nodes','#gui_main','#gui_common','#editor','#nodes','#engine','#gui','#dsp','#types']);
 
 env.__class__.find_source_files = find_source_files
 
@@ -161,6 +161,7 @@ SConscript('nodes/SCsub');
 SConscript('gui/SCsub');
 SConscript('gui_common/SCsub');
 SConscript('gui_main/SCsub');
+SConscript('gui_nodes/SCsub');
 SConscript('bin/SCsub');
 
 
