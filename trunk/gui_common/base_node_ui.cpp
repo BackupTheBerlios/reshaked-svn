@@ -10,8 +10,22 @@
 //
 //
 #include "base_node_ui.h"
+#include "common_skin.h" 
+#include "widgets/label.h"
+
+void BaseNodeUI::presets_callback() {
+
+
+}
 
 BaseNodeUI::BaseNodeUI(AudioNode *p_node) {
+
+	GUI::HBoxContainer *hbc= add( new GUI::HBoxContainer );
+	hbc->add( new GUI::Label("Name: ") );
+	_name = hbc->add( new GUI::LineEdit, 1 );
+	GUI::Button *preset = hbc->add( new GUI::Button );
+	preset->add_bitmap_override( GUI::BITMAP_BUTTON_DEFAULT_ICON, BITMAP_GRAPH_NODE_PRESET );
+		
 
 }
 

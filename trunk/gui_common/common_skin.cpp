@@ -204,7 +204,17 @@ void CommonSkin::set_default_extra() {
 	SET_CONSTANT(C_GRAPH_NODE_VSPACING,1);
 	SET_CONSTANT(C_GRAPH_NODE_HSPACING,1);
 	
+	/* nodeui label */
+	
+	SET_STYLEBOX( SB_NODEUI_LABEL, GUI::StyleBox() );
+	SET_FONT( FONT_NODEUI_LABEL, 0 );
+	SET_COLOR( COLOR_NODEUI_LABEL_FONT, GUI::Color(0) );
 
+	/* nodeui value */
+	
+	SET_STYLEBOX( SB_NODEUI_VALUE, GUI::StyleBox() );
+	SET_FONT( FONT_NODEUI_VALUE, 0 );
+	SET_COLOR( COLOR_NODEUI_VALUE_FONT, GUI::Color(0) );
 
 }
 	

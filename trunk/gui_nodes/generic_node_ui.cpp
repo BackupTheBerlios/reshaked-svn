@@ -11,7 +11,12 @@
 //
 #include "generic_node_ui.h"
 
-GenericNodeUI::GenericNodeUI()
+BaseNodeUI *ui_create_func(AudioNode *p_node) {
+
+	return new GenericNodeUI(p_node);
+}
+
+GenericNodeUI::GenericNodeUI(AudioNode *p_node) : BaseNodeUI(p_node)
 {
 }
 

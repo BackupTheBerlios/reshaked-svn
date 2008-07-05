@@ -12,14 +12,18 @@
 #ifndef GENERIC_NODE_UI_H
 #define GENERIC_NODE_UI_H
 
+#include "gui_common/base_node_ui.h"
+
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
-class GenericNodeUI{
+class GenericNodeUI : public BaseNodeUI {
 public:
-    GenericNodeUI();
 
-    ~GenericNodeUI();
+	static BaseNodeUI *ui_create_func(AudioNode *p_node);
+
+	GenericNodeUI(AudioNode *p_node);	
+	~GenericNodeUI();
 
 };
 

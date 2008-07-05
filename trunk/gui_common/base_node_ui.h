@@ -14,13 +14,21 @@
 
 
 #include "containers/box_container.h"
+#include "widgets/line_edit.h"
+#include "widgets/button.h"
 #include "engine/audio_node.h"
+
 
 
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
 class BaseNodeUI : public GUI::VBoxContainer {
+
+	AudioNode *_node;	
+	GUI::LineEdit *_name;
+	
+	void presets_callback();
 public:
 
 	BaseNodeUI(AudioNode *p_node);	
