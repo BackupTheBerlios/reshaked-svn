@@ -13,6 +13,7 @@
 #include "node_ui_value.h"
 #include "gui_common/common_skin.h"
 #include "base/painter.h"
+#include <stdio.h>
 
 GUI::Size NodeUI_Value::get_minimum_size_internal() {
 
@@ -46,6 +47,7 @@ void NodeUI_Value::range_changed() {
 	update();
 }
 void NodeUI_Value::value_changed(double p_new_val) {
+
 
 	update();
 }

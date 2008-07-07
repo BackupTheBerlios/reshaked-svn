@@ -27,7 +27,12 @@ void NodeUI_Label::draw(const GUI::Point& p_pos,const GUI::Size& p_size,const GU
 	get_painter()->draw_stylebox( stylebox( SB_NODEUI_LABEL ), GUI::Point(), p_size );
 	GUI::Point margin( get_painter()->get_stylebox_margin( stylebox( SB_NODEUI_LABEL ), GUI::MARGIN_LEFT ),get_painter()->get_stylebox_margin( stylebox( SB_NODEUI_LABEL ), GUI::MARGIN_TOP ) );
 	int limit_x=get_size_cache().width-get_painter()->get_stylebox_min_size( stylebox( SB_NODEUI_LABEL ) ).width;
-	
+	int text_w=get_painter()->get_font_string_width( font( FONT_NODEUI_LABEL ), name );
+	int ofs = (limit_x - text_w)/2;
+	if (ofs<0)
+		ofs=0;
+		
+	margin.x+=ofs;	
 	margin.y+=get_painter()->get_font_ascent( font( FONT_NODEUI_LABEL ) );
 	
 	get_painter()->draw_text(font( FONT_NODEUI_LABEL ), margin, name,  color (COLOR_NODEUI_LABEL_FONT) );

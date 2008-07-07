@@ -67,7 +67,21 @@ String HL_ControlPort::get_value_as_text(float p_value) const {
 	if (p_value==max && max_string!="")
 		return max_string;
 		
-	String str = String::num(p_value);
+	int decimals=4;
+	
+	if (step!=0) {
+		
+		decimals=0;
+		double s = step;
+		s-=floor(s);
+		while(s<0.9999 && decimals<4) {
+			s*=10.0;
+			s-=floor(s);
+			decimals++;
+		}		
+	}
+	
+	String str = String::num(p_value,decimals);
 	if (suffix!="")
 		str+=" "+suffix;
 	

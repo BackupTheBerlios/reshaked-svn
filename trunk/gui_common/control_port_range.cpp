@@ -67,6 +67,7 @@ double ControlPortRange::get_unit_value()  {
 void ControlPortRange::set_unit_value(double p_v)  {
 
 	control_port->set_normalized(p_v); // go through editcommands...
+	value_changed_signal.call( control_port->get() );	
 }
 
 String ControlPortRange::get_as_text() {
