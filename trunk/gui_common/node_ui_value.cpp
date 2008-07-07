@@ -17,7 +17,7 @@
 GUI::Size NodeUI_Value::get_minimum_size_internal() {
 
 	GUI::Size minsize=get_painter()->get_stylebox_min_size( stylebox( SB_NODEUI_VALUE ) );
-	minsize.x+=get_painter()->get_font_height( font( FONT_NODEUI_VALUE ) );
+	minsize.y+=get_painter()->get_font_height( font( FONT_NODEUI_VALUE ) );
 	
 	return minsize;
 }
@@ -35,6 +35,7 @@ void NodeUI_Value::draw(const GUI::Point& p_pos,const GUI::Size& p_size,const GU
 		ofs=0;
 		
 	margin.x+=ofs;
+	margin.y+=get_painter()->get_font_ascent( font( FONT_NODEUI_VALUE ) );
 	
 	get_painter()->draw_text( font( FONT_NODEUI_VALUE ), margin, text, color( COLOR_NODEUI_VALUE_FONT ), limit_x );
 

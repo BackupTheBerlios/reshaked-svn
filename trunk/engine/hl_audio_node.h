@@ -31,12 +31,12 @@ class HL_ControlPort : public ControlPort {
 	Hint hint;
 	
 	String name;
-	String caption;
+	String suffix;
 public:
 
 
 	virtual String get_name() const;
-	virtual String get_caption() const;
+	virtual String get_suffix() const;
 
 	virtual float get_min() const;
 	virtual float get_max() const;
@@ -50,7 +50,7 @@ public:
 	virtual String get_value_as_text(float p_value) const;
 	virtual Hint get_hint() const;
 	
-	void set_all(float p_val, float p_min, float p_max, float p_default, float p_step, Hint p_hint, String p_name, String p_caption,String p_min_str="",String p_max_str="");
+	void set_all(float p_val, float p_min, float p_max, float p_default, float p_step, Hint p_hint, String p_name, String p_suffix="",String p_min_str="",String p_max_str="");
 		
 		
 	HL_ControlPort();

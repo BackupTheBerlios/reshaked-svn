@@ -525,7 +525,26 @@ void AudioGraphWidget::mouse_button(const GUI::Point& p_pos, int p_button,bool p
 				
 					case CLICK_SHOW_UI: {
 					
-						/* ?? */
+						AudioNode *an=song->get_audio_graph()->get_node(node_idx);
+						node_menu.node_idx=node_idx;
+						
+						/* determine popup pos */
+						{
+												
+							GUI::Rect node_rect( GUI::Point( an->get_x(), an->get_y() ), get_node_size( an ) );
+							int layer_port = (current_layer<0 || current_layer>=MAX_LAYER_COLORS) ? MAX_LAYER_COLORS : current_layer;
+	
+							int top_margin=get_painter()->get_stylebox_margin(stylebox( SB_LAYER_STYLE_NODE_0 + layer_port ), GUI::MARGIN_TOP);
+							int right_margin=get_painter()->get_stylebox_margin(stylebox( SB_LAYER_STYLE_NODE_0 + layer_port ), GUI::MARGIN_RIGHT);
+							
+							GUI::Size button_size=get_painter()->get_bitmap_size( bitmap( BITMAP_GRAPH_NODE_OPTIONS ) );
+							
+							GUI::Point popup_pos=node_rect.pos;
+							popup_pos.y+=top_margin+button_size.height;
+							popup_pos.x+=right_margin;											
+							node_ui_window->edit_node( popup_pos + get_global_pos(), an );
+						}										
+						
 					} break;
 					case CLICK_OPTIONS: {
 					
@@ -839,6 +858,8 @@ void AudioGraphWidget::set_in_window() {
 	control_port_editor = new ControlPortVisibilityEditor( song->get_audio_graph(), get_window() 
 	);	
 	node_layer_editor = new NodeLayerEditor( song->get_audio_graph(), get_window() );
+	
+	node_ui_window = new NodeUI_Window( get_window() );
 	
 }
 

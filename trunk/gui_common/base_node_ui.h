@@ -26,7 +26,6 @@
 class BaseNodeUI : public GUI::VBoxContainer {
 
 	AudioNode *_node;	
-	GUI::LineEdit *_name;
 	
 	void presets_callback();
 public:

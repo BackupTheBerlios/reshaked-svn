@@ -19,7 +19,7 @@
 #include "gui_main/gui_update_notify.h"
 #include "gui_main/control_port_visibility_editor.h"
 #include "gui_main/node_layer_editor.h"
-
+#include "gui_main/node_ui_window.h"
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -96,6 +96,7 @@ class AudioGraphWidget : public GUI::Widget{
 	 GUI::PopUpMenu *node_popup;
 	 ControlPortVisibilityEditor *control_port_editor;
 	 NodeLayerEditor *node_layer_editor;
+	 NodeUI_Window *node_ui_window;
 	 
 	 enum NodeMenuOption {
 	 

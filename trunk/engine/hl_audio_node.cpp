@@ -17,9 +17,9 @@ String HL_ControlPort::get_name() const {
 	return name;
 }
 
-String HL_ControlPort::get_caption() const {
+String HL_ControlPort::get_suffix() const {
 
-	return caption;
+	return suffix;
 }
 
 float HL_ControlPort::get_min() const {
@@ -67,14 +67,19 @@ String HL_ControlPort::get_value_as_text(float p_value) const {
 	if (p_value==max && max_string!="")
 		return max_string;
 		
+	String str = String::num(p_value);
+	if (suffix!="")
+		str+=" "+suffix;
 	
+	return str;
 }
+
 ControlPort::Hint HL_ControlPort::get_hint() const {
 
 	return hint;
 }
 
-void HL_ControlPort::set_all(float p_val, float p_min, float p_max, float p_default, float p_step, Hint p_hint, String p_name, String p_caption,String p_min_str,String p_max_str )  {
+void HL_ControlPort::set_all(float p_val, float p_min, float p_max, float p_default, float p_step, Hint p_hint, String p_name, String p_suffix,String p_min_str,String p_max_str )  {
 
 	val=p_val;
 	min=p_min;
@@ -83,7 +88,7 @@ void HL_ControlPort::set_all(float p_val, float p_min, float p_max, float p_defa
 	step=p_step;
 	hint=p_hint;
 	name=p_name;
-	caption=p_caption;
+	suffix=p_suffix;
 	min_string=p_min_str;
 	max_string=p_max_str;		
 

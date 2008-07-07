@@ -18,6 +18,9 @@
 	@author Juan Linietsky <reduzio@gmail.com>
 */
 class GenericNodeUI : public BaseNodeUI {
+
+	AudioNode *node;
+	void set_in_window();
 public:
 
 	static BaseNodeUI *ui_create_func(AudioNode *p_node);
