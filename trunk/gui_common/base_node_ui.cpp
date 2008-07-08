@@ -15,17 +15,20 @@
 
 void BaseNodeUI::presets_callback() {
 
-
+	edited_signal.call(_node);
 }
 
 BaseNodeUI::BaseNodeUI(AudioNode *p_node) {
 
+	_node=p_node;
 	GUI::HBoxContainer *hbc= add( new GUI::HBoxContainer );
 	hbc->add( new GUI::Widget, 1 );
 	GUI::Button *preset = hbc->add( new GUI::Button );
+	preset->pressed_signal.connect( this, &BaseNodeUI::presets_callback );
 	preset->add_bitmap_override( GUI::BITMAP_BUTTON_DEFAULT_ICON, BITMAP_GRAPH_NODE_PRESET );
 		
-
+			
+	
 }
 
 

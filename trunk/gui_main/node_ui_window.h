@@ -22,7 +22,11 @@ class NodeUI_Window : public GUI::Window {
 
 	GUI::VBoxContainer *container;
 	BaseNodeUI *node_ui;
+	
+	void edited_callback( AudioNode *p_node);
 public:
+
+	GUI::Signal< GUI::Method1< AudioNode* > > edited_signal;
 
 	void edit_node(const GUI::Point& p_location, AudioNode *p_node);
 

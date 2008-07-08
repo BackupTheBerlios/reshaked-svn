@@ -30,6 +30,8 @@ class BaseNodeUI : public GUI::VBoxContainer {
 	void presets_callback();
 public:
 
+	GUI::Signal< GUI::Method1< AudioNode* > > edited_signal;
+
 	BaseNodeUI(AudioNode *p_node);	
 	~BaseNodeUI();
 

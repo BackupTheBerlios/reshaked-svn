@@ -20,6 +20,7 @@
 #include "gui_main/control_port_visibility_editor.h"
 #include "gui_main/node_layer_editor.h"
 #include "gui_main/node_ui_window.h"
+#include "gui_common/preset_browser.h"
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -111,6 +112,10 @@ class AudioGraphWidget : public GUI::Widget{
 	 
 	 void node_menu_callback(int p_option);
 	 void set_in_window();
+	 
+	 void node_edit_preset_callback( AudioNode *p_node );
+	 
+	 PresetBrowser *preset_browser;
 	 
 public:
 

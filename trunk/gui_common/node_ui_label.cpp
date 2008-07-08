@@ -22,6 +22,7 @@ GUI::Size NodeUI_Label::get_minimum_size_internal() {
 	return minsize;
 }
 
+
 void NodeUI_Label::draw(const GUI::Point& p_pos,const GUI::Size& p_size,const GUI::Rect& p_exposed) {
 
 	get_painter()->draw_stylebox( stylebox( SB_NODEUI_LABEL ), GUI::Point(), p_size );

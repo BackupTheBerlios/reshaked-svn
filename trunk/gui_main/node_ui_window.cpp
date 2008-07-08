@@ -11,6 +11,12 @@
 //
 #include "node_ui_window.h"
 
+void NodeUI_Window::edited_callback( AudioNode *p_node) {
+
+	edited_signal.call(p_node);
+}
+
+
 
 void NodeUI_Window::edit_node(const GUI::Point& p_location, AudioNode *p_node) {
 
@@ -19,7 +25,7 @@ void NodeUI_Window::edit_node(const GUI::Point& p_location, AudioNode *p_node) {
 		
 	node_ui=NULL;	
 	node_ui=NodeUI_Registry::create_ui( p_node );
-	
+	node_ui->edited_signal.connect( this, &NodeUI_Window::edited_callback );
 	container->add( node_ui, 1 );
 	
 	set_size( GUI::Size(1,1));

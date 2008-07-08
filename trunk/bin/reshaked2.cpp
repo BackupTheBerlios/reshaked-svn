@@ -17,11 +17,23 @@ namespace GUI {
 #include "widgets/scroll_bar.h"
 #include "gui_main/main_window.h"
 #include "gui_common/common_skin.h"
+#include "gui_common/default_paths.h"
 #include <SDL.h>
 
 #define DEFAULT_H 550
 #define DEFAULT_W 750
 #define interface interface
+
+
+#ifdef WINDOWS_ENABLED
+
+#define BASE_PATH String( String(getenv("APPDATA"))+"\\Reshaked")
+
+#else
+
+#define BASE_PATH String( String(getenv("HOME"))+"/.reshaked")
+
+#endif
 
 int main_loop(SDL_Surface *screen,GUI::TimerSDL *timer,unsigned int flags,MainWindow *main_window) {
 	GUI::KeycodesSDL keycode_sdl_translator;
@@ -226,6 +238,8 @@ int main(int argc, char *argv[]) {
 //	AudioDriverManager::add_driver( &driver_jack );		
 	
 #endif
+	
+	DefaultPaths::set_base_path(BASE_PATH);
 	
 	/** ENABLE GUI AND SDL */
 	

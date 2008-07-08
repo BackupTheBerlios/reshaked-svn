@@ -850,6 +850,11 @@ void AudioGraphWidget::set_current_layer(int p_layer) {
 	update();
 }
 
+void AudioGraphWidget::node_edit_preset_callback( AudioNode *p_node ) {
+
+	preset_browser->edit_preset( p_node );
+}
+
 void AudioGraphWidget::set_in_window() {
 
 	node_popup = new GUI::PopUpMenu( get_window() );
@@ -860,12 +865,16 @@ void AudioGraphWidget::set_in_window() {
 	node_layer_editor = new NodeLayerEditor( song->get_audio_graph(), get_window() );
 	
 	node_ui_window = new NodeUI_Window( get_window() );
+	node_ui_window->edited_signal.connect( this, &AudioGraphWidget::node_edit_preset_callback );
+	
+	preset_browser = new PresetBrowser( get_window() );
 	
 }
 
 
 AudioGraphWidget::AudioGraphWidget(GUI_UpdateNotify *p_update_notify,Song *p_song) {
 
+	
 	p_update_notify->audio_graph_changed_signal.connect( this, &AudioGraphWidget::redraw );
 	song=p_song;
 	current_layer=0;

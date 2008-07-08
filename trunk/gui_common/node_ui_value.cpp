@@ -15,6 +15,18 @@
 #include "base/painter.h"
 #include <stdio.h>
 
+void NodeUI_Value::value_entered(double p_val) {
+
+	get_range()->set( p_val );
+	update();	
+}
+
+void NodeUI_Value::mouse_doubleclick(const GUI::Point& p_pos,int p_modifier_mask) {
+	
+	
+	dialog->show("Enter Value:",get_range()->get_min(), get_range()->get_max(), get_range()->get_step(), get_range()->get() );
+}
+
 GUI::Size NodeUI_Value::get_minimum_size_internal() {
 
 	GUI::Size minsize=get_painter()->get_stylebox_min_size( stylebox( SB_NODEUI_VALUE ) );
@@ -52,6 +64,12 @@ void NodeUI_Value::value_changed(double p_new_val) {
 	update();
 }
 
+void NodeUI_Value::set_in_window() {
+
+	dialog = new GUI::NumericInputDialog( get_window() );
+	dialog->entered_number_signal.connect( this, &NodeUI_Value::value_entered );
+
+}
 
 NodeUI_Value::NodeUI_Value() {
 
@@ -60,6 +78,10 @@ NodeUI_Value::NodeUI_Value() {
 
 NodeUI_Value::~NodeUI_Value()
 {
+
+	if (dialog)
+		delete dialog;
+
 }
 
 
