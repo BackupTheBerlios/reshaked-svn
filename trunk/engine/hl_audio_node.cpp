@@ -34,30 +34,30 @@ float HL_ControlPort::get_step() const {
 
 	return step;
 }
-float HL_ControlPort::get_default() const {
+float HL_ControlPort::get_initial() const {
 
-	return def;
+	return initial;
 }
 float HL_ControlPort::get() const {
 
 	return val;
 }
 
-void HL_ControlPort::set(float p_val,bool p_make_default) {
+void HL_ControlPort::set(float p_val,bool p_make_initial) {
 
 	if (p_val<min)
 		p_val=min;
 	if (p_val>max)
 		p_val=max;
-	val=p_val;
 	
 	if (step!=0) {
 
-		val=floor( val / step + 0.5 ) * step;
+		p_val=floor( p_val / step + 0.5 ) * step;
 	}
 	
-	if (p_make_default)
-		def=val;
+	val=p_val;	
+	if (p_make_initial)
+		initial=p_val;
 	
 }
 String HL_ControlPort::get_value_as_text(float p_value) const {
@@ -93,12 +93,12 @@ ControlPort::Hint HL_ControlPort::get_hint() const {
 	return hint;
 }
 
-void HL_ControlPort::set_all(float p_val, float p_min, float p_max, float p_default, float p_step, Hint p_hint, String p_name, String p_suffix,String p_min_str,String p_max_str )  {
+void HL_ControlPort::set_all(float p_val, float p_min, float p_max, float p_step, Hint p_hint, String p_name, String p_suffix,String p_min_str,String p_max_str )  {
 
 	val=p_val;
+	initial=p_val;
 	min=p_min;
 	max=p_max;	
-	def=p_default;
 	step=p_step;
 	hint=p_hint;
 	name=p_name;
@@ -115,7 +115,7 @@ HL_ControlPort::HL_ControlPort(){
 	max=1;
 	val=0;
 	step=0.01;
-	def=0;
+	initial=0;
 	hint=HINT_RANGE;
 	
 }
@@ -236,10 +236,43 @@ void HL_AudioNode::add_control_port( PortFlow p_flow, ControlPort* p_port ) {
 }
 
 
+
 void HL_AudioNode::mix_rate_changed() {
 
 	//?
 }
+
+
+Error HL_AudioNode::save( TreeSaver * p_tree ) {
+
+	for (int i=0;i<get_port_count( PORT_CONTROL, PORT_IN );i++) {
+	
+		ControlPort *cp = get_control_port(  PORT_IN , i );
+		
+		p_tree->add_float( cp->get_name(), cp->get_initial() );
+		
+	}
+}
+
+Error HL_AudioNode::load( TreeLoader * p_tree )  {
+
+	for (int i=0;i<p_tree->get_var_count();i++) {
+	
+		String varname = p_tree->get_var_name(i);
+		
+		for (int j=0;j<get_port_count( PORT_CONTROL, PORT_IN );j++) {
+		
+			ControlPort *cp = get_control_port(  PORT_IN , j );
+			
+			if (cp->get_name()==varname)
+				cp->set( p_tree->get_float( varname ), true );
+			
+		}
+		
+	}
+
+}
+
 
 HL_AudioNode::HL_AudioNode(int p_instanced_channels,const AudioNodeInfo *p_info) {
 

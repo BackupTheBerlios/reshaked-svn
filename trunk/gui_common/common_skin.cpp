@@ -42,6 +42,7 @@ void CommonSkin::set_default_extra() {
 	/** MAIN WINDOW **/
 
 	SET_BITMAP(BITMAP_ICON_FILE_DISK,PixmapData::get_pixmap(	PIXMAP_ICON_FILE_DISK));
+	SET_BITMAP(BITMAP_ICON_FILE_FOLDER,PixmapData::get_pixmap(	PIXMAP_ICON_FILE_FOLDER));
 	SET_BITMAP(BITMAP_ICON_HELP,PixmapData::get_pixmap(	PIXMAP_ICON_HELP));
 	SET_BITMAP(BITMAP_ICON_UNDO,PixmapData::get_pixmap(	PIXMAP_ICON_UNDO));
 	SET_BITMAP(BITMAP_ICON_REDO,PixmapData::get_pixmap(	PIXMAP_ICON_REDO));

@@ -10,6 +10,9 @@
 #include "error_list.h"
 #include <vector>
 
+#include "tree_loader.h"
+#include "tree_saver.h"
+
 class AudioNode;
 
 struct AudioNodeInfo {
@@ -52,10 +55,10 @@ public:
 	virtual float get_min() const=0;
 	virtual float get_max() const=0;
 	virtual float get_step() const=0;
-	virtual float get_default() const=0;
+	virtual float get_initial() const=0;
 	virtual float get() const=0;
 	
-	virtual void set(float p_val,bool p_make_default=false)=0; //set, optionally make the value the default too
+	virtual void set(float p_val,bool p_make_initial=false)=0; //set, optionally make the value the default too
 	virtual void set_normalized(float p_val); // set in range 0-1, internally converted to range
 	virtual float get_normalized() const;
 	
@@ -130,8 +133,8 @@ public:
 	
 	/* Load/Save */
 	
-//	virtual Error save( TreeSaver * p_tree ) const=0;
-	//virtual Error load( TreeLoader * p_tree )=0;
+	virtual Error save( TreeSaver * p_tree )=0;
+	virtual Error load( TreeLoader * p_tree )=0;
 	
 	/* Graph Positioning and Layering */
 	

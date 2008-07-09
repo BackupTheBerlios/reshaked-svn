@@ -25,8 +25,9 @@ class HL_ControlPort : public ControlPort {
 	bool visible;
 	String max_string;
 	String min_string;
-	float min,max,step,def;	
+	float min,max,step;	
 	float val;
+	float initial;
 	
 	Hint hint;
 	
@@ -41,7 +42,7 @@ public:
 	virtual float get_min() const;
 	virtual float get_max() const;
 	virtual float get_step() const;
-	virtual float get_default() const;
+	virtual float get_initial() const;
 	virtual float get() const;
 	inline float operator()() const { return val; } // quick get
 	
@@ -50,7 +51,7 @@ public:
 	virtual String get_value_as_text(float p_value) const;
 	virtual Hint get_hint() const;
 	
-	void set_all(float p_val, float p_min, float p_max, float p_default, float p_step, Hint p_hint, String p_name, String p_suffix="",String p_min_str="",String p_max_str="");
+	void set_all(float p_val, float p_min, float p_max, float p_step, Hint p_hint, String p_name, String p_suffix="",String p_min_str="",String p_max_str="");
 		
 		
 	HL_ControlPort();
@@ -85,6 +86,10 @@ class HL_AudioNode : public AudioNode {
 	virtual void connect_audio_buffer( PortFlow p_flow, int p_port, int p_channel, sample_t *p_buffer );
 	virtual void connect_event_buffer( PortFlow p_flow, int p_port, MusicEvent *p_buffer );
 
+	/* Implemented by default, just saves and restores all the input control ports */
+	virtual Error save( TreeSaver * p_tree );
+	virtual Error load( TreeLoader * p_tree );
+	
 protected:
 	
 	/*  High Level Audio Node API */
