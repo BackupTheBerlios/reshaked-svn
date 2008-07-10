@@ -19,6 +19,7 @@
 #include "bundles/window_box.h"
 #include "base/file_system.h"
 #include "bundles/input_dialog.h"
+#include "bundles/message_box.h"
 
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
@@ -45,11 +46,14 @@ class PresetBrowser : public GUI::Window {
 	void rescan_tree();
 	
 	GUI::StringInputDialog *string_input;
+	GUI::MessageBox *mbox;
+	GUI::QuestionInputDialog *question;
 	
 	String get_selected();
 	
 	void op_callback( Operation p_op );
 	void dialog_callback(String p_text);
+	void question_callback(int p_answer);
 
 public:
 

@@ -105,6 +105,9 @@ String PresetBrowser::get_selected() {
 
 void PresetBrowser::dialog_callback(String p_text) {
 
+	if (p_text=="")
+		return;
+
 	switch( current_op ) {
 	
 		case OP_OPEN: {
@@ -115,15 +118,82 @@ void PresetBrowser::dialog_callback(String p_text) {
 		} break;
 		case OP_MKDIR: {
 		
+			if (p_text.find("/")!=-1 || p_text.find("\\")!=-1 || p_text.find(".")==0) {
+			
+				mbox->show("File contains invalid characters.");
+				return;
+			}
+			
+			String path=current_path+get_selected();
+			if (path[ path.size() -1]=='/')
+				path=path.left( path.size() -1 );
+			
+			GUI::FileSystem *fs = GUI::FileSystem::instance_func();
+			if (!fs->make_dir( path+"/"+p_text)) {
+			
+				rescan_tree();
+			} else {
+			
+				mbox->show("Failed making dir.");
+			
+			}
+		
 		} break;
 		case OP_RENAME: {
 		
+			if (p_text.find("/")!=-1 || p_text.find("\\")!=-1 || p_text.find(".")==0) {
+			
+				mbox->show("File contains invalid characters.");
+				return;
+			}
+
+			
+			String path=current_path+get_selected();
+			if (path[ path.size() -1]=='/')
+				path=path.left( path.size() -1 );
+				
+			String new_path=path.left( path.find_last("/") )+"/"+p_text;
+			
+			GUI::FileSystem *fs = GUI::FileSystem::instance_func();
+			
+			if (fs->rename( path, new_path)) {
+			
+				mbox->show("Error renaming!");			
+			} else {
+				rescan_tree();
+			}
+			
+			delete fs;
+		
 		} break;
 		case OP_ERASE: {
+			printf("erasing..\n");						
+			String path=current_path+get_selected();
+			if (path[ path.size() -1]=='/')
+				path=path.left( path.size() -1 );
+						
+			GUI::FileSystem *fs = GUI::FileSystem::instance_func();
+			
+			if (fs->remove( path)) {
+			
+				mbox->show("Error removing!");			
+			} else {
+				rescan_tree();
+			}
+			
+			delete fs;
 						
 		} break;
 	};
 
+}
+
+void PresetBrowser::question_callback(int p_answer) {
+
+	printf("answer was %i\n",p_answer);
+	if (!p_answer)
+		return;
+	dialog_callback(".");
 }
 
 void PresetBrowser::op_callback( Operation p_op ) {
@@ -139,13 +209,39 @@ void PresetBrowser::op_callback( Operation p_op ) {
 		
 		} break;
 		case OP_MKDIR: {
-		
+			
+			string_input->show("Enter New Name:","New Dir");
 		} break;
 		case OP_RENAME: {
-		
+			
+			String sel=get_selected();
+			if  (sel=="/") {
+			
+				mbox->show("Not much point in renaming the root dir..");
+				return;
+			}
+			
+			if (sel[ sel.size() -1]=='/')
+				sel=sel.left( sel.size() -1 );
+			
+		//	if (sel[ sel.size() -1]=='/') {
+		// 	ok, renaming dirs allowed
+	//			mbox->show("Can only rename presets.");
+//				return;//
+			//}/
+				
+			string_input->show("Enter New Name:",sel.substr( sel.find_last("/")+1,sel.size()));
+				
 		} break;
 		case OP_ERASE: {
 						
+			String sel=get_selected();
+			if  (sel=="/") {			
+				mbox->show("Easy tiger! I want to keep this dir..");
+				return;
+			}
+			question->show("Delete \""+sel+"\" ?");
+			
 		} break;
 	};
 
@@ -199,8 +295,16 @@ PresetBrowser::PresetBrowser(GUI::Window *p_parent) : GUI::Window(p_parent, GUI:
 	b = vbc->add( new GUI::Button( "Erase" ) );
 	b->pressed_signal.connect( GUI::Method( GUI::Method1<Operation>( this, &PresetBrowser::op_callback), OP_ERASE ) );	
 	
-	
+	string_input = new GUI::StringInputDialog( this );
+	string_input->entered_string_signal.connect( this, &PresetBrowser::dialog_callback );
 
+	mbox = new GUI::MessageBox( this );
+	question = new GUI::QuestionInputDialog( this );
+	
+	question->button_pressed_signal.connect( this,  &PresetBrowser::question_callback );	
+	question->add_button(1,"Yes");
+	question->add_button(0,"Cancel");
+	
 }
 
 
