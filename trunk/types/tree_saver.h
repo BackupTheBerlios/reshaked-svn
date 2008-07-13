@@ -14,12 +14,14 @@
 
 #include "typedefs.h"
 #include "rstring.h"
-
+#include "error_list.h"
 
 /**
 	@author red <red@killy>
 */
 class TreeSaver{
+protected:
+	static TreeSaver* (*create_func)();
 public:
 
 
@@ -37,6 +39,9 @@ public:
 
 	virtual void close()=0; /// when finished filling up the tree, close it
 	
+	virtual Error save(String p_fileID, String p_filename)=0;
+	
+	static TreeSaver* create();
 
 	TreeSaver();
 	virtual ~TreeSaver();

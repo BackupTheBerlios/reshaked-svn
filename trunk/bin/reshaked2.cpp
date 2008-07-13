@@ -14,10 +14,15 @@ namespace GUI {
 #include "drivers/timer_sdl.h"
 #include "drivers/keycodes_sdl.h"
 #include "drivers/painter_sdl.h"
+#include "drivers/file_libc.h"
+#include "drivers/file_windows.h"
 #include "widgets/scroll_bar.h"
 #include "gui_main/main_window.h"
 #include "gui_common/common_skin.h"
 #include "gui_common/default_paths.h"
+#include "gui_common/tree_saver_file.h"
+#include "gui_common/tree_loader_file.h"
+
 #include <SDL.h>
 
 #define DEFAULT_H 550
@@ -224,13 +229,18 @@ int main_loop(SDL_Surface *screen,GUI::TimerSDL *timer,unsigned int flags,MainWi
 
 int main(int argc, char *argv[]) {
 
+		
 #ifdef WINDOWS_ENABLED	
 	GUI::FileSystemWindows::set_default_filesystem();
+	GUI::FileWindows::set_as_default();
 #else
 	GUI::FileSystemDirent::set_default_filesystem();
+	GUI::FileLibC::set_as_default();
 
 #endif
 	
+	TreeSaverFile::make_default();
+	TreeLoaderFile::make_default();
 	
 #ifdef JACK_ENABLED
 	

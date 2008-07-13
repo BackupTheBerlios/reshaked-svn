@@ -30,9 +30,11 @@
  * @MAYBE - Add a DOUBLE type in the future, for storing stuff like matrices.
  */
 
-class FileAccess;
 
 class TreeLoader{
+protected:
+	static TreeLoader* (*create_func)();
+
 public:
 
 	enum VarType {
@@ -114,8 +116,11 @@ public:
 	 * @param p_custom A custom fileaccess can be used for opening the file.
 	 * @return OK if success, a specific error if failed
 	 */
-	virtual Error open(String p_file,String p_header,FileAccess *p_custom=NULL)=0; /// Option to open a tree from a specific file. Not guaranteed to be implemented.
+	 
+	virtual Error open(String p_fileID, String p_filename)=0;
 	virtual void close()=0; /// close the file. Also, if open, file is always closed when the object is deleted.
+	
+	static TreeLoader* create();
 	
 	TreeLoader();
 	virtual ~TreeLoader();

@@ -33,7 +33,9 @@ double ControlPortRange::get_max()  {
 void ControlPortRange::set(double p_val)  {
 
 	control_port->set( p_val, true ); // shoudl go throgh editcommands....
+	_lastval=control_port->get();
 	value_changed_signal.call( control_port->get() );
+	
 }
 double ControlPortRange::get()  {
 
@@ -66,7 +68,8 @@ double ControlPortRange::get_unit_value()  {
 }
 void ControlPortRange::set_unit_value(double p_v)  {
 
-	control_port->set_normalized(p_v); // go through editcommands...
+	control_port->set_normalized(p_v,true); // go through editcommands...
+	_lastval=control_port->get();
 	value_changed_signal.call( control_port->get() );	
 }
 
@@ -75,6 +78,15 @@ String ControlPortRange::get_as_text() {
 	return control_port->get_value_as_text( control_port->get() );
 }
 
+void ControlPortRange::check_for_changes() {
+
+	if (_lastval!=control_port->get()) {
+	
+		_lastval=control_port->get();	
+		value_changed_signal.call( control_port->get() );	
+	}
+		
+}
 
 ControlPortRange::ControlPortRange(ControlPort *p_control_port) {
 

@@ -21,10 +21,30 @@
 
 class AudioDriverNode : public AudioNode {
 public:
+	
+	enum ConnectionType {
+	
+		CONNECTION_FIXED,
+		CONNECTION_NAMED
+	};
 
-	virtual void get_connectable_list( std::list<String>* p_list ) const=0;
-	virtual String get_connected_to() const=0;
-	virtual Error connect(String p_to)=0;
+
+	virtual void get_named_connectable_list( std::list<String>* p_list ) const=0;
+	virtual void get_fixed_connectable_list( std::list<String>* p_list ) const=0;
+	
+	virtual void connect_fixed(int p_index,int p_channel=-1)=0; // channel for audioports
+	virtual void connect_named(String p_name,int p_channel=-1)=0; // channel for audioports
+	
+	virtual void disconnect()=0;
+	
+	virtual ConnectionType get_connection_type() const=0;
+	
+	virtual String get_named_connection() const=0;
+	virtual int get_fixed_connection() const=0;
+	virtual int get_fixed_connection_channel() const=0; // for audio ports
+	
+	virtual PortType get_driver_node_type() const=0;
+	virtual PortFlow get_driver_node_flow() const=0;
 
 	AudioDriverNode();
 	~AudioDriverNode();

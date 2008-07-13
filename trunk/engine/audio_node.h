@@ -59,7 +59,7 @@ public:
 	virtual float get() const=0;
 	
 	virtual void set(float p_val,bool p_make_initial=false)=0; //set, optionally make the value the default too
-	virtual void set_normalized(float p_val); // set in range 0-1, internally converted to range
+	virtual void set_normalized(float p_val,bool p_make_initial=false); // set in range 0-1, internally converted to range
 	virtual float get_normalized() const;
 	
 	virtual String get_value_as_text(float p_value) const;
@@ -151,6 +151,8 @@ public:
 	void set_layer(int p_layer);
 	virtual int get_layer() const;
 			
+	Error save_file( String p_filename );
+	Error load_file( String p_filename );
 		
 	AudioNode();
 	virtual ~AudioNode();

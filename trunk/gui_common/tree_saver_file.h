@@ -58,6 +58,8 @@ class TreeSaverFile : public TreeSaver {
 	
 	GUI::File *f;
 	bool own_f;
+	
+	static TreeSaver* create_tree_saver_file();
 public:
 	
 	virtual void enter(String p_dir);
@@ -74,9 +76,10 @@ public:
 	
 	virtual void add_raw(String p_name,const unsigned char *p_raw,int p_bytes);
 	
-	bool save(String p_filename,String p_ascii_header,GUI::File *p_custom=NULL); ///< Return true if error
+	virtual Error save(String p_fileID, String p_filename);
 	void close();
 	
+	static void make_default();
 	
 	TreeSaverFile();
 	~TreeSaverFile();

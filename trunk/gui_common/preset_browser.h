@@ -1,4 +1,4 @@
-//
+ //
 // C++ Interface: preset_browser
 //
 // Description: 
@@ -49,12 +49,15 @@ class PresetBrowser : public GUI::Window {
 	GUI::MessageBox *mbox;
 	GUI::QuestionInputDialog *question;
 	
+	String filesave_path;
+	
 	String get_selected();
 	
 	void op_callback( Operation p_op );
 	void dialog_callback(String p_text);
 	void question_callback(int p_answer);
-
+	void attempt_save(String p_file);
+	AudioNode *node;
 public:
 
 	void edit_preset( AudioNode *p_node );

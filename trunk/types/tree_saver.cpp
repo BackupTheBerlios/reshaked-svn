@@ -11,6 +11,16 @@
 //
 #include "tree_saver.h"
 
+TreeSaver* (*TreeSaver::create_func)()=NULL;
+
+TreeSaver* TreeSaver::create() {
+
+	if (create_func)
+		return create_func();
+			
+	return NULL;
+}
+
 TreeSaver::TreeSaver()
 {
 }

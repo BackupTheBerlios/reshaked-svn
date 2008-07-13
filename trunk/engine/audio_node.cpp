@@ -12,11 +12,11 @@ bool ControlPort::is_visible() const {
 }
 
 
-void ControlPort::set_normalized(float p_val) {
+void ControlPort::set_normalized(float p_val,bool p_make_initial) {
 
 	p_val*=get_max()-get_min();
 	p_val+=get_min();
-	set(p_val);
+	set(p_val,p_make_initial);
 
 }
 
@@ -144,6 +144,45 @@ int AudioNode::get_layer() const {
 	return _layer;
 }
 
+Error AudioNode::save_file( String p_filename ) {
+
+	TreeSaver *ts=TreeSaver::create();
+	Error err = ts->save( "PRESET: "+get_info()->unique_ID, p_filename);
+	if (err)
+		delete ts;
+	ERR_FAIL_COND_V( err, err );
+	
+	ts->add_int( "version", get_info()->version );
+	ts->enter("data");
+	save( ts );
+	ts->exit();
+	ts->close();
+	
+	delete ts;
+	return OK;
+}
+
+Error AudioNode::load_file( String p_filename ) {
+
+	TreeLoader *tl=TreeLoader::create();
+	Error err = tl->open( "PRESET: "+get_info()->unique_ID, p_filename);
+	if (err)
+		delete tl;
+	ERR_FAIL_COND_V( err, err );
+	
+	if (tl->get_int("version")>get_info()->version ) {
+		
+		delete tl;
+		return ERR_VERSION_MISMATCH;
+	}
+	tl->enter("data");
+	load( tl );
+	tl->exit();
+	tl->close();
+	
+	delete tl;
+	return OK;
+}
 
 AudioNode::AudioNode() {
 

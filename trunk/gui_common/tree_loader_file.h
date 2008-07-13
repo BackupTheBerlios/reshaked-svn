@@ -80,6 +80,7 @@ class TreeLoaderFile : public TreeLoader {
 	
 	GUI::File *f;
 
+	static TreeLoader *create_tree_loader_file();
 public:
 
 	virtual bool enter(String p_dir);
@@ -112,8 +113,11 @@ public:
 	virtual VarType get_var_type(String p_var);
 
 	
-	virtual Error open(String p_file,String p_header,GUI::File *p_custom=NULL); /// Not guaranteed to be implemented
+	virtual Error open(String p_fileID, String p_filename);
+
 	virtual void close();
+
+	static void make_default();
 
 	TreeLoaderFile();
 	~TreeLoaderFile();

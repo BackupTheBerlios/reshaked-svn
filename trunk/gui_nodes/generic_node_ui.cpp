@@ -57,7 +57,8 @@ void GenericNodeUI::set_in_window() {
 		NodeUI_Label * label = vbc->add( new NodeUI_Label );
 		label->set_text( cp->get_name() );
 		
-		GUI::RangeBase *r=new ControlPortRange( cp );
+		ControlPortRange *r=new ControlPortRange( cp );
+		register_range_for_updates(r);
 		
 		switch (cp->get_hint()) {
 		

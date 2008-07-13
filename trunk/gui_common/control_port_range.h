@@ -21,6 +21,7 @@
 
 class ControlPortRange : public GUI::RangeBase {
 
+	float _lastval;
 	ControlPort *control_port;
 public:
 
@@ -43,6 +44,8 @@ public:
 	virtual void set_unit_value(double p_v); 
 	
 	virtual String get_as_text();
+	
+	void check_for_changes();
 
 	ControlPortRange(ControlPort *p_control_port);	
 	~ControlPortRange();

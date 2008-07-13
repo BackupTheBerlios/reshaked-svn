@@ -202,6 +202,9 @@ private:
 	};
 
 public:
+	
+	void clean();
+
 	UndoRedo();
 	~UndoRedo();
 

@@ -26,6 +26,9 @@ void UndoRedo::add_action(String p_description,CommandBase *p_do_method, Command
 
 }
 
+void UndoRedo::clean() {
+
+}
 
 UndoRedo::UndoRedo()
 {

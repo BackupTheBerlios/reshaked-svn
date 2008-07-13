@@ -223,6 +223,7 @@ uint32_t TreeLoaderFile::get_node_offset(String p_name, bool p_check_type, FileF
 
 bool TreeLoaderFile::enter(String p_dir) {
 
+	printf("attempting to enter %s\n",p_dir.ascii().get_data());
 	uint32_t ofs = get_node_offset(p_dir,true,FILE_FIELD_ENTER);
 	ERR_FAIL_COND_V( ofs == OFFSET_ERROR , true );
 
@@ -249,6 +250,7 @@ bool TreeLoaderFile::enter_by_index(int p_index) {
 }
 void TreeLoaderFile::exit() {
 
+	printf("exiting\n");
 	ERR_FAIL_COND( current.stack.size() == 1 );
 
 	uint32_t offset=current.stack[ current.stack.size() -2 ];
@@ -725,17 +727,14 @@ TreeLoader::VarType TreeLoaderFile::get_var_type(String p_var) {
 	return VAR_NONE;
 }
 
-Error TreeLoaderFile::open(String p_file,String p_header,GUI::File *p_custom) {
+Error TreeLoaderFile::open(String p_fileID, String p_filename) {
 
 	ERR_FAIL_COND_V(f,ERR_ALREADY_IN_USE); // loader in use
 
-	if (p_custom) {
-		f=p_custom;
-	} else {
-		f=GUI::File::create(); //use default
-	}
 
-	if (f->open(p_file.ascii().get_data(),GUI::File::READ)) {
+	f=GUI::File::create(); //use default
+
+	if (f->open(p_filename.ascii().get_data(),GUI::File::READ)) {
 
 
 		ERR_PRINT("Can't open file for reading!\n");
@@ -745,7 +744,7 @@ Error TreeLoaderFile::open(String p_file,String p_header,GUI::File *p_custom) {
 	char magic[4];
 	f->get_buffer( (uint8_t*)magic, 4 );
 
-	if (magic[0]!='C' || magic[1]!='N' || magic[2]!='X' || magic[3]!='T') {
+	if (magic[0]!='R' || magic[1]!='S' || magic[2]!='H' || magic[3]!='T') {
 
 		ERR_PRINT("Not a CNX Tree");
 		return ERR_INVALID_DATA;
@@ -759,7 +758,7 @@ Error TreeLoaderFile::open(String p_file,String p_header,GUI::File *p_custom) {
 		id+=f->get_8();
 	}
 
-	if (p_header!="" && id!=p_header) {
+	if (p_fileID!="" && id!=p_fileID) {
 
 		ERR_PRINT("Header Mismatch");
 		return ERR_INVALID_DATA;
@@ -857,7 +856,7 @@ Error TreeLoaderFile::open(String p_file,String p_header,GUI::File *p_custom) {
 	uint32_t root_offset=f->get_32();
 
 	enter_offset( root_offset );
-
+	current.stack.push_back( root_offset );
 	return OK;
 }
 
@@ -869,11 +868,22 @@ void TreeLoaderFile::close() {
 
 		f->close();
 		delete f;
+		f=NULL;
 	} else {
 
 		ERR_PRINT("File already closed");
 	}
 
+}
+
+TreeLoader *TreeLoaderFile::create_tree_loader_file() {
+
+	return new TreeLoaderFile;
+}
+
+void TreeLoaderFile::make_default() {
+
+	create_func=create_tree_loader_file;
 }
 
 TreeLoaderFile::TreeLoaderFile() {

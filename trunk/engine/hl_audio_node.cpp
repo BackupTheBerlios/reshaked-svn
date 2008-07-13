@@ -248,7 +248,7 @@ Error HL_AudioNode::save( TreeSaver * p_tree ) {
 	for (int i=0;i<get_port_count( PORT_CONTROL, PORT_IN );i++) {
 	
 		ControlPort *cp = get_control_port(  PORT_IN , i );
-		
+				
 		p_tree->add_float( cp->get_name(), cp->get_initial() );
 		
 	}
@@ -259,13 +259,17 @@ Error HL_AudioNode::load( TreeLoader * p_tree )  {
 	for (int i=0;i<p_tree->get_var_count();i++) {
 	
 		String varname = p_tree->get_var_name(i);
+		printf("found var %s\n",varname.ascii().get_data());
 		
 		for (int j=0;j<get_port_count( PORT_CONTROL, PORT_IN );j++) {
 		
 			ControlPort *cp = get_control_port(  PORT_IN , j );
 			
-			if (cp->get_name()==varname)
-				cp->set( p_tree->get_float( varname ), true );
+			if (cp->get_name()==varname) {
+				float value = p_tree->get_float( varname );
+				printf("found where to place it, value %f\n",value);
+				cp->set( value, true );
+			}
 			
 		}
 		

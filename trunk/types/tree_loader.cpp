@@ -11,6 +11,19 @@
 //
 #include "tree_loader.h"
 
+TreeLoader* (*TreeLoader::create_func)()=NULL;
+
+
+TreeLoader* TreeLoader::create() {
+
+	if (create_func)
+		return create_func();
+	else 
+		return NULL;
+	
+}
+
+
 TreeLoader::TreeLoader()
 {
 }

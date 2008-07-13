@@ -103,8 +103,37 @@ String PresetBrowser::get_selected() {
 	return path;
 }
 
+void PresetBrowser::attempt_save(String p_file) {
+
+	filesave_path=p_file;
+	
+	printf("attempt save path %s\n",p_file.ascii().get_data());
+	
+	GUI::FileSystem *fs = GUI::FileSystem::instance_func();
+	
+	if (fs->file_exists(p_file)) {
+		
+		String singlename = p_file.substr( p_file.find_last("/")+1,p_file.size());
+		question->show("File \""+singlename+"\" exists, overwrite?");
+	} else {
+	
+		Error err = node->save_file( p_file );
+		if (err) {
+		
+			mbox->show("Error saving file.");		
+		}
+		
+		rescan_tree();
+		
+	}
+	
+	delete fs;
+
+}
+
 void PresetBrowser::dialog_callback(String p_text) {
 
+	
 	if (p_text=="")
 		return;
 
@@ -115,6 +144,22 @@ void PresetBrowser::dialog_callback(String p_text) {
 		} break;
 		case OP_SAVE: {
 		
+			if (p_text.find("/")!=-1 || p_text.find("\\")!=-1 || p_text.find(".")==0) {
+			
+				mbox->show("File contains invalid characters.");
+				return;
+			}
+		
+			
+			String path=current_path+get_selected();
+			
+			if (path[ path.size() -1]=='/')
+				path=path.left( path.size() -1 );
+			else 
+				path=path.left( path.find_last("/") );
+						
+			attempt_save(path+"/"+p_text);
+			
 		} break;
 		case OP_MKDIR: {
 		
@@ -127,7 +172,10 @@ void PresetBrowser::dialog_callback(String p_text) {
 			String path=current_path+get_selected();
 			if (path[ path.size() -1]=='/')
 				path=path.left( path.size() -1 );
-			
+			else 
+				path=path.left( path.find_last("/") );
+				
+			printf("I'm trying to makedir %s\n",(path+"/"+p_text).ascii().get_data());
 			GUI::FileSystem *fs = GUI::FileSystem::instance_func();
 			if (!fs->make_dir( path+"/"+p_text)) {
 			
@@ -190,10 +238,20 @@ void PresetBrowser::dialog_callback(String p_text) {
 
 void PresetBrowser::question_callback(int p_answer) {
 
-	printf("answer was %i\n",p_answer);
+	question->hide();
 	if (!p_answer)
 		return;
-	dialog_callback(".");
+		
+	switch( current_op ) {
+		case OP_SAVE: {
+			String sel = get_selected();
+			dialog_callback(sel.substr( sel.find_last("/")+1,sel.size()));
+		} break; 
+		case OP_ERASE: {
+		
+			dialog_callback(".");		
+		} break;
+	};
 }
 
 void PresetBrowser::op_callback( Operation p_op ) {
@@ -204,9 +262,31 @@ void PresetBrowser::op_callback( Operation p_op ) {
 	
 		case OP_OPEN: {
 				
+			String sel=get_selected();
+			if (sel[ sel.size() -1]=='/') { // inside a path
+				return;
+			}
+							
+			Error err = node->load_file(current_path+sel);
+	
+			if (err) {
+			
+				mbox->show("Error loading file.");		
+			}
+	
 		} break;
 		case OP_SAVE: {
 		
+			String sel=get_selected();
+		
+			if (sel[ sel.size() -1]=='/') { // inside a path
+			
+				string_input->show("Enter New Preset Name:","New Preset");
+			
+			} else { // selected a file to overwrite
+		
+				attempt_save(current_path+sel);
+			}
 		} break;
 		case OP_MKDIR: {
 			
@@ -254,6 +334,8 @@ void PresetBrowser::edit_preset( AudioNode *p_node ) {
 	DefaultPaths::ensure_node_preset_dir_exists(p_node->get_info()->unique_ID);
 	
 	current_path=DefaultPaths::get_presets_path()+"/"+p_node->get_info()->unique_ID;
+	
+	node=p_node;
 	
 	rescan_tree();
 	
@@ -304,6 +386,8 @@ PresetBrowser::PresetBrowser(GUI::Window *p_parent) : GUI::Window(p_parent, GUI:
 	question->button_pressed_signal.connect( this,  &PresetBrowser::question_callback );	
 	question->add_button(1,"Yes");
 	question->add_button(0,"Cancel");
+	
+	
 	
 }
 

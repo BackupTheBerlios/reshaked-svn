@@ -22,7 +22,9 @@ class NodeUI_Window : public GUI::Window {
 
 	GUI::VBoxContainer *container;
 	BaseNodeUI *node_ui;
+	GUI::TimerID timer;
 	
+	void update_controls_callback();
 	void edited_callback( AudioNode *p_node);
 public:
 

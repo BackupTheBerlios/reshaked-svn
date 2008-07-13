@@ -41,6 +41,7 @@ enum Error {
 	ERR_DATABASE_CANT_WRITE, ///< database is full
  	ERR_COMPILATION_FAILED,
   	ERR_LINK_FAILED,
+  	ERR_VERSION_MISMATCH,
 	ERR_BUG, ///< a bug in the software certainly happened, due to a double check failing or unexpected behavior.
 	ERR_OMFG_THIS_IS_VERY_VERY_BAD, ///< shit happens, has never been used, though
 	ERR_WTF = ERR_OMFG_THIS_IS_VERY_VERY_BAD ///< short version of the above

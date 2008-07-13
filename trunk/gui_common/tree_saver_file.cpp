@@ -464,24 +464,28 @@ unsigned int TreeSaverFile::save_node(GUI::File *f) {
 	return nodepos;
 }
 
-bool TreeSaverFile::save(String p_filename,String p_ascii_header,GUI::File *p_custom) {
 
-	ERR_FAIL_COND_V(f,true);
+Error TreeSaverFile::save(String p_fileID, String p_filename) {
 
-	f=p_custom?p_custom:GUI::File::create();
-	own_f=p_custom==NULL;
 
-	if (f->open(p_filename.ascii().get_data(),GUI::File::WRITE)) {
 
-		ERR_PRINT("Error opening file for writing");
-		return true;
+	ERR_FAIL_COND_V(f,ERR_ALREADY_IN_USE);
+
+	f = GUI::File::create();
+	
+	GUI::File::FileError err = f->open(p_filename,GUI::File::WRITE);
+	if ( err != GUI::File::OK) {
+
+		ERR_PRINT("Error opening file for writing: %i");
+		printf("errcode %i\n",err);
+		return ERR_CANT_OPEN;
 	}
 
-	f->store_buffer( (uint8_t*)"CNXT", 4 ); //magic number
+	f->store_buffer( (uint8_t*)"RSHT", 4 ); //magic number
 
-	f->store_32( p_ascii_header.length() ); //saver version
+	f->store_32( p_fileID.length() ); //saver version
 
-	f->store_buffer( (uint8_t*)p_ascii_header.ascii().get_data(), p_ascii_header.length() );
+	f->store_buffer( (uint8_t*)p_fileID.ascii().get_data(), p_fileID.length() );
 
 	f->store_32( 1 ); //saver version
 
@@ -495,9 +499,8 @@ bool TreeSaverFile::save(String p_filename,String p_ascii_header,GUI::File *p_cu
 		f->store_buffer( (uint8_t*)"ASCII", 5 );
 	else {
 		ERR_PRINT("Unknown Encoding\n");
-		if (!p_custom)
-			delete f;
-		return true;
+		delete f;
+		return ERR_INVALID_DATA;
 	}
 
 	f->store_buffer( (uint8_t*)"LE", 2 ); /* Little Endian */
@@ -505,8 +508,8 @@ bool TreeSaverFile::save(String p_filename,String p_ascii_header,GUI::File *p_cu
 	f->store_32( MAX_ENTRY_NAME_LEN ); /* max name len */
 
 	current=&root;
-
-	return false;
+	printf("opened ok\n");
+	return OK;
 
 }
 
@@ -519,6 +522,7 @@ void TreeSaverFile::close() {
 	current=&root;
 	uint32_t rootpos=save_node(f);
 	if (rootpos==0xFFFFFFFF) { //error saving, return error
+		printf("error saving :(\n");
 		f->close();
 		return;
 	}
@@ -526,17 +530,25 @@ void TreeSaverFile::close() {
 	f->store_32( rootpos ); //POS FOR ROOT NODE, REAL
 	f->close();
 
-	if (!own_f)
-		delete f;
-
+	delete f;
 	f=NULL;
 
+}
+
+TreeSaver* TreeSaverFile::create_tree_saver_file() {
+
+	return new TreeSaverFile;
+}
+
+void TreeSaverFile::make_default() {
+
+	create_func=create_tree_saver_file;
 }
 
 TreeSaverFile::TreeSaverFile() {
 
 	f=NULL;
-	utf8=false;
+	utf8=true;
 	root.name="";
 	root.type=FILE_FIELD_ENTER;
 }
