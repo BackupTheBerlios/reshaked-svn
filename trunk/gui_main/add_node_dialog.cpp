@@ -36,10 +36,16 @@ GUI::Size AddNodeDialog::NodeInfoItem::get_minimum_size_internal() {
 	
 	minsize.height+=get_painter()->get_font_height( font(FONT_NODE_CHOOSER_NAME) );
 	minsize.height+=get_painter()->get_font_height( font(FONT_NODE_CHOOSER_DESCRIPTION) );
-	minsize.height+=constant(C_NODE_CHOOSER_ITEM_MARGIN)*2;
+	minsize.height+=constant(C_NODE_CHOOSER_ITEM_MARGIN)*3;
 	
-	if (icon>=0 && get_painter()->get_bitmap_size(icon).height>minsize.height)
-		minsize.height=get_painter()->get_bitmap_size(icon).height;
+	
+	if (icon>=0) { 
+	 
+	 	GUI::BitmapID iconid=get_window()->get_skin()->get_bitmap( icon );
+	 	if (get_painter()->get_bitmap_size(iconid).height>minsize.height)
+			minsize.height=get_painter()->get_bitmap_size(iconid).height;
+		
+	}
 	
 	minsize.height+=constant(C_NODE_CHOOSER_ITEM_INTERNAL_SEPARATION);
 	
@@ -54,14 +60,15 @@ void AddNodeDialog::NodeInfoItem::draw(const GUI::Point& p_global,const GUI::Siz
 	else
 		get_painter()->draw_fill_rect( GUI::Point(), p_size, color(COLOR_NODE_CHOOSER_BG));
 	
-	get_painter()->draw_fill_rect( GUI::Point(), GUI::Size(p_size.width,1), color(COLOR_NODE_CHOOSER_SEPARATOR));
+	get_painter()->draw_fill_rect( GUI::Point(0,p_size.height-1), GUI::Size(p_size.width,1), color(COLOR_NODE_CHOOSER_SEPARATOR));
 	GUI::Point ofs=GUI::Point();
 	ofs.x+=constant(C_NODE_CHOOSER_ITEM_MARGIN);
 	ofs.y+=constant(C_NODE_CHOOSER_ITEM_MARGIN);
 	if (icon>=0) {
 	
-		get_painter()->draw_bitmap(icon,ofs);
-		ofs.x+=constant(C_NODE_CHOOSER_ITEM_MARGIN)+get_painter()->get_bitmap_size(icon).width;
+		 	GUI::BitmapID iconid=get_window()->get_skin()->get_bitmap( icon );
+			get_painter()->draw_bitmap(iconid,ofs);
+			ofs.x+=constant(C_NODE_CHOOSER_ITEM_MARGIN)+get_painter()->get_bitmap_size(iconid).width;
 	}
 	
 	ofs.y+=get_painter()->get_font_ascent( font(FONT_NODE_CHOOSER_NAME ) );
@@ -76,6 +83,7 @@ void AddNodeDialog::NodeInfoItem::draw(const GUI::Point& p_global,const GUI::Siz
 void AddNodeDialog::NodeInfoItem::set_in_window() {
 
 	icon=get_window()->get_skin()->find_bitmap( "bitmap_"+info->icon_string );
+
 }
 
 AddNodeDialog::NodeInfoItem::NodeInfoItem(const AudioNodeInfo *p_node_info) {
@@ -84,6 +92,16 @@ AddNodeDialog::NodeInfoItem::NodeInfoItem(const AudioNodeInfo *p_node_info) {
 	current=NULL;
 	icon=GUI::INVALID_BITMAP_ID;
 }
+
+
+class _BGFILL : public GUI::Widget {
+public:
+	void draw(const GUI::Point& p_global,const GUI::Size& p_size,const GUI::Rect& p_exposed) {
+	
+		get_painter()->draw_fill_rect( GUI::Point(), p_size, color(COLOR_NODE_CHOOSER_BG) );
+	}
+
+};
 
 /******************/
 
@@ -271,7 +289,9 @@ AddNodeDialog::AddNodeDialog(GUI::Window *p_parent,Song *p_song) : GUI::Window(p
 			
 	GUI::ScrollBox *scroll_box = mg->add( new GUI::ScrollBox,1 );
 	scroll_box->set_expand_h(true);
+	scroll_box->set_expand_v(true);
 	GUI::VBoxContainer * vbox = scroll_box->set( new GUI::VBoxContainer );
+	vbox->set_separation(0);
 				
 	for (int i=0;i<AudioNodeRegistry::get_node_info_count();i++) {
 	
@@ -281,6 +301,7 @@ AddNodeDialog::AddNodeDialog(GUI::Window *p_parent,Song *p_song) : GUI::Window(p
 		nii->selected.connect( this, &AddNodeDialog::node_selected_callback );
 	}
 				
+	vbox->add( new _BGFILL, 1 );
 				
 	GUI::HBoxContainer * hbc = wb->add( new GUI::HBoxContainer );
 				

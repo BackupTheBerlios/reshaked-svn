@@ -26,6 +26,7 @@ const AudioNodeInfo *AmpRatioNode::get_creation_info() {
 	_info.description="Ratio-Based Amplification";
 	_info.unique_ID="INTERNAL_AmpRatioNode";
 	_info.creation_func=&AmpRatioNode::creation_func;
+	_info.icon_string="node_amp";
 	_info.category="Effects";
 
 	return &_info;

@@ -151,6 +151,7 @@ void AudioGraph::add_node(AudioNode *p_node,int p_at_index) {
 	recompute_process_order();
 	recompute_graph();
 	
+	p_node->graph_enter();
 	AudioControl::mutex_unlock();
 	
 }
@@ -179,6 +180,7 @@ void AudioGraph::erase_node(int p_index) {
 	AudioControl::mutex_lock();	
 	
 	/* erase node */
+	nodes[p_index]->graph_exit();
 	nodes.erase( nodes.begin() + p_index );
 	
 	recompute_process_order();

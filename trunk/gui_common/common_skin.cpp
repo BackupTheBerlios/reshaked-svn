@@ -13,7 +13,7 @@
 //
 #include "common_skin.h"
 
-
+#include <stdio.h>
 
 #define SET_STYLEBOX( m_which , m_style )\
 set_stylebox_name(m_which,#m_which);\
@@ -77,6 +77,14 @@ void CommonSkin::set_default_extra() {
 	SET_BM(GRAPH_NODE_CONTROL_EDIT);
 	SET_BM(GRAPH_NODE_SKIP);
 	SET_BM(GRAPH_NODE_LAYERS);
+	
+
+	SET_BM( NODE_HW_AUDIO_IN );
+	SET_BM( NODE_HW_AUDIO_OUT );
+	SET_BM( NODE_HW_EVENT_IN ) ;
+	SET_BM( NODE_HW_EVENT_OUT );
+	SET_BM( NODE_AMP );
+	SET_BM( NODE_REVERB );
 
 	/* NODE CHOOSER */
 	

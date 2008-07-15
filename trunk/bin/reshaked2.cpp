@@ -16,6 +16,7 @@ namespace GUI {
 #include "drivers/painter_sdl.h"
 #include "drivers/file_libc.h"
 #include "drivers/file_windows.h"
+#include "drivers/audio_driver_jack.h"
 #include "widgets/scroll_bar.h"
 #include "gui_main/main_window.h"
 #include "gui_common/common_skin.h"
@@ -244,10 +245,12 @@ int main(int argc, char *argv[]) {
 	
 #ifdef JACK_ENABLED
 	
-//	AudioDriverJACK driver_jack;
-//	AudioDriverManager::add_driver( &driver_jack );		
+	AudioDriverJACK driver_jack;
+	AudioDriver::add_audio_driver( &driver_jack );
 	
 #endif
+	
+	AudioDriver::initialize_audio(0); // for now, this
 	
 	DefaultPaths::set_base_path(BASE_PATH);
 	
@@ -279,6 +282,8 @@ int main(int argc, char *argv[]) {
 	main_window->update();
 	main_window->redraw_all();
 	painter->update_screen();
+			
+			
 			
 	/**** GUI AND SDL INIT END */
 		
