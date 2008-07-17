@@ -28,7 +28,7 @@ BaseNodeUI *NodeUI_Registry::create_ui(AudioNode *p_node) {
 
 void NodeUI_Registry::add_create_ui_func(UI_CreateFunc p_func) {
 
-	create_func_array.push_front(p_func);
+	create_func_array.push_back(p_func);
 }
 
 

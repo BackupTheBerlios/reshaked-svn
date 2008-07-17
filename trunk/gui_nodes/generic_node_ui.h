@@ -24,6 +24,7 @@ class GenericNodeUI : public BaseNodeUI {
 public:
 
 	static BaseNodeUI *ui_create_func(AudioNode *p_node);
+	
 
 	GenericNodeUI(AudioNode *p_node);	
 	~GenericNodeUI();

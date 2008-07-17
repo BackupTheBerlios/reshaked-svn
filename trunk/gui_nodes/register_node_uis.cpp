@@ -12,9 +12,11 @@
 #include "register_node_uis.h"
 
 #include "generic_node_ui.h"
+#include "gui_common/audio_driver_node_ui.h"
 #include "gui_common/node_ui_registry.h"
 
 void register_node_uis() {
 
+	NodeUI_Registry::add_create_ui_func(AudioDriverNodeUI::ui_create_func);
 	NodeUI_Registry::add_create_ui_func(GenericNodeUI::ui_create_func);
 }
