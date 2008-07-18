@@ -11,14 +11,28 @@
 //
 #include "song.h"
 
+
+Song *Song::singleton=NULL;
+
 AudioGraph* Song::get_audio_graph() {
 
 	return &audio_graph;
 }
 
+Song *Song::get_singleton() {
 
-Song::Song()
-{
+	return singleton;
+}
+
+int Song::process(int p_frames) {
+
+	return audio_graph.process(p_frames);
+}
+
+Song::Song() {
+
+	ERR_FAIL_COND( singleton );
+	singleton=this;
 }
 
 

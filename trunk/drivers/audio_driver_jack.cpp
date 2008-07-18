@@ -12,6 +12,7 @@
 #include "audio_driver_jack.h"
 #include "engine/audio_driver_node.h"
 #include "engine/audio_node_registry.h"
+#include "engine/song.h"
 
 
 AudioDriverJACK*AudioDriverJACK::singleton=NULL;
@@ -144,17 +145,16 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 	
 	virtual void connect_audio_buffer( PortFlow p_flow, int p_port, int p_channel, sample_t *p_buffer ) {
 	
-		if (type!=PORT_AUDIO || p_flow!=flow )
-			return;
-		if (p_channel>0 || p_channel >=chans)
-			return;
+		ERR_FAIL_COND(type!=PORT_AUDIO || p_flow!=flow );
+		ERR_FAIL_INDEX(p_channel,chans);
 		
 		audio_buffer[p_channel]=p_buffer;
 	}
 	virtual void connect_event_buffer( PortFlow p_flow, int p_port, MusicEvent *p_buffer ) {
 	
-		if (type==PORT_EVENT && flow==p_flow)
-			ev_buffer=p_buffer;
+		ERR_FAIL_COND(type==PORT_EVENT && flow==p_flow);
+			
+		ev_buffer=p_buffer;
 	}
 
 	virtual ControlPort* get_control_port( PortFlow p_flow,int p_port ) { 
@@ -170,7 +170,40 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 		
 	virtual void process(const ProcessInfo& p_info) {
 	
-	
+		switch( type ) {
+		
+			case PORT_AUDIO: {
+			
+
+				int mix_frames=p_info.audio_buffer_size;
+		
+				for (int c=0;c<chans;c++) {
+			
+			 	
+					jack_default_audio_sample_t *jack_buff = &((jack_default_audio_sample_t*)jack_port_get_buffer( ports[c].port , AudioDriverJACK::singleton->callback_nframes))[AudioDriverJACK::singleton->process_offset];
+				
+					sample_t *audio_buff=audio_buffer[c];
+			 	
+			 		ERR_FAIL_COND(!audio_buff);
+			 		
+			 		
+					if (flow==PORT_IN) {
+					
+						for (int i=0;i<mix_frames;i++) {
+						
+							audio_buff[i]=jack_buff[i];
+						}					
+					} else {
+				
+						for (int i=0;i<mix_frames;i++) {
+						
+							jack_buff[i]=audio_buff[i];
+						}					
+					}
+				}			
+			} break;
+		}
+		
 	}
 	virtual void set_mix_rate(float p_hz) {
 	
@@ -257,15 +290,21 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 	
 	virtual void connect_fixed(int p_index,int p_channel=-1) {
 	
-	
+		ERR_FAIL_INDEX( p_channel, chans );
+		ports[p_channel].index=p_index;
+		_connect_jack();
 	}
 	virtual void connect_named(String p_name,int p_channel=-1) {
 	
+		ERR_FAIL_INDEX( p_channel, chans );
+		ports[p_channel].named=p_name;
+		_connect_jack();
 	
 	}
 	virtual void disconnect() {
 	
 	
+		_disconnect_jack();
 	}
 	
 	virtual ConnectionType get_connection_type() const  {
@@ -273,18 +312,21 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 		return named?CONNECTION_NAMED:CONNECTION_FIXED;
 	}
 	
-	virtual String get_named_connection() const {
+	virtual String get_named_connection(int p_channel=-1) const {
 	
-		return "";
+		ERR_FAIL_INDEX_V( p_channel, chans,"" );
+		
+		return ports[p_channel].named;
 	}
-	virtual int get_fixed_connection() const {
 	
-		return 0;
-	}
-	virtual int get_fixed_connection_channel() const {
+	virtual int get_fixed_connection(int p_channel=1) const {
 	
-		return 0;
+		ERR_FAIL_INDEX_V( p_channel, chans,0 );
+		
+		return ports[p_channel].index;
+	
 	}
+	
 	
 	virtual PortType get_driver_node_type() const { return type; }
 	virtual PortFlow get_driver_node_flow() const { return flow; }
@@ -463,11 +505,27 @@ void AudioDriverJACK::finish() {
 int AudioDriverJACK::process(jack_nframes_t nframes) {
 
 
+	if (pthread_mutex_trylock(&mutex)!=0)
+		return 0; // couldn't process audio (locked)
+
+	if (Song::get_singleton()) {
+	
+		process_offset=0;
+		
+		while(nframes) { 
+			int processed = Song::get_singleton()->process(nframes);
+			process_offset+=processed;
+			nframes-=processed;
+		}		
+	}
+	
+	pthread_mutex_unlock(&mutex);
 	return 0;
 }
 int AudioDriverJACK::set_mix_rate(jack_nframes_t nframes) {
 
-
+	if (Song::get_singleton())
+		Song::get_singleton()->get_audio_graph()->set_mix_rate( nframes );
 	return 0;
 }
 
@@ -524,16 +582,20 @@ ControlPort *AudioDriverJACK::get_param(int p_param) {
 
 void AudioDriverJACK::lock() {
 
-
+	pthread_mutex_lock(&mutex);
 }
 void AudioDriverJACK::unlock() {
 
-
+	pthread_mutex_unlock(&mutex);
 }
 
 
 AudioDriverJACK::AudioDriverJACK() {
 
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&mutex,&attr);	
 	singleton=this;
 }
 

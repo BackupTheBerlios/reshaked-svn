@@ -28,6 +28,11 @@ class AudioDriverNodeUI : public BaseNodeUI {
 	GUI::ComboBox **combo_named;
 	GUI::ComboBox **combo_fixed;
 	
+	
+	void combo_named_selected(int idx, int combo_idx);
+	void combo_fixed_selected(int idx, int combo_idx);
+	
+	bool scanning;
 	void rescan();
 public:
 

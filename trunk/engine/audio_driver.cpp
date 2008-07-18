@@ -25,7 +25,7 @@ void AudioDriver::initialize_audio(int p_driver_index) {
 	_next=p_driver_index;
 	
 	_drivers[_current]->initialize();
-	_drivers[_current]->restart();
+
 }
 
 int AudioDriver::get_current_driver_index() {

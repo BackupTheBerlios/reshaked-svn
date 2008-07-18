@@ -43,6 +43,11 @@ friend class AudioDriverNodeJACK;
 
 	std::list< AudioDriverNodeJACK* > audio_nodes;
 	jack_client_t *client;
+	jack_nframes_t callback_nframes;
+	
+	int process_offset;
+	
+	pthread_mutex_t mutex;
 	
 	void finish();
 	

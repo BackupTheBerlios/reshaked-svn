@@ -39,9 +39,8 @@ public:
 	
 	virtual ConnectionType get_connection_type() const=0;
 	
-	virtual String get_named_connection() const=0;
-	virtual int get_fixed_connection() const=0;
-	virtual int get_fixed_connection_channel() const=0; // for audio ports
+	virtual String get_named_connection(int p_channel=-1) const=0;
+	virtual int get_fixed_connection(int p_channel=1) const=0;
 	
 	virtual PortType get_driver_node_type() const=0;
 	virtual PortFlow get_driver_node_flow() const=0;

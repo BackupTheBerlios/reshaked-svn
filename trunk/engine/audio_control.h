@@ -16,14 +16,12 @@ public:
 	
 	/* Audio Mutex */
 	static void mutex_lock();
-	static bool mutex_try_lock();
 	static void mutex_unlock();
 		
 	static int get_output_latency();
 	
 	static void reset();
 	
-	static void init();
 
 };
 

@@ -1,11 +1,11 @@
 
 #include "audio_control.h"
 #include "error_macros.h"
-//#include "sound_driver_list.h"
+#include "engine/audio_driver.h"
 
 void value_stream_global_lock() {
 	
-//	ReShaked::AudioControl::mutex_lock();
+	
 }
 
 void value_stream_global_unlock() {
@@ -34,28 +34,29 @@ float AudioControl::get_mix_rate() {
 /* Audio Mutex */
 void AudioControl::mutex_lock() {
 	
-//	audio_mutex->grab();
-	
-}
-bool AudioControl::mutex_try_lock() {
-	
-//	return audio_mutex->try_grab();
-	return true;
+	if (!AudioDriver::get_current_driver())
+		return;
+		
+	AudioDriver::get_current_driver()->lock();
 }
 void AudioControl::mutex_unlock() {
-	
-//	audio_mutex->release();
+
+	if (!AudioDriver::get_current_driver())
+		return;
+		
+	AudioDriver::get_current_driver()->unlock();
 	
 	
 }
 
 void AudioControl::reset() {
 	
-//	SoundDriverList::get_singleton()->reset_driver();
+	if (!AudioDriver::get_current_driver())
+		return;
+		
+	AudioDriver::get_current_driver()->restart();
+	
+
 }
 
-void AudioControl::init() {
-	
-//	audio_mutex=MutexLock::create_mutex();
-}
 	

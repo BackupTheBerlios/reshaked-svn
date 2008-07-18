@@ -17,8 +17,22 @@
 #include "widgets/label.h"
 #include "containers/grid_container.h"
 
+
+BaseNodeUI *AudioDriverNodeUI::ui_create_func(AudioNode *p_node) {
+
+	if (dynamic_cast<AudioDriverNode*>( p_node )) {
+	
+		return new AudioDriverNodeUI( dynamic_cast<AudioDriverNode*>( p_node ) );
+	}
+	
+	return NULL;
+}
+
+
 void AudioDriverNodeUI::rescan() {
 
+	scanning=true;
+	
 	std::list<String>::iterator I;
 	
 	
@@ -34,6 +48,8 @@ void AudioDriverNodeUI::rescan() {
 		
 			combo_fixed[i]->add_string(*I);
 		}
+		
+		combo_fixed[i]->select( driver_node->get_fixed_connection(i) );
 	}
 	
 	
@@ -45,24 +61,40 @@ void AudioDriverNodeUI::rescan() {
 	
 		combo_named[i]->clear();
 		
-		for (I=named_list.begin();I!=named_list.end();I++) {
+		int samenameidx=-1;
+		int j=0;
+		for (I=named_list.begin();I!=named_list.end();I++,j++) {
 		
 			combo_named[i]->add_string(*I);
+			if (*I==driver_node->get_named_connection(i) ) {
+			
+				samenameidx=j;
+			}
 		}
+		if (samenameidx!=-1)
+			combo_fixed[i]->select( samenameidx );
 	}
 		
+	scanning=false;
 	
 }
 
-BaseNodeUI *AudioDriverNodeUI::ui_create_func(AudioNode *p_node) {
 
-	if (dynamic_cast<AudioDriverNode*>( p_node )) {
+void AudioDriverNodeUI::combo_named_selected(int idx, int combo_idx) {
+
+	if (scanning)
+		return;
 	
-		return new AudioDriverNodeUI( dynamic_cast<AudioDriverNode*>( p_node ) );
-	}
-	
-	return NULL;
+	driver_node->connect_named(combo_named[combo_idx]->get_string(idx),combo_idx);
 }
+void AudioDriverNodeUI::combo_fixed_selected(int idx, int combo_idx) {
+
+	if (scanning)
+		return;
+	printf("connect fixed, port %i, connect to %i\n",combo_idx,idx);	
+	driver_node->connect_fixed(idx,combo_idx);
+}
+
 
 
 AudioDriverNodeUI::AudioDriverNodeUI(AudioDriverNode* p_node) : BaseNodeUI (p_node) {
@@ -94,6 +126,7 @@ AudioDriverNodeUI::AudioDriverNodeUI(AudioDriverNode* p_node) : BaseNodeUI (p_no
 	
 		combo_grid->add( new GUI::Label( String::num(i+1)+":" ), false, false );
 		combo_fixed[i]=combo_grid->add( new GUI::ComboBox, true, false );
+		combo_fixed[i]->selected_signal.connect( GUI::Method1<int>( GUI::Method2<int,int>( this, &AudioDriverNodeUI::combo_fixed_selected), i ) );
 	}
 	 
 	combo_grid = stack->add( new GUI::GridContainer(2) );
@@ -103,8 +136,10 @@ AudioDriverNodeUI::AudioDriverNodeUI(AudioDriverNode* p_node) : BaseNodeUI (p_no
 	
 		combo_grid->add( new GUI::Label( String::num(i+1)+":" ), false, false );
 		combo_named[i]=combo_grid->add( new GUI::ComboBox, true, false );
+		combo_named[i]->selected_signal.connect( GUI::Method1<int>( GUI::Method2<int,int>( this, &AudioDriverNodeUI::combo_named_selected), i ) );
 	}
 		
+	scanning=false;
 	rescan();
 	
 	bgroup.current_button_changed_signal.connect( stack, &GUI::StackContainer::raise );

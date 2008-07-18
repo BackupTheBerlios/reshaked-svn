@@ -20,8 +20,14 @@
 class Song{
 
 	AudioGraph audio_graph;
+	
+	static Song *singleton;
 public:
 
+	int process(int p_frames);
+
+	static Song *get_singleton();
+	
 	AudioGraph* get_audio_graph();
 	
 	Song();	
