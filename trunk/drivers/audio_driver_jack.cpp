@@ -20,6 +20,8 @@ AudioDriverJACK*AudioDriverJACK::singleton=NULL;
 
 struct AudioDriverNodeJACK : public AudioDriverNode {
 
+	bool inside_graph;
+
 	int node_idx;
 	std::list< AudioDriverNodeJACK* >::iterator thisI;
 	bool named;
@@ -61,6 +63,9 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 	}
 	void _connect_jack() {
 	
+		if (!inside_graph)
+			return;
+			
 		jack_client_t *c = AudioDriverJACK::singleton->client;
 		if (!c)
 			return;
@@ -118,6 +123,17 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 		}
 	}
 	
+	virtual void graph_enter() {
+	
+		inside_graph=true;
+		_connect_jack();
+	}
+	virtual void graph_exit() {
+	
+		_disconnect_jack();
+		inside_graph=false;
+	
+	}
 	
 	virtual int get_port_count( PortType p_type, PortFlow p_flow ) const {
 	
@@ -174,31 +190,34 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 		
 			case PORT_AUDIO: {
 			
-
+	
 				int mix_frames=p_info.audio_buffer_size;
 		
 				for (int c=0;c<chans;c++) {
 			
-			 	
+				
 					jack_default_audio_sample_t *jack_buff = &((jack_default_audio_sample_t*)jack_port_get_buffer( ports[c].port , AudioDriverJACK::singleton->callback_nframes))[AudioDriverJACK::singleton->process_offset];
 				
 					sample_t *audio_buff=audio_buffer[c];
-			 	
-			 		ERR_FAIL_COND(!audio_buff);
-			 		
-			 		
+				
+					ERR_FAIL_COND(!audio_buff);
+					
+					//printf("mix frames %i, dir is %i, chan is %i\n",mix_frames,flow,c);
+					
 					if (flow==PORT_IN) {
 					
 						for (int i=0;i<mix_frames;i++) {
 						
-							audio_buff[i]=jack_buff[i];
+							jack_buff[i]=audio_buff[i];
 						}					
+					
 					} else {
 				
 						for (int i=0;i<mix_frames;i++) {
 						
-							jack_buff[i]=audio_buff[i];
+							audio_buff[i]=jack_buff[i];
 						}					
+				
 					}
 				}			
 			} break;
@@ -371,7 +390,7 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 		thisI=AudioDriverJACK::singleton->audio_nodes.begin();
 		 
 		
-		_connect_jack();
+		inside_graph=false;
 	}
 
 	~AudioDriverNodeJACK() {
@@ -505,8 +524,12 @@ void AudioDriverJACK::finish() {
 int AudioDriverJACK::process(jack_nframes_t nframes) {
 
 
-	if (pthread_mutex_trylock(&mutex)!=0)
+	if (pthread_mutex_trylock(&mutex)!=0) {
+		printf("jack locked\n");
 		return 0; // couldn't process audio (locked)
+	}
+
+	callback_nframes=nframes;
 
 	if (Song::get_singleton()) {
 	

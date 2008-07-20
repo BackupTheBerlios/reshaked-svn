@@ -99,8 +99,10 @@ void AudioGraphProcess::add_connection(const AudioConnection& p_connection) {
 	
 	ERR_FAIL_INDEX(p_connection.from_node,(int)process_nodes.size()); 
 	ERR_FAIL_INDEX(p_connection.to_node,(int)process_nodes.size());
-	ERR_FAIL_INDEX(p_connection.from_port,process_nodes[p_connection.from_node]->node->get_port_count( AudioNode::PORT_AUDIO, AudioNode::PORT_OUT ));
-	ERR_FAIL_INDEX(p_connection.to_port,(int)process_nodes[p_connection.to_node]->input_audio_buffers.size());
+	
+	printf("from node is %s\n",process_nodes[p_connection.from_node]->node->get_name().ascii().get_data());
+	ERR_FAIL_INDEX(p_connection.from_port,process_nodes[p_connection.from_node]->node->get_port_count( p_connection.type, AudioNode::PORT_OUT ));
+	ERR_FAIL_INDEX(p_connection.to_port,process_nodes[p_connection.to_node]->node->get_port_count( p_connection.type, AudioNode::PORT_IN ));
 	
 	/* FIRST: Check if source node (an output) has a writing-to buffer, if not, create it  */
 	
@@ -113,13 +115,13 @@ void AudioGraphProcess::add_connection(const AudioConnection& p_connection) {
 	
 		case AudioNode::PORT_AUDIO: {
 	
-			
+			// check the number of channels are the same
 			int chans = from_node->node->get_audio_port_channel_count( AudioNode::PORT_OUT,  p_connection.from_port );
 			
 			ERR_FAIL_COND( chans != 
 					to_node->node->get_audio_port_channel_count( AudioNode::PORT_IN, p_connection.to_port ) );
 					
-			
+			// if the node lacks a buffer to write to, create it
 			if (!from_node->output_audio_buffers[p_connection.from_port]) {
 				
 				from_node->output_audio_buffers[p_connection.from_port] = new AudioBuffer(chans);
@@ -137,9 +139,10 @@ void AudioGraphProcess::add_connection(const AudioConnection& p_connection) {
 				*/
 				
 				AudioBuffer *buff = from_node->output_audio_buffers[p_connection.from_port];
+				// using buffer FROM node
 				
 				buff->connect_in( to_node->node, p_connection.to_port );		
-				process_nodes[p_connection.to_node]->input_audio_sources[p_connection.to_port].push_back( buff );		
+				process_nodes[p_connection.to_node]->input_audio_sources[p_connection.to_port].push_back( buff ); // add it to audiosources to keep track		
 				
 			} else {
 				
@@ -151,15 +154,17 @@ void AudioGraphProcess::add_connection(const AudioConnection& p_connection) {
 				
 				if (process_nodes[p_connection.to_node]->input_audio_sources[p_connection.to_port].size()==1) {
 					
+					
 					ERR_FAIL_COND( process_nodes[p_connection.to_node]->input_audio_buffers[p_connection.to_port]!=NULL);
 					
+					// create an input audio buffer where mixdown of source nodes will happen
 					AudioBuffer * buff=new AudioBuffer(chans);
 					process_nodes[p_connection.to_node]->input_audio_buffers[p_connection.to_port]=buff;
 					buff->connect_in( to_node->node, p_connection.to_port );		
 				}
 				
 				/**
-				* Add the Source Buffer to the listof Source Buffers
+				* Add the Source Buffer to the listof audiosources, to keep track
 				*/
 				
 				AudioBuffer *src_buff=from_node->output_audio_buffers[p_connection.from_port];

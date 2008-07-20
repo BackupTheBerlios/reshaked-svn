@@ -610,10 +610,11 @@ void AudioGraphWidget::mouse_button(const GUI::Point& p_pos, int p_button,bool p
 				task.type=Task::CONNECTING;
 				task.moving_click=p_pos;
 				task.moving_pos=p_pos;
-				//EditCommands::get_singleton()->audio_graph_swap_nodes(song->get_audio_graph(),node_idx,song->get_audio_graph()->get_node_count()-1);
-				task.moving_idx=node_idx; //song->get_audio_graph()->get_node_count()-1;
+				EditCommands::get_singleton()->audio_graph_swap_nodes(song->get_audio_graph(),node_idx,song->get_audio_graph()->get_node_count()-1);
+				task.moving_idx=song->get_audio_graph()->get_node_count()-1;
 				task.port_type=port_type;
 				task.port_flow=port_flow;
+				printf("node i foudn has flow %i\n",port_flow);
 				task.port_idx=port_idx;
 				
 							
@@ -724,20 +725,21 @@ void AudioGraphWidget::mouse_button(const GUI::Point& p_pos, int p_button,bool p
 					ac.from_node=task.moving_idx;
 					ac.to_node=node_idx;
 					ac.to_port=port_idx;
-					
-					printf("connect type %i\n",ac.type);
-					printf("from_node: %i, to_node: %i\n",ac.from_node,ac.to_node);
-					printf("from_port: %i, to_port: %i\n",ac.from_port,ac.to_port);
-					printf("from_flow: %i\n",task.port_flow);
-					
+										
+					printf("swap? flow is %i\n",task.port_flow);
 					if (task.port_flow==AudioNode::PORT_IN) {
 					
 						SWAP( ac.from_node, ac.to_node );
 						SWAP( ac.from_port, ac.to_port );
+						task.port_flow=AudioNode::PORT_OUT;
 					}
 					
+					printf("connect type %i\n",ac.type);
+					printf("From: %s, %s port %i\n",song->get_audio_graph()->get_node(ac.from_node)->get_name().ascii().get_data(),(task.port_flow==AudioNode::PORT_IN?"IN":"OUT"),ac.from_port);
+					printf("To: %s, port %i\n",song->get_audio_graph()->get_node(ac.to_node)->get_name().ascii().get_data(),ac.to_port);
+					
 					EditCommands::get_singleton()->audio_graph_connect(song->get_audio_graph(),ac);
-				}
+				}	
 			}
 		}		
 		task.type=Task::NONE;

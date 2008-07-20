@@ -25,7 +25,15 @@ public:
 
 };
 
+// little helper to avoid making mistakes 
 
+struct  _AudioLock {
+
+	_AudioLock() { AudioControl::mutex_lock(); }
+	~_AudioLock() { AudioControl::mutex_unlock(); }
+};
+
+#define _AUDIO_LOCK_ _AudioLock lock;
 
 
 #endif

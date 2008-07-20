@@ -32,6 +32,7 @@ bool AudioGraph::recompute_process_order() {
 		inv_process_order[i]=i;
 	
 	
+	printf("node count is %i, connection count is %i\n",nodes.size(),connections.size());
 	int iterations=0;
 	int swaps;
 	
@@ -58,17 +59,18 @@ bool AudioGraph::recompute_process_order() {
 		iterations++;
 	
 	} while (iterations<=worst_case && swaps>0);
+	
 	/* I'm guessing as a worst case that the maximum iterations (worst case) 
-	   is the amount of connections to process, just like the bubble sort, and if it
-	   goes beyond this, then there must be a cyclic link. Another possibility
-	   to detect cyclic links may be comparing if the input and output are the same 
-	   and swaps>0.
+	is the amount of connections to process, just like the bubble sort, and if it
+	goes beyond this, then there must be a cyclic link. Another possibility
+	to detect cyclic links may be comparing if the input and output are the same 
+	and swaps>0.
 	
 	*/
 	
 	//printf("Iterations needed to solve graph: %i ( %i being worst case  )\n",iterations,worst_case);
 	
-	if (iterations>=(int)nodes.size()) {
+	if (iterations>worst_case+1) {
 		
 		//printf("graph solving FAILED.\n");
 		return true; /* we fucked it */
@@ -113,8 +115,10 @@ void AudioGraph::recompute_graph() {
 	for (int i=0;i<connections.size();i++) {
 		
 		//printf("**connecting %lls,%i to %lls,%i\n",nodes[connections[i].from_node]->get_caption().c_str(),connections[i].from_port,nodes[connections[i].to_node]->get_caption().c_str(),connections[i].to_port);
-		
-		graph_process.add_connection(connections[i]);
+		AudioConnection ac=connections[i];
+		ac.from_node=inv_process_order[ac.from_node];
+		ac.to_node=inv_process_order[ac.to_node];
+		graph_process.add_connection(ac);
 		
 	}
 	
@@ -139,7 +143,15 @@ AudioNode* AudioGraph::get_node(int p_index) {
 
 void AudioGraph::add_node(AudioNode *p_node,int p_at_index) {
 
-	AudioControl::mutex_lock();
+	_AUDIO_LOCK_
+	
+	for (int i=0;i<connections.size();i++) {
+	
+		if (connections[i].from_node>=p_at_index)
+			connections[i].from_node++;
+		if (connections[i].to_node>=p_at_index)
+			connections[i].to_node++;
+	}
 	
 	if (p_at_index<0 || p_at_index>=nodes.size())
 		nodes.push_back(p_node);
@@ -152,7 +164,7 @@ void AudioGraph::add_node(AudioNode *p_node,int p_at_index) {
 	recompute_graph();
 	
 	p_node->graph_enter();
-	AudioControl::mutex_unlock();
+	
 	
 }
 
@@ -177,7 +189,31 @@ void AudioGraph::erase_node(int p_index) {
 
 	ERR_FAIL_INDEX(p_index,(int)nodes.size());
 
-	AudioControl::mutex_lock();	
+	_AUDIO_LOCK_
+	
+	int i=0;
+	while (i<(int)connections.size()) {
+	
+		bool from_erased=false;
+		bool to_erased=false;
+		
+		if (index_adjust(connections[i].from_node,p_index))
+			from_erased=true;
+		if (index_adjust(connections[i].to_node,p_index))
+			to_erased=true;
+			
+		if (from_erased || to_erased) {
+			
+			/* this connection was lost, report loss if asked to */
+			/* This is useful if we want to undo or redo the action */
+			
+			connections.erase( connections.begin() + i );
+			
+			ERR_CONTINUE(from_erased && to_erased); //should never happen!
+		} else
+			i++;
+	}
+	
 	
 	/* erase node */
 	nodes[p_index]->graph_exit();
@@ -187,7 +223,7 @@ void AudioGraph::erase_node(int p_index) {
 	recompute_graph();
 	
 	
-	AudioControl::mutex_unlock();
+	
 	
 }
 
@@ -211,7 +247,7 @@ AudioGraph::ConnectError AudioGraph::connect(const AudioConnection& p_connection
 		} break;
 	}
 	
-	AudioControl::mutex_lock();
+	_AUDIO_LOCK_
 	
 	/* Check if connection exists first */
 	for (int i=0;i<(int)connections.size();i++) {
@@ -255,7 +291,7 @@ AudioGraph::ConnectError AudioGraph::connect(const AudioConnection& p_connection
 	recompute_graph();
 	last_error=CONNECT_OK;
 	
-	AudioControl::mutex_unlock();
+	
 	
 	return CONNECT_OK;
 }
@@ -263,7 +299,7 @@ AudioGraph::ConnectError AudioGraph::connect(const AudioConnection& p_connection
 
 void AudioGraph::disconnect(const AudioConnection& p_connection) {
 
-	AudioControl::mutex_lock();
+	_AUDIO_LOCK_
 	
 	for (int i=0;i<(int)connections.size();i++) {
 		
@@ -276,13 +312,12 @@ void AudioGraph::disconnect(const AudioConnection& p_connection) {
 
 	if ( recompute_process_order() ) {
 		ERR_PRINT("recompute_process_order()");
-		AudioControl::mutex_unlock();
 		return;
 	}
 	
 	recompute_graph();
 	
-	AudioControl::mutex_unlock();
+
 	
 }
 
@@ -301,16 +336,19 @@ bool AudioGraph::can_connect(const AudioConnection& p_connection) {
 	if (has_connection(p_connection))
 		return false;
 		
-	AudioControl::mutex_lock();
+	_AUDIO_LOCK_
 	
 	ConnectError ce = connect( p_connection );
 	
 	if (ce==CONNECT_OK) {
 	
 		disconnect( p_connection );
+	} else {
+	
+		printf("connect error is %i\n",ce);
 	}
 	
-	AudioControl::mutex_unlock();
+
 	
 	return (ce==CONNECT_OK);
 
@@ -345,7 +383,7 @@ void AudioGraph::swap_node_indices(int p_idx,int p_with_idx) {
 	if (p_idx==p_with_idx)
 		return;
 		
-	AudioControl::mutex_lock();
+	_AUDIO_LOCK_
 		
 	SWAP(nodes[p_idx],nodes[p_with_idx]);
 	
@@ -368,7 +406,7 @@ void AudioGraph::swap_node_indices(int p_idx,int p_with_idx) {
 	recompute_process_order();
 	recompute_graph();
 	
-	AudioControl::mutex_unlock();
+
 	
 }
 
@@ -395,7 +433,7 @@ void AudioGraph::clear() {
 
 void AudioGraph::set_mix_rate(float p_hz) {
 
-	AudioControl::mutex_lock();
+	_AUDIO_LOCK_
 
 	sampling_rate=p_hz;
 	
@@ -404,7 +442,7 @@ void AudioGraph::set_mix_rate(float p_hz) {
 		nodes[i]->set_mix_rate(p_hz);
 	}
 
-	AudioControl::mutex_unlock();
+
 
 }
 
