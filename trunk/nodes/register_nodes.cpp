@@ -14,9 +14,11 @@
 
 
 #include "amp_ratio_node.h"
+#include "hq_reverb_node.h"
 
 void register_nodes() {
 
 	AudioNodeRegistry::add_node_info( AmpRatioNode::get_creation_info() );
+	AudioNodeRegistry::add_node_info( HQ_ReverbNode::get_creation_info() );	
 }
 

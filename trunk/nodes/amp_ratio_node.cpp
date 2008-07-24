@@ -49,6 +49,7 @@ void AmpRatioNode::process(const ProcessInfo& p_info) {
 AmpRatioNode::AmpRatioNode(int p_instanced_channels,const AudioNodeInfo *p_info) : HL_AudioNode(p_instanced_channels,p_info) {
 
 	amp.set_all( 1.0, 0.0, 16.0, 0.01, ControlPort::HINT_RANGE, "ratio","","Mute");
+	amp.set_visible(true);
 
 	add_audio_port("In",PORT_IN);
 	add_audio_port("AmpOut",PORT_OUT);

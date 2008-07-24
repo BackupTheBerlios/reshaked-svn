@@ -99,6 +99,7 @@ enum CommonConstantList {
 	C_GRAPH_NODE_HSPACING,	
 	C_GENERIC_NODE_UI_ROW_SIZE,
 	C_GENERIC_NODE_UI_ROW_MAX,
+	C_GENERIC_NODE_UI_KNOB_MARGIN,
 	COMMON_C_MAX
 
 };
@@ -229,8 +230,11 @@ class CommonSkin : public GUI::Skin {
 	
 	GUI::FontID bar_font;
 	GUI::FontID beat_font;
+	GUI::FontID small_font;
 	
 	GUI::FontID load_number_font(PixmapDataList p_bitmap);
+	GUI::FontID load_fixed_font(PixmapDataList p_pixmap,int p_from,int p_to);
+	
 public:
 	
 	

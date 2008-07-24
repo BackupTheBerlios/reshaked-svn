@@ -35,7 +35,7 @@ const float Reverb::allpass_tunings[MAX_ALLPASS]={
 
 
 
-void Reverb::process(float *p_src,float *p_dst,int p_frames) {
+void Reverb::process(const float *p_src,float *p_dst,int p_frames) {
 	
 	if (p_frames>INPUT_BUFFER_SIZE)
 		p_frames=INPUT_BUFFER_SIZE;
@@ -76,7 +76,7 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 			
 			float in=input_buffer[i];
 			input_buffer[i]=in*hp_a1+hpf_h1*hp_a2+hpf_h2*hp_b1;
-			hpf_h2=input_buffer[i];
+			hpf_h2=input_buffer[i] + 1e-18 - 1e-18; // treat denormal case
 			hpf_h1=in;	
 		}
 	}
@@ -93,7 +93,7 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 			
 			float out=undenormalise(c.buffer[c.pos]*c.feedback);
 			out=out*(1.0-c.damp)+c.damp_h*c.damp; //lowpass
-			c.damp_h=out;
+			c.damp_h=out + 1e-18 - 1e-18; // undenormalise history
 			c.buffer[c.pos]=input_buffer[j]+out;
 			p_dst[j]+=out;
 			c.pos++;
@@ -103,39 +103,6 @@ void Reverb::process(float *p_src,float *p_dst,int p_frames) {
 
 
 	static const float allpass_feedback=0.7;
-	/* this one works, but the other version is just nicer....
-	int ap_size_limit[MAX_ALLPASS];
-	
-	for (int i=0;i<MAX_ALLPASS;i++) {
-		
-		AllPass &a=allpass[i];
-		ap_size_limit[i]=a.size-lrintf((float)a.extra_spread_frames*(1.0-params.extra_spread));
-	}
-	
-	for (int i=0;i<p_frames;i++) {
-		
-		float sample=p_dst[i];
-		float aux,in;
-		float AllPass*ap;
-		
-#define PROCESS_ALLPASS(m_ap) 	\
-	ap=&allpass[m_ap];	\
-	if (ap->pos>=ap_size_limit[m_ap])	\
-		ap->pos=0;	\
-	aux=undenormalise(ap->buffer[ap->pos]);	\
-	in=sample;	\
-	sample=-in+aux;	\
-	ap->pos++;
-		
-		
-		PROCESS_ALLPASS(0);
-		PROCESS_ALLPASS(1);
-		PROCESS_ALLPASS(2);
-		PROCESS_ALLPASS(3);
-		
-		p_dst[i]=sample;
-	}
-	*/
 	
 	for (int i=0;i<MAX_ALLPASS;i++) {
 		

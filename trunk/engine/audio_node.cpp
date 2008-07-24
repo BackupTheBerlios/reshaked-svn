@@ -41,7 +41,7 @@ ControlPort::Hint ControlPort::get_hint() const {
 
 ControlPort::ControlPort() {
 
-	visible=true;
+	visible=false;
 }
 ControlPort::~ControlPort() {
 

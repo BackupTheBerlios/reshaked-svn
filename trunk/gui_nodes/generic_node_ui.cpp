@@ -25,6 +25,17 @@ BaseNodeUI *GenericNodeUI::ui_create_func(AudioNode *p_node) {
 	return new GenericNodeUI(p_node);
 }
 
+class _GenericNodeUI_KnobMargin : public GUI::Widget {
+
+	virtual GUI::Size get_minimum_size_internal() {
+	
+		return GUI::Size( constant(C_GENERIC_NODE_UI_KNOB_MARGIN), 0 );
+	}
+
+public:
+};
+
+
 void GenericNodeUI::set_in_window() {
 
 	int max=constant(C_GENERIC_NODE_UI_ROW_MAX)*constant(C_GENERIC_NODE_UI_ROW_SIZE);
@@ -64,7 +75,12 @@ void GenericNodeUI::set_in_window() {
 		
 			case ControlPort::HINT_RANGE: {
 			
-				GUI::Knob *knob = vbc->add( new GUI::Knob );		
+				GUI::HBoxContainer *knob_hbc = vbc->add( new GUI::HBoxContainer );
+				
+				knob_hbc->add( new _GenericNodeUI_KnobMargin );
+				GUI::Knob *knob = knob_hbc->add( new GUI::Knob );		
+				knob_hbc->add( new _GenericNodeUI_KnobMargin );
+				
 				knob->set_range( r );
 			} break;
 		}

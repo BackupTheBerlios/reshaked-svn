@@ -94,7 +94,7 @@ public:
 	void set_extra_spread(float p_spread);
 	void set_extra_spread_base(float p_sec);
 	
-	void process(float *p_src,float *p_dst,int p_frames);
+	void process(const float *p_src,float *p_dst,int p_frames);
 	
     Reverb();
 

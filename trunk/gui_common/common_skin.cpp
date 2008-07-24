@@ -225,8 +225,11 @@ void CommonSkin::set_default_extra() {
 	SET_FONT( FONT_NODEUI_VALUE, 0 );
 	SET_COLOR( COLOR_NODEUI_VALUE_FONT, GUI::Color(0) );
 	
+	/* generic nodeui */
+	
 	SET_CONSTANT(C_GENERIC_NODE_UI_ROW_SIZE,6);
 	SET_CONSTANT(C_GENERIC_NODE_UI_ROW_MAX,4);	
+	SET_CONSTANT(C_GENERIC_NODE_UI_KNOB_MARGIN,7);
 
 }
 	
@@ -248,13 +251,29 @@ GUI::FontID CommonSkin::load_number_font(PixmapDataList p_pixmap) {
 	return font;
 }
 	
+GUI::FontID CommonSkin::load_fixed_font(PixmapDataList p_pixmap,int p_from,int p_to) {
+		
+	
+	int font_h=painter->get_bitmap_size(PixmapData::get_pixmap(p_pixmap)).height;
+	int font_w=painter->get_bitmap_size(PixmapData::get_pixmap(p_pixmap)).width/(p_to-p_from);
+	
+	GUI::FontID font = painter->create_font(font_w,font_h);
+	
+	for (int i=0;i<(p_to-p_from);i++) {
+		
+		painter->font_add_char(font,p_from+i,PixmapData::get_pixmap(p_pixmap),GUI::Rect(GUI::Point(i*(font_w),0),GUI::Size(font_w,font_h)));
+	}	
+	
+	return font;
+}
+
 CommonSkin::CommonSkin(GUI::Painter *p_painter) : Skin(COMMON_SB_MAX,COMMON_C_MAX,COMMON_BITMAP_MAX,COMMON_FONT_MAX,COMMON_COLOR_MAX) {
 	
 	painter=p_painter;
 	
 //	bar_font=load_number_font(PIXMAP_GLOBAL_VIEW_BAR_FONT);
 //	beat_font=load_number_font(PIXMAP_GLOBAL_VIEW_BEAT_FONT);
-	
+	small_font = load_fixed_font( PIXMAP_FONT_SMALL, 32, 127 );
 	set_default_extra();
 }
 
