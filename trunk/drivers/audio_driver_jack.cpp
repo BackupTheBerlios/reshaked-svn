@@ -76,7 +76,16 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 				jack_port_unregister( c, ports[i].port );
 				ports[i].port=NULL;				
 			}
-			
+
+							
+			ports[i].port=jack_port_register(c,String("node_"+String::num(node_idx)+"port_"+String::num(i)).ascii().get_data(),
+								(type==PORT_EVENT)?JACK_DEFAULT_MIDI_TYPE:JACK_DEFAULT_AUDIO_TYPE,
+								(flow==PORT_IN)?JackPortIsOutput:JackPortIsInput,
+								0);
+								
+			if (!ports[i].port)
+				continue;
+				
 			if (named) {
 			
 			
@@ -96,15 +105,6 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 						if (j==ports[i].index) {					
 					
 							
-							ports[i].port=jack_port_register(c,String("node_"+String::num(node_idx)+"port_"+String::num(i)).ascii().get_data(),
-								(type==PORT_EVENT)?JACK_DEFAULT_MIDI_TYPE:JACK_DEFAULT_AUDIO_TYPE,
-								(flow==PORT_IN)?JackPortIsOutput:JackPortIsInput,
-								0);
-								
-								
-							if (!ports[i].port)
-								break;
-								
 							printf("i try to connect %s to %s\n",jack_port_name(ports[i].port),*iter);
 							if (flow==PORT_IN)
 								jack_connect( c, jack_port_name(ports[i].port),*iter);
@@ -195,7 +195,9 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 		
 				for (int c=0;c<chans;c++) {
 			
-				
+					if (!ports[c].port)
+						continue;
+						
 					jack_default_audio_sample_t *jack_buff = &((jack_default_audio_sample_t*)jack_port_get_buffer( ports[c].port , AudioDriverJACK::singleton->callback_nframes))[AudioDriverJACK::singleton->process_offset];
 				
 					sample_t *audio_buff=audio_buffer[c];
