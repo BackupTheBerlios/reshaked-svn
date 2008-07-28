@@ -51,6 +51,7 @@ void GenericNodeUI::set_in_window() {
 		sbox->set_scroll_h(false);
 		sbox->set_expand_v(true);
 		sbox->set_expand_h(true);
+		sbox->set_minimum_size( GUI::Size(0, constant( C_GENERIC_NODE_UI_SCROLL_HEIGHT ) ) );
 		
 		port_grid = sbox->set( new GUI::GridContainer( constant(C_GENERIC_NODE_UI_ROW_SIZE) ) );
 		
@@ -73,7 +74,7 @@ void GenericNodeUI::set_in_window() {
 		
 		switch (cp->get_hint()) {
 		
-			case ControlPort::HINT_RANGE: {
+			default: {
 			
 				GUI::HBoxContainer *knob_hbc = vbc->add( new GUI::HBoxContainer );
 				

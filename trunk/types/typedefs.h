@@ -61,6 +61,13 @@ enum TrackType {
 #define FLOATS_EQ(m_f1,m_f2) ( fabsf((m_f1)-(m_f2))<EQ_THRESH )
 #define FLOATS_NOT_EQ(m_f1,m_f2) ( fabsf((m_f1)-(m_f2))>=EQ_THRESH )
 
+#if defined(__GNUC__) && (__GNUC__ >= 4 )
+#    define _FORCE_INLINE_ __attribute__((always_inline)) inline
+#elif defined(_MSVC)
+#	define _FORCE_INLINE_ __forceinline
+#else
+#    define _FORCE_INLINE_ inline
+#endif
 
 
 template<class T>

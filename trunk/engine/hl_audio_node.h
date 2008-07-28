@@ -22,13 +22,13 @@
 
 class HL_ControlPort : public ControlPort {
 
-	bool visible;
 	String max_string;
 	String min_string;
 	float min,max,step;	
 	float val;
 	float initial;
 	
+	bool exp_range;
 	Hint hint;
 	
 	String name;
@@ -51,6 +51,8 @@ public:
 	virtual String get_value_as_text(float p_value) const;
 	virtual Hint get_hint() const;
 	
+	void set_exp_range(bool p_enabled);
+	
 	void set_all(float p_val, float p_min, float p_max, float p_step, Hint p_hint, String p_name, String p_suffix="",String p_min_str="",String p_max_str="");
 		
 		
@@ -58,6 +60,37 @@ public:
 	virtual ~HL_ControlPort();
 };
 
+class HL_EnumControlPort : public ControlPort {
+
+
+	std::vector<String> values;
+	int val;
+	int initial;
+	
+	String name;
+public:
+
+
+	virtual String get_name() const;
+	virtual String get_suffix() const;
+
+	virtual float get_min() const;
+	virtual float get_max() const;
+	virtual float get_step() const;
+	virtual float get_initial() const;
+	virtual float get() const;
+	
+	
+	virtual void set(float p_val,bool p_make_default=false); //set, optionally make the value the default too
+	
+	virtual String get_value_as_text(float p_value) const;
+	virtual Hint get_hint() const;
+	
+	void set_enum(String p_name,std::vector<String> p_enum);
+	inline int operator()() const { return val; }		;
+	HL_EnumControlPort();
+	virtual ~HL_EnumControlPort();
+};
 
 class HL_AudioNode : public AudioNode {
 

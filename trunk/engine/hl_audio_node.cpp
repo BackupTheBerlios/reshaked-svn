@@ -88,6 +88,11 @@ String HL_ControlPort::get_value_as_text(float p_value) const {
 	return str;
 }
 
+void HL_ControlPort::set_exp_range(bool p_enabled) {
+
+	exp_range=p_enabled;
+}
+
 ControlPort::Hint HL_ControlPort::get_hint() const {
 
 	return hint;
@@ -117,6 +122,7 @@ HL_ControlPort::HL_ControlPort(){
 	step=0.01;
 	initial=0;
 	hint=HINT_RANGE;
+	exp_range=false;
 	
 }
 
@@ -127,6 +133,83 @@ HL_ControlPort::~HL_ControlPort()
 
 
 /****************/
+
+String HL_EnumControlPort::get_name() const {
+
+	return name;
+}
+String HL_EnumControlPort::get_suffix() const {
+
+	return "";
+}
+
+float HL_EnumControlPort::get_min() const {
+
+	return 0;
+}
+float HL_EnumControlPort::get_max() const {
+
+	return values.size()-1;
+}
+float HL_EnumControlPort::get_step() const {
+
+	return 1;
+}
+float HL_EnumControlPort::get_initial() const {
+
+	return initial;
+}
+float HL_EnumControlPort::get() const {
+
+	return val;
+}	
+
+void HL_EnumControlPort::set_enum(String p_name,std::vector<String> p_enum) {
+
+	name=p_name;
+	values=p_enum;
+}
+
+void HL_EnumControlPort::set(float p_val,bool p_make_default) {
+
+	if (p_val<0)
+		p_val=0;
+	else if (p_val>=values.size())
+		p_val=values.size()-1;
+		
+	val=(int)p_val;
+	if (p_make_default)
+		initial=(int)p_val;
+}
+
+String HL_EnumControlPort::get_value_as_text(float p_value) const {
+
+	int idx=(int)p_value;
+	if (values.size()==0)
+		return "<UNCONFIGURED>";
+	if (idx<0)
+		idx=0;
+	if (idx>=values.size())
+		idx=values.size()-1;
+
+	return values[idx];
+	
+}
+ControlPort::Hint HL_EnumControlPort::get_hint() const {
+
+	return HINT_ENUM;
+}
+
+	
+HL_EnumControlPort::HL_EnumControlPort() {
+
+}
+HL_EnumControlPort::~HL_EnumControlPort() {
+
+}
+
+/****************/
+
 
 const AudioNodeInfo *HL_AudioNode::get_info() const {
 
