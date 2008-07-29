@@ -43,11 +43,11 @@ float CompressorBase::get_threshold() const {
 
 void CompressorBase::set_ratio(float p_ratio) {
 
-	ratio=p_ratio;
+	ratio=1.0/p_ratio;
 }
 float CompressorBase::get_ratio() const {
 
-	return ratio;
+	return 1.0/ratio;
 }
 
 void CompressorBase::recompute_coeffs() {
@@ -70,8 +70,8 @@ float CompressorBase::get_mix_rate() const {
 CompressorBase::CompressorBase() {
 
 	mix_rate=44100;
-	attack=100;
-	release=400;
+	attack=0.1;
+	release=0.4;
 	recompute_coeffs();
 	threshold=0;
 	ratio=0;

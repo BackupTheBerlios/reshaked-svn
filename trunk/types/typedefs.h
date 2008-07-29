@@ -63,10 +63,16 @@ enum TrackType {
 
 #if defined(__GNUC__) && (__GNUC__ >= 4 )
 #    define _FORCE_INLINE_ __attribute__((always_inline)) inline
+typedef	long long int64;
+typedef unsigned long long uint64;
 #elif defined(_MSVC)
 #	define _FORCE_INLINE_ __forceinline
+typedef __int64 int64 ;
+typedef __uint64 uint64;
 #else
 #    define _FORCE_INLINE_ inline
+typedef	long long int64;
+typedef unsigned long long uint64;
 #endif
 
 

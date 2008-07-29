@@ -50,8 +50,8 @@ const AudioNodeInfo *CompressorNode::get_creation_info_rms() {
 
 	static AudioNodeInfo _info;
 	_info.caption="Compressor (RMS)";
-	_info.short_caption="CompressPk";
-	_info.description="Music-Oriented Compressor";
+	_info.short_caption="CompressRMS";
+	_info.description="Music-Friendly Compressor";
 	_info.unique_ID="INTERNAL_CompressorNodeRMS";
 	_info.creation_func=&CompressorNode::creation_func_rms;
 	_info.icon_string="node_compressor";
@@ -91,8 +91,8 @@ void CompressorNode::process(const ProcessInfo& p_info,CompType *p_compressor) {
 				
 				float gain = p_compressor->process_2( l,r );
 				gain*=post_gain_nrg;
-				dst_l[i]=src_l[i]*gain;
-				dst_r[i]=src_r[i]*gain;
+				dst_l[i]=l*gain;
+				dst_r[i]=r*gain;
 			}
 		} else { // sidechain
 		
@@ -152,12 +152,12 @@ CompressorNode::CompressorNode(int p_instanced_channels,const AudioNodeInfo *p_i
 	mode_strings.push_back("SideChain");
 	
 	mode.set_enum("Mode",mode_strings);
-	pre_gain.set_all( 0, -60, 24, 0.1, ControlPort::HINT_RANGE, "PreGain","dB");
+	pre_gain.set_all( 0, 0, 24, 0.1, ControlPort::HINT_RANGE, "PreGain","dB");
 	threshold.set_all( 0, -60, 0, 0.1, ControlPort::HINT_RANGE, "Threshold","dB");
 	ratio.set_all( 1, 1, 50, 0.1, ControlPort::HINT_RANGE, "Ratio",":1");
 	attack.set_all( 100, 1, 800, 1, ControlPort::HINT_RANGE, "Attack","ms");
 	release.set_all( 400, 1, 800, 1, ControlPort::HINT_RANGE, "Release","ms");
-	post_gain.set_all( 0, -60, 24, 0.1, ControlPort::HINT_RANGE, "PostGain","dB");
+	post_gain.set_all( 0, 0, 24, 0.1, ControlPort::HINT_RANGE, "PostGain","dB");
 	
 	add_control_port( PORT_IN, &mode);
 	add_control_port( PORT_IN, &pre_gain);
