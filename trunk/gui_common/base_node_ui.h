@@ -41,6 +41,8 @@ protected:
 	GUI::Frame* make_vslider(ControlPort *p_port);
 	GUI::Frame* make_vslider(String p_port);
 	
+	GUI::Frame* make_button(ControlPort *p_port);
+	GUI::Frame* make_button(String p_button);
 	
 	void register_range_for_updates(ControlPortRange *p_range);
 	

@@ -194,14 +194,26 @@ Error AudioNode::load_file( String p_filename ) {
 	return OK;
 }
 
+void AudioNode::set_ui_data(AudioNodeUIData *p_ui_data) {
+
+	_ui_data=p_ui_data;
+}
+AudioNodeUIData *AudioNode::get_ui_data() {
+
+	return _ui_data;
+}
+
 AudioNode::AudioNode() {
 
 
 	_x=-1;
 	_y=-1;
 	_layer=1;	
+	_ui_data=NULL;
 }
 
 AudioNode::~AudioNode() {
 
+	if (_ui_data)
+		delete _ui_data;
 }

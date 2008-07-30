@@ -17,9 +17,11 @@
 #include "widgets/knob.h"
 #include "gui_common/common_skin.h"
 #include "containers/grid_container.h"
+#include "containers/center_container.h"
 #include "widgets/label.h"
 #include "widgets/slider.h"
 #include "gui_common/control_port_range.h"
+#include "gui_common/button_port_edit.h"
 
 class _GenericNodeUI_KnobMargin : public GUI::Widget {
 
@@ -41,6 +43,17 @@ class _GenericNodeUI_VSliderMargin : public GUI::Widget {
 public:
 };
 
+static String _fix_name(String p_name) {
+
+	int idx=p_name.find("/");
+	if (idx!=-1) {
+	
+		return p_name.substr(idx+1,p_name.length() );
+	}
+	
+	return p_name;
+}
+
 GUI::Frame* BaseNodeUI::make_knob(ControlPort *p_port) {
 
 	GUI::VBoxContainer *vbc = new GUI::VBoxContainer;
@@ -48,7 +61,7 @@ GUI::Frame* BaseNodeUI::make_knob(ControlPort *p_port) {
 	ControlPort *cp = p_port;
 	
 	NodeUI_Label * label = vbc->add( new NodeUI_Label );
-	label->set_text( cp->get_name() );
+	label->set_text( _fix_name(cp->get_name()) );
 	
 	ControlPortRange *r=new ControlPortRange( cp );
 	register_range_for_updates(r);
@@ -87,7 +100,7 @@ GUI::Frame* BaseNodeUI::make_vslider(ControlPort *p_port) {
 	
 	hbc->add( new _GenericNodeUI_VSliderMargin );
 	NodeUI_Label * label = hbc->add( new NodeUI_Label( NodeUI_Label::VERTICAL ) );
-	label->set_text( p_port->get_name() );
+	label->set_text( _fix_name(p_port->get_name()) );
 	ControlPort *cp = p_port;
 	ControlPortRange *r=new ControlPortRange( cp );
 	register_range_for_updates(r);
@@ -118,6 +131,28 @@ GUI::Frame* BaseNodeUI::make_vslider(String p_port) {
 	return make_vslider( cp );	
 	
 }
+
+
+GUI::Frame* BaseNodeUI::make_button(ControlPort *p_port) {
+
+	GUI::CenterContainer *cc = new GUI::CenterContainer;
+	
+	ButtonPortEdit *bpe = cc->set( new ButtonPortEdit );
+	bpe->set_range( new ControlPortRange( p_port ), true );
+	bpe->set_text( _fix_name( p_port->get_name() ) );
+	return cc;
+
+}
+GUI::Frame* BaseNodeUI::make_button(String p_port) {
+
+	ControlPort *cp=_node->get_control_port_by_name( AudioNode::PORT_IN, p_port );
+	
+	ERR_FAIL_COND_V( !cp, new GUI::Widget );
+	
+	return make_button( cp );	
+
+}
+
 
 void BaseNodeUI::register_range_for_updates(ControlPortRange *p_range) {
 

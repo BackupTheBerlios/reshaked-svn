@@ -72,13 +72,19 @@ public:
 	virtual ~ControlPort();
 };
 
+class AudioNodeUIData {
 
+public:
+
+	virtual ~AudioNodeUIData() {}
+};
 
 class AudioNode {
 
 	int _x,_y; // coordinates in graph
 	int _layer; // layer in graph, <0 means all layers
 	String _name;
+	AudioNodeUIData *_ui_data; // to be used by the UI for persisting stuff
 protected:
 friend class AudioGraph;	
 	
@@ -154,6 +160,11 @@ public:
 			
 	Error save_file( String p_filename );
 	Error load_file( String p_filename );
+		
+		
+	// to be used by the UI, DONT TOUCH IT
+	void set_ui_data(AudioNodeUIData *p_ui_data);
+	AudioNodeUIData *get_ui_data();
 		
 	AudioNode();
 	virtual ~AudioNode();

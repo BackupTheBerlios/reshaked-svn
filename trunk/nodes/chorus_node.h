@@ -37,6 +37,7 @@
 		HL_ControlPort rate;
 		HL_ControlPort depth;
 		HL_ControlPort level;
+		HL_ControlPort phase;
 		HL_ControlPort width;
 		HL_ControlPort cutoff;
 		HL_ControlPort pan;

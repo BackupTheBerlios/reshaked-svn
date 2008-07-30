@@ -244,7 +244,7 @@ ChorusNode::ChorusNode(int p_instanced_channels,const AudioNodeInfo *p_info) : H
 	
 	for (int i=0;i<MAX_VOICES;i++) {
 		
-		String caption_prefix=String("Voice ")+String::num(i+1)+"/";
+		String caption_prefix=String("Voice")+String::num(i+1)+"/";
 		voice[i].delay.set_all( 12, 0, MAX_DELAY_MS, 1, HL_ControlPort::HINT_RANGE, caption_prefix+"Delay","ms");
 		voice[i].delay.set_exp_range(true);
 		voice[i].rate.set_all( 1, 0.1, 20, 0.1, HL_ControlPort::HINT_RANGE, caption_prefix+"Rate","hz");
@@ -252,18 +252,20 @@ ChorusNode::ChorusNode(int p_instanced_channels,const AudioNodeInfo *p_info) : H
 		voice[i].depth.set_all( 0, 0, MAX_DEPTH_MS, 0.1, HL_ControlPort::HINT_RANGE,caption_prefix+"Depth","ms");
 		voice[i].depth.set_exp_range(true);
 		voice[i].level.set_all( 0, 0, 4, 0.01, HL_ControlPort::HINT_RANGE, caption_prefix+"Level","","Off");
+		voice[i].phase.set_all( 0, 0, 3.14, 0.01, HL_ControlPort::HINT_RANGE, caption_prefix+"Phase","rad");
 		voice[i].width.set_all( 0, 0, MAX_WIDTH_MS, 1, HL_ControlPort::HINT_RANGE, caption_prefix+"Width","ms");
 		voice[i].width.set_exp_range(true);
-		voice[i].cutoff.set_all( 16000, 1, 16000, 1, HL_ControlPort::HINT_RANGE, caption_prefix+"Cutoff","hz","","Off");
+		voice[i].cutoff.set_all( 16000, 1, 16000, 1, HL_ControlPort::HINT_RANGE, caption_prefix+"LPF","hz","","Off");
 		voice[i].cutoff.set_exp_range(true);
 		
 		voice[i].pan.set_all( 0.5, 0, 1, 0.01, HL_ControlPort::HINT_RANGE, caption_prefix+"Pan");
-		voice[i].pan_depth.set_all( 0.5, 0, 1, 0.01, HL_ControlPort::HINT_RANGE,caption_prefix+"Pan Depth");
+		voice[i].pan_depth.set_all( 0.5, 0, 1, 0.01, HL_ControlPort::HINT_RANGE,caption_prefix+"PanDepth");
 		
 		add_control_port( PORT_IN, &voice[i].delay );		
 		add_control_port( PORT_IN, &voice[i].rate );		
 		add_control_port( PORT_IN, &voice[i].depth );		
 		add_control_port( PORT_IN, &voice[i].level );		
+		add_control_port( PORT_IN, &voice[i].phase );		
 		add_control_port( PORT_IN, &voice[i].width );		
 		add_control_port( PORT_IN, &voice[i].cutoff );		
 		add_control_port( PORT_IN, &voice[i].pan );		
@@ -275,9 +277,9 @@ ChorusNode::ChorusNode(int p_instanced_channels,const AudioNodeInfo *p_info) : H
 			voice[i].filter_h[j]=0;
 	}
 	
-	wet.set_all( 0, 0, 1, 0.01, HL_ControlPort::HINT_RANGE, "Wet Send");
+	wet.set_all( 0, 0, 1, 0.01, HL_ControlPort::HINT_RANGE, "Wet");
 	add_control_port( PORT_IN, &wet );		
-	dry.set_all( 0, 0, 1, 0.01, HL_ControlPort::HINT_RANGE, "Dry Send");
+	dry.set_all( 0, 0, 1, 0.01, HL_ControlPort::HINT_RANGE, "Dry");
 	add_control_port( PORT_IN, &dry );			
 	
 	ring_buffers=NULL;

@@ -22,6 +22,7 @@ void register_nodes() {
 
 	AudioNodeRegistry::add_node_info( AmpRatioNode::get_creation_info() );
 	AudioNodeRegistry::add_node_info( HQ_ReverbNode::get_creation_info() );	
+	AudioNodeRegistry::add_node_info( HQ_ReverbNode::get_creation_info() );	
 	AudioNodeRegistry::add_node_info( ChorusNode::get_creation_info() );	
 	AudioNodeRegistry::add_node_info( CompressorNode::get_creation_info_peak() );	
 	AudioNodeRegistry::add_node_info( CompressorNode::get_creation_info_rms() );	
