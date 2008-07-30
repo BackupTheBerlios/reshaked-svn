@@ -87,12 +87,13 @@ HQ_ReverbNode::HQ_ReverbNode(int p_instanced_channels,const AudioNodeInfo *p_inf
 	predelay.set_all( 100.0, 20.0, 500.0, 1.0, ControlPort::HINT_RANGE, "PreDelay","ms");
 	predelay_fb.set_all( 0.0,0.0,1.0,0.01, ControlPort::HINT_RANGE, "Pre-Fbk");
 	room_size.set_all( 0.7,0.0,1.0,0.01, ControlPort::HINT_RANGE, "RoomSize");
-	hpf.set_all( 0.0,0.0,1.0,0.01, ControlPort::HINT_RANGE, "HP-Filter","","Off");
-	lpf.set_all( 0.5,0.0,1.0,0.01, ControlPort::HINT_RANGE, "LP-Filter","None","","All");
-	spread.set_all( 1.0,0.0,1.0,0.01, ControlPort::HINT_RANGE, "St. Spread","","Mono");
-	wet.set_all( 0.3,0.0,1.0,0.01, ControlPort::HINT_RANGE, "Wet Send","","Silence");
-	dry.set_all( 0.8,0.0,1.0,0.01, ControlPort::HINT_RANGE, "Dry Send","","Silence");
+	hpf.set_all( 0.0,0.0,16384.0,1.0, ControlPort::HINT_RANGE, "Pre-HPF","hz","Off");
+	lpf.set_all( 0.5,0.0,1.0,0.01, ControlPort::HINT_RANGE, "Damp","","None","Full");
+	spread.set_all( 1.0,0.0,1.0,0.01, ControlPort::HINT_RANGE, "Width","","Mono");
+	wet.set_all( 0.3,0.0,1.0,0.01, ControlPort::HINT_RANGE, "Wet","","Silence");
+	dry.set_all( 0.8,0.0,1.0,0.01, ControlPort::HINT_RANGE, "Dry","","Silence");
 	
+	hpf.set_exp_range(true);
 	room_size.set_visible(true);
 	wet.set_visible(true);
 	

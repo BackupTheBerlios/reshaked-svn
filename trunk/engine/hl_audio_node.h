@@ -54,6 +54,8 @@ public:
 	void set_exp_range(bool p_enabled);
 	
 	void set_all(float p_val, float p_min, float p_max, float p_step, Hint p_hint, String p_name, String p_suffix="",String p_min_str="",String p_max_str="");
+	virtual void set_normalized(float p_val,bool p_make_initial=false); // set in range 0-1, internally converted to range
+	virtual float get_normalized() const;
 		
 		
 	HL_ControlPort();

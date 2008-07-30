@@ -111,6 +111,7 @@ public:
 	virtual void connect_event_buffer( PortFlow p_flow, int p_port, MusicEvent *p_buffer )=0;
 
 	virtual ControlPort* get_control_port( PortFlow p_flow,int p_port )=0;
+	virtual ControlPort* get_control_port_by_name( PortFlow p_flow,String p_name ); //  helper
 	
 	/* AudioNode Info */
 	

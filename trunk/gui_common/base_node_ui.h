@@ -30,9 +30,21 @@ class BaseNodeUI : public GUI::VBoxContainer {
 	AudioNode *_node;	
 	void presets_callback();
 		
+	
+		
 protected:
 	
+	// helpers
+	GUI::Frame* make_knob(ControlPort *p_port);
+	GUI::Frame* make_knob(String p_port);
+	
+	GUI::Frame* make_vslider(ControlPort *p_port);
+	GUI::Frame* make_vslider(String p_port);
+	
+	
 	void register_range_for_updates(ControlPortRange *p_range);
+	
+	virtual void check_ranges_user();
 public:
 
 	GUI::Signal< GUI::Method1< AudioNode* > > edited_signal;

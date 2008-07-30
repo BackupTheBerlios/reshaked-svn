@@ -147,7 +147,7 @@ public:
 		return process( dlen );
 	}
 	_FORCE_INLINE_ float process_1(sample_t mono) {
-	
+	 
 		return process_sqr( fabsf(mono) );
 	}
 

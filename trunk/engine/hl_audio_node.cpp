@@ -74,7 +74,7 @@ String HL_ControlPort::get_value_as_text(float p_value) const {
 		decimals=0;
 		double s = step;
 		s-=floor(s);
-		while(s<0.9999 && decimals<4) {
+		while(s!=0 && s<0.9999 && decimals<4) {
 			s*=10.0;
 			s-=floor(s);
 			decimals++;
@@ -91,6 +91,25 @@ String HL_ControlPort::get_value_as_text(float p_value) const {
 void HL_ControlPort::set_exp_range(bool p_enabled) {
 
 	exp_range=p_enabled;
+}
+void HL_ControlPort::set_normalized(float p_val,bool p_make_initial) {
+
+	
+	if (exp_range) {
+		if (p_val<0)
+			p_val=0;
+		if (p_val>1.0)
+			p_val=1.0;
+		ControlPort::set_normalized( powf(p_val,2.0), p_make_initial );
+	} else
+		ControlPort::set_normalized( p_val, p_make_initial );
+}
+float HL_ControlPort::get_normalized() const {
+
+	if (exp_range)
+		return powf(ControlPort::get_normalized(),1.0/2.0);
+	else
+		return ControlPort::get_normalized();
 }
 
 ControlPort::Hint HL_ControlPort::get_hint() const {

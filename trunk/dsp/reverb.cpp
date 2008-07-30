@@ -67,7 +67,7 @@ void Reverb::process(const float *p_src,float *p_dst,int p_frames) {
 	}
 	
 	if (params.hpf>0) {
-		float hpaux=expf(-2.0*M_PI*params.hpf*6000/params.mix_rate);
+		float hpaux=expf(-2.0*M_PI*params.hpf/params.mix_rate);
 		float hp_a1=(1.0+hpaux)/2.0;
 		float hp_a2=-(1.0+hpaux)/2.0;
 		float hp_b1=hpaux;
@@ -169,8 +169,8 @@ void Reverb::set_predelay_feedback(float p_predelay_fb) {
 
 void Reverb::set_highpass(float p_frq) {
 	
-	if (p_frq>1)
-		p_frq=1;
+	if (p_frq> 0 && p_frq <20)
+		p_frq=20;
 	if (p_frq<0)
 		p_frq=0;
 	params.hpf=p_frq;	

@@ -1,5 +1,5 @@
 //
-// C++ Implementation: generic_node_ui
+// C++ Implementation: reverb_node_ui
 //
 // Description: 
 //
@@ -9,7 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "generic_node_ui.h"
+#include "reverb_node_ui.h"
+
 #include "gui_common/node_ui_label.h"
 #include "gui_common/node_ui_value.h"
 #include "widgets/knob.h"
@@ -19,14 +20,25 @@
 #include "widgets/label.h"
 #include "gui_common/control_port_range.h"
 
-BaseNodeUI *GenericNodeUI::ui_create_func(AudioNode *p_node) {
+#if 0
+BaseNodeUI *ReverbNodeUI::ui_create_func(AudioNode *p_node) {
 
-	
-	return new GenericNodeUI(p_node);
+	ReverbNode	
+	return new ReverbNodeUI(p_node);
 }
 
+class _ReverbNodeUI_KnobMargin : public GUI::Widget {
 
-void GenericNodeUI::set_in_window() {
+	virtual GUI::Size get_minimum_size_internal() {
+	
+		return GUI::Size( constant(C_GENERIC_NODE_UI_KNOB_MARGIN), 0 );
+	}
+
+public:
+};
+
+
+void ReverbNodeUI::set_in_window() {
 
 	int max=constant(C_GENERIC_NODE_UI_ROW_MAX)*constant(C_GENERIC_NODE_UI_ROW_SIZE);
 	
@@ -52,22 +64,48 @@ void GenericNodeUI::set_in_window() {
 	
 	for (int i=0;i<node->get_port_count( AudioNode::PORT_CONTROL, AudioNode::PORT_IN );i++) {
 	
-		//port_grid->add( make_knob( node->get_control_port( AudioNode::PORT_IN, i ) ), false, false );
-		port_grid->add( make_vslider( node->get_control_port( AudioNode::PORT_IN, i ) ), false, false );
+		GUI::VBoxContainer *vbc = port_grid->add( new GUI::VBoxContainer, false, false );
+		
+		ControlPort *cp = node->get_control_port( AudioNode::PORT_IN, i );
+		
+		NodeUI_Label * label = vbc->add( new NodeUI_Label );
+		label->set_text( cp->get_name() );
+		
+		ControlPortRange *r=new ControlPortRange( cp );
+		register_range_for_updates(r);
+		
+		switch (cp->get_hint()) {
+		
+			default: {
+			
+				GUI::HBoxContainer *knob_hbc = vbc->add( new GUI::HBoxContainer );
+				
+				knob_hbc->add( new _ReverbNodeUI_KnobMargin );
+				GUI::Knob *knob = knob_hbc->add( new GUI::Knob );		
+				knob_hbc->add( new _ReverbNodeUI_KnobMargin );
+				
+				knob->set_range( r );
+			} break;
+		}
+		
+		NodeUI_Value * value = vbc->add( new NodeUI_Value );
+		if (r)
+			value->set_range( r, true );
 		
 	}
 	
 	
 }
 
-GenericNodeUI::GenericNodeUI(AudioNode *p_node) : BaseNodeUI(p_node) {
+ReverbNodeUI::ReverbNodeUI(AudioNode *p_node) : BaseNodeUI(p_node) {
 
 	node=p_node;
 }
 
 
-GenericNodeUI::~GenericNodeUI()
+ReverbNodeUI::~ReverbNodeUI()
 {
 }
 
 
+#endif

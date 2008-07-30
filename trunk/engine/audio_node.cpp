@@ -96,6 +96,16 @@ String AudioNode::get_port_name( PortType p_type, PortFlow p_flow,int p_port ) c
 	
 	return str;
 }
+ControlPort* AudioNode::get_control_port_by_name( PortFlow p_flow,String p_name ) {
+
+	for (int i=0;i<get_port_count( PORT_CONTROL, p_flow);i++) {
+	
+		if (get_control_port( p_flow , i )->get_name()==p_name )
+			return get_control_port( p_flow , i );
+	}
+	
+	return NULL;
+}
 
 void AudioNode::graph_enter() {
 
