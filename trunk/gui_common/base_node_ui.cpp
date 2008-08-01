@@ -14,6 +14,7 @@
 #include "widgets/label.h"
 #include "gui_common/node_ui_label.h"
 #include "gui_common/node_ui_value.h"
+#include "gui_common/node_ui_enum.h"
 #include "widgets/knob.h"
 #include "gui_common/common_skin.h"
 #include "containers/grid_container.h"
@@ -90,6 +91,43 @@ GUI::Frame* BaseNodeUI::make_knob(String p_port) {
 	ERR_FAIL_COND_V( !cp, new GUI::Widget );
 	
 	return make_knob( cp );	
+	
+}
+
+GUI::Frame* BaseNodeUI::make_enum(ControlPort *p_port,bool p_label) {
+
+	if (!p_label) {
+	
+		ControlPortRange *r=new ControlPortRange( p_port );
+		register_range_for_updates(r);
+		
+		NodeUI_Enum *_enum = new NodeUI_Enum;
+		_enum->set_range( r, true );
+		return _enum;
+	
+	}
+	GUI::VBoxContainer *vbc = new GUI::VBoxContainer;
+
+	ControlPort *cp = p_port;
+	NodeUI_Label * label = vbc->add( new NodeUI_Label );
+	label->set_text( _fix_name(cp->get_name()) );
+	
+	ControlPortRange *r=new ControlPortRange( cp );
+	register_range_for_updates(r);
+	
+	NodeUI_Enum *_enum = vbc->add( new NodeUI_Enum );
+	_enum->set_range( r, true );
+	
+	return vbc;
+}
+
+GUI::Frame* BaseNodeUI::make_enum(String p_port,bool p_label) {
+
+	ControlPort *cp=_node->get_control_port_by_name( AudioNode::PORT_IN, p_port );
+	
+	ERR_FAIL_COND_V( !cp, new GUI::Widget );
+	
+	return make_enum( cp,p_label );	
 	
 }
 

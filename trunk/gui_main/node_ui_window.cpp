@@ -46,7 +46,7 @@ NodeUI_Window::NodeUI_Window(GUI::Window *p_parent) : GUI::Window(p_parent,GUI::
 	node_ui=NULL;
 
 	GUI::Timer *t=get_timer();
-	timer = t->create_timer( GUI::Method( this, &NodeUI_Window::update_controls_callback),200 );
+	timer = t->create_timer( GUI::Method( this, &NodeUI_Window::update_controls_callback),50 );
 	
 
 }

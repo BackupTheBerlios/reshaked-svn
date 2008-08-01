@@ -70,15 +70,20 @@ String HL_ControlPort::get_value_as_text(float p_value) const {
 	int decimals=4;
 	
 	if (step!=0) {
-		
+				
 		decimals=0;
 		double s = step;
-		s-=floor(s);
-		while(s!=0 && s<0.9999 && decimals<4) {
+		
+		while( (s-floor(s))>1e-5 ) {
+			
 			s*=10.0;
 			s-=floor(s);
+			
 			decimals++;
-		}		
+
+			if (decimals==4)
+				break;						
+		}
 	}
 	
 	String str = String::num(p_value,decimals);
@@ -222,12 +227,30 @@ ControlPort::Hint HL_EnumControlPort::get_hint() const {
 	
 HL_EnumControlPort::HL_EnumControlPort() {
 
+	val=0; initial=0;
 }
 HL_EnumControlPort::~HL_EnumControlPort() {
 
 }
 
 /****************/
+
+String HL_AudioNode::get_port_name( PortType p_type, PortFlow p_flow,int p_port ) const {
+
+	const std::vector< String >& ports = _port_names[p_type][p_flow];
+	
+	ERR_FAIL_INDEX_V( p_port, ports.size(), "");
+	
+	String name = ports[p_port];
+	
+	if (name.empty()) {
+	
+		return AudioNode::get_port_name(p_type,p_flow,p_port);
+	}
+	
+	return name;
+	
+}
 
 
 const AudioNodeInfo *HL_AudioNode::get_info() const {

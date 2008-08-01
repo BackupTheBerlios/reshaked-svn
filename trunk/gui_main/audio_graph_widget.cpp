@@ -339,7 +339,9 @@ void AudioGraphWidget::draw_node(const GUI::Rect& p_rect,AudioNode *p_node) {
 	
 	GUI::Size plug_size = p->get_bitmap_size( bitmap( BITMAP_GRAPH_JACK ) );
 	
-	int port_h = MAX( plug_size.height, p->get_font_height( font( FONT_GRAPH_NODE_PORT ) )+p->get_stylebox_min_size( stylebox( SB_GRAPH_AUDIO_PORT ) ).height );
+	GUI::Size port_sb_minsize=p->get_stylebox_min_size( stylebox( SB_GRAPH_AUDIO_PORT ) );
+	
+	int port_h = MAX( plug_size.height, p->get_font_height( font( FONT_GRAPH_NODE_PORT ) )+port_sb_minsize.height );
 	
 	GUI::Rect port_rect( GUI::Point(), GUI::Size( p_rect.size.width - sb_minsize.width - plug_size.width -constant( C_GRAPH_NODE_HSPACING ), port_h ));	
 	
@@ -360,14 +362,33 @@ void AudioGraphWidget::draw_node(const GUI::Rect& p_rect,AudioNode *p_node) {
 				GUI::Point plug_ofs=ofs+GUI::Point(0,(port_h-plug_size.height)/2);
 				GUI::Rect this_port_rect=port_rect;
 				this_port_rect.pos+=ofs;
+				GUI::Point text_ofs;
+				int text_w = p->get_font_string_width( font( FONT_GRAPH_NODE_PORT), name );
 				
 				if (port_flows[j]==AudioNode::PORT_IN) {
 				
 					this_port_rect.pos.x+=plug_size.width+constant( C_GRAPH_NODE_HSPACING );
+#if 0					
+					text_ofs=this_port_rect.pos+text_rect_ofs;
+					this_port_rect.size.width=text_w+port_sb_minsize.width;
+#else
+					text_ofs=this_port_rect.pos+text_rect_ofs;
+#endif
+
 					
 				} else {
 				
-					plug_ofs.x+=this_port_rect.size.width+constant( C_GRAPH_NODE_HSPACING );				
+					plug_ofs.x+=this_port_rect.size.width+constant( C_GRAPH_NODE_HSPACING );	
+#if 0					
+					text_ofs.y=this_port_rect.pos.y+text_rect_ofs.y;
+					text_ofs.x=this_port_rect.pos.x+port_rect.size.width-p->get_stylebox_margin( stylebox( SB_GRAPH_AUDIO_PORT ), GUI::MARGIN_RIGHT)-text_w;
+					this_port_rect.pos.x+=(this_port_rect.size.width-text_w-port_sb_minsize.width);				
+					this_port_rect.size.width=text_w+port_sb_minsize.width;
+#else
+					text_ofs=this_port_rect.pos+text_rect_ofs;
+
+#endif
+									
 				}
 									
 				switch( port_types[i] ) {
@@ -375,17 +396,17 @@ void AudioGraphWidget::draw_node(const GUI::Rect& p_rect,AudioNode *p_node) {
 					case AudioNode::PORT_AUDIO: {
 					
 						p->draw_stylebox( stylebox( SB_GRAPH_AUDIO_PORT ), this_port_rect.pos, this_port_rect.size );
-						p->draw_text( font( FONT_GRAPH_NODE_PORT), this_port_rect.pos+text_rect_ofs, name, color( COLOR_GRAPH_NODE_AUDIO_PORT_FONT ) );
+						p->draw_text( font( FONT_GRAPH_NODE_PORT), text_ofs, name, color( COLOR_GRAPH_NODE_AUDIO_PORT_FONT ) );
 					} break;
 					case AudioNode::PORT_EVENT: {
 					
 						p->draw_stylebox( stylebox( SB_GRAPH_EVENT_PORT ), this_port_rect.pos, this_port_rect.size );
-						p->draw_text( font( FONT_GRAPH_NODE_PORT), this_port_rect.pos+text_rect_ofs, name, color( COLOR_GRAPH_NODE_EVENT_PORT_FONT ) );
+						p->draw_text( font( FONT_GRAPH_NODE_PORT), text_ofs, name, color( COLOR_GRAPH_NODE_EVENT_PORT_FONT ) );
 					} break;
 					case AudioNode::PORT_CONTROL: {
 					
 						p->draw_stylebox( stylebox( SB_GRAPH_CONTROL_PORT ), this_port_rect.pos, this_port_rect.size );
-						p->draw_text( font( FONT_GRAPH_NODE_PORT), this_port_rect.pos+text_rect_ofs, name, color( COLOR_GRAPH_NODE_CONTROL_PORT_FONT ) );
+						p->draw_text( font( FONT_GRAPH_NODE_PORT), text_ofs, name, color( COLOR_GRAPH_NODE_CONTROL_PORT_FONT ) );
 					} break;
 				}
 				

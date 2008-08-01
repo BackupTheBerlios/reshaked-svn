@@ -435,6 +435,9 @@ void AudioGraph::set_mix_rate(float p_hz) {
 
 	_AUDIO_LOCK_
 
+	if (sampling_rate==p_hz)
+		return;
+		
 	sampling_rate=p_hz;
 	
 	for (int i=0;i<nodes.size();i++) {
@@ -450,7 +453,7 @@ AudioGraph::AudioGraph() {
 	
 	last_error=CONNECT_OK;
 	graph_order_valid=false;
-	sampling_rate=48000.0;
+	sampling_rate=654321; // ridiculous one so it will change
 }
 
 AudioGraph::~AudioGraph() {

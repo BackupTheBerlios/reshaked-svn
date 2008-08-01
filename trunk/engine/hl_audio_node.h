@@ -125,6 +125,9 @@ class HL_AudioNode : public AudioNode {
 	virtual Error save( TreeSaver * p_tree );
 	virtual Error load( TreeLoader * p_tree );
 	
+	virtual String get_port_name( PortType p_type, PortFlow p_flow,int p_port ) const;
+	
+	
 protected:
 	
 	/*  High Level Audio Node API */

@@ -143,7 +143,7 @@ CompressorNode::CompressorNode(int p_instanced_channels,const AudioNodeInfo *p_i
 	
 	add_audio_port("Input",PORT_IN);
 	add_audio_port("SideChain",PORT_IN);
-	add_audio_port("Compressed",PORT_OUT);	
+	add_audio_port("Output",PORT_OUT);	
 	
 
 		
@@ -152,12 +152,12 @@ CompressorNode::CompressorNode(int p_instanced_channels,const AudioNodeInfo *p_i
 	mode_strings.push_back("SideChain");
 	
 	mode.set_enum("Mode",mode_strings);
-	pre_gain.set_all( 0, 0, 24, 0.1, ControlPort::HINT_RANGE, "PreGain","dB");
+	pre_gain.set_all( 0, -24, 24, 0.1, ControlPort::HINT_RANGE, "PreGain","dB");
 	threshold.set_all( 0, -60, 0, 0.1, ControlPort::HINT_RANGE, "Threshold","dB");
 	ratio.set_all( 1, 1, 50, 0.1, ControlPort::HINT_RANGE, "Ratio",":1");
 	attack.set_all( 100, 1, 800, 1, ControlPort::HINT_RANGE, "Attack","ms");
 	release.set_all( 400, 1, 800, 1, ControlPort::HINT_RANGE, "Release","ms");
-	post_gain.set_all( 0, 0, 24, 0.1, ControlPort::HINT_RANGE, "PostGain","dB");
+	post_gain.set_all( 0, -24, 24, 0.1, ControlPort::HINT_RANGE, "PostGain","dB");
 	
 	add_control_port( PORT_IN, &mode);
 	add_control_port( PORT_IN, &pre_gain);

@@ -52,8 +52,8 @@ void GenericNodeUI::set_in_window() {
 	
 	for (int i=0;i<node->get_port_count( AudioNode::PORT_CONTROL, AudioNode::PORT_IN );i++) {
 	
-		//port_grid->add( make_knob( node->get_control_port( AudioNode::PORT_IN, i ) ), false, false );
-		port_grid->add( make_vslider( node->get_control_port( AudioNode::PORT_IN, i ) ), false, false );
+		port_grid->add( make_knob( node->get_control_port( AudioNode::PORT_IN, i ) ), false, false );
+		//port_grid->add( make_vslider( node->get_control_port( AudioNode::PORT_IN, i ) ), false, false );
 		
 	}
 	

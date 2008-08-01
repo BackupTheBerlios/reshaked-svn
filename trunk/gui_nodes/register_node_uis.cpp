@@ -16,11 +16,15 @@
 #include "gui_common/node_ui_registry.h"
 #include "gui_nodes/hq_reverb_node_ui.h"
 #include "gui_nodes/chorus_node_ui.h"
+#include "gui_nodes/compressor_node_ui.h"
+#include "gui_nodes/filter_bank_node_ui.h"
 
 void register_node_uis() {
 
 	NodeUI_Registry::add_create_ui_func(HQ_ReverbNodeUI::ui_create_func);
 	NodeUI_Registry::add_create_ui_func(ChorusNodeUI::ui_create_func);
+	NodeUI_Registry::add_create_ui_func(CompressorNodeUI::ui_create_func);
+	NodeUI_Registry::add_create_ui_func(FilterBankNodeUI::ui_create_func);
 	
 	NodeUI_Registry::add_create_ui_func(AudioDriverNodeUI::ui_create_func);
 	

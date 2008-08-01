@@ -73,7 +73,7 @@ HQ_ReverbNode::HQ_ReverbNode(int p_instanced_channels,const AudioNodeInfo *p_inf
 		p_instanced_channels=1;
 	
 	add_audio_port("Input",PORT_IN);
-	add_audio_port("Wet+Dry",PORT_OUT);
+	add_audio_port("Output",PORT_OUT);
 			
 	reverb = new Reverb[p_instanced_channels];
 	

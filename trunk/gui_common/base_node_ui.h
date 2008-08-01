@@ -38,6 +38,9 @@ protected:
 	GUI::Frame* make_knob(ControlPort *p_port);
 	GUI::Frame* make_knob(String p_port);
 	
+	GUI::Frame* make_enum(ControlPort *p_port,bool p_label=true);
+	GUI::Frame* make_enum(String p_port,bool p_label=true);
+	
 	GUI::Frame* make_vslider(ControlPort *p_port);
 	GUI::Frame* make_vslider(String p_port);
 	
