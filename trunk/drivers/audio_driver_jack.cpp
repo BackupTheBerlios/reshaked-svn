@@ -39,6 +39,7 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 		int index;
 		
 		jack_port_t *port;
+		int _in_ev_offset; //offset to reading input events for the slice
 		
 		JackPort() { port=NULL; index=0; }
 	};
@@ -59,6 +60,7 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 				
 			}
 		}
+		
 	
 	}
 	void _connect_jack() {
@@ -168,7 +170,7 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 	}
 	virtual void connect_event_buffer( PortFlow p_flow, int p_port, MusicEvent *p_buffer ) {
 	
-		ERR_FAIL_COND(type==PORT_EVENT && flow==p_flow);
+		ERR_FAIL_COND(type!=PORT_EVENT || flow!=p_flow);
 			
 		ev_buffer=p_buffer;
 	}
@@ -223,9 +225,89 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 					}
 				}			
 			} break;
+			case PORT_EVENT: {
+			
+					
+				for (int c=0;c<chans;c++) { // always one anyway.. but..	
+			
+					if (!ports[c].port)
+						continue;
+					
+					void *jack_buff = jack_port_get_buffer( ports[c].port , AudioDriverJACK::singleton->callback_nframes);
+					MusicEvent *event_buffer=ev_buffer;
+					ERR_CONTINUE(!ev_buffer);
+						
+					if (flow==PORT_OUT) { // read from jack, output events
+					
+						jack_nframes_t event_count = jack_midi_get_event_count(jack_buff);
+						
+						if ( AudioDriverJACK::singleton->process_offset==0) {
+						
+							ports[c]._in_ev_offset=0;
+						}
+						
+						int limit=AudioDriverJACK::singleton->process_offset+p_info.audio_buffer_size;
+						int idx=0;
+						while( ports[c]._in_ev_offset < event_count ) {
+						
+							jack_midi_event_t src_ev;
+							if (!jack_midi_event_get ( &src_ev,jack_buff,ports[c]._in_ev_offset))
+								break;
+							
+							if (src_ev.time>=limit)
+								break;
+							
+							if (idx>=p_info.event_buffer_size)
+								break;
+								
+							MusicEvent &dst_ev = event_buffer[idx];
+							
+							unsigned char *bufdata = (unsigned char*)src_ev.buffer;
+							
+							if ((*bufdata)&0x80) {
+								//meaningful event
+								dst_ev.type=(*bufdata)>>4;
+								dst_ev.channel=(*bufdata)&0xF;
+								
+								bufdata++;
+								
+								dst_ev.raw.param1=*bufdata;
+								
+								if (
+									dst_ev.type==MusicEvent::MIDI_NOTE_OFF ||
+									dst_ev.type==MusicEvent::MIDI_NOTE_ON ||
+									dst_ev.type==MusicEvent::MIDI_NOTE_PRESSURE ||
+									dst_ev.type==MusicEvent::MIDI_CONTROLLER ||
+									dst_ev.type==MusicEvent::MIDI_PITCH_BEND ||
+									dst_ev.type==MusicEvent::MIDI_CONTROLLER ) {					
+									
+									} {
+									
+									bufdata++;
+									
+									dst_ev.raw.param2=*bufdata;
+								}
+								
+								dst_ev.frame=src_ev.time-AudioDriverJACK::singleton->process_offset;
+								idx++;		
+							}
+							
+							ports[c]._in_ev_offset++;
+						}
+						
+						if (idx>=p_info.event_buffer_size) {
+							idx=p_info.event_buffer_size-1;
+						}
+			
+						event_buffer[idx]=MusicEvent( MusicEvent::STREAM_TAIL, 0,0,0);
+					}
+					
+				}
+			} break;
 		}
 		
-	}
+	}  
+    
 	virtual void set_mix_rate(float p_hz) {
 	
 	
@@ -494,10 +576,10 @@ String AudioDriverJACK::get_name() {
 
 void AudioDriverJACK::initialize() {
 
-	AudioNodeRegistry::add_node_info( get_output_audio_creation_info() );
 	AudioNodeRegistry::add_node_info( get_input_audio_creation_info() );
-	AudioNodeRegistry::add_node_info( get_output_event_creation_info() );
+	AudioNodeRegistry::add_node_info( get_output_audio_creation_info() );
 	AudioNodeRegistry::add_node_info( get_input_event_creation_info() );
+	AudioNodeRegistry::add_node_info( get_output_event_creation_info() );
 
 	
 }

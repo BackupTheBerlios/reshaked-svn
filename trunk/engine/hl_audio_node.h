@@ -139,7 +139,7 @@ protected:
 	
 	inline sample_t * get_audio_buffer( PortFlow p_flow, int p_port, int p_channel);
 	
-	inline MusicEvent * get_event_buffer( PortFlow p_flow, int p_port, int p_channel);
+	inline MusicEvent * get_event_buffer( PortFlow p_flow, int p_port);
 	
 	inline int get_channels() const { return _instanced_channels; } //inline version
 	
@@ -178,7 +178,7 @@ sample_t * HL_AudioNode::get_audio_buffer( PortFlow p_flow, int p_port, int p_ch
 	return _audio_buffers[p_flow][p_port].buffers[p_channel];
 }
 
-MusicEvent * HL_AudioNode::get_event_buffer( PortFlow p_flow, int p_port, int p_channel) {
+MusicEvent * HL_AudioNode::get_event_buffer( PortFlow p_flow, int p_port) {
 
 	ERR_FAIL_INDEX_V( p_port, _event_buffers[p_flow].size(), NULL );
 	

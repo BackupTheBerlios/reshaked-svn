@@ -299,7 +299,6 @@ int AudioGraphProcess::process(int p_frames) {
 			/** STEP 5 - CLEAR The event buffer */
 			
 			MusicEvent *ebuff_dst = &(*buff)[0];
-			ebuff_dst[0]=MusicEvent( MusicEvent::STREAM_TAIL, 0,0,0);
 			int idx=0;
 			
 			/** STEP 6 - APPEND The outputs into this input */
@@ -323,6 +322,10 @@ int AudioGraphProcess::process(int p_frames) {
 				}
 				
 			}
+			
+
+			ebuff_dst[ std::min( idx, EVENT_BUFFER_SIZE-1) ]=MusicEvent( MusicEvent::STREAM_TAIL, 0,0,0);
+			
 		}
 		
 		/** STEP 7: Check the Output Event Buffers.. */
@@ -332,7 +335,7 @@ int AudioGraphProcess::process(int p_frames) {
 			EventBuffer *buff=process_nodes[i]->output_event_buffers[j];
 			
 			if (buff==NULL)
-				continue; ///< Doesnt use an input buffer
+				continue; ///< Doesnt use an output buffer
 		
 			(*buff)[0]=MusicEvent( MusicEvent::STREAM_TAIL, 0,0,0);
 		}

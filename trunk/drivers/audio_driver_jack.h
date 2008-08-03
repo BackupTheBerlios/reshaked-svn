@@ -16,6 +16,7 @@
 #include <vector>
 #include <list>
 #include <jack/jack.h>
+#include <jack/midiport.h>
 #include <pthread.h>
 /**
 	@author Juan Linietsky <reduzio@gmail.com>

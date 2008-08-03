@@ -22,6 +22,7 @@ MusicEvent::MusicEvent(Type p_type, unsigned char p_chan,unsigned char data1, un
 
 MusicEvent::MusicEvent() {
 
+	frame=0;
 	type=NONE;
 	channel=0;
 	raw.param1=0;

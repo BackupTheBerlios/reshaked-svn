@@ -18,6 +18,7 @@
 #include "filter_bank_node.h"
 #include "chorus_node.h"
 #include "compressor_node.h"
+#include "sine_synth_node.h"
 
 void register_nodes() {
 
@@ -26,6 +27,8 @@ void register_nodes() {
 	AudioNodeRegistry::add_node_info( ChorusNode::get_creation_info() );	
 	AudioNodeRegistry::add_node_info( FilterBankNode::get_creation_info() );	
 	AudioNodeRegistry::add_node_info( CompressorNode::get_creation_info_peak() );	
-	AudioNodeRegistry::add_node_info( CompressorNode::get_creation_info_rms() );	
+	AudioNodeRegistry::add_node_info( CompressorNode::get_creation_info_rms() );
+		
+	AudioNodeRegistry::add_node_info( SineSynthNode::get_creation_info() );			
 }
 

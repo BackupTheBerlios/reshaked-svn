@@ -86,7 +86,7 @@ void NodeUI_Enum::draw(const GUI::Point& p_pos,const GUI::Size& p_size,const GUI
 	int text_h=get_painter()->get_font_height( font( FONT_NODEUI_ENUM ) )+text_sb_size.height;
 	int h = MAX( text_h, arrowsize.height );
 	
-	int arrow_hofs=(h-arrowsize.height)/2;
+	int arrow_hofs=(p_size.height-arrowsize.height)/2;
 	get_painter()->draw_bitmap( bitmap( pressing_left?BITMAP_ICON_ENUM_LEFT_ACTIVE:BITMAP_ICON_ENUM_LEFT ), GUI::Point(0,arrow_hofs) );
 	get_painter()->draw_bitmap( bitmap( pressing_right?BITMAP_ICON_ENUM_RIGHT_ACTIVE:BITMAP_ICON_ENUM_RIGHT ), GUI::Point(p_size.x-arrowsize.x,arrow_hofs) );
 
@@ -96,7 +96,7 @@ void NodeUI_Enum::draw(const GUI::Point& p_pos,const GUI::Size& p_size,const GUI
 	
 	text_rect.pos+=margin;
 	text_rect.size-=text_sb_size;
-	text_rect.pos.y+=(h-text_h)/2;
+	text_rect.pos.y=(p_size.height-text_h)/2;
 	String text=get_range()->get_as_text();
 	
 	int limit_x=text_rect.size.x;

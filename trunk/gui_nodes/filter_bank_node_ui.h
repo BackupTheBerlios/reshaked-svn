@@ -13,6 +13,7 @@
 #define FILTERBANKNODEUI_H
 
 #include "gui_common/base_node_ui.h"
+#include "gui_common/filter_bank_fr.h"
 #include "nodes/filter_bank_node.h"
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
@@ -20,7 +21,7 @@
 class FilterBankNodeUI : public BaseNodeUI {
 
 	FilterBankNode *node;
-		
+	FilterBankFR *fr;
 	void set_in_window();
 	void check_ranges_user();
 public:
