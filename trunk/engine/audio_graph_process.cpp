@@ -86,6 +86,31 @@ void AudioGraphProcess::add_node(AudioNode *p_node) {
 		process_node->output_audio_buffers[i]=NULL;
 	}	
 		
+		
+	/* by default the input ports read from silence buffer */
+	process_node->input_event_buffers.resize(p_node->get_port_count( AudioNode::PORT_EVENT, AudioNode::PORT_IN ));
+	process_node->input_event_sources.resize(p_node->get_port_count( AudioNode::PORT_EVENT, AudioNode::PORT_IN ));
+	
+	for (int i=0;i<p_node->get_port_count( AudioNode::PORT_EVENT, AudioNode::PORT_IN );i++) {
+		
+	
+		p_node->connect_event_buffer( AudioNode::PORT_IN, i,&event_silence_buffer[0]);
+				
+		process_node->input_event_buffers[i]=NULL;
+	}		
+	/* by default, set the output ports to write from trash buffer */
+	
+	process_node->output_event_buffers.resize(p_node->get_port_count( AudioNode::PORT_EVENT, AudioNode::PORT_OUT ));
+	
+	for (int i=0;i<p_node->get_port_count( AudioNode::PORT_EVENT, AudioNode::PORT_OUT );i++) {
+		
+		p_node->connect_event_buffer( AudioNode::PORT_OUT, i,&event_trash_buffer[0]);
+
+		process_node->output_event_buffers[i]=NULL;
+	}	
+		
+		
+		
 	/* We'll store hoe many sources does each input have here */
 	process_nodes.push_back(process_node);
 }

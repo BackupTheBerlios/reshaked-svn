@@ -248,10 +248,11 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 						
 						int limit=AudioDriverJACK::singleton->process_offset+p_info.audio_buffer_size;
 						int idx=0;
+						//printf("I see %i events at offset %i\n",event_count,ports[c]._in_ev_offset);
 						while( ports[c]._in_ev_offset < event_count ) {
 						
 							jack_midi_event_t src_ev;
-							if (!jack_midi_event_get ( &src_ev,jack_buff,ports[c]._in_ev_offset))
+							if (jack_midi_event_get ( &src_ev,jack_buff,ports[c]._in_ev_offset))
 								break;
 							
 							if (src_ev.time>=limit)
@@ -260,6 +261,7 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 							if (idx>=p_info.event_buffer_size)
 								break;
 								
+							
 							MusicEvent &dst_ev = event_buffer[idx];
 							
 							unsigned char *bufdata = (unsigned char*)src_ev.buffer;
@@ -268,6 +270,7 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 								//meaningful event
 								dst_ev.type=(*bufdata)>>4;
 								dst_ev.channel=(*bufdata)&0xF;
+								//printf("meaningful event %x, chan %i\n",dst_ev.type,dst_ev.channel);
 								
 								bufdata++;
 								
@@ -287,7 +290,7 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 									
 									dst_ev.raw.param2=*bufdata;
 								}
-								
+												
 								dst_ev.frame=src_ev.time-AudioDriverJACK::singleton->process_offset;
 								idx++;		
 							}
@@ -367,7 +370,8 @@ struct AudioDriverNodeJACK : public AudioDriverNode {
 	
 		const char **result,**iter;
 				
-		result = jack_get_ports (c, NULL, (type==PORT_EVENT)?JACK_DEFAULT_MIDI_TYPE:JACK_DEFAULT_AUDIO_TYPE,JackPortIsPhysical|(flow==PORT_IN)?JackPortIsInput:JackPortIsOutput);
+		printf("flow is out? %i\n",(flow==PORT_OUT));
+		result = jack_get_ports (c, NULL, (type==PORT_EVENT)?JACK_DEFAULT_MIDI_TYPE:JACK_DEFAULT_AUDIO_TYPE,JackPortIsPhysical|((flow==PORT_IN)?JackPortIsInput:JackPortIsOutput));
 		
 
 		if (result) {
