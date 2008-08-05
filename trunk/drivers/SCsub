@@ -8,7 +8,9 @@ env_drivers.find_source_files(env_drivers.target_list,"*.cpp");
 
 env.Library('drivers', env_drivers.target_list)
 
+Export('env_drivers')
+
 #if (env.use_asio==True):
 #	SConscript("asio/SCsub");
 
-#SConscript("portaudio/SCsub");
+SConscript("libpng/SCsub");
