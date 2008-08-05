@@ -293,7 +293,8 @@ int main(int argc, char *argv[]) {
 	main_window->init(""); // no config
 	
 	
-	AudioDriver::get_current_driver()->restart();
+	if (AudioDriver::get_current_driver())
+		AudioDriver::get_current_driver()->restart();
 
 	
 	int res = main_loop(screen,timer,flags,main_window);

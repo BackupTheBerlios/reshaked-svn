@@ -1,0 +1,32 @@
+
+import os
+
+Import('env_drivers');
+
+asio_files=[\
+	"asio/common/debugmessage.cpp",\
+#	"asio/common/asiodrvr.cpp",\
+	"asio/common/dllentry.cpp",\
+	"asio/common/register.cpp",\
+	"asio/common/combase.cpp",\
+	"asio/common/asio.cpp",\
+	"asio/host/ASIOConvertSamples.cpp",\
+	"asio/host/asiodrivers.cpp",\
+];
+asio_pc_files=[\
+	"asio/host/pc/asiolist.cpp",\
+];
+
+asio_mac_files=[\
+	"asio/host/mac/codefragments.cpp",\
+	"asio/host/mac/asioshlib.cpp",\
+];
+
+env_drivers.target_list = env_drivers.target_list + asio_files
+
+if (os.name=='nt'):
+	env_drivers.target_list = env_drivers.target_list + asio_pc_files
+
+if (os.name=='darwin'):
+	env_drivers.target_list = env_drivers.target_list + asio_mac_files
+

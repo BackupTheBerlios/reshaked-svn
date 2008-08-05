@@ -105,14 +105,14 @@ void HL_ControlPort::set_normalized(float p_val,bool p_make_initial) {
 			p_val=0;
 		if (p_val>1.0)
 			p_val=1.0;
-		ControlPort::set_normalized( powf(p_val,2.0), p_make_initial );
+		ControlPort::set_normalized( pow(p_val,2.0), p_make_initial );
 	} else
 		ControlPort::set_normalized( p_val, p_make_initial );
 }
 float HL_ControlPort::get_normalized() const {
 
 	if (exp_range)
-		return powf(ControlPort::get_normalized(),1.0/2.0);
+		return pow(ControlPort::get_normalized(),1.0/2.0);
 	else
 		return ControlPort::get_normalized();
 }

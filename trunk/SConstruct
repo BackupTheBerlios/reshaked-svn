@@ -17,6 +17,8 @@ win32_paths=win32
 
 env=Environment();
 
+env.asio_enabled=False
+
 win32_msvc=("msvc" in env["TOOLS"])
 
 opts=Options()
@@ -28,6 +30,7 @@ if (not win32):
 	opts.Add('jack','Enable JACK connection kit (0|1).',1)
 opts.Add('PNG','Enable LibPNG (0|1).',1)
 opts.Add('vst_enabled', 'Enable VST Support (win32 and win32_cross) (0|1).', 1)
+opts.Add('asio_enabled', 'Enable ASIO Support (win32 and win32_cross) (0|1).', 1)
 
 win32_cross=False
 # add the cross compiler option
@@ -50,29 +53,37 @@ if (win32_cross):
 	env['LD']='i586-mingw32msvc-ld'
 	env['CC']='i586-mingw32msvc-gcc'
 	env['AR']='i586-mingw32msvc-ar'
-	win32_paths=true
 
 # More win32 stuff
 
-if (win32_paths):
-	env.Append(CPPPATH=['#drivers/vst'])
-        
 
 if (win32 or win32_cross):
 
 	if (win32_msvc):
-        	env.Append(CPPFLAGS=['/DWINDOWS_ENABLED'])
-        	env.Append(CPPFLAGS=['/DSDL_ENABLED','/Gd'])
-        else:
-        	env.Append(CPPFLAGS=['-DWINDOWS_ENABLED'])
-        	env.Append(CPPFLAGS=['-DSDL_ENABLED'])
-        	env.Append(CPPFLAGS=['-I SDL'])
-        if (env['vst_enabled']):
+		env.Append(CPPFLAGS=['/DWINDOWS_ENABLED'])
+		env.Append(CPPFLAGS=['/DSDL_ENABLED','/Gd'])
+	else:
+		env.Append(CPPFLAGS=['-DWINDOWS_ENABLED'])
+		env.Append(CPPFLAGS=['-DSDL_ENABLED'])
+		env.Append(CPPFLAGS=['-I SDL'])
+
+	if (env['vst_enabled']):
 		if (win32_msvc):
 			env.Append(CPPFLAGS=['/DVST_ENABLED'])
-                else:
+		else:
 			env.Append(CPPFLAGS=['-DVST_ENABLED'])
+	
+		env.Append(CPPPATH=['#drivers/vst'])
 
+	if (env["asio_enabled"]):
+		if (win32_msvc):
+			env.Append(CPPFLAGS=['/DASIO_ENABLED'])
+		else:
+			env.Append(CPPFLAGS=['-DASIO_ENABLED'])
+	
+		env.Append(CPPPATH=['#drivers/asio','#drivers/asio/host','#drivers/asio/host/mac','#drivers/asio/host/pc','#drivers/asio/common'])
+		env.asio_enabled=True
+		
 else:
 
        	env.Append(CPPFLAGS=['-DPOSIX_ENABLED'])
@@ -134,9 +145,13 @@ if (not win32_msvc):
 env.Append(LIBS=['drivers','gui_main','gui_nodes','gui_common','editor','nodes','engine','gui','dsp','types']);
 env.Append(LIBPATH=['#drivers','#gui_main','#gui_nodes','#gui_common','#editor','#nodes','#engine','#gui','#dsp','#types']);
 
+if (win32_cross):
+	env.Append(LIBS=['mingw32','SDLmain','SDL','m']);
+
+
 env.__class__.find_source_files = find_source_files
 
-env.Append(CPPPATH=['#drivers/libpng'])
+env.Append(CPPPATH=['#gui_common/libpng'])
 env.Append(CXXFLAGS=['-DGUI_EXTERNAL_STRING="\\\"types/rstring.h\\\""']);
 
 env.bin_targets=[]
@@ -157,6 +172,6 @@ SConscript('bin/SCsub');
 
 
 if (env['prefix']):
-        dst_target = env.Install(env['prefix']+'/bin', env.bin_targets)
-        env.Alias('install', dst_target )
+	dst_target = env.Install(env['prefix']+'/bin', env.bin_targets)
+	env.Alias('install', dst_target )
 

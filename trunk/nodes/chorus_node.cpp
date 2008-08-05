@@ -1,3 +1,4 @@
+
 //
 // C++ Implementation: chorus_plugin
 //
@@ -134,7 +135,7 @@ void ChorusNode::process(const ProcessInfo& p_info) {
 			//low pass filter
 			if (v.cutoff()==0)
 				continue;
-			float auxlp=expf(-2.0*M_PI*v.cutoff()/get_mix_rate());
+			float auxlp=exp(-2.0*M_PI*v.cutoff()/get_mix_rate());
 			float c1=1.0-auxlp;
 			float c2=auxlp;
 			float h=v.filter_h[c];

@@ -7,12 +7,15 @@ env_drivers.target_list=[];
 env_drivers.find_source_files(env_drivers.target_list,"*.cpp");
 
 
+
+if (env.asio_enabled):
+	env_drivers.Append(CXXFLAGS=['-DWINDOWS'])
+
 Export('env_drivers')
 
-#if (env.use_asio==True):
-#	SConscript("asio/SCsub");
+if (env.asio_enabled):
+	SConscript("asio/SCsub");
 
-SConscript("libpng/SCsub");
-
+#SConscript("vst/SCsub");
 
 env.Library('drivers', env_drivers.target_list)

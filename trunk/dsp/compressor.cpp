@@ -52,8 +52,8 @@ float CompressorBase::get_ratio() const {
 
 void CompressorBase::recompute_coeffs() {
 
-	c_attack=expf( -1/(attack*mix_rate) );
-	c_release=expf( -1/(release*mix_rate) );
+	c_attack=exp( -1/(attack*mix_rate) );
+	c_release=exp( -1/(release*mix_rate) );
 }
 
 void CompressorBase::set_mix_rate(float p_mix_rate) {

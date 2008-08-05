@@ -1,4 +1,4 @@
-Import('env_drivers')
+Import('env_gui_common')
 
 png_sources = [
 	"libpng/png.c",
@@ -37,4 +37,4 @@ zlib_sources = [
 
 
 
-env_drivers.target_list = env_drivers.target_list + png_sources + zlib_sources
+env_gui_common.target_list = env_gui_common.target_list + png_sources + zlib_sources

@@ -171,7 +171,7 @@ void FilterBankNode::process(const ProcessInfo& p_info) {
 		
 		float cutoff=f.cutoff();
 		
-		cutoff*=powf( 2 , cutoff_offset() );
+		cutoff*=pow( 2 , cutoff_offset() );
 		if (cutoff<50)
 			cutoff=50; // shitty things happen with very low cutoffs
 		

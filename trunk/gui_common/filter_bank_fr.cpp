@@ -1,3 +1,4 @@
+
 //
 // C++ Implementation: filter_bank_fr
 //
@@ -12,10 +13,11 @@
 #include "filter_bank_fr.h"
 #include "gui_common/common_skin.h"
 #include "dsp/formulas.h"
+#include <math.h>
 
-#define FREQ_2_LOG( m_val ) ( ::logf( (m_val) ) / ::logf (2) )
+#define FREQ_2_LOG( m_val ) ( log( (m_val) ) / log (2) )
 
-#define LOG_2_FREQ( m_val ) ( ::powf(2, (m_val)) )
+#define LOG_2_FREQ( m_val ) ( pow(2, (m_val)) )
 
 
 static float float_2_freq(float p_float,float p_min,float p_max) {
@@ -31,11 +33,11 @@ static float float_2_freq(float p_float,float p_min,float p_max) {
 static int freq_2_pixel(float p_freq,float p_min,float p_max,float p_width) {
 	
 	float w=p_width;
-	float logfbeg=FREQ_2_LOG(p_min);
-	float logfend=FREQ_2_LOG(p_max);
-	float logf=FREQ_2_LOG(p_freq);
+	float lbeg=FREQ_2_LOG(p_min);
+	float lend=FREQ_2_LOG(p_max);
+	float l=FREQ_2_LOG(p_freq);
 
-	return (int) (w * ( (logf-logfbeg)/(logfend-logfbeg)));
+	return (int) (w * ( (l-lbeg)/(lend-lbeg)));
 }
 
 
@@ -102,7 +104,7 @@ void FilterBankFR::draw(const GUI::Point& p_global,const GUI::Size& p_size,const
 		if (disabled)
 			continue;
 		
-		f.set_cutoff( filter[i].cutoff->get()*powf( 2 , cutoff_offset->get() ) );
+		f.set_cutoff( filter[i].cutoff->get()*pow( 2 , cutoff_offset->get() ) );
 
 		f.set_resonance( filter[i].resonance->get() );
 		f.set_stages( (int)filter[i].stages->get()+1 );
@@ -118,7 +120,7 @@ void FilterBankFR::draw(const GUI::Point& p_global,const GUI::Size& p_size,const
 			float freq= float_2_freq(  (float)j/(float)response_len  ,MIN_FREQ,filter[i].cutoff->get_max() );
 		
 			float freqresponse=f.get_response( freq, &fc );
-			freqresponse=powf(freqresponse,filter[i].stages->get()+1.0); //apply stages
+			freqresponse=pow(freqresponse,filter[i].stages->get()+1.0); //apply stages
 			
 			response[j]+=freqresponse;
 			if (response[j]>response_roof)
@@ -151,7 +153,7 @@ void FilterBankFR::draw(const GUI::Point& p_global,const GUI::Size& p_size,const
 		if (filter[i].mode->get()==0)
 			continue;
 		
-		int x=freq_2_pixel( filter[i].cutoff->get()*powf( 2 , cutoff_offset->get() ) ,MIN_FREQ,filter[i].cutoff->get_max(),response_len);
+		int x=freq_2_pixel( filter[i].cutoff->get()*pow( 2 , cutoff_offset->get() ) ,MIN_FREQ,filter[i].cutoff->get_max(),response_len);
 			
 		bool selected=(drag.index==i || (drag.over==i && drag.index==-1));
 		
@@ -193,7 +195,7 @@ void FilterBankFR::draw(const GUI::Point& p_global,const GUI::Size& p_size,const
 	
 	if (drag.over>=0) {
 		
-		float cutoff=filter[drag.over].cutoff->get()*powf( 2 , cutoff_offset->get());
+		float cutoff=filter[drag.over].cutoff->get()*pow( 2 , cutoff_offset->get());
 		
 		String text;
 		
@@ -252,7 +254,7 @@ void FilterBankFR::mouse_motion(const GUI::Point& p_pos, const  GUI::Point& p_re
 			if (filter[i].mode->get()==0)
 				continue;
 			
-			int x=freq_2_pixel( filter[i].cutoff->get()*powf( 2 , cutoff_offset->get() ) ,MIN_FREQ,filter[i].cutoff->get_max(),get_size_cache().width);
+			int x=freq_2_pixel( filter[i].cutoff->get()*pow( 2 , cutoff_offset->get() ) ,MIN_FREQ,filter[i].cutoff->get_max(),get_size_cache().width);
 			
 			int distance=fabsf(p_pos.x-x);
 			if (distance>10)
@@ -273,7 +275,7 @@ void FilterBankFR::mouse_motion(const GUI::Point& p_pos, const  GUI::Point& p_re
 	
 		float freq= float_2_freq(  (float)p_pos.x/(float)get_size_cache().width ,MIN_FREQ,filter[drag.index].cutoff->get_max() );
 				
-		freq/=powf( 2 , cutoff_offset->get() );
+		freq/=pow( 2 , cutoff_offset->get() );
 		//filter[drag.index].cutoff->set(freq);
 		filter[drag.index].cutoff->set(freq);
 		float reso=(float)(get_size_cache().height-p_pos.y)/get_size_cache().height;

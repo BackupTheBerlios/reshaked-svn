@@ -26,14 +26,23 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+union _diunion {
+
+	double d;
+	int i;
+};
+
 inline int fast_floor(double val) {
-   val = val + (68719476736.0*1.5);
-   return (((int*)&val)[iman_]>>16);
+	
+	val = val + (68719476736.0*1.5);
+	_diunion diu;
+	diu.d=val;
+	return ((&diu.i)[iman_]>>16);
 }
 
 static inline float note_to_freq(float p_note) {
 	
-	return 440.0*powf(2.0,(p_note-69.0)/12.0); // 440 tuning, change to 415 if you feel baroque	
+	return 440.0*pow(2.0,(p_note-69.0)/12.0); // 440 tuning, change to 415 if you feel baroque	
 }
 
 static inline Tick get_swing_pos(Tick p_src_tick,int p_swing_base,double p_swing) {

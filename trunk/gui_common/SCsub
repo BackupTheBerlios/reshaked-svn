@@ -6,4 +6,9 @@ env_gui_common.target_list=[];
 
 env_gui_common.find_source_files(env_gui_common.target_list,"*.cpp");
 
+
+Export('env_gui_common');
+
+SConscript('libpng/SCsub');
+
 env.Library('gui_common', env_gui_common.target_list)
