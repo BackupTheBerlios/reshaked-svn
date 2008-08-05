@@ -46,13 +46,13 @@ class TreeLoaderFile : public TreeLoader {
 
 	HashType hash_type;
 	StringType string_type;
-	uint32_t max_entry_len;
+	unsigned int max_entry_len;
 	
 	
 	struct HashItem {
 		
-		uint32_t hash;
-		uint32_t offset;
+		unsigned int hash;
+		unsigned int offset;
 	};
 	
 	std::vector<HashItem> hash_table;
@@ -63,19 +63,19 @@ class TreeLoaderFile : public TreeLoader {
 	
 	struct Current {
 
-		std::vector<uint32_t> stack;
+		std::vector<unsigned int> stack;
 		
-		uint32_t dir_count;
-		uint32_t data_count;
-		uint32_t dir_offsets_offset;
-		uint32_t data_offsets_offset; //helper , same as dir_offsets_offset+data_count*4
+		unsigned int dir_count;
+		unsigned int data_count;
+		unsigned int dir_offsets_offset;
+		unsigned int data_offsets_offset; //helper , same as dir_offsets_offset+data_count*4
 	} current;
 	
 	/* helpers */
 	
-	bool enter_offset(uint32_t p_offset);
-	bool is_offset_name_and_type( uint32_t p_ofs, String p_name, bool p_check_type,FileFieldType p_type );
-	uint32_t get_node_offset(String p_name, bool p_check_type,FileFieldType p_type);
+	bool enter_offset(unsigned int p_offset);
+	bool is_offset_name_and_type( unsigned int p_ofs, String p_name, bool p_check_type,FileFieldType p_type );
+	unsigned int get_node_offset(String p_name, bool p_check_type,FileFieldType p_type);
 	bool enter_data( String p_name, FileFieldType p_type );
 	
 	GUI::File *f;

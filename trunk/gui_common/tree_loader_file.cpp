@@ -13,11 +13,11 @@
 #include "tree_loader_file.h"
 #include "error_macros.h"
 
-static inline uint32_t hash_djb2(const char *p_cstr) {
+static inline unsigned int hash_djb2(const char *p_cstr) {
 
 	const unsigned char* chr=(const unsigned char*)p_cstr;
-	uint32_t hash = 5381;
-	uint32_t c;
+	unsigned int hash = 5381;
+	unsigned int c;
 	
 	while ((c = *chr++))
 		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
@@ -28,15 +28,15 @@ static inline uint32_t hash_djb2(const char *p_cstr) {
 
 #define LOADER_FILE_VERSION 1
 
-bool TreeLoaderFile::enter_offset(uint32_t p_offset) {
+bool TreeLoaderFile::enter_offset(unsigned int p_offset) {
 
 	f->seek(p_offset);
 
-	uint8_t type = f->get_8();
+	unsigned char type = f->get_8();
 //	printf("Type is %i\n",type);
 	ERR_FAIL_COND_V( type != FILE_FIELD_ENTER, true );
 
-	uint32_t namesize=f->get_32();
+	unsigned int namesize=f->get_32();
 
 	ERR_FAIL_COND_V( namesize>MAX_ENTRY_NAME_LEN, true );
 
@@ -44,7 +44,7 @@ bool TreeLoaderFile::enter_offset(uint32_t p_offset) {
 
 	f->seek( f->get_pos()+namesize );
 
-	uint32_t new_hash_table_size=f->get_32();
+	unsigned int new_hash_table_size=f->get_32();
 
 //	printf("hash table size: %i\n",new_hash_table_size);
 	if (new_hash_table_size==0) {
@@ -74,18 +74,18 @@ bool TreeLoaderFile::enter_offset(uint32_t p_offset) {
 }
 
 
-bool TreeLoaderFile::is_offset_name_and_type( uint32_t p_ofs, String p_name,bool p_check_type,FileFieldType p_type ) {
+bool TreeLoaderFile::is_offset_name_and_type( unsigned int p_ofs, String p_name,bool p_check_type,FileFieldType p_type ) {
 
 
 	f->seek( p_ofs );
-	uint8_t t=f->get_8();
+	unsigned char t=f->get_8();
 	if (p_check_type && t!=p_type)
 		return false;
 
-	uint32_t name_len=f->get_32();
+	unsigned int name_len=f->get_32();
 
 /*
-	uint32_t auxp = f->get_pos();
+	unsigned int auxp = f->get_pos();
 
 	printf("COMPARE: ");
 	for (int i=0;i<(int)name_len;i++) {
@@ -114,17 +114,17 @@ bool TreeLoaderFile::is_offset_name_and_type( uint32_t p_ofs, String p_name,bool
 
 bool TreeLoaderFile::enter_data( String p_name, FileFieldType p_type ) {
 
-	uint32_t ofs=get_node_offset( p_name, true, p_type);
+	unsigned int ofs=get_node_offset( p_name, true, p_type);
 
 	ERR_FAIL_COND_V(ofs==OFFSET_ERROR,true);
 
 	f->seek( ofs );
 
-	uint8_t t=f->get_8(); //type
+	unsigned char t=f->get_8(); //type
 	ERR_FAIL_COND_V(t!=p_type,true);
 
 
-	uint32_t name_len=f->get_32();
+	unsigned int name_len=f->get_32();
 	f->seek( f->get_pos() + name_len ); //skip data
 
 	return false;
@@ -132,7 +132,7 @@ bool TreeLoaderFile::enter_data( String p_name, FileFieldType p_type ) {
 }
 
 
-uint32_t TreeLoaderFile::get_node_offset(String p_name, bool p_check_type, FileFieldType p_type) {
+unsigned int TreeLoaderFile::get_node_offset(String p_name, bool p_check_type, FileFieldType p_type) {
 
 	ERR_FAIL_COND_V(p_name.length()>MAX_ENTRY_NAME_LEN,OFFSET_ERROR);
 
@@ -147,7 +147,7 @@ uint32_t TreeLoaderFile::get_node_offset(String p_name, bool p_check_type, FileF
 
 	if (  hash_table.size() && hash_type!=HASH_NONE) {
 		//try with hash table
-		uint32_t hash;
+		unsigned int hash;
 
 		switch(hash_type) {
 			case HASH_DJB2: {
@@ -179,7 +179,7 @@ uint32_t TreeLoaderFile::get_node_offset(String p_name, bool p_check_type, FileF
 		while (true) {
 
 			if (is_offset_name_and_type( hash_table[idx].offset, p_name, p_check_type,p_type )) {
-				uint32_t offset=hash_table[idx].offset;
+				unsigned int offset=hash_table[idx].offset;
 
 				return offset;
 			}
@@ -208,7 +208,7 @@ uint32_t TreeLoaderFile::get_node_offset(String p_name, bool p_check_type, FileF
 		for (int i=0;i<(int)( current.dir_count+current.data_count );i++) {
 
 			f->seek( current.dir_offsets_offset+i*4 );
-			uint32_t offset=f->get_32();
+			unsigned int offset=f->get_32();
 
 			if (is_offset_name_and_type( offset, p_name, p_check_type,p_type )) {
 				return offset;
@@ -224,7 +224,7 @@ uint32_t TreeLoaderFile::get_node_offset(String p_name, bool p_check_type, FileF
 bool TreeLoaderFile::enter(String p_dir) {
 
 	printf("attempting to enter %s\n",p_dir.ascii().get_data());
-	uint32_t ofs = get_node_offset(p_dir,true,FILE_FIELD_ENTER);
+	unsigned int ofs = get_node_offset(p_dir,true,FILE_FIELD_ENTER);
 	ERR_FAIL_COND_V( ofs == OFFSET_ERROR , true );
 
 	if (!enter_offset(ofs)) {
@@ -239,7 +239,7 @@ bool TreeLoaderFile::enter_by_index(int p_index) {
 	ERR_FAIL_INDEX_V( p_index, current.dir_count, true );
 
 	f->seek( current.dir_offsets_offset+p_index*4 );
-	uint32_t offset=f->get_32();
+	unsigned int offset=f->get_32();
 
 	if (!enter_offset( offset )) {
 
@@ -253,7 +253,7 @@ void TreeLoaderFile::exit() {
 	printf("exiting\n");
 	ERR_FAIL_COND( current.stack.size() == 1 );
 
-	uint32_t offset=current.stack[ current.stack.size() -2 ];
+	unsigned int offset=current.stack[ current.stack.size() -2 ];
 	if (!enter_offset( offset )) {
 
 		current.stack.resize( current.stack.size() -1 );
@@ -267,10 +267,10 @@ String TreeLoaderFile::get_path() {
 
 		f->seek( current.stack[i] );
 
-		uint8_t type = f->get_8();
+		unsigned char type = f->get_8();
 		ERR_FAIL_COND_V( type != FILE_FIELD_ENTER, "" );
 
-		uint32_t namesize=f->get_32();
+		unsigned int namesize=f->get_32();
 
 		ERR_FAIL_COND_V( namesize>MAX_ENTRY_NAME_LEN, "" );
 
@@ -285,7 +285,7 @@ void TreeLoaderFile::goto_root() {
 
 	ERR_FAIL_COND( current.stack.size() < 1 );
 
-	uint32_t offset=current.stack[ 0 ];
+	unsigned int offset=current.stack[ 0 ];
 
 	if (!enter_offset( offset )) {
 
@@ -302,9 +302,9 @@ int TreeLoaderFile::get_int(String p_name) {
 		return 0;
 	}
 
-	uint32_t v = f->get_32();
+	unsigned int v = f->get_32();
 
-	return (int32_t)v;
+	return (signed int)v;
 
 }
 void TreeLoaderFile::get_int_array(String p_name,int *p_arr,int p_from,int p_len) {
@@ -315,7 +315,7 @@ void TreeLoaderFile::get_int_array(String p_name,int *p_arr,int p_from,int p_len
 		return;
 	}
 
-	uint32_t len = f->get_32();
+	unsigned int len = f->get_32();
 
 	if (p_len==-1)
 		p_len=len-p_from;
@@ -326,7 +326,7 @@ void TreeLoaderFile::get_int_array(String p_name,int *p_arr,int p_from,int p_len
 		f->seek( f->get_pos() + p_from * 4 );
 
 	for (int i=0;i<p_len;i++)
-		p_arr[i]=(int32_t)f->get_32();
+		p_arr[i]=(signed int)f->get_32();
 
 }
 int TreeLoaderFile::get_int_array_len(String p_name) {
@@ -337,7 +337,7 @@ int TreeLoaderFile::get_int_array_len(String p_name) {
 		return 0;
 	}
 
-	uint32_t len = f->get_32();
+	unsigned int len = f->get_32();
 
 	return len;
 }
@@ -345,7 +345,7 @@ int TreeLoaderFile::get_int_array_len(String p_name) {
 union FloatIntUnion {
 
 	float f;
-	uint32_t i;
+	unsigned int i;
 };
 float TreeLoaderFile::get_float(String p_name) {
 
@@ -372,7 +372,7 @@ void TreeLoaderFile::get_float_array(String p_name,float* p_array,int p_from,int
 		return;
 	}
 
-	uint32_t len = f->get_32();
+	unsigned int len = f->get_32();
 
 	if (p_len==-1)
 		p_len=len-p_from;
@@ -403,7 +403,7 @@ int TreeLoaderFile::get_float_array_len(String p_name) {
 		return 0;
 	}
 
-	uint32_t len = f->get_32();
+	unsigned int len = f->get_32();
 
 	return len;
 
@@ -416,7 +416,7 @@ String TreeLoaderFile::get_string(String p_name) {
 		return "";
 	}
 
-	uint32_t len = f->get_32();
+	unsigned int len = f->get_32();
 
 	String s;
 
@@ -463,7 +463,7 @@ void TreeLoaderFile::get_string_array(String p_name,String*p_array,int p_from,in
 		return;
 	}
 
-	uint32_t count=f->get_16();
+	unsigned int count=f->get_16();
 
 	if (p_len==-1)
 		p_len=count-p_from;
@@ -474,7 +474,7 @@ void TreeLoaderFile::get_string_array(String p_name,String*p_array,int p_from,in
 
 		for (int i=0;i<p_from;i++) {
 
-			uint32_t len = f->get_32();
+			unsigned int len = f->get_32();
 
 			switch (string_type) {
 
@@ -498,7 +498,7 @@ void TreeLoaderFile::get_string_array(String p_name,String*p_array,int p_from,in
 
 	for (int j=0;j<count;j++) {
 
-		uint32_t len = f->get_32();
+		unsigned int len = f->get_32();
 
 		String s;
 
@@ -553,7 +553,7 @@ int TreeLoaderFile::get_string_array_len(String p_name) {
 		return 0;
 	}
 
-	uint32_t len = f->get_32();
+	unsigned int len = f->get_32();
 
 	return len;
 
@@ -567,7 +567,7 @@ void TreeLoaderFile::get_raw(String p_name,unsigned char *p_raw,int p_from,int p
 		return;
 	}
 
-	uint32_t len = f->get_32();
+	unsigned int len = f->get_32();
 
 	if (p_len==-1)
 		p_len=len-p_from;
@@ -589,7 +589,7 @@ int TreeLoaderFile::get_raw_len(String p_name)  {
 		return 0;
 	}
 
-	uint32_t len = f->get_32();
+	unsigned int len = f->get_32();
 
 	return len;
 }
@@ -603,10 +603,10 @@ String TreeLoaderFile::get_var_name(int i)  {
 	ERR_FAIL_INDEX_V( i, current.data_count, true );
 
 	f->seek( current.data_offsets_offset+i*4 );
-	uint32_t offset=f->get_32();
+	unsigned int offset=f->get_32();
 
 	f->seek( offset+1 );
-	uint32_t name_len=f->get_32();
+	unsigned int name_len=f->get_32();
 
 	String s;
 
@@ -628,10 +628,10 @@ String TreeLoaderFile::get_child_name(int i)  {
 	ERR_FAIL_INDEX_V( i, current.dir_count, true );
 
 	f->seek( current.dir_offsets_offset+i*4 );
-	uint32_t offset=f->get_32();
+	unsigned int offset=f->get_32();
 
 	f->seek( offset+1 );
-	uint32_t name_len=f->get_32();
+	unsigned int name_len=f->get_32();
 
 	String s;
 
@@ -649,13 +649,13 @@ bool TreeLoaderFile::is_child(String p_dir)  {
 
 bool TreeLoaderFile::is_var(String p_var)  {
 
-	uint32_t ofs=get_node_offset(p_var, false, FILE_FIELD_ENTER);
+	unsigned int ofs=get_node_offset(p_var, false, FILE_FIELD_ENTER);
 	if (ofs==OFFSET_ERROR)
 		return false;
 
 	f->seek(ofs);
 
-	uint8_t b=f->get_8();
+	unsigned char b=f->get_8();
 
 	switch (b) {
 
@@ -677,13 +677,13 @@ bool TreeLoaderFile::is_var(String p_var)  {
 
 TreeLoader::VarType TreeLoaderFile::get_var_type(String p_var) {
 
-	uint32_t ofs=get_node_offset(p_var, false, FILE_FIELD_ENTER);
+	unsigned int ofs=get_node_offset(p_var, false, FILE_FIELD_ENTER);
 
 	ERR_FAIL_COND_V(ofs==OFFSET_ERROR,VAR_NONE);
 
 	f->seek(ofs);
 
-	uint8_t b=f->get_8();
+	unsigned char b=f->get_8();
 
 	switch (b) {
 
@@ -742,7 +742,7 @@ Error TreeLoaderFile::open(String p_fileID, String p_filename) {
 	}
 
 	char magic[4];
-	f->get_buffer( (uint8_t*)magic, 4 );
+	f->get_buffer( (unsigned char*)magic, 4 );
 
 	if (magic[0]!='R' || magic[1]!='S' || magic[2]!='H' || magic[3]!='T') {
 
@@ -750,7 +750,7 @@ Error TreeLoaderFile::open(String p_fileID, String p_filename) {
 		return ERR_INVALID_DATA;
 	}
 
-	uint32_t header_len=f->get_32();
+	unsigned int header_len=f->get_32();
 
 	String id;
 	for (int i=0;i<header_len;i++) {
@@ -764,7 +764,7 @@ Error TreeLoaderFile::open(String p_fileID, String p_filename) {
 		return ERR_INVALID_DATA;
 	}
 
-	uint32_t version=f->get_32();
+	unsigned int version=f->get_32();
 
 	if (version>LOADER_FILE_VERSION) {
 
@@ -774,7 +774,7 @@ Error TreeLoaderFile::open(String p_fileID, String p_filename) {
 
 	char encoding[5];
 
-	f->get_buffer((uint8_t*)encoding,5);
+	f->get_buffer((unsigned char*)encoding,5);
 
 	if (	encoding[0]=='U' &&
 		encoding[1]=='T' &&
@@ -819,7 +819,7 @@ Error TreeLoaderFile::open(String p_fileID, String p_filename) {
 
 	char endian[2];
 
-	f->get_buffer((uint8_t*)endian,2);
+	f->get_buffer((unsigned char*)endian,2);
 
 	if (endian[0]=='L' && endian[1]=='E') {
 
@@ -836,7 +836,7 @@ Error TreeLoaderFile::open(String p_fileID, String p_filename) {
 
 	char hash_str[4];
 
-	f->get_buffer( (uint8_t*)hash_str,4);
+	f->get_buffer( (unsigned char*)hash_str,4);
 
 	if (hash_str[0]=='D' && hash_str[1]=='J' && hash_str[2]=='B' && hash_str[3]=='2') {
 
@@ -853,7 +853,7 @@ Error TreeLoaderFile::open(String p_fileID, String p_filename) {
 
 	max_entry_len=f->get_32();
 
-	uint32_t root_offset=f->get_32();
+	unsigned int root_offset=f->get_32();
 
 	enter_offset( root_offset );
 	current.stack.push_back( root_offset );

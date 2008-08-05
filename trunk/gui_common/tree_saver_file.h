@@ -53,7 +53,7 @@ class TreeSaverFile : public TreeSaver {
 	
 	bool validate_child_name(String p_name);
 	
-	void save_listing_node_data(GUI::File *f,std::vector<uint32_t>& childpos);
+	void save_listing_node_data(GUI::File *f,std::vector<unsigned int>& childpos);
 	unsigned int save_node(GUI::File *f);
 	
 	GUI::File *f;

@@ -11,11 +11,11 @@
 //
 #include "tree_saver_file.h"
 
-static inline uint32_t hash_djb2(const char *p_cstr) {
+static inline unsigned int hash_djb2(const char *p_cstr) {
 
 	const unsigned char* chr=(const unsigned char*)p_cstr;
-	uint32_t hash = 5381;
-	uint32_t c;
+	unsigned int hash = 5381;
+	unsigned int c;
 	
 	while ((c = *chr++))
 		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
@@ -231,11 +231,11 @@ void TreeSaverFile::add_raw(String p_name,const unsigned char *p_arr,int p_bytes
 
 struct ChildHash {
 
-	uint32_t hash;
-	uint32_t offset;
+	unsigned int hash;
+	unsigned int offset;
 };
 
-void TreeSaverFile::save_listing_node_data(GUI::File *f,std::vector<uint32_t>& childpos) {
+void TreeSaverFile::save_listing_node_data(GUI::File *f,std::vector<unsigned int>& childpos) {
 
 
 	ERR_FAIL_COND( childpos.size()!=current->childs.size() ); //just check for bugs
@@ -316,18 +316,18 @@ void TreeSaverFile::save_listing_node_data(GUI::File *f,std::vector<uint32_t>& c
 union FloatIntUnion {
 
 	float f;
-	uint32_t i;
+	unsigned int i;
 };
 
 unsigned int TreeSaverFile::save_node(GUI::File *f) {
 
-	std::vector<uint32_t> savepos;
+	std::vector<unsigned int> savepos;
 
 	for (int i=0;i<current->childs.size();i++) {
 
 
 		current=current->childs[i]; //change to child node
-		uint32_t nodepos=save_node(f);
+		unsigned int nodepos=save_node(f);
 		savepos.push_back( nodepos );
 		if (nodepos==0xFFFFFFFF)
 			return nodepos; //error
@@ -335,12 +335,12 @@ unsigned int TreeSaverFile::save_node(GUI::File *f) {
 
 	}
 
-	uint32_t nodepos=f->get_pos();
+	unsigned int nodepos=f->get_pos();
 
 	f->store_8( current->type );
 
 	f->store_32( current->name.length() );
-	f->store_buffer( (uint8_t*)current->name.ascii().get_data(), current->name.length() );
+	f->store_buffer( (unsigned char*)current->name.ascii().get_data(), current->name.length() );
 
 	switch( current->type ) {
 
@@ -351,7 +351,7 @@ unsigned int TreeSaverFile::save_node(GUI::File *f) {
 		} break;
 		case FILE_FIELD_INT: {
 #define save_signed_int(m_int) {\
-	uint32_t *me=(uint32_t*)&m_int;\
+	unsigned int *me=(unsigned int*)&m_int;\
 	f->store_32( *me );\
 }
 			save_signed_int(current->int_val);
@@ -451,7 +451,7 @@ unsigned int TreeSaverFile::save_node(GUI::File *f) {
 		case FILE_FIELD_RAW: {
 
 
-			f->store_buffer( (uint8_t*)&current->raw_array[0], current->raw_array.size() );
+			f->store_buffer( (unsigned char*)&current->raw_array[0], current->raw_array.size() );
 
 		} break;
 		default: {
@@ -481,30 +481,30 @@ Error TreeSaverFile::save(String p_fileID, String p_filename) {
 		return ERR_CANT_OPEN;
 	}
 
-	f->store_buffer( (uint8_t*)"RSHT", 4 ); //magic number
+	f->store_buffer( (unsigned char*)"RSHT", 4 ); //magic number
 
 	f->store_32( p_fileID.length() ); //saver version
 
-	f->store_buffer( (uint8_t*)p_fileID.ascii().get_data(), p_fileID.length() );
+	f->store_buffer( (unsigned char*)p_fileID.ascii().get_data(), p_fileID.length() );
 
 	f->store_32( 1 ); //saver version
 
 	if (utf8)
-		f->store_buffer( (uint8_t*)"UTF-8", 5 );
+		f->store_buffer( (unsigned char*)"UTF-8", 5 );
 	else if (sizeof(String::CharType)==4)
-		f->store_buffer( (uint8_t*)"UCS32", 5 );
+		f->store_buffer( (unsigned char*)"UCS32", 5 );
 	else if (sizeof(String::CharType)==2)
-		f->store_buffer( (uint8_t*)"UCS16", 5 );
+		f->store_buffer( (unsigned char*)"UCS16", 5 );
 	else if (sizeof(String::CharType)==1)
-		f->store_buffer( (uint8_t*)"ASCII", 5 );
+		f->store_buffer( (unsigned char*)"ASCII", 5 );
 	else {
 		ERR_PRINT("Unknown Encoding\n");
 		delete f;
 		return ERR_INVALID_DATA;
 	}
 
-	f->store_buffer( (uint8_t*)"LE", 2 ); /* Little Endian */
-	f->store_buffer( (uint8_t*)"DJB2", 4 ); /* Hash Type */
+	f->store_buffer( (unsigned char*)"LE", 2 ); /* Little Endian */
+	f->store_buffer( (unsigned char*)"DJB2", 4 ); /* Hash Type */
 	f->store_32( MAX_ENTRY_NAME_LEN ); /* max name len */
 
 	current=&root;
@@ -517,10 +517,10 @@ void TreeSaverFile::close() {
 
 	ERR_FAIL_COND(!f);
 
-	uint32_t seekpos=f->get_pos();
+	unsigned int seekpos=f->get_pos();
 	f->store_32( 0 ); //POS FOR ROOT NODE
 	current=&root;
-	uint32_t rootpos=save_node(f);
+	unsigned int rootpos=save_node(f);
 	if (rootpos==0xFFFFFFFF) { //error saving, return error
 		printf("error saving :(\n");
 		f->close();
