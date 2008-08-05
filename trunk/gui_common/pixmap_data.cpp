@@ -11,7 +11,7 @@
 //
 //
 #include "pixmap_data.h"
-#include <png.h>
+#include "png.h"
 #include "error_macros.h"
 
 GUI::Painter *PixmapData::painter=NULL;

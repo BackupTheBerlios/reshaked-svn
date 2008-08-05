@@ -6,7 +6,6 @@ env_drivers.target_list=[];
 
 env_drivers.find_source_files(env_drivers.target_list,"*.cpp");
 
-env.Library('drivers', env_drivers.target_list)
 
 Export('env_drivers')
 
@@ -14,3 +13,6 @@ Export('env_drivers')
 #	SConscript("asio/SCsub");
 
 SConscript("libpng/SCsub");
+
+
+env.Library('drivers', env_drivers.target_list)
