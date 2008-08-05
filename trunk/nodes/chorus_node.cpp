@@ -12,7 +12,7 @@
 #include "chorus_node.h"
 #include <math.h>
 
-
+#include "dsp/formulas.h"
 
 
 void ChorusNode::mix_rate_changed() {
@@ -118,11 +118,11 @@ void ChorusNode::process(const ProcessInfo& p_info) {
 			sample_t *rb_buff=ring_buffers[c];
 	
 			double delay_msec=v.delay()+(v.width()/(double)get_channels())*(double)c;
-			unsigned int delay_frames=lrint((delay_msec/1000.0)*get_mix_rate());
+			unsigned int delay_frames=(int)((delay_msec/1000.0)*get_mix_rate());
 			float max_depth_frames=(v.depth()/1000.0)*get_mix_rate();
 				
 			unsigned long long local_cycles=v.cycles;
-			unsigned long long increment=llrint(cycles_to_mix/(double)p_info.audio_buffer_size*(double)(1<<CYCLES_FRAC));
+			unsigned long long increment=(int)(cycles_to_mix/(double)p_info.audio_buffer_size*(double)(1<<CYCLES_FRAC));
 			
 			//check the LFO doesnt read ahead of the write pos
 			if ((((int)max_depth_frames)+10)>delay_frames) { //10 as some threshold to avoid precision stuff
@@ -194,7 +194,7 @@ void ChorusNode::process(const ProcessInfo& p_info) {
 						
 				float wave_delay=sinf(phase*2.0*M_PI)*max_depth_frames;
 				
-				int wave_delay_frames=lrint(floor(wave_delay));
+				int wave_delay_frames=fast_floor(wave_delay);
 				float wave_delay_frac=wave_delay-(float)wave_delay_frames;
 				
 				/** COMPUTE RINGBUFFER POS**/
@@ -226,7 +226,7 @@ void ChorusNode::process(const ProcessInfo& p_info) {
 			v.filter_h[c]=h;
 		}
 		
-		v.cycles+=llrint(cycles_to_mix*(double)(1<<CYCLES_FRAC));
+		v.cycles+=(int)(cycles_to_mix*(double)(1<<CYCLES_FRAC));
 	}
 	
 	buffer_pos+=p_info.audio_buffer_size;

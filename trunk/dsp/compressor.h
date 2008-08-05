@@ -130,7 +130,7 @@ public:
 
 	_FORCE_INLINE_ float process_sqr(float len) {
 
-		unsigned int ilen = lrint(len * (1<<AVERAGE_BITS)); // make integer
+		unsigned int ilen = fast_floor(len * (1<<AVERAGE_BITS)); // make integer
 		
 		average+=ilen;
 		
@@ -169,7 +169,7 @@ public:
 		
 		
 
-		int new_average_len=lrint((float)AVERAGE_BUF_TIME_MS/1000.0*p_mix_rate);
+		int new_average_len=fast_floor((float)AVERAGE_BUF_TIME_MS/1000.0*p_mix_rate);
 		
 		if (new_average_len==average_len)
 			return;

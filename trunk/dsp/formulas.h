@@ -16,6 +16,21 @@
 #include <math.h>
 #include "typedefs.h"
 
+#if __BIG_ENDIAN_
+#define iman_ 1
+#else
+#define iman_ 0
+#endif
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+inline int fast_floor(double val) {
+   val = val + (68719476736.0*1.5);
+   return (((int*)&val)[iman_]>>16);
+}
+
 static inline float note_to_freq(float p_note) {
 	
 	return 440.0*powf(2.0,(p_note-69.0)/12.0); // 440 tuning, change to 415 if you feel baroque	
@@ -28,7 +43,7 @@ static inline Tick get_swing_pos(Tick p_src_tick,int p_swing_base,double p_swing
 	Tick tick_debased=p_src_tick-tick_frac;
 	
 	
-	Tick swing_split=llrint( ((1.0+p_swing)*(double)tick_frac_size )/2.0 );
+	Tick swing_split=(int)( ((1.0+p_swing)*(double)tick_frac_size )/2.0 );
 	
 	if (tick_frac<=swing_split) {
 		

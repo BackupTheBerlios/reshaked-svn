@@ -9,6 +9,7 @@ namespace GUI {
 	}
 }
 
+#include "engine/audio_driver.h"
 #include "drivers/file_system_windows.h"
 #include "drivers/file_system_dirent.h"
 #include "drivers/timer_sdl.h"

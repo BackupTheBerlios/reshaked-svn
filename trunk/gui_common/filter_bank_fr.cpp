@@ -13,17 +13,17 @@
 #include "gui_common/common_skin.h"
 #include "dsp/formulas.h"
 
-#define FREQ_2_LOG( m_val ) ( log( (m_val) ) / log (2) )
+#define FREQ_2_LOG( m_val ) ( ::logf( (m_val) ) / ::logf (2) )
 
-#define LOG_2_FREQ( m_val ) ( pow(2, (m_val)) )
+#define LOG_2_FREQ( m_val ) ( ::powf(2, (m_val)) )
 
 
 static float float_2_freq(float p_float,float p_min,float p_max) {
 	
-	float logfbeg=FREQ_2_LOG(p_min);
-	float logfend=FREQ_2_LOG(p_max);
-	float logf=logfbeg+(logfend-logfbeg)*p_float;
-	return LOG_2_FREQ(logf);
+	float lbeg=FREQ_2_LOG(p_min);
+	float lend=FREQ_2_LOG(p_max);
+	float l=lbeg+(lend-lbeg)*p_float;
+	return LOG_2_FREQ(l);
 	
 }
 
@@ -254,7 +254,7 @@ void FilterBankFR::mouse_motion(const GUI::Point& p_pos, const  GUI::Point& p_re
 			
 			int x=freq_2_pixel( filter[i].cutoff->get()*powf( 2 , cutoff_offset->get() ) ,MIN_FREQ,filter[i].cutoff->get_max(),get_size_cache().width);
 			
-			int distance=fabs(p_pos.x-x);
+			int distance=fabsf(p_pos.x-x);
 			if (distance>10)
 				continue;
 			

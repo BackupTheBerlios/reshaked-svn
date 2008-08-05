@@ -6,7 +6,7 @@
 
 
 
-#ifdef WIN32_ENABLED
+#ifdef WINDOWS_ENABLED
 
 #define RAISE_SIGNAL
 

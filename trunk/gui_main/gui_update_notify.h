@@ -14,6 +14,7 @@
 
 #include "editor/update_notify.h"
 #include "signals/signals.h"
+#include <stddef.h>
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */

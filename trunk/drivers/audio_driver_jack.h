@@ -9,6 +9,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+
+#ifdef JACK_ENABLED
+
 #ifndef AUDIO_DRIVER_JACK_H
 #define AUDIO_DRIVER_JACK_H
 
@@ -71,4 +74,5 @@ public:
 
 };
 
+#endif
 #endif

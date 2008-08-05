@@ -9,6 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#ifdef JACK_ENABLED
+
 #include "audio_driver_jack.h"
 #include "engine/audio_driver_node.h"
 #include "engine/audio_node_registry.h"
@@ -716,3 +718,4 @@ AudioDriverJACK::~AudioDriverJACK()
 }
 
 
+#endif

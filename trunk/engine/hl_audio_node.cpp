@@ -377,6 +377,8 @@ Error HL_AudioNode::save( TreeSaver * p_tree ) {
 		p_tree->add_float( cp->get_name(), cp->get_initial() );
 		
 	}
+	
+	return OK;
 }
 
 Error HL_AudioNode::load( TreeLoader * p_tree )  {
@@ -400,6 +402,7 @@ Error HL_AudioNode::load( TreeLoader * p_tree )  {
 		
 	}
 
+	return OK;
 }
 
 

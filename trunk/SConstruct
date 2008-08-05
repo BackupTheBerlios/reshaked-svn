@@ -1,4 +1,3 @@
-
 EnsureSConsVersion(0,14);
 
 import os
@@ -15,9 +14,10 @@ def find_source_files(self, source_list,filetype):
 
 win32=(os.name == 'nt')
 win32_paths=win32
-win32_msvc=False
 
 env=Environment();
+
+win32_msvc=("msvc" in env["TOOLS"])
 
 opts=Options()
 opts.Add('optimize', 'Optimize (0|1).', 0)
@@ -44,13 +44,13 @@ if (not win32):
 # Set the win32 cross compiler if requested
 if (win32_cross):
 
-        env.Append(CPPFLAGS=['-DANSIC_LIBS_ENABLED','-fstrict-aliasing'])
-        env['CXX']='i586-mingw32msvc-g++'
-        env['RANLIB']='i586-mingw32msvc-ranlib'
-        env['LD']='i586-mingw32msvc-ld'
-        env['CC']='i586-mingw32msvc-gcc'
-        env['AR']='i586-mingw32msvc-ar'
-        win32_paths=true
+	env.Append(CPPFLAGS=['-DANSIC_LIBS_ENABLED','-fstrict-aliasing'])
+	env['CXX']='i586-mingw32msvc-g++'
+	env['RANLIB']='i586-mingw32msvc-ranlib'
+	env['LD']='i586-mingw32msvc-ld'
+	env['CC']='i586-mingw32msvc-gcc'
+	env['AR']='i586-mingw32msvc-ar'
+	win32_paths=true
 
 # More win32 stuff
 
@@ -61,18 +61,19 @@ if (win32_paths):
 if (win32 or win32_cross):
 
 	if (win32_msvc):
-        	env.Append(CPPFLAGS=['/DWIN32_ENABLED'])
+        	env.Append(CPPFLAGS=['/DWINDOWS_ENABLED'])
+        	env.Append(CPPFLAGS=['/DSDL_ENABLED','/Gd'])
         else:
-        	env.Append(CPPFLAGS=['-DWIN32_ENABLED'])
+        	env.Append(CPPFLAGS=['-DWINDOWS_ENABLED'])
+        	env.Append(CPPFLAGS=['-DSDL_ENABLED'])
+        	env.Append(CPPFLAGS=['-I SDL'])
         if (env['vst_enabled']):
 		if (win32_msvc):
 			env.Append(CPPFLAGS=['/DVST_ENABLED'])
                 else:
 			env.Append(CPPFLAGS=['-DVST_ENABLED'])
 
-# Not Win32
-
-if (not win32 or not win32_cross): 
+else:
 
        	env.Append(CPPFLAGS=['-DPOSIX_ENABLED'])
 	
@@ -82,47 +83,36 @@ if (not win32 or not win32_cross):
 	if (errorval):
 		print "**Error: cant execute pkg-config, please install pkg-config!"
 		sys.exit(1);
-     
-# SDL
+	     
+	# SDL
+	
+	if (env['SDL']):
+	
+		errorval=os.system("sdl-config --version");
+	
+	        if (errorval):
+	                print "Error: cant execute sdl-config, make sure SDL is installed";
+	                exit(255);
+	
+		env.ParseConfig('sdl-config --cflags --libs')
+	        env.Append(CPPFLAGS=['-DSDL_ENABLED'])
+	      
+	
+	# JACK
+	
+	if (not win32 and not win32_cross and env['jack']):
+	
+		errorval=os.system("pkg-config jack --modversion");
+	
+	        if (errorval):
+	                print "Error: cant execute pkg-config to check for JACK, make sure pkg-config and JACK are installed";
+	                exit(255);
+	
+		env.ParseConfig('pkg-config jack --cflags --libs')
+		env.Append(CPPFLAGS=['-DJACK_ENABLED']);
+	
+	# Common Variables        
 
-if (env['SDL']):
-
-	errorval=os.system("sdl-config --version");
-
-        if (errorval):
-                print "Error: cant execute sdl-config, make sure SDL is installed";
-                exit(255);
-
-	env.ParseConfig('sdl-config --cflags --libs')
-        env.Append(CPPFLAGS=['-DSDL_ENABLED'])
-
-# PNG
-
-if (env['PNG']):
-
-	errorval=os.system("pkg-config libpng --modversion");
-
-        if (errorval):
-                print "Error: cant execute pkg-config to check for libpng, make sure pkg-config and libpng are installed";
-                exit(255);
-
-	env.ParseConfig('pkg-config libpng --cflags --libs')
-       
-
-# JACK
-
-if (not win32 and not win32_cross and env['jack']):
-
-	errorval=os.system("pkg-config jack --modversion");
-
-        if (errorval):
-                print "Error: cant execute pkg-config to check for JACK, make sure pkg-config and JACK are installed";
-                exit(255);
-
-	env.ParseConfig('pkg-config jack --cflags --libs')
-	env.Append(CPPFLAGS=['-DJACK_ENABLED']);
-
-# Common Variables        
 
 env.Append(CPPPATH=['#types','#gui','#'])
 
@@ -146,6 +136,7 @@ env.Append(LIBPATH=['#drivers','#gui_main','#gui_nodes','#gui_common','#editor',
 
 env.__class__.find_source_files = find_source_files
 
+env.Append(CPPPATH=['#drivers/libpng'])
 env.Append(CXXFLAGS=['-DGUI_EXTERNAL_STRING="\\\"types/rstring.h\\\""']);
 
 env.bin_targets=[]

@@ -24,12 +24,6 @@ int AudioControl::get_output_latency() {
 	return 0;
 //	return SoundDriverList::get_singleton()->get_output_latency();
 }
-float AudioControl::get_mix_rate() {
-	
-	
-//	return SoundDriverList::get_singleton()->get_mix_rate();	
-	
-}
 
 /* Audio Mutex */
 void AudioControl::mutex_lock() {
