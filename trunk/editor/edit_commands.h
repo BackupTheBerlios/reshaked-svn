@@ -16,7 +16,8 @@
 #include "engine/audio_graph.h"
 #include "editor/update_notify.h"
 #include "editor/undo_redo.h"
-
+#include "editor/editor.h"
+#include "engine/song.h"
 
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
@@ -33,6 +34,9 @@ class EditCommands : public UndoRedo {
 	void _audio_graph_remove_node_helper(AudioGraph* p_graph, int p_node_idx);
 	void _control_port_set_visibility_helper( ControlPort *p_port, bool p_visible);
 	void _audio_node_set_layer_helper(AudioNode *p_node,int p_layer);
+	
+	void _song_add_track_helper(Song *p_song,Track *p_track,int p_at_index);
+	void _song_remove_track_helper(Song *p_song, int p_track);
 	
 public:
 

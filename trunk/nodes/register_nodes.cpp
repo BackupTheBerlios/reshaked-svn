@@ -12,6 +12,7 @@
 #include "register_nodes.h"
 #include "engine/audio_node_registry.h"
 
+#include "engine/pattern_track.h"
 
 #include "amp_ratio_node.h"
 #include "hq_reverb_node.h"
@@ -19,6 +20,7 @@
 #include "chorus_node.h"
 #include "compressor_node.h"
 #include "sine_synth_node.h"
+
 
 void register_nodes() {
 
@@ -28,6 +30,8 @@ void register_nodes() {
 	AudioNodeRegistry::add_node_info( FilterBankNode::get_creation_info() );	
 	AudioNodeRegistry::add_node_info( CompressorNode::get_creation_info_peak() );	
 	AudioNodeRegistry::add_node_info( CompressorNode::get_creation_info_rms() );
+		
+	AudioNodeRegistry::add_node_info( PatternTrack::get_creation_info() );
 		
 	AudioNodeRegistry::add_node_info( SineSynthNode::get_creation_info() );			
 }

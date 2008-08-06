@@ -178,14 +178,37 @@ void EditCommands::_audio_graph_remove_node_helper(AudioGraph* p_graph, int p_no
 	
 void EditCommands::audio_graph_add_node(AudioGraph *p_graph,AudioNode *p_node) {
 	
+	begin_group("Audio Graph - Add Node: '"+p_node->get_info()->caption+"'");
 	
-	int at_pos = p_graph->get_node_count();
-	CommandBase *cmd_do=command( this, &EditCommands::_audio_graph_add_node_helper, p_graph, p_node, at_pos ); 
-	CommandBase *cmd_undo=command( this, &EditCommands::_audio_graph_remove_node_helper, p_graph, at_pos ); 
+	{ // add node to graph
+		int at_pos = p_graph->get_node_count();		
+		
+		CommandBase *cmd_do=command( this, &EditCommands::_audio_graph_add_node_helper, p_graph, p_node, at_pos ); 
+		CommandBase *cmd_undo=command( this, &EditCommands::_audio_graph_remove_node_helper, p_graph, at_pos ); 
+		
+		cmd_do->add_data(p_node);
+		
+		add_action("add_node",cmd_do,cmd_undo);
+	}
 	
-	cmd_do->add_data(p_node);
+	Track * t = dynamic_cast<Track*>(p_node);
 	
-	add_action("Audio Graph - Add Node: '"+p_node->get_info()->caption+"'",cmd_do,cmd_undo);
+	if (t) { // it's a track, must add into the song
+	
+		Song * s = Editor::get_singleton()->get_song();
+		
+		int new_track_pos = Editor::get_singleton()->get_cursor_track()+1;
+		
+		if (new_track_pos<0 || new_track_pos>=s->get_track_count())
+			new_track_pos=s->get_track_count();
+					
+		CommandBase *cmd_do=command( this, &EditCommands::_song_add_track_helper, s,t,new_track_pos);
+		CommandBase *cmd_undo=command( this, &EditCommands::_song_remove_track_helper,s,new_track_pos); 
+				
+		add_action("add_track",cmd_do,cmd_undo);
+	
+	}
+	
 }
 void EditCommands::audio_graph_remove_node(AudioGraph *p_graph,int p_node_idx) {
 
@@ -205,6 +228,25 @@ void EditCommands::audio_graph_remove_node(AudioGraph *p_graph,int p_node_idx) {
 		
 		add_action("take_node",cmd_do,cmd_undo);
 	}
+	
+	Track * t = dynamic_cast<Track*>(node);
+	
+	if (t) { // it's a track, must add into the song
+	
+		Song * s = Editor::get_singleton()->get_song();
+		
+		int old_track_pos = s->find_track_pos(t);
+		
+		if (old_track_pos>=0) {
+						
+			CommandBase *cmd_do=command( this, &EditCommands::_song_remove_track_helper,s,old_track_pos); 
+			CommandBase *cmd_undo=command( this, &EditCommands::_song_add_track_helper, s,t,old_track_pos);
+					
+			add_action("take_track",cmd_do,cmd_undo);
+		}
+	
+	}
+	
 	end_group();
 	
 
@@ -304,6 +346,17 @@ void EditCommands::audio_graph_set_node_layer(AudioGraph *p_graph,AudioNode *p_n
 	
 	end_group();
 
+}
+
+/******* SONG *******/
+
+void EditCommands::_song_add_track_helper(Song *p_song,Track *p_track,int p_at_index) {
+
+	p_song->add_track(p_track,p_at_index);
+}
+void EditCommands::_song_remove_track_helper(Song *p_song, int p_track) {
+
+	p_song->remove_track(p_track);
 }
 
 

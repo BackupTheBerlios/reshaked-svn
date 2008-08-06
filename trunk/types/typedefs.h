@@ -31,8 +31,6 @@ typedef float sample_t;
 
 #define POW2( m_p ) ((m_p)*(m_p))
 
-typedef long long Tick;
-
 typedef signed char Note;
 
  enum NoteConstants {
@@ -74,6 +72,8 @@ typedef __uint64 uint64;
 typedef	long long int64;
 typedef unsigned long long uint64;
 #endif
+
+typedef int64 Tick;
 
 
 template<class T>

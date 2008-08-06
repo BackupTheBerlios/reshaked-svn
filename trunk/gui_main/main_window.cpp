@@ -50,6 +50,8 @@ bool MainWindow::must_quit() {
 
 MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_skin) : GUI::Window(p_painter,p_timer,p_skin) {
 
+	editor = new Editor(&song);
+
 	register_nodes();
 	register_node_uis();
 
@@ -133,6 +135,8 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 
 MainWindow::~MainWindow()
 {
+
+	delete editor;
 }
 
 

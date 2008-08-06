@@ -14,6 +14,7 @@
 
 //#include "engine/audio_plugin_registry.h"
 
+#include "editor/editor.h"
 #include "base/window.h"
 #include "containers/box_container.h"
 #include "containers/stack_container.h"
@@ -75,6 +76,7 @@ class MainWindow : public GUI::Window {
 	bool quit;
 	
 	Song song;
+	Editor *editor;
 	GUI_UpdateNotify gui_update_notify;
 	
 	AudioGraphScreen *audio_graph_screen;

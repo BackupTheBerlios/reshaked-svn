@@ -13,16 +13,26 @@
 #define SONG_H
 
 #include "engine/audio_graph.h"
+#include "engine/track.h"
 
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
-class Song{
+class Song {
 
 	AudioGraph audio_graph;
 	
 	static Song *singleton;
+	
+	std::vector<Track*> tracks;
 public:
+
+	void add_track(Track* p_track,int p_at_idx=-1);
+	void remove_track(int p_at_idx);
+	int get_track_count() const;
+	Track *get_track(int p_index) const;
+	int find_track_pos(Track *p_track) const;
+	
 
 	int process(int p_frames);
 
