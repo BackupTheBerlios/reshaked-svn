@@ -16,6 +16,7 @@
 
 #include <vector>
 #include "error_macros.h"
+#include "typedefs.h"
 
 extern void value_stream_global_lock();
 extern void value_stream_global_unlock();

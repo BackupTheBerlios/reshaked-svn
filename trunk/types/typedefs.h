@@ -13,7 +13,7 @@ namespace ReShaked {
 
 
 #define MAX_DIVISORS 12
-static const char divisors[MAX_DIVISORS]={1,2,3,4,6,8,12,16,24,32,48,64};
+static const char beat_divisors[MAX_DIVISORS]={1,2,3,4,6,8,12,16,24,32,48,64};
 //Minimum Common Denominator for the divisors
 //This is done to avoid precision issues and simplify the editing code
 #define TICKS_PER_BEAT 192 
@@ -31,7 +31,7 @@ typedef float sample_t;
 
 #define POW2( m_p ) ((m_p)*(m_p))
 
-typedef signed char Note;
+//typedef signed char Note;
 
  enum NoteConstants {
 	NOTE_EMPTY=-1,

@@ -73,6 +73,13 @@ PatternTrack::PatternTrack(int p_instanced_channels,const AudioNodeInfo *p_info)
 	add_event_port("Output",PORT_OUT);
 	
 	visible_columns=1;
+	
+	PatternBlock *pb = new PatternBlock;
+	pb->set_length( 2 * TICKS_PER_BEAT );
+	pb->set( Position( 0, 0) ,Note( 60, 40 ) );
+	pb->set( Position( TICKS_PER_BEAT, 0) ,Note( 22, 60 ) );
+	insert_block(pb,TICKS_PER_BEAT);
+	pb->unreference();
 
 }
 

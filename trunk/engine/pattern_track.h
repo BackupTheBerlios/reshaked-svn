@@ -38,16 +38,16 @@ public:
 		Tick tick;
 		int column;
 
-		inline bool operator==(const Position& eq) { return tick==eq.tick && column==eq.column; }
+		inline bool operator==(const Position& eq) const { return tick==eq.tick && column==eq.column; }
 
-		inline bool operator<(const Position& eq) { if (tick>eq.tick) return false; else if (tick<eq.tick) return true; else return (column<eq.column); }
+		inline bool operator<(const Position& eq) const { if (tick>eq.tick) return false; else if (tick<eq.tick) return true; else return (column<eq.column); }
 
-		inline bool operator>(const Position& eq) { if (tick<eq.tick) return false; else if (tick>eq.tick) return true; else return (column>eq.column); }
+		inline bool operator>(const Position& eq) const { if (tick<eq.tick) return false; else if (tick>eq.tick) return true; else return (column>eq.column); }
 
-		inline bool operator<=(const Position& eq) {
+		inline bool operator<=(const Position& eq) const {
 			return (*this==eq || *this<eq);
 		}
-		inline bool operator>=(const Position& eq) {
+		inline bool operator>=(const Position& eq) const { 
 			return (*this==eq || *this>eq);
 		}
 
@@ -90,12 +90,39 @@ public:
 		int beats_len;
 	public:
 		
-		bool get_notes_in_local_range(Tick p_from, Tick p_to, int *p_note_from,int *p_note_to) {
+		bool get_notes_in_local_range(Tick p_from, Tick p_to, int *p_note_from,int *p_note_to) const {
 		
-			return false;
+			int from = notes.find( p_from );
+			int to = notes.find( p_to );
+			
+			if (to<0 || notes.get_pos(to).tick<p_from)
+				return false; // out of range
+			
+			if (notes.get_pos(from).tick<p_from)
+				from++; // if from is less than first event, 
+				
+			
+			*p_note_from=from;
+			*p_note_to=to;
+			
+			return true;
 		}
 		
 		inline int get_note_count() const { return notes.size(); }
+		
+		inline void set( const Position& p_pos, const Note& p_note) {
+		
+			if (p_note.is_empty()) {
+			
+				int exact_idx = notes.find_exact( p_pos );
+				if (exact_idx >= 0)
+					notes.erase( exact_idx );
+			} else {
+			
+				notes.insert( p_pos, p_note );	
+			}
+		}
+		
 		inline Note get_note(int p_index) const { 
 			ERR_FAIL_INDEX_V( p_index, get_note_count(), Note() ); 
 			return notes[p_index]; 
@@ -115,6 +142,11 @@ public:
 			if (p_length==0)
 				return;
 			beats_len=p_length;
+		}
+		
+		PatternBlock() {
+		
+			beats_len=1;
 		}
 			
 	};

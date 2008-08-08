@@ -33,6 +33,10 @@ void Track::Block::unreference() {
 
 }
 
+int Track::Block::get_refcount() {
+
+	return _refcount;
+}
 Track::Block::Block() {
 
 	_refcount=1;
@@ -83,11 +87,20 @@ int Track::get_block_count() const {
 
 	return blocks.size();
 }
+
+
 Track::Block* Track::get_block(int p_index) const {
 
 	ERR_FAIL_INDEX_V( p_index, blocks.size(), NULL );
 	
 	return blocks[p_index];
+}
+
+Tick Track::get_block_pos(int p_index) const {
+
+	ERR_FAIL_INDEX_V( p_index, blocks.size(), 0 );
+	return blocks.get_pos(p_index);
+
 }
 int Track::find_block_index(Block* p_block) const {
 

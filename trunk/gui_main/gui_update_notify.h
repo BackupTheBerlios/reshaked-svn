@@ -27,9 +27,11 @@ public:
 
 	virtual void sound_driver_changed();
 	virtual void audio_graph_changed();
+	virtual void track_list_changed();
 	
 	GUI::Signal<> sound_driver_changed_signal;
 	GUI::Signal<> audio_graph_changed_signal;
+	GUI::Signal<> track_list_changed_signal;
 
 	GUI_UpdateNotify();
 	~GUI_UpdateNotify();

@@ -353,10 +353,13 @@ void EditCommands::audio_graph_set_node_layer(AudioGraph *p_graph,AudioNode *p_n
 void EditCommands::_song_add_track_helper(Song *p_song,Track *p_track,int p_at_index) {
 
 	p_song->add_track(p_track,p_at_index);
+	UpdateNotify::get_singleton()->track_list_changed();
+	
 }
 void EditCommands::_song_remove_track_helper(Song *p_song, int p_track) {
 
 	p_song->remove_track(p_track);
+	UpdateNotify::get_singleton()->track_list_changed();
 }
 
 

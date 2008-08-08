@@ -112,7 +112,11 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 		
 	main_stack = main_vbc->add( new GUI::StackContainer, 1 );
 	
+	global_screen = main_stack->add(new GlobalScreen);
+	track_editor_screen = main_stack->add(new TrackEditorScreen(editor,&gui_update_notify));
 	audio_graph_screen = main_stack->add(new AudioGraphScreen(&gui_update_notify,&song) );	
+	
+	tab_bar->tab_changed_signal.connect( main_stack, &GUI::StackContainer::raise );
 	
 	hb = main_vbc->add( new GUI::HBoxContainer );
 	

@@ -59,6 +59,10 @@ Song *Song::get_singleton() {
 	return singleton;
 }
 
+BarMap& Song::get_bar_map() {
+
+	return bar_map;
+}
 int Song::process(int p_frames) {
 
 	return audio_graph.process(p_frames);

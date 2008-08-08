@@ -25,6 +25,8 @@ public:
 	virtual void sound_driver_changed()=0;
 	virtual void audio_graph_changed()=0;
 
+	virtual void track_list_changed()=0;
+
 	UpdateNotify();
 	virtual ~UpdateNotify();
 

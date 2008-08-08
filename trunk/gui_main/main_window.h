@@ -28,7 +28,8 @@
 #include "engine/song.h"
 #include "gui_main/gui_update_notify.h"
 #include "gui_main/add_node_dialog.h"
-
+#include "gui_main/track_editor_screen.h"
+#include "gui_main/global_screen.h"
 #include "gui_main/audio_graph_screen.h"
 
 /**
@@ -79,6 +80,8 @@ class MainWindow : public GUI::Window {
 	Editor *editor;
 	GUI_UpdateNotify gui_update_notify;
 	
+	GlobalScreen *global_screen;
+	TrackEditorScreen *track_editor_screen;
 	AudioGraphScreen *audio_graph_screen;
 	
 	AddNodeDialog *add_node_dialog;

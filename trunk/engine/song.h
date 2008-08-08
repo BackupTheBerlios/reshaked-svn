@@ -14,7 +14,7 @@
 
 #include "engine/audio_graph.h"
 #include "engine/track.h"
-
+#include "engine/bar_map.h"
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -25,6 +25,8 @@ class Song {
 	static Song *singleton;
 	
 	std::vector<Track*> tracks;
+	
+	BarMap bar_map;
 public:
 
 	void add_track(Track* p_track,int p_at_idx=-1);
@@ -33,6 +35,7 @@ public:
 	Track *get_track(int p_index) const;
 	int find_track_pos(Track *p_track) const;
 	
+	BarMap& get_bar_map();
 
 	int process(int p_frames);
 

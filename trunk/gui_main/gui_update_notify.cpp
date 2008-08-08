@@ -28,6 +28,11 @@ void GUI_UpdateNotify::audio_graph_changed() {
 	audio_graph_changed_signal.call();
 }
 
+void GUI_UpdateNotify::track_list_changed() {
+
+	track_list_changed_signal.call();
+}
+
 
 GUI_UpdateNotify::GUI_UpdateNotify(){
 
