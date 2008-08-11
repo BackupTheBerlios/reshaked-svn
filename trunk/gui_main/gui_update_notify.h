@@ -28,10 +28,20 @@ public:
 	virtual void sound_driver_changed();
 	virtual void audio_graph_changed();
 	virtual void track_list_changed();
+	virtual void cursor_track_changed(int p_from,int p_to);	
+	virtual void cursor_step_changed();
+	virtual void window_snap_changed();
+	virtual void window_offset_changed();
+	virtual void selection_changed();
 	
 	GUI::Signal<> sound_driver_changed_signal;
 	GUI::Signal<> audio_graph_changed_signal;
 	GUI::Signal<> track_list_changed_signal;
+	GUI::Signal< GUI::Method2<int,int> > cursor_track_changed_signal;
+	GUI::Signal<> cursor_step_changed_signal;
+	GUI::Signal<> window_snap_changed_signal;
+	GUI::Signal<> window_offset_changed_signal;
+	GUI::Signal<> selection_changed_signal;
 
 	GUI_UpdateNotify();
 	~GUI_UpdateNotify();

@@ -119,7 +119,15 @@ int Track::find_block_at_pos( Tick p_pos ) const {
 
 int Track::get_block_at_pos( Tick p_pos ) const {
 
-	return blocks.find_exact(p_pos);
+	int block = blocks.find(p_pos);
+	
+	if (block<0)
+		return -1;
+		
+	if ( blocks.get_pos(block) + blocks[block]->get_length() <= p_pos )
+		return -1;
+		
+	return block;
 }
 
 void Track::get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) const {
@@ -197,9 +205,19 @@ void Track::clear() {
 	blocks.clear();
 }
 
+bool Track::is_collapsed() const {
 
-Track::Track(int p_instanced_channels,const AudioNodeInfo *p_info) : HL_AudioNode(p_instanced_channels,p_info)
-{
+	return collapsed;
+}
+void Track::set_collapsed(bool p_collapsed) {
+
+	collapsed=p_collapsed;
+}
+
+
+Track::Track(int p_instanced_channels,const AudioNodeInfo *p_info) : HL_AudioNode(p_instanced_channels,p_info) {
+
+	collapsed=false;
 }
 
 

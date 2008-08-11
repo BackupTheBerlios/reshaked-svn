@@ -76,9 +76,9 @@ void TrackEditorPattern::paint_note_event( GUI::Painter& p, int p_row, NoteListE
 
 	
 	int rowsize=get_row_height();
-	int fontofs=(rowsize-get_font_height())/2;
+	int fontofs=constant(C_TRACK_EDITOR_ROW_MARGIN);
 	int textofs=p_row*rowsize+fontofs+p.get_font_ascent(font(FONT_TRACK_EDITOR));
-	int volofs=textofs+p.get_font_descent(font(FONT_TRACK_EDITOR))+constant(C_TRACK_EDITOR_ROW_MARGIN);
+	int volofs=p_row*rowsize+fontofs+p.get_font_height( font(FONT_TRACK_EDITOR) ) + constant(C_TRACK_EDITOR_VOL_NOTE_BAR_SEPAATION);
 	int notewidth=get_font_width()*3;
 	int columnwidth=get_font_width()*4;
 
@@ -86,7 +86,7 @@ void TrackEditorPattern::paint_note_event( GUI::Painter& p, int p_row, NoteListE
 
 	
 	Tick row_ticks=Editor::get_singleton()->get_ticks_per_row();
-	Tick note_ofs=Editor::get_singleton()->get_window_offset_ticks();
+	Tick note_ofs=p_note.pos.tick; //p_row*row_ticksp_note.pos.tick-Editor::get_singleton()->get_row_ticks( Editor::get_singleton()->get_window_offset() ); 
 	
 	
 	if (note_ofs!=0) {
@@ -368,7 +368,7 @@ void TrackEditorPattern::paint_frames(GUI::Painter& p) {
 	
 	int last_block_idx=-1;
 	for (int i=0;i<(visible_rows+3);i++) {
-		Tick tick=Editor::get_singleton()->get_window_offset_ticks();
+		Tick tick=Editor::get_singleton()->get_row_ticks( Editor::get_singleton()->get_window_offset() + i );
 		int block_idx=track->get_block_at_pos(tick);
 		if (block_idx!=last_block_idx && block_idx!=-1)
 			last_block_idx=block_idx;
@@ -503,8 +503,8 @@ void TrackEditorPattern::draw(const GUI::Point& p_pos,const GUI::Size& p_size,co
 
 	for (int i=0;i<visible_rows;i++) {
 
-		Tick from=Editor::get_singleton()->get_window_offset_ticks();
-		Tick to=Editor::get_singleton()->get_row_ticks( Editor::get_singleton()->get_window_offset()+1)-1;
+		Tick from=Editor::get_singleton()->get_row_ticks( Editor::get_singleton()->get_window_offset() + i );
+		Tick to=from+Editor::get_singleton()->get_ticks_per_row()-1;
 		Tick adjust=0;
 
 		/* Calculate Repeat, if exists */
@@ -556,6 +556,7 @@ void TrackEditorPattern::draw(const GUI::Point& p_pos,const GUI::Size& p_size,co
 					continue;
 					
 				int note_from,note_to;
+				//printf("tick %i-%i, notes %i-%i\n",from,to,note_from,note_to);
 				
 				if (block->get_notes_in_local_range(from-block_pos,to-block_pos,&note_from,&note_to)) {
 				
@@ -563,6 +564,7 @@ void TrackEditorPattern::draw(const GUI::Point& p_pos,const GUI::Size& p_size,co
 					
 						NoteListElement nle;
 						nle.pos=block->get_note_pos(n);
+						nle.pos.tick=nle.pos.tick+block_pos-from;
 						nle.note=block->get_note(n);
 						nl.push_back(nle);	
 					}
@@ -593,12 +595,13 @@ void TrackEditorPattern::draw(const GUI::Point& p_pos,const GUI::Size& p_size,co
 
 	paint_row_lines(p);
 
-
+//	printf("focus %i, track %i, row %i (%i-%i)\n",(int)has_focus(),(int)Editor::get_singleton()->get_cursor_track(),(int)Editor::get_singleton()->get_cursor_row(),(int)Editor::get_singleton()->get_window_offset(),(int)(Editor::get_singleton()->get_window_offset()+visible_rows));
 	if ( has_focus() && Editor::get_singleton()->get_cursor_track()==song->find_track_pos(track) &&
 		    Editor::get_singleton()->get_cursor_row()>=Editor::get_singleton()->get_window_offset() &&
 		    Editor::get_singleton()->get_cursor_row()<(Editor::get_singleton()->get_window_offset()+visible_rows)) {
 				/* cursor is here */
 
+		
 		paint_cursor( p, Editor::get_singleton()->get_cursor_row()-Editor::get_singleton()->get_window_offset() );
 
 	}
@@ -630,7 +633,7 @@ void TrackEditorPattern::get_row_column_and_field(GUI::Point p_pos,int *p_row,in
 		*p_column=track->get_visible_columns()-1;
 		*p_field=1;
 	}
-	
+		
 }
 
 void TrackEditorPattern::get_column_and_row_at_pos(const GUI::Point& p_pos, int *p_column, int *p_row) {	
@@ -638,6 +641,8 @@ void TrackEditorPattern::get_column_and_row_at_pos(const GUI::Point& p_pos, int 
 	int field;
 	get_row_column_and_field( p_pos, p_row, p_column, &field );
 	*p_row+=Editor::get_singleton()->get_window_offset();
+	if (*p_row<0)
+		*p_row=0;
 	
 }
 
@@ -659,9 +664,12 @@ void TrackEditorPattern::mouse_button(const GUI::Point& p_pos, int p_button,bool
 		
 		get_row_column_and_field(p_pos,&row,&column,&field);
 	
+		
+		Editor::get_singleton()->set_cursor_track( song->find_track_pos( track ) );
 		Editor::get_singleton()->set_cursor_field( field );
 		Editor::get_singleton()->set_cursor_col( column );
 		Editor::get_singleton()->set_cursor_row( Editor::get_singleton()->get_window_offset() + row );
+		
 		update();
 		
 		mouse_selection_begin( p_pos );
@@ -673,7 +681,7 @@ void TrackEditorPattern::mouse_button(const GUI::Point& p_pos, int p_button,bool
 
 void TrackEditorPattern::mouse_motion(const GUI::Point& p_pos, const GUI::Point& p_rel, int p_button_mask) {
 
-	mouse_selection_update_check();
+	mouse_selection_update_check(p_pos);
 }
 
 bool TrackEditorPattern::key(unsigned long p_unicode, unsigned long p_scan_code,bool p_press,bool p_repeat,int p_modifier_mask) {
@@ -687,12 +695,12 @@ bool TrackEditorPattern::key(unsigned long p_unicode, unsigned long p_scan_code,
 		key_value|=p_modifier_mask;
 	}
 	
-	/*
-	if (p_press && Editor::get_singleton()->pattern_edit_key_press(key_value)) {
+	
+	if (p_press && Editor::get_singleton()->track_editor_keypress(key_value)) {
 		
 		update();		
 		return true;
-	}*/
+	}
 	
 		
 	return false;

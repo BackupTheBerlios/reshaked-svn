@@ -31,7 +31,7 @@
 #include "gui_main/track_editor_screen.h"
 #include "gui_main/global_screen.h"
 #include "gui_main/audio_graph_screen.h"
-
+#include "editor/key_bindings.h"
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -85,7 +85,9 @@ class MainWindow : public GUI::Window {
 	AudioGraphScreen *audio_graph_screen;
 	
 	AddNodeDialog *add_node_dialog;
+	KeyBindings key_bindings;
 	
+	void init_key_bindings();
 public:
 	
 	void init(String p_config_file="");

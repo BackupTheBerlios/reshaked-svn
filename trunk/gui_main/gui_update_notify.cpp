@@ -33,6 +33,32 @@ void GUI_UpdateNotify::track_list_changed() {
 	track_list_changed_signal.call();
 }
 
+void GUI_UpdateNotify::cursor_track_changed(int p_from,int p_to) {
+
+	cursor_track_changed_signal.call(p_from,p_to);
+}
+
+void GUI_UpdateNotify::cursor_step_changed() {
+
+	cursor_step_changed_signal.call();
+}
+
+void GUI_UpdateNotify::window_snap_changed() {
+
+	window_snap_changed_signal.call();
+}
+
+
+void GUI_UpdateNotify::window_offset_changed() {
+
+	window_offset_changed_signal.call();
+}
+
+void GUI_UpdateNotify::selection_changed() {
+
+	selection_changed_signal.call();
+}
+
 
 GUI_UpdateNotify::GUI_UpdateNotify(){
 

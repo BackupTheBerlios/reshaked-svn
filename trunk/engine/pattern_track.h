@@ -104,7 +104,7 @@ public:
 			
 			*p_note_from=from;
 			*p_note_to=to;
-			
+
 			return true;
 		}
 		

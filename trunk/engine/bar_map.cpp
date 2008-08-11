@@ -19,13 +19,19 @@ void BarMap::insert_bar_len_at_beat(int p_beat,int p_len) {
 }
 
 
-int BarMap::get_bar_idx_from_beat(int p_beat) {
+int BarMap::get_bar_len_idx_from_beat(int p_beat) {
 
 	ERR_FAIL_COND_V(p_beat<0,-1);	
 	int idx=bar_len_map.find( p_beat );
 	ERR_FAIL_COND_V(idx<0,-1);
 	return idx;	
 }
+
+int BarMap::get_bar_len_at_beat(int p_beat) {
+
+	return get_bar_len_idx_len( get_bar_len_idx_from_beat( p_beat ) );
+}
+
 int BarMap::get_bar_at_beat(int p_beat) {
 	
 	ERR_FAIL_COND_V(p_beat<0,-1);	
@@ -54,33 +60,33 @@ int BarMap::get_bar_at_beat(int p_beat) {
 }
 int BarMap::get_bar_beat(int p_beat) {
 	
-	int bar_idx=get_bar_idx_from_beat(p_beat);
-	int bar_len= bar_len_map[bar_idx ];
-	return (p_beat - bar_len_map.get_pos( bar_idx ))%bar_len;
+	int bar_len_idx=get_bar_len_idx_from_beat(p_beat);
+	int bar_len= bar_len_map[bar_len_idx ];
+	return (p_beat - bar_len_map.get_pos( bar_len_idx ))%bar_len;
 	
 }
-void BarMap::remove_bar_len(int p_bar_idx) {
+void BarMap::remove_bar_len(int p_bar_len_idx) {
 	
-	if (p_bar_idx==0)
+	if (p_bar_len_idx==0)
 		return;//cant remove the first one, but act as if we did :)
-	ERR_FAIL_INDEX(p_bar_idx,bar_len_map.size());
-	bar_len_map.erase( p_bar_idx );
+	ERR_FAIL_INDEX(p_bar_len_idx,bar_len_map.size());
+	bar_len_map.erase( p_bar_len_idx );
 		
 }
 
-void BarMap::set_bar_idx_len(int p_bar_idx,int p_len) {
+void BarMap::set_bar_len_idx_len(int p_bar_len_idx,int p_len) {
 	
-	ERR_FAIL_INDEX(p_bar_idx,bar_len_map.size());
-	bar_len_map[p_bar_idx]=p_len;
+	ERR_FAIL_INDEX(p_bar_len_idx,bar_len_map.size());
+	bar_len_map[p_bar_len_idx]=p_len;
 }
 
-int BarMap::get_bar_idx_pos(int p_bar_idx) {
+int BarMap::get_bar_len_idx_pos(int p_bar_len_idx) {
 	
-	ERR_FAIL_INDEX_V(p_bar_idx,bar_len_map.size(),-1);
-	return bar_len_map.get_pos(p_bar_idx);	
+	ERR_FAIL_INDEX_V(p_bar_len_idx,bar_len_map.size(),-1);
+	return bar_len_map.get_pos(p_bar_len_idx);	
 }
 
-int BarMap::get_bar_idx_at_beat(int p_beat) {
+int BarMap::get_bar_len_idx_at_beat(int p_beat) {
 	
 	int idx=bar_len_map.find_exact( p_beat );
 	if (idx<0)
@@ -88,14 +94,14 @@ int BarMap::get_bar_idx_at_beat(int p_beat) {
 	
 	return idx;
 }
-int BarMap::get_bar_idx(int p_bar_idx) {
+int BarMap::get_bar_len_idx_len(int p_bar_len_idx) {
 	
-	ERR_FAIL_INDEX_V(p_bar_idx,bar_len_map.size(),-1);
+	ERR_FAIL_INDEX_V(p_bar_len_idx,bar_len_map.size(),-1);
 	
-	return bar_len_map[p_bar_idx];	
+	return bar_len_map[p_bar_len_idx];	
 }	
 
-int BarMap::get_bar_idx_count() {
+int BarMap::get_bar_len_idx_count() {
 	
 	return bar_len_map.size();
 }

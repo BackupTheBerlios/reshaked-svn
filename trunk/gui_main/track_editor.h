@@ -29,17 +29,19 @@ protected:
 	virtual void get_column_and_row_at_pos(const GUI::Point& p_pos, int *p_column, int *p_row)=0;
 	
 	void mouse_selection_begin(const GUI::Point p_pos);
-	void mouse_selection_update_check();
+	void mouse_selection_update_check(const GUI::Point p_pos);
 	void mouse_selection_end();
 	
 	int get_row_height();
 		
 	
 public: //signals
-	GUI::Signal< GUI::Method1<TrackEditor*> > track_editor_under_cursor_request_signal;
+	GUI::Signal< GUI::Method1<GUI::Point> > mouse_selecting_signal;
 	
 public:
-	void set_track_editor_under_cursor(TrackEditor *p_track_editor, const GUI::Point &p_pos);
+
+	Track *get_track();
+	void mouse_select_notify(const GUI::Point &p_pos);
 	
 	TrackEditor(Track* p_track);
 	

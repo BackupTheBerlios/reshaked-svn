@@ -26,6 +26,11 @@ public:
 	virtual void audio_graph_changed()=0;
 
 	virtual void track_list_changed()=0;
+	virtual void cursor_track_changed(int p_from,int p_to)=0;
+	virtual void cursor_step_changed()=0;
+	virtual void window_snap_changed()=0;
+	virtual void window_offset_changed()=0;
+	virtual void selection_changed()=0;
 
 	UpdateNotify();
 	virtual ~UpdateNotify();

@@ -20,6 +20,7 @@
 #include "gui_main/track_editor_top.h"
 #include "gui_main/track_editor.h"
 #include "gui_main/gui_update_notify.h"
+#include "gui_main/track_editor_bar_beat.h"
 
 
 /**
@@ -27,7 +28,9 @@
 */
 class TrackEditorScreen : public GUI::VBoxContainer {
 
+	TrackEditorBarBeat *barbeat;
 	TrackEditorTop *top;
+	
 	Editor *editor;
 
 	GUI::VBoxContainer *vb_holder;
@@ -38,8 +41,12 @@ class TrackEditorScreen : public GUI::VBoxContainer {
 	GUI::ScrollBar *v_scroll;
 	std::vector< TrackEditor * > track_editors;
 	
+	void mouse_selection_update_callback(GUI::Point p_pos);
+	void cursor_track_changed_callback(int p_from,int p_to);
+	
 public:
 
+	void repaint();
 	void rebuild();
 	
 	TrackEditorScreen(Editor *p_editor,GUI_UpdateNotify *p_update_notify);

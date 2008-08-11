@@ -195,13 +195,13 @@ void CommonSkin::set_default_extra() {
 	GUI::StyleBox sb;
 	sb = GUI::StyleBox( 1, GUI::Color(0x99,0x5c,0x5c),GUI::Color(0xF1,0x6c,0x6c),GUI::Color(0xF1,0x6c,0x6c)); 
 	sb.margins[0]=2; sb.margins[1]=2; sb.margins[2]=2; sb.margins[3]=2;
-     	SET_STYLEBOX( SB_GRAPH_AUDIO_PORT, sb );
+	SET_STYLEBOX( SB_GRAPH_AUDIO_PORT, sb );
 	sb = GUI::StyleBox( 1, GUI::Color(0x5c,0x5c,0x99), GUI::Color(0x6c,0x6c,0xF1), GUI::Color(0x6c,0x6c,0xF1) );
 	sb.margins[0]=2; sb.margins[1]=2; sb.margins[2]=2; sb.margins[3]=2;
-     	SET_STYLEBOX( SB_GRAPH_EVENT_PORT, sb);
+	SET_STYLEBOX( SB_GRAPH_EVENT_PORT, sb);
 	sb = GUI::StyleBox( 1, GUI::Color(0x99,0x98,0x5c),GUI::Color(0xf1,0xef,0x6c),GUI::Color(0xf1,0xef,0x6c)); 
 	sb.margins[0]=2; sb.margins[1]=2; sb.margins[2]=2; sb.margins[3]=2;
-     	SET_STYLEBOX( SB_GRAPH_CONTROL_PORT, GUI::StyleBox( 1, GUI::Color(0x79,0x78,0x3c),GUI::Color(0xf1,0xef,0x6c),GUI::Color(0xf1,0xef,0x6c)) );
+	SET_STYLEBOX( SB_GRAPH_CONTROL_PORT, GUI::StyleBox( 1, GUI::Color(0x79,0x78,0x3c),GUI::Color(0xf1,0xef,0x6c),GUI::Color(0xf1,0xef,0x6c)) );
 	
 	
 	SET_FONT(FONT_GRAPH_NODE_PORT,0);
@@ -280,28 +280,54 @@ void CommonSkin::set_default_extra() {
 		
 	/* track editor */
 	
-	SET_FONT( FONT_TRACK_EDITOR, 0 );
+	SET_FONT( FONT_TRACK_EDITOR, track_font );
 	SET_CONSTANT( C_TRACK_EDITOR_VOL_NOTE_BAR_HEIGHT, 2 );
-	SET_CONSTANT( C_TRACK_EDITOR_ROW_MARGIN, 1 );
+	SET_CONSTANT( C_TRACK_EDITOR_VOL_NOTE_BAR_SEPAATION,0 );
+	SET_CONSTANT( C_TRACK_EDITOR_ROW_MARGIN, 2 );
 	SET_CONSTANT( C_TRACK_EDITOR_SELECTION_MARGIN,2 );	
 	SET_STYLEBOX( SB_TRACK_EDITOR_CURSOR,	GUI::StyleBox(1,GUI::Color(255),GUI::Color(255)));
 	
+	SET_BM( CONTROL_PLAY_PATTERN );
+	SET_BM( CONTROL_PLAY_CURSOR );
+	SET_BM( ICON_VOLUME_MASK );
+	SET_BM( ICON_CURSOR_STEP );
+	SET_BM( ICON_MIDI );
+	SET_BM( ICON_ZOOM );
+	SET_BM( ICON_TRACK_VISIBLE );
+	SET_BM( ICON_TRACK_VISIBLE_HL );
+	SET_BM( ICON_TRACK_COLLAPSED );
+	SET_BM( ICON_TRACK_COLLAPSED_HL );
+	SET_BM( ICON_TRACK_OPTIONS );
+	SET_BM( ICON_TRACK_OPTIONS_HL );
 	
+	SET_COLOR(COLOR_TRACK_EDITOR_BG,GUI::Color(0));
+	SET_COLOR(COLOR_BARBEAT_BG,GUI::Color(0));		
+	SET_COLOR(COLOR_BARBEAT_BEAT_LINE,GUI::Color(0x7a,0x90,0x9c));
+	SET_COLOR(COLOR_BARBEAT_BAR_LINE,GUI::Color(0xe2,0xf6,0xff));
+	SET_COLOR(COLOR_BARBEAT_SUBBEAT_LINE,GUI::Color(0x4f,0x5b,0x65));
+	SET_COLOR(COLOR_BARBEAT_BEAT_FONT,GUI::Color(0x8a,0xa0,0xac));
+	SET_COLOR(COLOR_BARBEAT_BAR_FONT,GUI::Color(0xae,0xe9,0xf8));
+	SET_COLOR(COLOR_BARBEAT_SUBBEAT_FONT,GUI::Color(0x6b,0x6b,0x6b));
+		
+	SET_FONT( FONT_TRACK_EDITOR_TRACK_NAME, track_font );
+	SET_STYLEBOX( SB_TRACK_EDITOR_TRACK_NAME, GUI::StyleBox(1,GUI::Color(0),GUI::Color(0),GUI::Color(0) ) );
+		
 	/* pattern editor */
 	
 	SET_COLOR(COLOR_PATTERN_FONT,GUI::Color(0xae,0xe9,0xf8));
-       	SET_COLOR(COLOR_PATTERN_FONT_VOLUME,GUI::Color(0xf2,0xae,0xbd));
-       	SET_COLOR(COLOR_PATTERN_FONT_NOFIT,GUI::Color(0x81,0x81,0x81));
-       	SET_COLOR(COLOR_PATTERN_FONT_REPEAT,GUI::Color(0x81,0x81,0x81));
+	SET_COLOR(COLOR_PATTERN_FONT_VOLUME,GUI::Color(0xf2,0xae,0xbd));
+	SET_COLOR(COLOR_PATTERN_FONT_NOFIT,GUI::Color(0x81,0x81,0x81));
+	SET_COLOR(COLOR_PATTERN_FONT_REPEAT,GUI::Color(0x81,0x81,0x81));
 	SET_COLOR(COLOR_PATTERN_VOLUME_BG,GUI::Color(0));
 	SET_COLOR(COLOR_PATTERN_NOTE_BG,GUI::Color(0));
 	SET_COLOR(COLOR_PATTERN_VOLUME_BAR,GUI::Color(0xff,0xbe,0xaa));
 	SET_COLOR(COLOR_PATTERN_NOTE_BAR,GUI::Color(0xc8,0xdc,0xff));
 	SET_COLOR(COLOR_PATTERN_BEAT_LINE,GUI::Color(0x7a,0x90,0x9c));
-     	SET_COLOR(COLOR_PATTERN_BAR_LINE,GUI::Color(0xe2,0xf6,0xff));
-      	SET_COLOR(COLOR_PATTERN_SUBBEAT_LINE,GUI::Color(0x4f,0x5b,0x65));
+	SET_COLOR(COLOR_PATTERN_BAR_LINE,GUI::Color(0xe2,0xf6,0xff));
+	SET_COLOR(COLOR_PATTERN_SUBBEAT_LINE,GUI::Color(0x4f,0x5b,0x65));
 	SET_COLOR(COLOR_PATTERN_SELECTION,GUI::Color(0x28,0x5C,0x7C));
 	SET_COLOR(COLOR_PATTERN_BG,GUI::Color(0));	
+	
 	
 	SET_STYLEBOX(SB_PATTERN_BLOCK,GUI::StyleBox(3,GUI::Color(0x2d,0x27,0x39),GUI::Color(0xbd,0xd3,0xd7),GUI::Color(0xbd,0xd3,0xd7)));
      	//SET_STYLEBOX(SB_PATTERN_BLOCK_SHARED,get_stylebox(SB_GLOBAL_VIEW_LINKED)); //use the same
@@ -336,7 +362,7 @@ GUI::FontID CommonSkin::load_fixed_font(PixmapDataList p_pixmap,int p_from,int p
 	int font_h=painter->get_bitmap_size(PixmapData::get_pixmap(p_pixmap)).height;
 	int font_w=painter->get_bitmap_size(PixmapData::get_pixmap(p_pixmap)).width/(p_to-p_from);
 	
-	GUI::FontID font = painter->create_font(font_w,font_h);
+	GUI::FontID font = painter->create_font(font_h,font_h-1);
 	
 	for (int i=0;i<(p_to-p_from);i++) {
 		
@@ -353,6 +379,7 @@ CommonSkin::CommonSkin(GUI::Painter *p_painter) : Skin(COMMON_SB_MAX,COMMON_C_MA
 //	bar_font=load_number_font(PIXMAP_GLOBAL_VIEW_BAR_FONT);
 //	beat_font=load_number_font(PIXMAP_GLOBAL_VIEW_BEAT_FONT);
 	small_font = load_fixed_font( PIXMAP_FONT_SMALL, 32, 127 );
+	track_font = load_fixed_font( PIXMAP_FONT_FIXED, 32, 127 );
 	set_default_extra();
 }
 

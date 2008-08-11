@@ -42,21 +42,32 @@ public:
 		int field;
 		int window_offset;
 		int window_rows;
+		int step;
 	} cursor;
 	
 	
 	struct Selection {
 	
-		struct P {
+		struct {
 		
-			int track,col,row;
+			int track,col;
+			Tick tick;
 		} begin,end;
 		bool active;
-	} selection;
+	} selection,shift_selection;
 	
 	Track *get_current_track() const;
 	
 	TrackEditMode track_edit_mode;
+		
+	bool pattern_editor_keypress( unsigned int p_code ); // return true if event must be handled
+	void cursor_move_track_left();
+	void cursor_move_track_right();
+	void adjust_window_offset();
+	
+	void selection_verify();
+	void shift_selection_check_begin(unsigned int &p_code);
+	void shift_selection_check_end();
 public:
 
 	Song *get_song() const { return song; }
@@ -69,6 +80,7 @@ public:
 	void set_window_offset(int p_row);
 	void set_window_rows(int p_rows);
 	void set_cursor_row(int p_row);
+	void set_cursor_step(int p_step);
 	
 	Tick get_cursor_tick() const;
 	int get_cursor_track() const;
@@ -77,8 +89,9 @@ public:
 	int get_cursor_zoom_divisor() const;
 	int get_window_offset() const;
 	int get_window_rows() const;
-	
 	int64 get_cursor_row() const;
+	
+	int get_cursor_step() const;
 	
 	int64 get_ticks_per_row() const;
 	int64 get_row_ticks(int p_row) const;
@@ -90,6 +103,10 @@ public:
 
 	/**/
 	
+	
+	void set_selection_begin_at_cursor();
+	void set_selection_end_at_cursor();
+	
 	bool is_selection_active() const;
 	int get_selection_begin_track() const;
 	int get_selection_begin_column() const;
@@ -97,8 +114,21 @@ public:
 	int get_selection_end_track() const;
 	int get_selection_end_column() const;
 	int get_selection_end_row() const;
+	
+	void set_selection_disabled();	
+	
+	void set_mouse_selection_begin(int p_track,int p_col, int p_row);
+	void set_mouse_selection_end(int p_track,int p_col, int p_row);	
+	
+	void select_column_block_all();
 
 	static Editor *get_singleton();
+
+	/* pattern editing */
+	
+	bool track_editor_keypress( unsigned int p_code ); // return true if event must be handled
+	
+
 
 	Editor(Song *p_song);
 	

@@ -74,11 +74,13 @@ GUI::BitmapID PixmapData::create_bitmap_from_buffer(const unsigned char *p_png_b
 
 	png_read_image(png, row_p);
 
-	GUI::BitmapID bmp=painter->create_bitmap(GUI::Size(width,height),GUI::MODE_PIXMAP,true);
+	GUI::BitmapID bmp=painter->create_bitmap(GUI::Size(width,height),(color==PNG_COLOR_TYPE_GRAY)?GUI::MODE_ALPHA_MASK:GUI::MODE_PIXMAP,(color==PNG_COLOR_TYPE_RGB_ALPHA));
 	
 	switch(color) {
 
-		case 0 : { // Each pixel is a grayscale sample.
+		case PNG_COLOR_TYPE_GRAY: { // Each pixel is a grayscale sample.
+		
+		/*
 			switch(depth) {
 				case  1 : break;
 				case  2 : break;
@@ -86,15 +88,22 @@ GUI::BitmapID PixmapData::create_bitmap_from_buffer(const unsigned char *p_png_b
 				case  8 : break;
 				case 16 : break;
 				default : break;
-			}
+			} */
 			
-			printf("depth is %i\n",depth);
-			ERR_PRINT("Grayscale PNG not supproted!");
-			return -1;
+			for (int x=0;x<width;x++) {
+				for (int y=0;y<height;y++) {
+					
+					unsigned char * pixel=&data[png_get_rowbytes(png, info)*y+x];
+					painter->set_bitmap_pixel(bmp,GUI::Point(x,y),GUI::Color(*pixel));
+				}
+			}			
+			//printf("depth is %i\n",depth);
+			//ERR_PRINT("Grayscale PNG not supproted!");
+		
 		break;
 		}
 
-		case 2:  // Each pixel is a R,G,B triple
+		case PNG_COLOR_TYPE_RGB:  // Each pixel is a R,G,B triple
 			switch(depth) {
 				case 16 : // 48 bits (RGB)
 				break;
@@ -112,7 +121,7 @@ GUI::BitmapID PixmapData::create_bitmap_from_buffer(const unsigned char *p_png_b
 		break;
 		
 	
-		case 6:  // Each pixel is an R,G,B,A.
+		case PNG_COLOR_TYPE_RGB_ALPHA:  // Each pixel is an R,G,B,A.
 			switch(depth) {
 				case 16 : // 64 bits (RGBA)
 				break;

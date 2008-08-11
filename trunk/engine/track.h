@@ -43,6 +43,7 @@ private:
 
 
 	ValueStream<Tick,Block*> blocks;
+	bool collapsed;
 
 public:
 
@@ -82,6 +83,9 @@ public:
 	bool block_fits(Tick p_at_pos, Tick p_len,const std::list<int>& p_ignore_blocks=std::list<int>()) const; // helper
 	
 	virtual void clear();
+	
+	bool is_collapsed() const;
+	void set_collapsed(bool p_collapsed);
 	
 	Track(int p_instanced_channels,const AudioNodeInfo *p_info);	
 	~Track();

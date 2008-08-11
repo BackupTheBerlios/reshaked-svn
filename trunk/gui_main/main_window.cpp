@@ -50,6 +50,7 @@ bool MainWindow::must_quit() {
 
 MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_skin) : GUI::Window(p_painter,p_timer,p_skin) {
 
+	init_key_bindings();
 	editor = new Editor(&song);
 
 	register_nodes();
@@ -134,6 +135,8 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 	add_node_dialog = new AddNodeDialog(this,&song);
 	add_node_dialog->hide();
 	quit=false;
+	
+	
 }
 
 
