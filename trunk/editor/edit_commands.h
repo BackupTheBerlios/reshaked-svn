@@ -18,7 +18,7 @@
 #include "editor/undo_redo.h"
 #include "editor/editor.h"
 #include "engine/song.h"
-
+#include "engine/pattern_track.h"
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -37,6 +37,8 @@ class EditCommands : public UndoRedo {
 	
 	void _song_add_track_helper(Song *p_song,Track *p_track,int p_at_index);
 	void _song_remove_track_helper(Song *p_song, int p_track);
+	void _track_collapse_helper(Track *p_track,bool p_collapsed);
+	void _pattern_set_note_helper( PatternTrack::PatternBlock *p_block, PatternTrack::Position p_pos,PatternTrack::Note p_note );
 	
 public:
 
@@ -59,6 +61,8 @@ public:
 	
 	void audio_node_set_name(AudioNode *p_node, String p_name);
 
+	void track_collapse(Track *p_track,bool p_collapsed);
+	void pattern_set_note( PatternTrack *p_pattern, int p_column, Tick p_tick, const PatternTrack::Note &p_note );
 
 	EditCommands();
 	

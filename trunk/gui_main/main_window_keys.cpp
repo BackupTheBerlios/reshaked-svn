@@ -140,7 +140,7 @@ void MainWindow::init_key_bindings() {
 	key_bindings.add_key_bind("note_entry/clear_field","Clear Field",GUI::KEY_PERIOD);
 
 	key_bindings.add_key_bind("note_entry/note_off","Note Off",GUI::KEY_BACKQUOTE);
-	key_bindings.add_key_bind("note_entry/toggle_note_edit","Note Edit Mode Toggle",GUI::KEY_SPACE);
+	key_bindings.add_key_bind("editor/toggle_front_back_edit","Toggle Front/Back Edit",GUI::KEY_SPACE);
 	for (int i=0;i<MAX_PIANO_KEYS;i++)
 		key_bindings.add_key_bind((String)"note_entry/"+piano_key_name[i],piano_key_name[i],_default_pianokey_bind[i]);
 	

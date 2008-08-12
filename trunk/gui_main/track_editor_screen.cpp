@@ -29,7 +29,11 @@ public:
 	}
 };
 	
+void TrackEditorScreen::track_block_changed(Track::Block *p_block) {
 
+
+	repaint(); // todo optimize later
+}
 
 void TrackEditorScreen::rebuild() {
 
@@ -64,6 +68,9 @@ void TrackEditorScreen::rebuild() {
 		
 		
 		te->mouse_selecting_signal.connect( this, &TrackEditorScreen::mouse_selection_update_callback );
+		
+		if (!t->is_collapsed() && te->is_visible() && editor->get_cursor_track()==i)
+			te->get_focus();
 
 	}
 	
@@ -75,6 +82,8 @@ void TrackEditorScreen::mouse_selection_update_callback(GUI::Point p_pos) {
 
 	for (int i=0;i<track_editors.size();i++) {
 	
+		if (track_editors[i]->get_track()->is_collapsed())
+			continue;
 		GUI::Rect rect = GUI::Rect(track_editors[i]->get_global_pos(), track_editors[i]->get_size_cache() );
 		
 		if (p_pos.x>= rect.pos.x && p_pos.x<=rect.pos.x+rect.size.x) {
@@ -134,6 +143,7 @@ TrackEditorScreen::TrackEditorScreen(Editor *p_editor,GUI_UpdateNotify *p_update
 	p_update_notify->window_offset_changed_signal.connect( this, &TrackEditorScreen::repaint );
 	p_update_notify->selection_changed_signal.connect( this, &TrackEditorScreen::repaint );
 	
+	rebuild();
 }
 
 

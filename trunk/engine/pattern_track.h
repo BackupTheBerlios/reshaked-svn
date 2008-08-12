@@ -62,10 +62,6 @@ public:
 			MAX_NOTES=128,
 			NOTE_OFF=254,
 			MAX_VOLUME=99,
-			PREVIOUS_PORTAMENTO=0,
-			NO_PORTAMENTO=100,
-			NO_AUTO_OFF=0,
-			NO_VOLUME=100,
 			NO_NOTE=255,
 		};
 
@@ -82,6 +78,11 @@ public:
 		bool is_note_off() { return note==NOTE_OFF; }
 		bool is_empty() const { return (note==NO_NOTE) ; }
 		void set_octave(unsigned char p_octave) { if (note<MAX_NOTES) note=(note%12)+p_octave*12;  }
+		
+		bool operator==(const Note& p_note) const {
+		
+			return (p_note.volume == volume && p_note.note==note);
+		}
 	};
 		
 	class PatternBlock : public Block {
@@ -122,6 +123,15 @@ public:
 				notes.insert( p_pos, p_note );	
 			}
 		}
+		inline const Note get( const Position& p_pos) {
+		
+			int exact_idx = notes.find_exact( p_pos );
+			if (exact_idx >= 0)
+				return notes[exact_idx];
+			else
+				return Note();
+		}
+
 		
 		inline Note get_note(int p_index) const { 
 			ERR_FAIL_INDEX_V( p_index, get_note_count(), Note() ); 

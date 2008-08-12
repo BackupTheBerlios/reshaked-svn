@@ -14,26 +14,182 @@
 #include "engine/pattern_track.h"
 #include "key_bindings.h"
 #include "update_notify.h"
+#include "piano_keys.h"
+#include "editor/edit_commands.h"
+
+
+void Editor::pattern_set_note_at_cursor( PatternTrack::Note p_note) {
+
+	PatternTrack *pt = dynamic_cast<PatternTrack*>( song->get_track( cursor.track ) );
+	
+	if (!pt)
+		return;
+
+	EditCommands::get_singleton()->pattern_set_note( pt, cursor.col, get_cursor_tick(), p_note );
+}
+
+PatternTrack::Note Editor::pattern_get_note_at_cursor() const {
+
+	PatternTrack *pt = dynamic_cast<PatternTrack*>( song->get_track( cursor.track ) );
+	
+	if (!pt)
+		return PatternTrack::Note();
+
+
+
+	int blk_idx=pt->get_block_at_pos( cursor.tick );
+	if (blk_idx<0)
+		return PatternTrack::Note();
+		
+	PatternTrack::PatternBlock *block = static_cast<PatternTrack::PatternBlock*>(pt->get_block(blk_idx));
+	
+	if (!block)
+		return PatternTrack::Note();; //pointless
+		
+	Tick tick = cursor.tick - pt->get_block_pos(blk_idx);
+
+	PatternTrack::Position pos( tick, cursor.col );
+	return block->get( pos );
+
+}
 
 bool Editor::pattern_editor_keypress( unsigned int p_code ) {
 
+	
+	if (track_edit_mode==EDIT_MODE_FRONT) {
+		// front edit
+			
+		/* first of all, check note */
 
+		if (cursor.field==0) {
+		
+			
+		
+			int note_entry=-1;
+			for(int i=0;i<MAX_PIANO_KEYS;i++) {
+			
+				String keyname=String("note_entry/")+piano_key_name[i];
+				
+				if (p_code!=KEYBIND( keyname ) )
+					continue;
+					
+				note_entry=insert.octave*12+i;
+				break;
+			
+			}
+			
+			if (note_entry!=-1) {
+			
+				if (note_entry>=PatternTrack::Note::MAX_NOTES)
+					return false; // completely pointless
+					
+				PatternTrack::Note note=pattern_get_note_at_cursor();
+				
+				note.note=note_entry;
+				if (note.is_note() || insert.volume_mask_active)
+					note.volume=insert.volume_mask;
+					
+				
+				pattern_set_note_at_cursor( note );
+				set_cursor_row( get_cursor_row() + get_cursor_step() );
+				
+				
+				return true;			
+			} 
+						
+		} else if (cursor.field==1) {
+			// check set octave
+			PatternTrack::Note note=pattern_get_note_at_cursor();
+			
+			if (note.is_note()) {
+				
+				for (int i=0;i<10;i++) {
+
+					if (!IS_NUMBIND(i,p_code))
+						continue;
+					
+				
+					note.note=note.note%12;
+					note.note+=i*12;
+					pattern_set_note_at_cursor( note );
+					set_cursor_row( get_cursor_row() + get_cursor_step() );
+					return true;
+				}						
+			}		
+		}		
+		
+
+	} else {
+	
+		PatternTrack::Note note=pattern_get_note_at_cursor();
+	
+		if (note.is_note()) {
+			
+			for (int i=0;i<10;i++) {
+			
+
+				if (!IS_NUMBIND(i,p_code))
+					continue;
+				
+				if (cursor.field==0) {
+					note.volume=note.volume%10;
+					note.volume+=i*10;
+					pattern_set_note_at_cursor( note );
+					
+					set_cursor_field(1);
+				} else {
+				
+					note.volume-=note.volume%10;
+					note.volume+=i;
+					pattern_set_note_at_cursor( note );
+					
+					set_cursor_field(0);
+					set_cursor_row( get_cursor_row() + get_cursor_step() );
+				
+				}
+				
+				return true;
+			}						
+		}				
+	}
+	
+	if (p_code==KEYBIND("note_entry/note_off")) {
+		
+		pattern_set_note_at_cursor( PatternTrack::Note( PatternTrack::Note::NOTE_OFF) );
+		set_cursor_row( get_cursor_row() + get_cursor_step() );			
+		return true;
+	}
+	
+	if (p_code==KEYBIND("note_entry/clear_field")) {
+		
+		pattern_set_note_at_cursor( PatternTrack::Note() );
+		set_cursor_row( get_cursor_row() + get_cursor_step() );
+		return true;
+	}
 	
 	return false;
 }
 
 
 void Editor::cursor_move_track_left() {
-
-	if (cursor.track<=0)
-		return;
 		
-	Track * track = song->get_track( cursor.track );
-	if (!track)
-		return;
-		
-	set_cursor_track(cursor.track-1);
+	int prev=-1;
 	
+	for (int i=cursor.track-1;i>=0;i--) {
+	
+		if (song->get_track( i ) && !song->get_track( i )->is_collapsed()) {
+		
+			prev=i;
+			break;
+		}
+	}
+		
+	if (prev<0)
+		return; //nothing to move to
+	
+	set_cursor_track(prev);
+	
+	Track * track = song->get_track(cursor.track);
 	set_cursor_col( track->get_visible_columns() );
 	
 	if (dynamic_cast<PatternTrack*>(track)) 
@@ -47,10 +203,21 @@ void Editor::cursor_move_track_left() {
 }
 void Editor::cursor_move_track_right() {
 
-	if (cursor.track>=(song->get_track_count()-1))
-		return;
+	int next=-1;
+	
+	for (int i=cursor.track+1;i<song->get_track_count();i++) {
+	
+		if (song->get_track( i ) && !song->get_track( i )->is_collapsed()) {
 		
-	set_cursor_track(cursor.track + 1);
+			next=i;
+			break;
+		}
+	}
+		
+	if (next<0)
+		return; //nothing to move to
+		
+	set_cursor_track(next);
 	set_cursor_col(0);
 	set_cursor_field(0);
 	
@@ -64,6 +231,9 @@ bool Editor::track_editor_keypress( unsigned int p_code ) {
 	Track * track = song->get_track( cursor.track );
 	
 	if (!track)
+		return false;
+		
+	if (track->is_collapsed())
 		return false;
 		
 	bool is_pattern=dynamic_cast<PatternTrack*>(track);
@@ -316,6 +486,20 @@ bool Editor::track_editor_keypress( unsigned int p_code ) {
 		CASE( KEYBIND("editor/select_column_block") )
 		
 			select_column_block_all();			
+			
+		CASE( KEYBIND("editor/toggle_front_back_edit") )
+		
+			if (track_edit_mode==EDIT_MODE_FRONT)
+				track_edit_mode=EDIT_MODE_BACK;
+			else
+				track_edit_mode=EDIT_MODE_FRONT;
+
+			UpdateNotify::get_singleton()->track_list_changed();
+			
+		CASE( KEYBIND("note_entry/toggle_volume_mask") )
+			
+			insert.volume_mask_active=!insert.volume_mask_active;
+			UpdateNotify::get_singleton()->volume_mask_changed();
 			/*
 	key_bindings.add_key_bind("editor/selection_copy","Selection Copy",GUI::KEY_MASK_ALT+GUI::KEY_c);
 	key_bindings.add_key_bind("editor/selection_paste_insert","Selection Paste Insert",GUI::KEY_MASK_ALT+GUI::KEY_p);

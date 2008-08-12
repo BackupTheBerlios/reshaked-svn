@@ -31,8 +31,10 @@ public:
 	virtual void cursor_track_changed(int p_from,int p_to);	
 	virtual void cursor_step_changed();
 	virtual void window_snap_changed();
+	virtual void volume_mask_changed();
 	virtual void window_offset_changed();
 	virtual void selection_changed();
+	virtual void track_block_changed(Track::Block *p_block);
 	
 	GUI::Signal<> sound_driver_changed_signal;
 	GUI::Signal<> audio_graph_changed_signal;
@@ -40,8 +42,10 @@ public:
 	GUI::Signal< GUI::Method2<int,int> > cursor_track_changed_signal;
 	GUI::Signal<> cursor_step_changed_signal;
 	GUI::Signal<> window_snap_changed_signal;
+	GUI::Signal<> volume_mask_changed_signal;
 	GUI::Signal<> window_offset_changed_signal;
 	GUI::Signal<> selection_changed_signal;
+	GUI::Signal< GUI::Method1<Track::Block*> > track_block_changed_signal;
 
 	GUI_UpdateNotify();
 	~GUI_UpdateNotify();

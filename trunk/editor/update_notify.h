@@ -12,6 +12,8 @@
 #ifndef UPDATE_NOTIFY_H
 #define UPDATE_NOTIFY_H
 
+#include "engine/track.h"
+
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -29,8 +31,10 @@ public:
 	virtual void cursor_track_changed(int p_from,int p_to)=0;
 	virtual void cursor_step_changed()=0;
 	virtual void window_snap_changed()=0;
+	virtual void volume_mask_changed()=0;
 	virtual void window_offset_changed()=0;
 	virtual void selection_changed()=0;
+	virtual void track_block_changed(Track::Block *p_block)=0;
 
 	UpdateNotify();
 	virtual ~UpdateNotify();

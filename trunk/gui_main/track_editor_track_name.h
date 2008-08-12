@@ -24,7 +24,7 @@ class TrackEditorTrackName : public GUI::Widget {
 	TrackEditor *track_editor;
 	GUI::Size get_minimum_size_internal();
 	void draw(const GUI::Point& p_pos,const GUI::Size& p_size,const GUI::Rect& p_exposed);
-
+	void mouse_button(const GUI::Point& p_pos, int p_button,bool p_press,int p_modifier_mask);
 public:
 	TrackEditorTrackName(TrackEditor *p_track_editor);	
 	~TrackEditorTrackName();

@@ -10,6 +10,7 @@
 //
 //
 #include "edit_commands.h"
+#include "editor.h"
 
 EditCommands *EditCommands::singleton=NULL;
 
@@ -354,12 +355,70 @@ void EditCommands::_song_add_track_helper(Song *p_song,Track *p_track,int p_at_i
 
 	p_song->add_track(p_track,p_at_index);
 	UpdateNotify::get_singleton()->track_list_changed();
+	Editor::get_singleton()->validate_cursor_pos();
 	
 }
 void EditCommands::_song_remove_track_helper(Song *p_song, int p_track) {
 
 	p_song->remove_track(p_track);
 	UpdateNotify::get_singleton()->track_list_changed();
+	Editor::get_singleton()->validate_cursor_pos();
+}
+
+/******* TRACK ********/
+
+void EditCommands::_track_collapse_helper(Track *p_track,bool p_collapsed) {
+
+	p_track->set_collapsed(p_collapsed);
+	UpdateNotify::get_singleton()->track_list_changed();
+	Editor::get_singleton()->validate_cursor_pos();
+}
+
+
+void EditCommands::track_collapse(Track *p_track,bool p_collapsed) {
+
+	if (p_track->is_collapsed()==p_collapsed)
+		return; // pointless
+
+	CommandBase *cmd_do=command( this, &EditCommands::_track_collapse_helper, p_track, p_collapsed );
+	CommandBase *cmd_undo=command( this, &EditCommands::_track_collapse_helper, p_track, !p_collapsed );
+
+	add_action(String("Track - ")+(p_collapsed?"Collapse":"Expand"),cmd_do,cmd_undo);
+
+}
+
+/*******PATTERN*******/
+
+void EditCommands::_pattern_set_note_helper( PatternTrack::PatternBlock *p_block, PatternTrack::Position p_pos, PatternTrack::Note p_note ) {
+
+	p_block->set(p_pos,p_note);
+	UpdateNotify::get_singleton()->track_block_changed( p_block );
+}
+
+
+void EditCommands::pattern_set_note( PatternTrack *p_pattern, int p_column, Tick p_tick, const PatternTrack::Note &p_note ) {
+
+
+	int blk_idx=p_pattern->get_block_at_pos( p_tick );
+	if (blk_idx<0)
+		return;
+	PatternTrack::PatternBlock *block = static_cast<PatternTrack::PatternBlock*>(p_pattern->get_block(blk_idx));
+	if (!block)
+		return; //pointless
+		
+	Tick tick = p_tick - p_pattern->get_block_pos(blk_idx);
+
+	PatternTrack::Position pos( tick, p_column );
+	PatternTrack::Note old_note = block->get( pos );
+	if (p_note==old_note)
+		return; // also pointless, will help the paste commands
+		
+	PatternTrack::Note note=p_note;
+	CommandBase *cmd_do=command( this, &EditCommands::_pattern_set_note_helper, block, pos, note);
+	CommandBase *cmd_undo=command( this, &EditCommands::_pattern_set_note_helper, block,pos, old_note );
+
+	add_action("Pattern - Edit Note",cmd_do,cmd_undo);
+		
 }
 
 

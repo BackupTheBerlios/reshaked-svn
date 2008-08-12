@@ -48,6 +48,10 @@ void GUI_UpdateNotify::window_snap_changed() {
 	window_snap_changed_signal.call();
 }
 
+void GUI_UpdateNotify::volume_mask_changed() {
+
+	volume_mask_changed_signal.call();
+}
 
 void GUI_UpdateNotify::window_offset_changed() {
 
@@ -59,6 +63,10 @@ void GUI_UpdateNotify::selection_changed() {
 	selection_changed_signal.call();
 }
 
+void GUI_UpdateNotify::track_block_changed(Track::Block *p_block) {
+
+	track_block_changed_signal.call( p_block );
+}
 
 GUI_UpdateNotify::GUI_UpdateNotify(){
 

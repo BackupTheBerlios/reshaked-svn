@@ -25,9 +25,9 @@ static const char* _chan_names[8]={"Mono","Stereo","3","Quad","5","6","7","Octo"
 
 void AddNodeDialog::NodeInfoItem::mouse_button(const GUI::Point& p_pos, int p_button,bool p_press,int p_modifier_mask) {
 
-	if (p_button!=GUI::BUTTON_LEFT)
+	if (!p_press || p_button!=GUI::BUTTON_LEFT)
 		return;
-	
+		
 	selected.call(this);
 }
 

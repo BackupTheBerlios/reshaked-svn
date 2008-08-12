@@ -82,7 +82,7 @@ void Editor::set_mouse_selection_begin(int p_track,int p_col, int p_row) {
 	// use shift selection for mouse
 
 	shift_selection.begin.track=p_track;
-	shift_selection.begin.col=p_col;cursor.col;
+	shift_selection.begin.col=p_col;
 	shift_selection.begin.tick=get_row_ticks( p_row );
 	
 	shift_selection.end=shift_selection.begin;

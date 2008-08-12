@@ -12,6 +12,7 @@
 #include "track_editor_track_name.h"
 #include "gui_common/common_skin.h"
 #include "engine/pattern_track.h"
+#include "editor/edit_commands.h"
 
 GUI::Size TrackEditorTrackName::get_minimum_size_internal() {
 
@@ -31,10 +32,10 @@ void TrackEditorTrackName::draw(const GUI::Point& p_pos,const GUI::Size& p_size,
 	
 	if (track_editor->get_track()->is_collapsed()) {
 	
-		bmp=bitmap(BITMAP_ICON_TRACK_VISIBLE);
+		bmp=bitmap(BITMAP_ICON_TRACK_COLLAPSED);
 	} else {
 	
-		bmp=bitmap(BITMAP_ICON_TRACK_COLLAPSED);
+		bmp=bitmap(BITMAP_ICON_TRACK_VISIBLE);
 	}
 	
 	get_painter()->draw_bitmap( bmp, ofs );
@@ -57,6 +58,24 @@ void TrackEditorTrackName::draw(const GUI::Point& p_pos,const GUI::Size& p_size,
 	
 }
 
+void TrackEditorTrackName::mouse_button(const GUI::Point& p_pos, int p_button,bool p_press,int p_modifier_mask) {
+
+	if (!p_press)
+		return;
+	int y=p_pos.y;
+	
+	y-=get_painter()->get_stylebox_margin( stylebox( SB_TRACK_EDITOR_TRACK_NAME ), GUI::MARGIN_TOP );
+		
+	// test collapse
+	if (y<get_painter()->get_bitmap_size( bitmap(BITMAP_ICON_TRACK_COLLAPSED) ).height ) {
+	
+		EditCommands::get_singleton()->track_collapse( track_editor->get_track(), !track_editor->get_track()->is_collapsed() );
+	}
+	
+	y-=get_painter()->get_bitmap_size( bitmap(BITMAP_ICON_TRACK_COLLAPSED) ).height;
+	// test options
+	
+}
 
 TrackEditorTrackName::TrackEditorTrackName(TrackEditor *p_track_editor) {
 

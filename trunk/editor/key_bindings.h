@@ -26,6 +26,9 @@
 #define IS_KEYBIND(m_str,m_key) \
 	(KeyBindings::get_singleton_instance()->get_key_bind_by_name(m_str)==m_key)
 
+#define IS_NUMBIND(m_number,m_key) \
+	(KeyBindings::get_singleton_instance()->get_number(m_key)==m_number)
+
 class KeyBindings {
 public:
 	

@@ -13,7 +13,7 @@
 #define EDITOR_H
 
 #include "engine/song.h"
-
+#include "engine/pattern_track.h"
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -32,6 +32,14 @@ public:
 	Song *song;
 
 	static Editor *singleton;
+	
+	struct Insertion {
+	
+		int octave;
+		bool volume_mask_active;
+		int volume_mask;
+	
+	} insert;
 	
 	struct Cursor {
 	
@@ -59,6 +67,10 @@ public:
 	Track *get_current_track() const;
 	
 	TrackEditMode track_edit_mode;
+		
+		
+	void pattern_set_note_at_cursor( PatternTrack::Note p_note);
+	PatternTrack::Note pattern_get_note_at_cursor() const;
 		
 	bool pattern_editor_keypress( unsigned int p_code ); // return true if event must be handled
 	void cursor_move_track_left();
@@ -100,6 +112,7 @@ public:
 	void set_track_edit_mode( TrackEditMode p_track_edit_mode );
 	TrackEditMode get_track_edit_mode() const;
 
+	void validate_cursor_pos();
 
 	/**/
 	

@@ -200,6 +200,65 @@ int64 Editor::get_window_offset_ticks() const {
 	return cursor.window_offset * get_ticks_per_row();
 }
 
+void Editor::validate_cursor_pos() {
+
+	if (cursor.track>=song->get_track_count() )
+		cursor.track=song->get_track_count()-1;
+
+	if (cursor.track<0 && song->get_track_count() )
+		cursor.track=0;
+		
+	if (cursor.track<0 || cursor.track>=song->get_track_count()) {
+		UpdateNotify::get_singleton()->track_list_changed();
+		return;
+	}
+		
+	if (song->get_track(cursor.track)->is_collapsed()) {
+		// inside collapsed trac, try to relocate right
+		
+		int new_location=-1;
+	
+	
+		// try to the right
+		for (int i=cursor.track+1;i<song->get_track_count();i++) {
+		
+			if (song->get_track(i)->is_collapsed())
+				continue;
+				
+			new_location=i;
+			break;
+		}
+		
+		if (new_location==-1) {
+			
+			// try to the right
+			for (int i=cursor.track-1;i>=0;i--) {
+			
+				if (song->get_track(i)->is_collapsed())
+					continue;
+					
+				new_location=i;
+				break;
+			}
+			
+		}
+		
+		cursor.track=new_location;		
+	}	
+	
+	if (cursor.track<0 || cursor.track>=song->get_track_count()) {
+		UpdateNotify::get_singleton()->track_list_changed();
+		return;
+	}
+	
+	
+	if (cursor.col >= song->get_track(cursor.track)->get_visible_columns())
+		cursor.col=song->get_track(cursor.track)->get_visible_columns()-1;
+		
+	UpdateNotify::get_singleton()->track_list_changed();
+		
+}
+
 /**********/
 
 void Editor::set_track_edit_mode( TrackEditMode p_track_edit_mode ) {
@@ -226,6 +285,10 @@ Editor::Editor(Song *p_song) {
 	cursor.window_offset=0;
 	cursor.window_rows=0;
 	cursor.step=1;
+	
+	insert.octave=4;
+	insert.volume_mask_active=false;
+	insert.volume_mask=99;
 	
 	selection.active=false;
 	shift_selection.active=false;
