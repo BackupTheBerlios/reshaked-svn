@@ -88,6 +88,7 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 	hb->add( new GUI::VSeparator );
 	
 	GUI::MenuButton * add_button = hb->add( new GUI::MenuButton( p_skin->get_bitmap( BITMAP_ICON_ADD) )  );
+	add_button->set_tooltip("Add Node: \n From here, you can add any\n kind of nodes to the song:\n\n   -Tracks (Pattern/Automation)\n   -Synths\n   -Audio FX\n   -Hardware In/Out (Audio/MIDI).");
 	add_button->pressed_signal.connect( this, &MainWindow::add_node_callback );
 
 	hb->add( new GUI::VSeparator );

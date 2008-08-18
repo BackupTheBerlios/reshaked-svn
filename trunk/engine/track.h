@@ -79,7 +79,7 @@ public:
 	int find_block_at_pos( Tick p_pos ) const;
 	int get_block_at_pos( Tick p_pos ) const;
 	
-	void get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) const;
+	bool get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) const;
 	bool block_fits(Tick p_at_pos, Tick p_len,const std::list<int>& p_ignore_blocks=std::list<int>()) const; // helper
 	
 	virtual void clear();

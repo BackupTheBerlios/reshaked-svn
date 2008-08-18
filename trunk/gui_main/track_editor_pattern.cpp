@@ -690,11 +690,9 @@ bool TrackEditorPattern::key(unsigned long p_unicode, unsigned long p_scan_code,
 
 	int key_value=p_scan_code;
 
-	if (key_value!=GUI::KEY_TAB) { //ruins things otherwise
-	
-		key_value|=p_modifier_mask;
-	}
-	
+
+	key_value|=p_modifier_mask; // bind them to be recognized
+
 	
 	if (p_press && Editor::get_singleton()->track_editor_keypress(key_value)) {
 		

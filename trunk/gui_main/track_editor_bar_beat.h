@@ -23,7 +23,7 @@ class TrackEditorBarBeat : public GUI::Widget {
 
 	enum {
 	
-		MAX_CHAR_WIDTH=8	
+		MAX_CHAR_WIDTH=10
 	};
 
 	int get_font_width();

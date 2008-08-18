@@ -13,21 +13,30 @@
 #include "editor.h"
 #include "update_notify.h"
 #include "key_bindings.h"
+#include "edit_commands.h"
 
 void Editor::selection_verify() {
 
 	if (!selection.active)
 		return;
 		
-	if (selection.begin.track > selection.end.track )
+	if (selection.begin.track > selection.end.track ) {
 		SWAP( selection.begin.track, selection.end.track );
-		
-	if (selection.begin.col > selection.end.col )
 		SWAP( selection.begin.col, selection.end.col );
+		
+	} else if (selection.begin.track == selection.end.track ) {
+			
+		if (selection.begin.col > selection.end.col )
+			SWAP( selection.begin.col, selection.end.col );
+	}
 		
 	if (selection.begin.tick > selection.end.tick )
 		SWAP( selection.begin.tick, selection.end.tick );
 		
+	selection.begin.tick-=selection.begin.tick%get_ticks_per_row(); // make sure it starts at zero
+	selection.end.tick=selection.end.tick-(selection.end.tick%get_ticks_per_row()) + get_ticks_per_row()-1; // make sure it starts at get_ticks_per_row() -1
+		
+	
 }
 
 
@@ -233,4 +242,223 @@ void Editor::set_selection_disabled() {
 
 	selection.active=false;
 	UpdateNotify::get_singleton()->selection_changed();
+}
+
+
+void Editor::selection_command(SelectionCommand p_command,int p_param) {
+
+	Selection s=selection;
+	
+	String target="Selection";
+	
+	if (!s.active) {
+	
+		s.begin.tick=cursor.tick;
+		s.end.tick=cursor.tick;
+		s.begin.track=cursor.track;
+		s.end.track=cursor.track;
+		s.begin.col=cursor.col;
+		s.end.col=cursor.col;
+		s.active=true;
+		target="Cursor";
+	}
+	switch(p_command) {
+	
+		case SELECTION_SCALE_VOLUMES: {
+		
+			EditCommands::get_singleton()->begin_group(target+" - Scale Volumes");
+		} break;
+		case SELECTION_APPLY_VOLUME_MASK: {
+		
+			EditCommands::get_singleton()->begin_group(target+" - Apply Volume Mask");		
+		} break;
+		case SELECTION_QUANTIZE_UP: {
+		
+			EditCommands::get_singleton()->begin_group(target+" - Quantize Up");		
+		} break;
+		case SELECTION_QUANTIZE_NEAREST: {
+		
+		
+			EditCommands::get_singleton()->begin_group(target+" - Quantize Nearest");		
+		} break;
+		case SELECTION_QUANTIZE_DOWN: {
+		
+			EditCommands::get_singleton()->begin_group(target+" - Quantize Down");		
+		} break;
+		case SELECTION_TRANSPOSE_UP: {
+		
+			EditCommands::get_singleton()->begin_group(target+" - Transpose Up Semitone");		
+		} break;
+		case SELECTION_TRANSPOSE_UP_OCTAVE: {
+		
+			EditCommands::get_singleton()->begin_group(target+" - Transpose Up Octave");		
+		} break;
+		case SELECTION_TRANSPOSE_DOWN: {
+		
+			EditCommands::get_singleton()->begin_group(target+" - Transpose Down");		
+		} break;
+		case SELECTION_TRANSPOSE_DOWN_OCTAVE: {
+		
+			EditCommands::get_singleton()->begin_group(target+" - Transpose Octave");		
+		} break;
+	
+	
+	}
+
+
+	
+
+	for(int i=s.begin.track;i<=s.end.track;i++) {
+	
+		if (i<0 || i>=song->get_track_count())
+			continue;
+	
+		Track *t = song->get_track(i);
+		if (t->is_collapsed()) // don't work in collapsed tracks
+			continue;
+			
+										
+		if (dynamic_cast<PatternTrack*>(t)) {
+			// its-a-pattern mario!
+			
+			std::list<NoteListElement> nelist;
+			
+			int fromblock,toblock;
+			
+			if (t->get_blocks_in_rage(s.begin.tick,s.end.tick,&fromblock,&toblock)) {
+				
+				for (int j=fromblock;j<=toblock;j++) {
+				
+					PatternTrack::PatternBlock *b = (PatternTrack::PatternBlock*)t->get_block(j);
+					
+					Tick bfrom=s.begin.tick-t->get_block_pos(j);
+					Tick bto=s.end.tick-t->get_block_pos(j);
+					
+					int fromblock2,toblock2;
+					
+					if (b->get_notes_in_local_range(bfrom,bto,&fromblock2,&toblock2)) {
+					
+						for (int k=fromblock2;k<=toblock2;k++) {
+						
+							PatternTrack::Position pos = b->get_note_pos(k);
+							
+							if ( i==s.begin.track && pos.column<s.begin.col )
+								continue;
+							if ( i==s.end.track &&pos.column>s.end.col )
+								continue;
+								
+							NoteListElement nle;
+							nle.pos=pos;
+								
+							nle.pos.tick+=t->get_block_pos(j);
+															
+							nle.note=b->get_note(k);
+							
+							nelist.push_back(nle);
+						}
+					}
+				}
+			}
+			
+			std::list<NoteListElement>::iterator I;
+			
+			
+			for(I=nelist.begin();I!=nelist.end();I++) {
+			
+				switch(p_command) {
+				
+					case SELECTION_SCALE_VOLUMES: {
+					
+						if (!I->note.is_note())
+							break;
+							
+						int vol = p_param * (int)I->note.volume / PatternTrack::Note::MAX_VOLUME;
+						if (vol<0)
+							vol=0;
+						if (vol>=PatternTrack::Note::MAX_VOLUME)
+							vol=PatternTrack::Note::MAX_VOLUME;
+						
+						I->note.volume=vol;
+						
+					} break;
+					case SELECTION_APPLY_VOLUME_MASK: {
+					
+						if (!I->note.is_note())
+							break;
+							
+						I->note.volume=insert.volume_mask_active;
+					
+					} break;
+					case SELECTION_QUANTIZE_UP: {
+					
+						I->pos.tick -= I->pos.tick % get_ticks_per_row();
+					
+					} break;
+					case SELECTION_QUANTIZE_NEAREST: {
+					
+						Tick tick = I->pos.tick;
+						I->pos.tick -= I->pos.tick % get_ticks_per_row();
+					
+						if (tick % get_ticks_per_row() > get_ticks_per_row()/2 ) 
+							I->pos.tick+=get_ticks_per_row();
+					
+					} break;
+					case SELECTION_QUANTIZE_DOWN: {
+					
+						if (I->pos.tick % get_ticks_per_row()) {
+							I->pos.tick+=get_ticks_per_row();
+						}
+					
+					} break;
+					case SELECTION_TRANSPOSE_UP: {
+					
+						if (!I->note.is_note())
+							break;
+							
+						if (I->note.note<(PatternTrack::Note::MAX_NOTES-1))
+							I->note.note++;
+						
+					
+					} break;
+					case SELECTION_TRANSPOSE_UP_OCTAVE: {
+					
+						if (!I->note.is_note())
+							break;
+					
+						if (I->note.note<(PatternTrack::Note::MAX_NOTES-13))
+							I->note.note+=12;
+					
+					} break;
+					case SELECTION_TRANSPOSE_DOWN: {
+					
+						if (!I->note.is_note())
+							break;
+					
+						if (I->note.note>0)
+							I->note.note--;
+					
+					} break;
+					case SELECTION_TRANSPOSE_DOWN_OCTAVE: {
+					
+						if (!I->note.is_note())
+							break;
+					
+						if (I->note.note>=12)
+							I->note.note-=12;
+					
+					} break;
+				
+				
+				}
+				
+				
+				pattern_track_set_note( i, I->pos, I->note );
+			}
+			
+		}
+	}
+
+	EditCommands::get_singleton()->end_group();
+
+
 }

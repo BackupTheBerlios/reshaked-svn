@@ -19,6 +19,7 @@
 #include "editor/editor.h"
 #include "engine/song.h"
 #include "engine/pattern_track.h"
+
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -39,6 +40,10 @@ class EditCommands : public UndoRedo {
 	void _song_remove_track_helper(Song *p_song, int p_track);
 	void _track_collapse_helper(Track *p_track,bool p_collapsed);
 	void _pattern_set_note_helper( PatternTrack::PatternBlock *p_block, PatternTrack::Position p_pos,PatternTrack::Note p_note );
+	void _pattern_set_visible_columns_helper( PatternTrack *p_pattern, int p_visible );
+	void _track_block_toggle_repeat_helper( Track::Block *p_block, bool p_repeat );
+	void _barbeat_set_barlen_helper( Song *p_song, int p_beat,int p_barlen );
+	void _marker_set_helper( Song *p_song, int p_beat, String p_marker );
 	
 public:
 
@@ -62,7 +67,13 @@ public:
 	void audio_node_set_name(AudioNode *p_node, String p_name);
 
 	void track_collapse(Track *p_track,bool p_collapsed);
+	void track_block_toggle_repeat( Track::Block *p_block, bool p_repeat );
+	
 	void pattern_set_note( PatternTrack *p_pattern, int p_column, Tick p_tick, const PatternTrack::Note &p_note );
+	void pattern_set_visible_columns( PatternTrack *p_pattern, int p_visible );
+
+	void barbeat_set_barlen( Song *p_song, int p_beat,int p_barlen );
+	void marker_set( Song *p_song, int p_beat, String p_marker );
 
 	EditCommands();
 	

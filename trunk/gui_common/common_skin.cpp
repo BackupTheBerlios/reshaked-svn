@@ -308,9 +308,10 @@ void CommonSkin::set_default_extra() {
 	SET_COLOR(COLOR_BARBEAT_BEAT_FONT,GUI::Color(0x8a,0xa0,0xac));
 	SET_COLOR(COLOR_BARBEAT_BAR_FONT,GUI::Color(0xae,0xe9,0xf8));
 	SET_COLOR(COLOR_BARBEAT_SUBBEAT_FONT,GUI::Color(0x6b,0x6b,0x6b));
-		
+	SET_COLOR(COLOR_BARBEAT_MARKER_FONT,GUI::Color(200));
 	SET_FONT( FONT_TRACK_EDITOR_TRACK_NAME, track_font );
 	SET_STYLEBOX( SB_TRACK_EDITOR_TRACK_NAME, GUI::StyleBox(1,GUI::Color(0),GUI::Color(0),GUI::Color(0) ) );
+	SET_CONSTANT( C_BARBEAT_MARKER_OFFSET, 4 );
 		
 	/* pattern editor */
 	
@@ -327,7 +328,7 @@ void CommonSkin::set_default_extra() {
 	SET_COLOR(COLOR_PATTERN_SUBBEAT_LINE,GUI::Color(0x4f,0x5b,0x65));
 	SET_COLOR(COLOR_PATTERN_SELECTION,GUI::Color(0x28,0x5C,0x7C));
 	SET_COLOR(COLOR_PATTERN_BG,GUI::Color(0));	
-	
+
 	
 	SET_STYLEBOX(SB_PATTERN_BLOCK,GUI::StyleBox(3,GUI::Color(0x2d,0x27,0x39),GUI::Color(0xbd,0xd3,0xd7),GUI::Color(0xbd,0xd3,0xd7)));
      	//SET_STYLEBOX(SB_PATTERN_BLOCK_SHARED,get_stylebox(SB_GLOBAL_VIEW_LINKED)); //use the same

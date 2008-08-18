@@ -35,7 +35,23 @@ void TrackEditorScreen::track_block_changed(Track::Block *p_block) {
 	repaint(); // todo optimize later
 }
 
+void TrackEditorScreen::track_changed_callback(Track *p_track) {
+
+	for (int i=0;i<track_editors.size();i++) {
+	
+		if (track_editors[i]->get_track()!=p_track)
+			continue;
+		track_editors[i]->check_minimum_size();
+		track_editors[i]->update();
+	}
+}
+
 void TrackEditorScreen::rebuild() {
+
+	/* check if it's REALLY necesary to rebuild */
+	
+	bool all_same=true;
+	
 
 	if (hb)
 		delete hb;
@@ -94,6 +110,10 @@ void TrackEditorScreen::mouse_selection_update_callback(GUI::Point p_pos) {
 	}
 	
 }
+void TrackEditorScreen::block_changed_callback(Track::Block *p_block) {
+
+	repaint();
+}
 
 void TrackEditorScreen::repaint() {
 
@@ -141,7 +161,10 @@ TrackEditorScreen::TrackEditorScreen(Editor *p_editor,GUI_UpdateNotify *p_update
 	p_update_notify->cursor_track_changed_signal.connect( this, &TrackEditorScreen::cursor_track_changed_callback );
 	p_update_notify->window_snap_changed_signal.connect( this, &TrackEditorScreen::repaint );
 	p_update_notify->window_offset_changed_signal.connect( this, &TrackEditorScreen::repaint );
+	p_update_notify->track_list_repaint_signal.connect( this, &TrackEditorScreen::repaint );
 	p_update_notify->selection_changed_signal.connect( this, &TrackEditorScreen::repaint );
+	p_update_notify->track_block_changed_signal.connect( this, &TrackEditorScreen::block_changed_callback );
+	p_update_notify->track_changed_signal.connect( this, &TrackEditorScreen::track_changed_callback );
 	
 	rebuild();
 }

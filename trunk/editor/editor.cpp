@@ -11,6 +11,7 @@
 //
 #include "editor.h"
 #include "update_notify.h"
+#include "edit_commands.h"
 
 Editor *Editor::singleton=NULL;
 
@@ -19,6 +20,32 @@ Editor *Editor::get_singleton() {
 	return singleton;
 }
 
+
+void Editor::set_volume_mask_active(bool p_active) {
+
+	insert.volume_mask_active=p_active;
+}
+bool Editor::is_volume_mask_active() const {
+
+	return insert.volume_mask_active;
+}
+void Editor::set_volume_mask(int p_volume_mask) {
+
+	if (p_volume_mask<0)
+		p_volume_mask=0;
+	if (p_volume_mask>PatternTrack::Note::MAX_VOLUME)
+		p_volume_mask=PatternTrack::Note::MAX_VOLUME;
+		
+	insert.volume_mask=p_volume_mask;
+	
+}
+int Editor::get_volume_mask() const {
+
+	return insert.volume_mask;
+}
+
+
+/****/
 
 void Editor::adjust_window_offset() {
 
@@ -81,7 +108,7 @@ void Editor::set_cursor_field(int p_field) {
 	if (p_field<0)
 		p_field=0;
 	if (p_field>1)
-		p_field>1;		
+		p_field=1;		
 			
 	cursor.field=p_field;
 }
@@ -271,6 +298,17 @@ Editor::TrackEditMode Editor::get_track_edit_mode() const {
 }
 
 
+void Editor::set_bar_len_at_beat(int p_beat,int p_len) {
+
+	EditCommands::get_singleton()->barbeat_set_barlen(song,p_beat,p_len); // not really much to do....
+}
+
+
+void Editor::set_marker_at_beat(int p_beat,String p_marker) {
+
+	EditCommands::get_singleton()->marker_set(song,p_beat,p_marker); // not really much to do....
+}
+
 
 Editor::Editor(Song *p_song) {
 	
@@ -300,6 +338,8 @@ Editor::Editor(Song *p_song) {
 
 Editor::~Editor()
 {
+
+	clipboard.clear();
 }
 
 

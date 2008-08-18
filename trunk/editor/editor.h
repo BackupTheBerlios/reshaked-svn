@@ -14,6 +14,7 @@
 
 #include "engine/song.h"
 #include "engine/pattern_track.h"
+#include <list>
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -28,7 +29,34 @@ public:
 		EDIT_MODE_FRONT,
 		EDIT_MODE_BACK
 	};
+	
+	enum PasteMode {
+	
+		PASTE_OVERWRITE,
+		PASTE_MIX,
+		PASTE_INSERT
+	};
+	
+	enum SelectionCommand {
+	
+		SELECTION_SCALE_VOLUMES,
+		SELECTION_APPLY_VOLUME_MASK,
+		SELECTION_QUANTIZE_UP,
+		SELECTION_QUANTIZE_NEAREST,
+		SELECTION_QUANTIZE_DOWN,
+		SELECTION_TRANSPOSE_UP,
+		SELECTION_TRANSPOSE_UP_OCTAVE,
+		SELECTION_TRANSPOSE_DOWN,
+		SELECTION_TRANSPOSE_DOWN_OCTAVE,	
+	};
 public:
+
+	struct NoteListElement {
+	
+		PatternTrack::Position pos;
+		PatternTrack::Note note;
+	};
+
 	Song *song;
 
 	static Editor *singleton;
@@ -64,11 +92,32 @@ public:
 		bool active;
 	} selection,shift_selection;
 	
+	struct Clipboard {
+	
+		struct TrackData {
+			virtual ~TrackData() {};
+		};
+		
+		struct PatternTrackData : public TrackData {
+		
+			std::list<NoteListElement> notes;
+		};
+	
+		std::vector<TrackData*> tracks;
+		bool active;
+		Tick length;
+		
+		void clear() { for(int i=0;i<tracks.size();i++) delete tracks[i]; tracks.clear(); active=false; length=0; }
+		
+		Clipboard() { clear(); }
+	} clipboard;
+	
+	
 	Track *get_current_track() const;
 	
 	TrackEditMode track_edit_mode;
 		
-		
+	void pattern_track_set_note( int p_track, const PatternTrack::Position& p_pos, const PatternTrack::Note& p_note );
 	void pattern_set_note_at_cursor( PatternTrack::Note p_note);
 	PatternTrack::Note pattern_get_note_at_cursor() const;
 		
@@ -77,13 +126,26 @@ public:
 	void cursor_move_track_right();
 	void adjust_window_offset();
 	
+	void insert_at_pos(int p_track,int p_col, Tick p_tick,int p_rows=1);
+	void delete_at_pos(int p_track,int p_col, Tick p_tick);
+	
 	void selection_verify();
 	void shift_selection_check_begin(unsigned int &p_code);
 	void shift_selection_check_end();
+	
+	void clipboard_zap_area(const Selection& p_selection);
 public:
 
 	Song *get_song() const { return song; }
 
+	/* insertion */
+
+	void set_volume_mask_active(bool p_active);
+	bool is_volume_mask_active() const;
+	void set_volume_mask(int p_volume_mask);
+	int get_volume_mask() const;
+
+	/* cursor  */
 	void set_cursor_tick(Tick p_tick);
 	void set_cursor_track(int p_track);
 	void set_cursor_col(int p_col);
@@ -114,7 +176,7 @@ public:
 
 	void validate_cursor_pos();
 
-	/**/
+	/* selection */
 	
 	
 	void set_selection_begin_at_cursor();
@@ -135,12 +197,24 @@ public:
 	
 	void select_column_block_all();
 
-	static Editor *get_singleton();
+	void selection_command(SelectionCommand p_command,int p_param=0);
+
+	/* clipboard */
+	
+	void clipboard_copy();
+	void clipboard_cut();
+	void clipboard_paste(PasteMode p_mode);
+	
 
 	/* pattern editing */
 	
 	bool track_editor_keypress( unsigned int p_code ); // return true if event must be handled
 	
+	
+	void set_bar_len_at_beat(int p_beat,int p_len);
+	void set_marker_at_beat(int p_beat,String p_marker);
+	
+	static Editor *get_singleton();
 
 
 	Editor(Song *p_song);

@@ -387,7 +387,26 @@ void EditCommands::track_collapse(Track *p_track,bool p_collapsed) {
 
 }
 
+
+void EditCommands::_track_block_toggle_repeat_helper( Track::Block *p_block, bool p_repeat ) {
+
+	p_block->set_repeat_enabled( p_repeat );
+	
+	UpdateNotify::get_singleton()->track_block_changed( p_block );
+}
+
+void EditCommands::track_block_toggle_repeat( Track::Block *p_block, bool p_repeat ) {
+
+	CommandBase *cmd_do=command( this, &EditCommands::_track_block_toggle_repeat_helper, p_block,p_repeat);
+	CommandBase *cmd_undo=command( this, &EditCommands::_track_block_toggle_repeat_helper, p_block, p_block->is_repeat_enabled() );
+
+
+	add_action(String("Track Block - ")+(p_repeat?"Enable Repeat":"Disable Repeat"),cmd_do,cmd_undo);
+}
+
 /*******PATTERN*******/
+
+
 
 void EditCommands::_pattern_set_note_helper( PatternTrack::PatternBlock *p_block, PatternTrack::Position p_pos, PatternTrack::Note p_note ) {
 
@@ -421,6 +440,123 @@ void EditCommands::pattern_set_note( PatternTrack *p_pattern, int p_column, Tick
 		
 }
 
+
+void EditCommands::_pattern_set_visible_columns_helper( PatternTrack *p_pattern, int p_visible ) {
+
+	p_pattern->set_visible_columns( p_visible );
+	UpdateNotify::get_singleton()->track_changed( p_pattern );
+}
+
+void EditCommands::pattern_set_visible_columns( PatternTrack *p_pattern, int p_visible ) {
+
+	if (p_visible<1)
+		return;
+
+	begin_group("Pattern - Set Columns");
+	
+	// find notes to erase
+	std::list<PatternTrack::Position> to_erase;
+		
+	for (int i=0;i<p_pattern->get_block_count();i++) {
+	
+		PatternTrack::PatternBlock *block = dynamic_cast<PatternTrack::PatternBlock*>(p_pattern->get_block( i ));
+		
+		for (int j=0;j<block->get_note_count();j++) {
+		
+			PatternTrack::Position pos = block->get_note_pos( j );
+			
+			if (pos.column < p_visible)
+				continue;
+			
+			pos.tick += p_pattern->get_block_pos( i );
+			to_erase.push_back(pos);
+		}
+	}
+	
+	// erase them
+	std::list<PatternTrack::Position>::iterator I;
+	
+	for( I = to_erase.begin() ; I != to_erase.end() ; I++ ) {
+	
+		pattern_set_note( p_pattern, I->column, I->tick , PatternTrack::Note() );
+	}
+	
+	
+	CommandBase *cmd_do=command( this, &EditCommands::_pattern_set_visible_columns_helper, p_pattern, p_visible);
+	CommandBase *cmd_undo=command( this, &EditCommands::_pattern_set_visible_columns_helper, p_pattern, p_pattern->get_visible_columns());
+
+	add_action("set_columns",cmd_do,cmd_undo);
+	
+	end_group();
+
+
+}
+
+void EditCommands::_barbeat_set_barlen_helper( Song *p_song, int p_beat,int p_barlen ) {
+
+	p_song->get_bar_map().insert_bar_len_at_beat(p_beat,p_barlen);
+	UpdateNotify::get_singleton()->track_list_repaint();
+}
+
+void EditCommands::barbeat_set_barlen( Song *p_song, int p_beat,int p_barlen ) {
+
+	
+	int previous=0;
+	
+	int idx = p_song->get_bar_map().get_bar_len_idx_from_beat(p_beat);
+	
+	if (idx>=0) {
+	
+		if (p_song->get_bar_map().get_bar_len_idx_pos(idx)==p_beat) {
+		
+			previous=p_song->get_bar_map().get_bar_len_idx_len(idx);
+		}
+	}
+
+	CommandBase *cmd_do=command( this, &EditCommands::_barbeat_set_barlen_helper, p_song,p_beat,p_barlen);
+	CommandBase *cmd_undo=command( this, &EditCommands::_barbeat_set_barlen_helper, p_song, p_beat, previous);
+
+	add_action("Bar Length Map - Change at Beat ",cmd_do,cmd_undo);
+
+}
+
+
+void EditCommands::_marker_set_helper( Song *p_song, int p_beat, String p_marker ) {
+
+	if (p_marker=="") {
+	
+		int exact=p_song->get_marker_map().find_exact(p_beat);
+		if (exact!=-1) {
+		
+			p_song->get_marker_map().erase(exact);
+		}
+	} else {
+	
+		p_song->get_marker_map().insert(p_beat,p_marker);
+	}
+	
+	UpdateNotify::get_singleton()->track_list_repaint();
+}
+
+
+
+void EditCommands::marker_set( Song *p_song, int p_beat, String p_marker ) {
+
+	String previous="";
+	
+	int exact=p_song->get_marker_map().find_exact(p_beat);
+	
+	if (exact!=-1) {
+		
+		previous = p_song->get_marker_map()[exact];
+	}
+	 
+	CommandBase *cmd_do=command( this, &EditCommands::_marker_set_helper, p_song,p_beat,p_marker);
+	CommandBase *cmd_undo=command( this, &EditCommands::_marker_set_helper, p_song, p_beat, previous);
+
+	add_action("Marker Map - Change Marker",cmd_do,cmd_undo);	 
+	 
+}
 
 EditCommands::EditCommands()
 {

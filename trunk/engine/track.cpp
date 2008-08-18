@@ -130,7 +130,7 @@ int Track::get_block_at_pos( Tick p_pos ) const {
 	return block;
 }
 
-void Track::get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) const {
+bool Track::get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) const {
 
 	int idx = blocks.find(p_from);
 	int c=blocks.size();
@@ -156,6 +156,7 @@ void Track::get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to
 		idx++;
 	}
 	
+	return ((*p_from_res)!=-1);
 }
 
 bool Track::block_fits(Tick p_at_pos, Tick p_len,const std::list<int>& p_ignore_blocks) const {

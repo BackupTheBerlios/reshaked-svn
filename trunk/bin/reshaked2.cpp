@@ -92,6 +92,8 @@ int main_loop(SDL_Surface *screen,GUI::TimerSDL *timer,unsigned int flags,MainWi
 #endif
 				}
 			
+
+			
 				main_window->key( event.key.keysym.unicode, keycode_sdl_translator.get_code(event.key.keysym.sym), event.key.state==SDL_PRESSED,false, mod );
 				
 				

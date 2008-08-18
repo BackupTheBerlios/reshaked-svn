@@ -15,7 +15,30 @@
 
 void BarMap::insert_bar_len_at_beat(int p_beat,int p_len) {
 	
-	bar_len_map.insert(p_beat,p_len);
+	bool exact=false;
+	
+	int bar_idx=bar_len_map.find(p_beat);
+	
+	if (bar_idx==-1) { // nonexisting
+	
+		if (p_len>0) { // if not zero, add
+		
+			bar_len_map.insert(p_beat,p_len);
+		}
+	} else {
+	
+		if (bar_len_map.get_pos( bar_idx )==p_beat && p_len<=0) {  // exact and erase
+		
+			if (p_beat==0) // can't erase the first one
+				return; 
+			bar_len_map.erase( bar_idx );
+		} else if (p_len>0) { // inset 
+		
+			bar_len_map.insert( p_beat, p_len );
+		}
+	}
+	
+
 }
 
 

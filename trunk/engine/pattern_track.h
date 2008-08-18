@@ -21,6 +21,10 @@
 class PatternTrack : public Track {
 public:
 	class PatternBlock;
+	enum {
+	
+		MAX_VISIBLE_COLUMNS=16
+	};
 
 private:
 
@@ -99,7 +103,7 @@ public:
 			if (to<0 || notes.get_pos(to).tick<p_from)
 				return false; // out of range
 			
-			if (notes.get_pos(from).tick<p_from)
+			if (from<0 || notes.get_pos(from).tick<p_from)
 				from++; // if from is less than first event, 
 				
 			
@@ -167,6 +171,7 @@ public:
 	virtual Block * create_block(BlockCreationData *p_data=NULL); 
 	virtual BlockCreationBehavior get_block_creation_behavior() const; 
 	virtual bool is_block_motion_snapped() const; 
+	void set_visible_columns(int p_visible);
 	virtual int get_visible_columns() const;
 
 	static AudioNode *creation_func(int p_channels,const AudioNodeInfo *p_info);

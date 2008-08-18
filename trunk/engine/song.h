@@ -26,6 +26,7 @@ class Song {
 	
 	std::vector<Track*> tracks;
 	
+	ValueStream<int,String> marker_map;
 	BarMap bar_map;
 public:
 
@@ -36,6 +37,7 @@ public:
 	int find_track_pos(Track *p_track) const;
 	
 	BarMap& get_bar_map();
+	ValueStream<int,String>& get_marker_map();
 
 	int process(int p_frames);
 

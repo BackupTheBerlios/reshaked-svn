@@ -18,6 +18,18 @@
 #include "editor/edit_commands.h"
 
 
+void Editor::pattern_track_set_note( int p_track, const PatternTrack::Position& p_pos, const PatternTrack::Note& p_note ) {
+
+
+	PatternTrack *pt = dynamic_cast<PatternTrack*>( song->get_track( p_track ) );
+	
+	if (!pt)
+		return;
+		
+	EditCommands::get_singleton()->pattern_set_note( pt, p_pos.column, p_pos.tick, p_note );		
+
+}
+
 void Editor::pattern_set_note_at_cursor( PatternTrack::Note p_note) {
 
 	PatternTrack *pt = dynamic_cast<PatternTrack*>( song->get_track( cursor.track ) );
@@ -53,8 +65,132 @@ PatternTrack::Note Editor::pattern_get_note_at_cursor() const {
 
 }
 
+void Editor::insert_at_pos(int p_track,int p_col, Tick p_tick,int p_rows) {
+
+	PatternTrack *pt = dynamic_cast<PatternTrack*>( song->get_track( p_track ) );
+	
+	if (pt) {
+
+		int blk_idx=pt->get_block_at_pos( p_tick );
+		if (blk_idx<0)
+			return;
+			
+		Tick block_pos=pt->get_block_pos(blk_idx);
+		
+			
+		PatternTrack::PatternBlock *pattern =  dynamic_cast<PatternTrack::PatternBlock*>(pt->get_block( blk_idx ));
+		
+		if (!pattern)
+			return;
+		int from,to;
+		
+		if (!pattern->get_notes_in_local_range(p_tick-block_pos,pattern->get_length()-1,&from,&to))
+			return;
+		
+		std::list<NoteListElement> notelist;
+		
+		for(int i=from;i<=to;i++) {
+		
+			if (pattern->get_note_pos(i).column!=p_col)
+				continue;
+			NoteListElement nle;
+			nle.pos=pattern->get_note_pos(i);
+			nle.pos.tick+=block_pos;
+			nle.note=pattern->get_note(i);
+			
+			notelist.push_back(nle);
+			
+		}
+		
+		EditCommands::get_singleton()->begin_group("Pattern Track - Insert");
+		
+		for(std::list<NoteListElement>::iterator I=notelist.begin();I!=notelist.end();I++) {
+		
+			
+			pattern_track_set_note( p_track, I->pos, PatternTrack::Note() ); // bye note
+		}
+					
+		for(std::list<NoteListElement>::iterator I=notelist.begin();I!=notelist.end();I++) {
+		
+			PatternTrack::Position pos=I->pos;
+			pos.tick+=p_rows*get_ticks_per_row();
+			if (pos.tick>=(block_pos+pattern->get_length()))
+				continue; // don't insert past end of block
+				
+			pattern_track_set_note( p_track, pos, I->note ); // hello note
+		}
+		
+		EditCommands::get_singleton()->end_group();
+	}
+
+}
+void Editor::delete_at_pos(int p_track,int p_col, Tick p_tick) {
+
+	PatternTrack *pt = dynamic_cast<PatternTrack*>( song->get_track( p_track ) );
+	
+	if (pt) {
+
+		int blk_idx=pt->get_block_at_pos( p_tick );
+		if (blk_idx<0)
+			return;
+			
+		Tick block_pos=pt->get_block_pos(blk_idx);
+		
+			
+		PatternTrack::PatternBlock *pattern =  dynamic_cast<PatternTrack::PatternBlock*>(pt->get_block( blk_idx ));
+		
+		if (!pattern)
+			return;
+		int from,to;
+		
+		if (!pattern->get_notes_in_local_range(p_tick-block_pos,pattern->get_length()-1,&from,&to))
+			return;
+		
+		std::list<NoteListElement> notelist;
+		
+		for(int i=from;i<=to;i++) {
+		
+			if (pattern->get_note_pos(i).column!=p_col)
+				continue;
+			NoteListElement nle;
+			nle.pos=pattern->get_note_pos(i);
+			nle.pos.tick+=block_pos;
+			nle.note=pattern->get_note(i);
+			
+			notelist.push_back(nle);
+			
+		}
+		
+		EditCommands::get_singleton()->begin_group("Pattern Track - Insert");
+		
+		for(std::list<NoteListElement>::iterator I=notelist.begin();I!=notelist.end();I++) {
+		
+			
+			pattern_track_set_note( p_track, I->pos, PatternTrack::Note() ); // bye note
+		}
+					
+		for(std::list<NoteListElement>::iterator I=notelist.begin();I!=notelist.end();I++) {
+		
+			PatternTrack::Position pos=I->pos;
+			pos.tick-=get_ticks_per_row();
+			if (pos.tick<p_tick)
+				continue; // don't insert past end of block
+				
+			pattern_track_set_note( p_track, pos, I->note ); // hello note
+		}
+		
+		EditCommands::get_singleton()->end_group();
+	}
+
+}
+
+
 bool Editor::pattern_editor_keypress( unsigned int p_code ) {
 
+	PatternTrack *pt = dynamic_cast<PatternTrack*>( song->get_track( cursor.track ) );
+	
+	if (!pt)
+		return false;
 	
 	if (track_edit_mode==EDIT_MODE_FRONT) {
 		// front edit
@@ -86,8 +222,12 @@ bool Editor::pattern_editor_keypress( unsigned int p_code ) {
 				PatternTrack::Note note=pattern_get_note_at_cursor();
 				
 				note.note=note_entry;
-				if (note.is_note() || insert.volume_mask_active)
-					note.volume=insert.volume_mask;
+				if (note.is_note()) {
+					if (insert.volume_mask_active)
+						note.volume=insert.volume_mask;
+					else 
+						note.volume=99;
+				}
 					
 				
 				pattern_set_note_at_cursor( note );
@@ -148,26 +288,55 @@ bool Editor::pattern_editor_keypress( unsigned int p_code ) {
 				
 				}
 				
+				insert.volume_mask=note.volume;
+				UpdateNotify::get_singleton()->volume_mask_changed();
+				
 				return true;
 			}						
 		}				
 	}
 	
-	if (p_code==KEYBIND("note_entry/note_off")) {
-		
-		pattern_set_note_at_cursor( PatternTrack::Note( PatternTrack::Note::NOTE_OFF) );
-		set_cursor_row( get_cursor_row() + get_cursor_step() );			
-		return true;
-	}
+	bool handled=true;
 	
-	if (p_code==KEYBIND("note_entry/clear_field")) {
-		
-		pattern_set_note_at_cursor( PatternTrack::Note() );
-		set_cursor_row( get_cursor_row() + get_cursor_step() );
-		return true;
-	}
+	SWITCH(p_code) 
 	
-	return false;
+		
+		CASE( KEYBIND("note_entry/note_off"))  
+			
+			pattern_set_note_at_cursor( PatternTrack::Note( PatternTrack::Note::NOTE_OFF) );
+			set_cursor_row( get_cursor_row() + get_cursor_step() );			
+			
+		
+		CASE( KEYBIND("note_entry/clear_field"))  
+			
+			pattern_set_note_at_cursor( PatternTrack::Note() );
+			set_cursor_row( get_cursor_row() + get_cursor_step() );
+			
+		CASE( KEYBIND("editor/insert"))  
+						
+			insert_at_pos(cursor.track,cursor.col,cursor.tick);
+			
+		CASE( KEYBIND("editor/delete"))  
+					
+			delete_at_pos(cursor.track,cursor.col,cursor.tick);
+		CASE( KEYBIND("editor/add_column"))  
+		
+			EditCommands::get_singleton()->pattern_set_visible_columns( pt, pt->get_visible_columns() +1 );
+			
+		CASE( KEYBIND("editor/remove_column"))  
+		
+			EditCommands::get_singleton()->pattern_set_visible_columns( pt, pt->get_visible_columns() -1 );
+					
+		CASE( KEYBIND("note_entry/toggle_volume_mask"))  
+					
+			insert.volume_mask_active=!insert.volume_mask_active;
+			UpdateNotify::get_singleton()->volume_mask_changed();
+					
+		DEFAULT
+			handled=false;
+	END_SWITCH
+	
+	return handled;
 }
 
 
@@ -242,7 +411,7 @@ bool Editor::track_editor_keypress( unsigned int p_code ) {
 	
 	/* shift select */
 	
-	bool shift_select_check;
+
 	
 	shift_selection_check_begin(p_code);
 		
@@ -257,9 +426,11 @@ bool Editor::track_editor_keypress( unsigned int p_code ) {
 			
 			if (is_pattern && cursor.field>0)
 				set_cursor_field( 0 );
-			else if (cursor.col>0)
+			else if (cursor.col>0) {
 				set_cursor_col( cursor.col-1 );
-			else if (cursor.track>0) {
+				if (is_pattern)
+					set_cursor_field( 1 );
+			} else if (cursor.track>0) {
 				cursor_move_track_left();
 				// enter new track to the left			
 			}
@@ -267,9 +438,11 @@ bool Editor::track_editor_keypress( unsigned int p_code ) {
 		
 			if (is_pattern && cursor.field==0)
 				set_cursor_field( 1 );
-			else if (cursor.col < (track->get_visible_columns()-1))
+			else if (cursor.col < (track->get_visible_columns()-1)) {
 				set_cursor_col( cursor.col+1 );
-			else if (cursor.track< (song->get_track_count()-1)) {
+				if (is_pattern)
+					set_cursor_field( 0 );
+			} else if (cursor.track< (song->get_track_count()-1)) {
 				cursor_move_track_right();
 				// enter new track to the right
 			}
@@ -471,11 +644,11 @@ bool Editor::track_editor_keypress( unsigned int p_code ) {
 		
 			set_cursor_zoom_divisor( cursor.zoom_divisor+2);
 			
-		CASE( KEYBIND("editor/selection_begin") )
+		CASE( KEYBIND("editor/selection_block_begin") )
 		
 			set_selection_begin_at_cursor();
 				
-		CASE( KEYBIND("editor/selection_end") )
+		CASE( KEYBIND("editor/selection_block_end") )
 		
 			set_selection_end_at_cursor();
 				
@@ -494,19 +667,76 @@ bool Editor::track_editor_keypress( unsigned int p_code ) {
 			else
 				track_edit_mode=EDIT_MODE_FRONT;
 
-			UpdateNotify::get_singleton()->track_list_changed();
+			UpdateNotify::get_singleton()->track_list_repaint();
 			
 		CASE( KEYBIND("note_entry/toggle_volume_mask") )
 			
 			insert.volume_mask_active=!insert.volume_mask_active;
 			UpdateNotify::get_singleton()->volume_mask_changed();
-			/*
-	key_bindings.add_key_bind("editor/selection_copy","Selection Copy",GUI::KEY_MASK_ALT+GUI::KEY_c);
-	key_bindings.add_key_bind("editor/selection_paste_insert","Selection Paste Insert",GUI::KEY_MASK_ALT+GUI::KEY_p);
-	key_bindings.add_key_bind("editor/selection_paste_overwrite","Selection Paste Overwrite",GUI::KEY_MASK_ALT+GUI::KEY_o);
-	key_bindings.add_key_bind("editor/selection_paste_mix","Selection Paste Mix",GUI::KEY_MASK_ALT+GUI::KEY_m);
-	key_bindings.add_key_bind("editor/selection_zap","Erase Data Under Selection",GUI::KEY_MASK_ALT+GUI::KEY_z);
-			*/
+		CASE( KEYBIND("editor/selection_copy") )
+		
+			clipboard_copy();
+		CASE( KEYBIND("editor/selection_paste_insert") )
+		
+			clipboard_paste( PASTE_INSERT );
+		CASE( KEYBIND("editor/selection_paste_overwrite") )
+		
+			clipboard_paste( PASTE_OVERWRITE );
+			
+		CASE( KEYBIND("editor/selection_paste_mix") )
+		
+			clipboard_paste( PASTE_MIX );
+		CASE( KEYBIND("editor/selection_zap") )
+		
+			clipboard_cut();
+			
+		CASE( KEYBIND("editor/quantize_up") )
+		
+			selection_command( SELECTION_QUANTIZE_UP );
+		CASE( KEYBIND("editor/quantize_nearest") )
+		
+			selection_command( SELECTION_QUANTIZE_NEAREST );
+		CASE( KEYBIND("editor/quantize_down") )
+		
+			selection_command( SELECTION_QUANTIZE_DOWN );
+		CASE( KEYBIND("editor/transpose_up") )
+		
+			selection_command( SELECTION_TRANSPOSE_UP );
+		CASE( KEYBIND("editor/transpose_up_octave") )
+		
+			selection_command( SELECTION_TRANSPOSE_UP_OCTAVE );
+		CASE( KEYBIND("editor/transpose_down") )
+		
+			selection_command( SELECTION_TRANSPOSE_DOWN );
+		CASE( KEYBIND("editor/transpose_down_octave") )
+		
+			selection_command( SELECTION_TRANSPOSE_DOWN_OCTAVE );
+		CASE( KEYBIND("editor/scale_volumes") )
+		
+			UpdateNotify::get_singleton()->editor_volume_scale_request();
+		
+		CASE( KEYBIND("editor/apply_volume_mask") )
+			
+			selection_command( SELECTION_APPLY_VOLUME_MASK );
+			
+		CASE( KEYBIND("editor/toggle_block_repeat") )
+		
+			if (cursor.track<0 || cursor.track>=song->get_track_count())
+				break;
+				
+			int idx = song->get_track( cursor.track )->find_block_at_pos( cursor.tick );
+			if (idx<0)
+				break;
+				
+			Track::Block *b=song->get_track( cursor.track )->get_block( idx );
+			EditCommands::get_singleton()->track_block_toggle_repeat( b, !b->is_repeat_enabled() );
+			
+		CASE( KEYBIND("editor/bar_length_at_pos" ) )
+		
+			UpdateNotify::get_singleton()->editor_change_bar_len_request();
+		CASE( KEYBIND("editor/edit_marker" ) )
+		
+			UpdateNotify::get_singleton()->editor_change_marker_request();
 		DEFAULT
 		
 			handled=false;

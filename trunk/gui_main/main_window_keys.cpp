@@ -78,9 +78,11 @@ void MainWindow::init_key_bindings() {
 	
 	key_bindings.add_key_bind("editor/transpose_up","Transpose Up",GUI::KEY_MASK_ALT+GUI::KEY_q);
 	key_bindings.add_key_bind("editor/transpose_down","Transpose Down",GUI::KEY_MASK_ALT+GUI::KEY_a);
+	key_bindings.add_key_bind("editor/transpose_up_octave","Transpose Up Octave",GUI::KEY_MASK_SHIFT+GUI::KEY_MASK_ALT+GUI::KEY_q);
+	key_bindings.add_key_bind("editor/transpose_down_octave","Transpose Down Octave",GUI::KEY_MASK_SHIFT+GUI::KEY_MASK_ALT+GUI::KEY_a);
 	
-	key_bindings.add_key_bind("editor/selection_begin","Selection Begin",GUI::KEY_MASK_ALT+GUI::KEY_b);
-	key_bindings.add_key_bind("editor/selection_end","Selection Begin",GUI::KEY_MASK_ALT+GUI::KEY_e);
+	key_bindings.add_key_bind("editor/selection_block_begin","Selection Block Begin",GUI::KEY_MASK_ALT+GUI::KEY_b);
+	key_bindings.add_key_bind("editor/selection_block_end","Selection Block Begin",GUI::KEY_MASK_ALT+GUI::KEY_e);
 	key_bindings.add_key_bind("editor/selection_copy","Selection Copy",GUI::KEY_MASK_ALT+GUI::KEY_c);
 	key_bindings.add_key_bind("editor/selection_paste_insert","Selection Paste Insert",GUI::KEY_MASK_ALT+GUI::KEY_p);
 	key_bindings.add_key_bind("editor/selection_paste_overwrite","Selection Paste Overwrite",GUI::KEY_MASK_ALT+GUI::KEY_o);
@@ -95,15 +97,13 @@ void MainWindow::init_key_bindings() {
 	key_bindings.add_key_bind("editor/selection_right","Selection Move Right",GUI::KEY_MASK_SHIFT+GUI::KEY_RIGHT,true);
 	key_bindings.add_key_bind("editor/selection_page_up","Selection Page Up",GUI::KEY_MASK_SHIFT+GUI::KEY_PAGEUP,true);
 	key_bindings.add_key_bind("editor/selection_page_down","Selection Page Down",GUI::KEY_MASK_SHIFT+GUI::KEY_PAGEDOWN,true);
-	key_bindings.add_key_bind("editor/selection_move_home","Selection Home",GUI::KEY_MASK_SHIFT+GUI::KEY_HOME,true);
-	key_bindings.add_key_bind("editor/selection_move_end","Selection End",GUI::KEY_MASK_SHIFT+GUI::KEY_END,true);
+	key_bindings.add_key_bind("editor/selection_home","Selection Home",GUI::KEY_MASK_SHIFT+GUI::KEY_HOME,true);
+	key_bindings.add_key_bind("editor/selection_end","Selection End",GUI::KEY_MASK_SHIFT+GUI::KEY_END,true);
 	
-	key_bindings.add_key_bind("editor/selection_scale_volumes","Selection Scale Volumes",GUI::KEY_MASK_ALT+GUI::KEY_j);
+	key_bindings.add_key_bind("editor/scale_volumes","Scale Volumes",GUI::KEY_MASK_ALT+GUI::KEY_j);
 	
-	key_bindings.add_key_bind("editor/selection_apply_volume_mask","Selection Apply Volume Mask",GUI::KEY_MASK_ALT+GUI::KEY_v);
-	
-	key_bindings.add_key_bind("editor/delete","Delete",GUI::KEY_DELETE);
-	
+	key_bindings.add_key_bind("editor/apply_volume_mask","Apply Volume Mask",GUI::KEY_MASK_ALT+GUI::KEY_v);
+		
 	key_bindings.add_key_bind("editor/move_note_up","Move Note Up",GUI::KEY_MASK_CTRL+GUI::KEY_UP,true);
 	key_bindings.add_key_bind("editor/move_note_down","Move Note Down",GUI::KEY_MASK_CTRL+GUI::KEY_DOWN,true);
 
@@ -130,7 +130,8 @@ void MainWindow::init_key_bindings() {
 	key_bindings.add_key_bind("editor/set_loop_end","Set Loop End",GUI::KEY_MASK_CTRL+GUI::KEY_r);
 	key_bindings.add_key_bind("editor/selection_to_loop","Selection -> Loop",GUI::KEY_MASK_CTRL+GUI::KEY_l);
 	key_bindings.add_key_bind("editor/selection_create_blocks","Selection -> Create Blocks",GUI::KEY_MASK_CTRL+GUI::KEY_a);
-	key_bindings.add_key_bind("editor/toggle_block_repeat","Toggle Block Repeat",GUI::KEY_MASK_CTRL+GUI::KEY_MASK_SHIFT+GUI::KEY_r);
+	key_bindings.add_key_bind("editor/toggle_block_repeat","Toggle Block Repeat",GUI::KEY_MASK_ALT+GUI::KEY_r);
+	key_bindings.add_key_bind("editor/delete_block","Delete Block",GUI::KEY_MASK_CTRL+GUI::KEY_MASK_SHIFT+GUI::KEY_d);
 	
 	
 	key_bindings.add_key_bind("global/raise_octave","Raise Octave",GUI::KEY_ASTERISK);

@@ -188,8 +188,6 @@ protected:
 		~Action() { if (undo_method) delete undo_method; if (redo_method) delete redo_method; }
 	};
 
-	void begin_group(String p_name);
-	void end_group();
 	void add_action(String p_description,CommandBase *p_do_method, CommandBase *p_undo_method);
 
 private:
@@ -202,6 +200,9 @@ private:
 	};
 
 public:
+	
+	void begin_group(String p_name);
+	void end_group();
 	
 	void clean();
 

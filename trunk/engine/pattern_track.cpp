@@ -61,6 +61,17 @@ bool PatternTrack::is_block_motion_snapped() const {
 }
 
 
+void PatternTrack::set_visible_columns(int p_visible) {
+
+	if (p_visible<1)
+		p_visible=1;
+	if (p_visible>MAX_VISIBLE_COLUMNS)
+		p_visible=MAX_VISIBLE_COLUMNS;
+		
+	visible_columns=p_visible;
+		
+}
+
 int PatternTrack::get_visible_columns() const {
 
 	return visible_columns;

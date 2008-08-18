@@ -34,7 +34,7 @@ protected:
 	
 	int get_row_height();
 		
-	
+
 public: //signals
 	GUI::Signal< GUI::Method1<GUI::Point> > mouse_selecting_signal;
 	

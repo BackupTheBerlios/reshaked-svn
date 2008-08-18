@@ -63,6 +63,12 @@ BarMap& Song::get_bar_map() {
 
 	return bar_map;
 }
+
+ValueStream<int,String>& Song::get_marker_map() {
+
+	return marker_map;
+}
+
 int Song::process(int p_frames) {
 
 	return audio_graph.process(p_frames);
@@ -72,6 +78,7 @@ Song::Song() {
 
 	ERR_FAIL_COND( singleton );
 	singleton=this;
+	marker_map.insert(0,"Markers");
 }
 
 
