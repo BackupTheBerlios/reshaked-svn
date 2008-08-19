@@ -93,6 +93,22 @@ int Song::get_loop_end() const  {
 	return loop.end;
 }
 
+void Song::set_initial_tempo(float p_bpm) {
+
+	if (p_bpm<32)
+		p_bpm=32;
+		
+	if (p_bpm>255)
+		p_bpm=255;
+	
+	initial_tempo=p_bpm;
+}
+
+float Song::get_initial_tempo() const {
+
+	return initial_tempo;
+}
+
 int Song::process(int p_frames) {
 
 
@@ -106,6 +122,7 @@ Song::Song() {
 	marker_map.insert(0,"Markers");
 	loop.begin=0;
 	loop.end=0;
+	initial_tempo=125;
 }
 
 

@@ -76,6 +76,11 @@ void GUI_UpdateNotify::track_block_changed(Track::Block *p_block) {
 	track_block_changed_signal.call( p_block );
 }
 
+void GUI_UpdateNotify::song_initial_tempo_changed() {
+
+	song_initial_tempo_changed_signal.call();
+}
+
 
 void GUI_UpdateNotify::editor_volume_scale_request() {
 

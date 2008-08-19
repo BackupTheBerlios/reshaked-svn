@@ -146,6 +146,18 @@ void TrackEditorScreen::cursor_track_changed_callback(int p_from,int p_to) {
 
 }
 
+void TrackEditorScreen::notify_enter() {
+
+	for(int i=0;i<editor->get_song()->get_track_count();i++) {
+	
+		
+		if (track_editors[i]->is_visible() && editor->get_cursor_track()==i)
+			track_editors[i]->get_focus();
+
+	}
+
+}
+
 TrackEditorScreen::TrackEditorScreen(Editor *p_editor,GUI_UpdateNotify *p_update_notify) {
 
 	editor=p_editor;

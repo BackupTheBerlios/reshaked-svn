@@ -274,7 +274,51 @@ void AddNodeDialog::create_node() {
 	hide();
 }
 
-void AddNodeDialog::show() {
+void AddNodeDialog::filter_changed(int p_to_which) {
+
+	ERR_FAIL_INDEX(p_to_which,filters.size());
+	
+	String filter = filters[p_to_which];
+	
+	GUI::ChildIterator I = vbox->first_child();
+	
+	while(!I.end()) {
+	
+		NodeInfoItem *nii = dynamic_cast<NodeInfoItem*>( I.get() );
+		
+		if (nii) {
+		
+			if (filter=="All" || nii->info->category==filter) {
+				
+				nii->show();
+			} else {
+			
+				nii->hide();			
+			}
+		}
+		
+		I=vbox->next_child(I);
+	}
+
+}
+
+
+String AddNodeDialog::get_current_category() {
+
+	ERR_FAIL_INDEX_V( filter_group.get_current(), filters.size(), "All");
+	return filters[ filter_group.get_current() ];
+}
+
+void AddNodeDialog::show(String p_pre_type) {
+
+	for (int i=0;i<filters.size();i++) {
+	
+		if (filters[i]==p_pre_type) {
+		
+			filter_group.set_current(i);
+			break;
+		}
+	}
 
 	Window::show();
 	fix_name();
@@ -290,22 +334,57 @@ AddNodeDialog::AddNodeDialog(GUI::Window *p_parent,Song *p_song) : GUI::Window(p
 	
 	GUI::MarginGroup *mg = wb->add( new GUI::MarginGroup("Audio Node Type:"),1 );
 			
+	GUI::HBoxContainer *filter_hb=mg->add( new GUI::CenterContainer )->set( new GUI::HBoxContainer );
 	GUI::ScrollBox *scroll_box = mg->add( new GUI::ScrollBox,1 );
 	scroll_box->set_expand_h(true);
 	scroll_box->set_expand_v(true);
-	GUI::VBoxContainer * vbox = scroll_box->set( new GUI::VBoxContainer );
+	vbox = scroll_box->set( new GUI::VBoxContainer );
 	vbox->set_separation(0);
 				
+	filters.push_back("All");
+					
 	for (int i=0;i<AudioNodeRegistry::get_node_info_count();i++) {
 	
+		String category=AudioNodeRegistry::get_node_info(i)->category;
+		
+		bool has_filter=false;
+		for (int j=0;j<filters.size();j++) {
+		
+			if (filters[j]==category) {
+			
+				has_filter=true;
+				break;
+			}
+		}
+		
+		
+		if (!has_filter) {
+		
+			filters.push_back(category);
+		}
+		
 		NodeInfoItem *nii = new NodeInfoItem( AudioNodeRegistry::get_node_info(i) );
 		nii->current=&selected;
 		vbox->add( nii );
 		nii->selected.connect( this, &AddNodeDialog::node_selected_callback );
 	}
 				
+	
 	vbox->add( new _BGFILL, 1 );
+					
+					
+	for (int i=0;i<filters.size();i++) {
+	
+		filter_group.add_button( filter_hb->add( new GUI::Button(filters[i]) ) )->set_focus_mode( GUI::FOCUS_NONE );
+	}
 				
+	filters.push_back("Favorites");
+	
+	GUI::BaseButton *fave_button = filter_group.add_button( filter_hb->add( new GUI::Button ) );
+	fave_button->add_bitmap_override( GUI::BITMAP_BUTTON_DEFAULT_ICON, BITMAP_ICON_FAVORITE );
+	fave_button->set_focus_mode( GUI::FOCUS_NONE );
+				
+	filter_group.current_button_changed_signal.connect( this, &AddNodeDialog::filter_changed );
 	GUI::HBoxContainer * hbc = wb->add( new GUI::HBoxContainer );
 				
 	mg = hbc->add( new GUI::MarginGroup("Name:"), 1 );
@@ -322,7 +401,6 @@ AddNodeDialog::AddNodeDialog(GUI::Window *p_parent,Song *p_song) : GUI::Window(p
 	
 	add->pressed_signal.connect( this, &AddNodeDialog::create_node );
 	
-		
 }
 
 

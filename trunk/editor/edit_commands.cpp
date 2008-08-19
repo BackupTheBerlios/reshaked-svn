@@ -404,6 +404,22 @@ void EditCommands::song_swap_tracks(Song *p_song, int p_track, int p_with_track)
 		
 }
 
+
+void EditCommands::_song_change_initial_tempo_helper(Song *p_song, float p_bpm) {
+
+	p_song->set_initial_tempo( p_bpm );
+}
+
+
+void EditCommands::song_change_initial_tempo(Song *p_song, float p_bpm) {
+
+	CommandBase *cmd_do=command( this, &EditCommands::_song_change_initial_tempo_helper, p_song, p_bpm );
+	CommandBase *cmd_undo=command( this, &EditCommands::_song_change_initial_tempo_helper, p_song, p_song->get_initial_tempo() );
+
+	add_action(String("Song - Change Initial Tempo (BPM)"),cmd_do,cmd_undo);
+
+	
+}
 /******* TRACK ********/
 
 void EditCommands::_track_collapse_helper(Track *p_track,bool p_collapsed) {

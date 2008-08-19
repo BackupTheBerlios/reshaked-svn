@@ -29,6 +29,7 @@ class Song {
 	ValueStream<int,String> marker_map;
 	BarMap bar_map;
 	
+	float initial_tempo;
 	
 	struct Loop {
 	
@@ -49,6 +50,8 @@ public:
 
 	int process(int p_frames);
 
+	void set_initial_tempo(float p_bpm);
+	float get_initial_tempo() const;
 
 	void set_loop_begin(int p_loop_begin);
 	int get_loop_begin() const;

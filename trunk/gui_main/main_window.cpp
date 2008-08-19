@@ -18,10 +18,85 @@
 
 #include "nodes/register_nodes.h"
 #include "gui_nodes/register_node_uis.h"
+#include "editor/edit_commands.h"
 
 void MainWindow::init(String p_config_file) {
 
 
+}
+
+void MainWindow::initial_tempo_changed() {
+
+	tempo_spin->get_range()->set( song.get_initial_tempo() );
+}
+
+void MainWindow::tempo_spin_changed(double p_bpm) {
+
+	static bool updating=false;
+	
+	if (updating)
+		return;
+		
+	updating=true;
+		
+	EditCommands::get_singleton()->song_change_initial_tempo(&song,(int)p_bpm);
+	
+	updating=false;
+}
+
+void MainWindow::octave_spin_changed(double p_to_octave) {
+
+	editor->set_octave((int)p_to_octave);
+}
+
+void MainWindow::unhandled_key(unsigned long p_unicode, unsigned long p_scan_code,bool p_press,bool p_repeat,int p_modifier_mask) {
+
+
+	if (!p_press)
+		return;
+		
+	unsigned int code = p_scan_code | p_modifier_mask;
+	//printf("fuck.. unhandled key code %i, trackview %i\n",code,KEYBIND("global/track_view"));
+
+	SWITCH( code )
+	
+		CASE( KEYBIND("global/raise_octave") )
+		
+
+			octave_spin->get_range()->step_increment();
+		CASE( KEYBIND("global/lower_octave") )
+
+			octave_spin->get_range()->step_decrement();
+			
+		CASE( KEYBIND("global/add_node") )
+		
+			add_node_callback();
+			
+		CASE( KEYBIND("global/song_view") )
+		
+			tab_bar->select_tab( TAB_GLOBAL );
+			
+		CASE( KEYBIND("global/track_view") )
+		
+			tab_bar->select_tab( TAB_TRACKS );
+			track_editor_screen->notify_enter();
+			
+		CASE( KEYBIND("global/graph_view") )
+		
+			tab_bar->select_tab( TAB_GRAPH );
+						
+	END_SWITCH		
+}
+void MainWindow::tab_changed(int p_tab) {
+
+	
+}
+
+void MainWindow::pre_tab_changed(int p_tab) {
+
+	if (tab_bar->get_selected_tab()==TAB_GRAPH)
+		last_graph_add_category=add_node_dialog->get_current_category();
+		
 }
 
 void MainWindow::file_menu_callback(int p_option) {
@@ -34,7 +109,11 @@ void MainWindow::control_callback(int p_option) {
 
 void MainWindow::add_node_callback() {
 
-	add_node_dialog->show();
+	if (tab_bar->get_selected_tab()!=TAB_GRAPH)
+		add_node_dialog->show("Tracks");
+	else
+		add_node_dialog->show(last_graph_add_category);
+	
 }
 
 void MainWindow::quit_request() {
@@ -81,7 +160,7 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 	
 	tab_bar = hb->add( new GUI::TabBar );
 	
-	tab_bar->add_tab("Global");
+	tab_bar->add_tab("Song");
 	tab_bar->add_tab("Tracks");
 	tab_bar->add_tab("Graph");
 		
@@ -108,6 +187,18 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 	
 	hb->add( new GUI::VSeparator );
 		
+	hb->add( new GUI::Icon )->add_bitmap_override( GUI::BITMAP_ICON_DEFAULT, BITMAP_ICON_TEMPO );
+	tempo_spin = hb->add(new GUI::SpinBox);
+	tempo_spin->get_range()->config(32,255,125,1);
+	tempo_spin->get_range()->value_changed_signal.connect( this, &MainWindow::tempo_spin_changed );
+	
+	hb->add( new GUI::VSeparator );
+	hb->add( new GUI::Icon )->add_bitmap_override( GUI::BITMAP_ICON_DEFAULT, BITMAP_ICON_OCTAVE );	
+	octave_spin = hb->add(new GUI::SpinBox);
+	octave_spin->get_range()->config(0,9,4,1);
+	octave_spin->get_range()->value_changed_signal.connect( this, &MainWindow::octave_spin_changed );
+		
+	hb->add( new GUI::VSeparator );
 		
 	GUI::MenuButton * preferences = hb->add( new GUI::MenuButton( p_skin->get_bitmap( BITMAP_ICON_PREFERENCES) )  );
 	GUI::MenuButton * help = hb->add( new GUI::MenuButton( p_skin->get_bitmap( BITMAP_ICON_HELP) )  );
@@ -136,8 +227,9 @@ MainWindow::MainWindow(GUI::Painter *p_painter,GUI::Timer *p_timer,GUI::Skin *p_
 	add_node_dialog = new AddNodeDialog(this,&song);
 	add_node_dialog->hide();
 	quit=false;
-	
-	
+	key_unhandled_signal.connect( this, &MainWindow::unhandled_key);
+	gui_update_notify.song_initial_tempo_changed_signal.connect( this, &MainWindow::initial_tempo_changed );
+	last_graph_add_category="Hardware";
 }
 
 
@@ -145,6 +237,7 @@ MainWindow::~MainWindow()
 {
 
 	delete editor;
+	
 }
 
 

@@ -54,6 +54,7 @@ public:
 	void repaint();
 	void rebuild();
 	
+	void notify_enter();
 	TrackEditorScreen(Editor *p_editor,GUI_UpdateNotify *p_update_notify);
 	
 	~TrackEditorScreen();

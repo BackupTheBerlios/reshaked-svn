@@ -146,6 +146,10 @@ public:
 	int get_volume_mask() const;
 
 	/* cursor  */
+	
+	void set_octave(int p_octave);
+	int get_octave() const;
+	
 	void set_cursor_tick(Tick p_tick);
 	void set_cursor_track(int p_track);
 	void set_cursor_col(int p_col);

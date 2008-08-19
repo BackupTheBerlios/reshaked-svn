@@ -129,16 +129,12 @@ void MainWindow::init_key_bindings() {
 	key_bindings.add_key_bind("editor/set_loop_begin","Set Loop Begin",GUI::KEY_MASK_CTRL+GUI::KEY_b);
 	key_bindings.add_key_bind("editor/set_loop_end","Set Loop End",GUI::KEY_MASK_CTRL+GUI::KEY_e);
 	key_bindings.add_key_bind("editor/selection_to_loop","Selection -> Loop",GUI::KEY_MASK_CTRL+GUI::KEY_l);
-	key_bindings.add_key_bind("editor/selection_create_blocks","Selection -> Create Blocks",GUI::KEY_MASK_CTRL+GUI::KEY_a);
+	key_bindings.add_key_bind("editor/selection_create_blocks","Selection -> Create Blocks",GUI::KEY_MASK_CTRL+GUI::KEY_c);
 	key_bindings.add_key_bind("editor/toggle_block_repeat","Toggle Block Repeat",GUI::KEY_MASK_ALT+GUI::KEY_r);
 	key_bindings.add_key_bind("editor/delete_block","Delete Block",GUI::KEY_MASK_CTRL+GUI::KEY_MASK_SHIFT+GUI::KEY_d);
 	key_bindings.add_key_bind("editor/resize_block","Resize Block",GUI::KEY_MASK_CTRL+GUI::KEY_r);
 	
 	
-	key_bindings.add_key_bind("global/raise_octave","Raise Octave",GUI::KEY_ASTERISK);
-
-	key_bindings.add_key_bind("global/lower_octave","Lower Octave",GUI::KEY_SLASH);
-
 	key_bindings.add_key_bind("note_entry/clear_field","Clear Field",GUI::KEY_PERIOD);
 
 	key_bindings.add_key_bind("note_entry/note_off","Note Off",GUI::KEY_BACKQUOTE);
@@ -183,29 +179,36 @@ void MainWindow::init_key_bindings() {
 	
 	key_bindings.add_key_bind("editor/bar_length_at_pos","Set Bar Length",GUI::KEY_MASK_CTRL+GUI::KEY_MASK_SHIFT+GUI::KEY_b);
 		
-	key_bindings.set_key_bind_key_by_name("actions/undo",GUI::KEY_MASK_CTRL+GUI::KEY_z);
-	key_bindings.set_key_bind_key_by_name("actions/redo",GUI::KEY_MASK_SHIFT+GUI::KEY_MASK_CTRL+GUI::KEY_z);
+	key_bindings.add_key_bind("global/raise_octave","Raise Octave",GUI::KEY_KP_MULTIPLY);
+	
+	key_bindings.add_key_bind("global/lower_octave","Lower Octave",GUI::KEY_KP_DIVIDE);
+	key_bindings.add_key_bind("global/add_node","Add Node",GUI::KEY_MASK_CTRL+GUI::KEY_a);
+		
+	key_bindings.set_key_bind_key_by_name("global/undo",GUI::KEY_MASK_CTRL+GUI::KEY_z);
+	key_bindings.set_key_bind_key_by_name("global/redo",GUI::KEY_MASK_SHIFT+GUI::KEY_MASK_CTRL+GUI::KEY_z);
 
-	key_bindings.set_key_bind_key_by_name("actions/play",GUI::KEY_F5);
-	key_bindings.set_key_bind_key_by_name("actions/stop",GUI::KEY_F8);
+	key_bindings.set_key_bind_key_by_name("global/play",GUI::KEY_F5);
+	key_bindings.set_key_bind_key_by_name("global/stop",GUI::KEY_F8);
 	
-	key_bindings.set_key_bind_key_by_name("actions/pause",GUI::KEY_MASK_SHIFT+GUI::KEY_F8);
-	key_bindings.set_key_bind_key_by_name("actions/play_loop",GUI::KEY_MASK_SHIFT+GUI::KEY_F5);
+	key_bindings.set_key_bind_key_by_name("global/pause",GUI::KEY_MASK_SHIFT+GUI::KEY_F8);
+	key_bindings.set_key_bind_key_by_name("global/play_loop",GUI::KEY_MASK_SHIFT+GUI::KEY_F5);
 	
-	key_bindings.set_key_bind_key_by_name("actions/record",GUI::KEY_MASK_SHIFT+GUI::KEY_F6);
-	key_bindings.set_key_bind_key_by_name("actions/record_automations",GUI::KEY_MASK_SHIFT+GUI::KEY_F7);
+	key_bindings.set_key_bind_key_by_name("global/record",GUI::KEY_MASK_SHIFT+GUI::KEY_F6);
+	key_bindings.set_key_bind_key_by_name("global/record_automations",GUI::KEY_MASK_SHIFT+GUI::KEY_F7);
 	
-	key_bindings.set_key_bind_key_by_name("actions/play_block",GUI::KEY_F6);
-	key_bindings.set_key_bind_key_by_name("actions/play_from_cursor",GUI::KEY_F7);
+	key_bindings.set_key_bind_key_by_name("global/play_block",GUI::KEY_F6);
+	key_bindings.set_key_bind_key_by_name("global/play_from_cursor",GUI::KEY_F7);
 	
-	key_bindings.set_key_bind_key_by_name("actions/add_track",GUI::KEY_MASK_CTRL+GUI::KEY_t);
+//	key_bindings.set_key_bind_key_by_name("global/add_track",GUI::KEY_MASK_CTRL+GUI::KEY_t);
 	
-	key_bindings.set_key_bind_key_by_name("actions/toggle_rack",GUI::KEY_F4);
 	
-	key_bindings.set_key_bind_key_by_name("actions/delete_blocks",GUI::KEY_DELETE);
+//	key_bindings.set_key_bind_key_by_name("global/delete_blocks",GUI::KEY_DELETE);
 	
-	key_bindings.set_key_bind_key_by_name("actions/song_view",GUI::KEY_F1);
-	key_bindings.set_key_bind_key_by_name("actions/edit_view",GUI::KEY_F2);
+	key_bindings.add_key_bind("global/song_view","Song View",GUI::KEY_F1);
+	key_bindings.add_key_bind("global/track_view","Track View",GUI::KEY_F2);
+	
+	key_bindings.add_key_bind("global/graph_view","Graph View",GUI::KEY_F3);
+	
 	
 	
 }

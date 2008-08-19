@@ -37,7 +37,14 @@
 */
 class MainWindow : public GUI::Window {
 
-	enum FileMenu {
+	enum TabList {
+	
+		TAB_GLOBAL,
+		TAB_TRACKS,
+		TAB_GRAPH
+	};
+
+	enum MenuOptions {
 		
 		FILE_NEW_SONG,
 		FILE_OPEN_SONG,
@@ -47,9 +54,6 @@ class MainWindow : public GUI::Window {
 		FILE_EXPORT_MIDI,
 		FILE_EXPORT_WAV,
 		FILE_QUIT,	
-	};
-
-	enum ControlButton {
 	
 		CONTROL_PLAY,
 		CONTROL_LOOP,
@@ -65,11 +69,23 @@ class MainWindow : public GUI::Window {
 	
 	GUI::TabBar * tab_bar;
 	
+	GUI::SpinBox *tempo_spin;
+	GUI::SpinBox *octave_spin;
+	
 	GUI::StackContainer * main_stack;
+	
+	
 	
 	GUI::LineEdit *info_line;	
 	GUI::LineEdit *time_line;
+		
+	void octave_spin_changed(double p_to_octave);
+	void tempo_spin_changed(double p_bpm);
+	void initial_tempo_changed();
+	void unhandled_key(unsigned long p_unicode, unsigned long p_scan_code,bool p_press,bool p_repeat,int p_modifier_mask);
+	void pre_tab_changed(int p_tab);
 	
+	void tab_changed(int p_tab);
 	void file_menu_callback(int p_option);
 	void control_callback(int p_option);
 	void add_node_callback();
@@ -85,6 +101,7 @@ class MainWindow : public GUI::Window {
 	AudioGraphScreen *audio_graph_screen;
 	
 	AddNodeDialog *add_node_dialog;
+	String last_graph_add_category;
 	KeyBindings key_bindings;
 	
 	void init_key_bindings();

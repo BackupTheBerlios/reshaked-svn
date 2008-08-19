@@ -37,6 +37,7 @@ public:
 	virtual void window_offset_changed();
 	virtual void selection_changed();
 	virtual void track_block_changed(Track::Block *p_block);
+	virtual void song_initial_tempo_changed();	
 	// requestors
 	virtual void editor_volume_scale_request();	
 	virtual void editor_change_bar_len_request();	
@@ -55,6 +56,7 @@ public:
 	GUI::Signal<> window_offset_changed_signal;
 	GUI::Signal<> selection_changed_signal;
 	GUI::Signal< GUI::Method1<Track::Block*> > track_block_changed_signal;
+	GUI::Signal<> song_initial_tempo_changed_signal;
 
 	GUI::Signal<> editor_volume_scale_request_signal;
 	GUI::Signal<> editor_change_bar_len_request_signal;

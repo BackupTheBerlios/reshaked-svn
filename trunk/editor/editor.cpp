@@ -21,6 +21,21 @@ Editor *Editor::get_singleton() {
 }
 
 
+void Editor::set_octave(int p_octave) {
+
+	if (p_octave<0)
+		p_octave=0;
+	if (p_octave>9)
+		p_octave=9;
+	insert.octave=p_octave;
+	
+}
+int Editor::get_octave() const {
+
+	return insert.octave;
+}
+
+
 void Editor::set_volume_mask_active(bool p_active) {
 
 	insert.volume_mask_active=p_active;

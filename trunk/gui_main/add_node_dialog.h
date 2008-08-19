@@ -17,6 +17,7 @@
 #include "engine/song.h"
 #include "widgets/line_edit.h"
 #include "bundles/combo_box.h"
+#include "widgets/button_group.h"
 /**
 	@author Juan Linietsky <reduzio@gmail.com>
 */
@@ -27,6 +28,7 @@ class AddNodeDialog : public GUI::Window {
 
 	struct NodeInfoItem : public GUI::Widget {
 	
+
 		GUI::BitmapID icon;
 		NodeInfoItem **current;
 		const AudioNodeInfo *info;
@@ -43,6 +45,8 @@ class AddNodeDialog : public GUI::Window {
 		NodeInfoItem(const AudioNodeInfo *p_node_info);
 	};
 	
+	std::vector<String> filters;
+	GUI::ButtonGroup filter_group;
 	void fix_name();
 	
 	NodeInfoItem *selected;
@@ -51,14 +55,18 @@ class AddNodeDialog : public GUI::Window {
 	
 	void create_node();
 	
+	void filter_changed(int p_to_which);
+	
 	GUI::LineEdit *name;
 	GUI::ComboBox *channels;
+	GUI::VBoxContainer * vbox;
 	int default_channels;
 	bool updating_default_channels;
 
 public:
 
-	void show();
+	void show(String p_pre_type="");
+	String get_current_category() ;
 
 	AddNodeDialog(GUI::Window *p_parent, Song *p_song);
 	~AddNodeDialog();

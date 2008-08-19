@@ -97,7 +97,7 @@ int main_loop(SDL_Surface *screen,GUI::TimerSDL *timer,unsigned int flags,MainWi
 				main_window->key( event.key.keysym.unicode, keycode_sdl_translator.get_code(event.key.keysym.sym), event.key.state==SDL_PRESSED,false, mod );
 				
 				
-				if (event.key.keysym.sym==SDLK_F1) {
+				if (event.key.keysym.sym==SDLK_F12) {
 
 					main_window->get_painter()->draw_fill_rect( GUI::Point() , GUI::Size( screen->w , screen->h ), GUI::Color(100,20,33) );
 					SDL_UpdateRect(screen, 0,0,0,0);

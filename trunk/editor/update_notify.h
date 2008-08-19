@@ -37,6 +37,7 @@ public:
 	virtual void window_offset_changed()=0;
 	virtual void selection_changed()=0;
 	virtual void track_block_changed(Track::Block *p_block)=0;
+	virtual void song_initial_tempo_changed()=0;
 	
 	virtual void editor_volume_scale_request()=0;
 	virtual void editor_change_bar_len_request()=0;

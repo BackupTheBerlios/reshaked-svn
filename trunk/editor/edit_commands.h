@@ -45,6 +45,7 @@ class EditCommands : public UndoRedo {
 	void _pattern_set_visible_columns_helper( PatternTrack *p_pattern, int p_visible );
 	
 	void _song_swap_tracks_helper(Song *p_song, int p_track, int p_with_track);
+	void _song_change_initial_tempo_helper(Song *p_song, float p_bpm);
 	
 	void _track_block_toggle_repeat_helper( Track::Block *p_block, bool p_repeat );
 	void _track_add_block_helper(Track *p_track,Track::Block *p_block, Tick p_at_pos);
@@ -76,6 +77,7 @@ public:
 	void audio_node_set_name(AudioNode *p_node, String p_name);
 
 	void song_swap_tracks(Song *p_song, int p_track, int p_with_track);
+	void song_change_initial_tempo(Song *p_song, float p_bpm);
 
 	void track_collapse(Track *p_track,bool p_collapsed);
 	void track_block_toggle_repeat( Track::Block *p_block, bool p_repeat );
