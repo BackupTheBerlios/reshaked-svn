@@ -310,6 +310,108 @@ void Editor::set_marker_at_beat(int p_beat,String p_marker) {
 }
 
 
+void Editor::set_loop_begin_at_cursor() {
+
+	bool disabled=song->get_loop_begin() == song->get_loop_end();
+		
+	int begin = cursor.tick / TICKS_PER_BEAT;
+	int end = disabled?begin+1:song->get_loop_end();
+			
+	if (end < begin)
+		SWAP( begin, end );
+		
+	song->set_loop_begin( begin );
+	song->set_loop_end( end );
+	
+	
+	UpdateNotify::get_singleton()->track_list_repaint();
+}
+
+
+void Editor::set_loop_end_at_cursor() {
+
+	bool disabled=song->get_loop_begin() == song->get_loop_end();
+		
+	if (disabled)
+		return;
+	
+	int begin = song->get_loop_begin();
+	int end = cursor.tick / TICKS_PER_BEAT + 1;
+			
+	if (end < begin)
+		SWAP( begin, end );
+		
+	song->set_loop_begin( begin );
+	song->set_loop_end( end );
+	
+	
+	UpdateNotify::get_singleton()->track_list_repaint();
+}
+
+void Editor::delete_block_at_cursor() {
+
+	if (cursor.track<0 || cursor.track>= song->get_track_count())
+		return;
+		
+	Track *t=song->get_track(cursor.track);
+	
+	int idx = t->get_block_at_pos( cursor.tick );
+	
+	if (idx<0) 
+		return;
+		
+	Track::Block *block = t->get_block(idx);
+	
+	
+		
+	EditCommands::get_singleton()->track_remove_block( t, block);
+}
+
+void Editor::toggle_block_repeat_at_cursor() {
+
+	if (cursor.track<0 || cursor.track>=song->get_track_count())
+		return;
+		
+	int idx = song->get_track( cursor.track )->find_block_at_pos( cursor.tick );
+	if (idx<0)
+		return;
+		
+	Track::Block *b=song->get_track( cursor.track )->get_block( idx );
+	EditCommands::get_singleton()->track_block_toggle_repeat( b, !b->is_repeat_enabled() );
+}
+
+void Editor::resize_block_at_cursor() {
+
+	if (cursor.track<0 || cursor.track>=song->get_track_count())
+		return;
+		
+	int idx = song->get_track( cursor.track )->find_block_at_pos( cursor.tick );
+	if (idx<0)
+		return;
+		
+		
+	Tick pos = song->get_track( cursor.track)->get_block_pos( idx );
+	
+	Tick new_size = cursor.tick+get_ticks_per_row()-pos;
+	
+	if (new_size==0)
+		return;
+	
+	if (song->get_track( cursor.track)->is_block_motion_snapped()) {
+	
+		if (new_size%TICKS_PER_BEAT) {
+		
+			new_size-=new_size%TICKS_PER_BEAT;
+			new_size+=TICKS_PER_BEAT;
+		}
+	}
+	
+	
+	
+	EditCommands::get_singleton()->track_resize_block( song->get_track( cursor.track), idx, new_size );
+
+}
+
 Editor::Editor(Song *p_song) {
 	
 	singleton=this;

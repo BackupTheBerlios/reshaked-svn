@@ -13,7 +13,7 @@
 #include "containers/grid_container.h"
 #include "track_editor_pattern.h"
 #include "widgets/label.h"
-#include "track_editor_track_name.h"
+
 #include "gui_common/common_skin.h"
 	
 class _BlackWidget : public GUI::Widget {
@@ -43,7 +43,13 @@ void TrackEditorScreen::track_changed_callback(Track *p_track) {
 			continue;
 		track_editors[i]->check_minimum_size();
 		track_editors[i]->update();
+		
 	}
+}
+
+void TrackEditorScreen::rebuild_queue() {
+
+	get_window()->get_root()->update_signal.connect( this, &TrackEditorScreen::rebuild );
 }
 
 void TrackEditorScreen::rebuild() {
@@ -57,6 +63,7 @@ void TrackEditorScreen::rebuild() {
 		delete hb;
 		
 	track_editors.clear();
+	track_editor_names.clear();
 	
 	hb = vb_holder->add( new GUI::HBoxContainer,1 );
 	hb->set_separation(0);
@@ -81,6 +88,7 @@ void TrackEditorScreen::rebuild() {
 		hb->add( te );
 		
 		track_editors.push_back( te );
+		track_editor_names.push_back(name);
 		
 		
 		te->mouse_selecting_signal.connect( this, &TrackEditorScreen::mouse_selection_update_callback );
@@ -117,8 +125,10 @@ void TrackEditorScreen::block_changed_callback(Track::Block *p_block) {
 
 void TrackEditorScreen::repaint() {
 
-	for (int i=0;i<track_editors.size();i++)
+	for (int i=0;i<track_editors.size();i++) {
 		track_editors[i]->update();
+		track_editor_names[i]->update();
+	}
 		
 	barbeat->update();
 }
@@ -157,7 +167,7 @@ TrackEditorScreen::TrackEditorScreen(Editor *p_editor,GUI_UpdateNotify *p_update
 	
 	hb=NULL;
 	
-	p_update_notify->track_list_changed_signal.connect( this, &TrackEditorScreen::rebuild );
+	p_update_notify->track_list_changed_signal.connect( this, &TrackEditorScreen::rebuild_queue );
 	p_update_notify->cursor_track_changed_signal.connect( this, &TrackEditorScreen::cursor_track_changed_callback );
 	p_update_notify->window_snap_changed_signal.connect( this, &TrackEditorScreen::repaint );
 	p_update_notify->window_offset_changed_signal.connect( this, &TrackEditorScreen::repaint );

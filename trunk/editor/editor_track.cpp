@@ -721,22 +721,35 @@ bool Editor::track_editor_keypress( unsigned int p_code ) {
 			
 		CASE( KEYBIND("editor/toggle_block_repeat") )
 		
-			if (cursor.track<0 || cursor.track>=song->get_track_count())
-				break;
-				
-			int idx = song->get_track( cursor.track )->find_block_at_pos( cursor.tick );
-			if (idx<0)
-				break;
-				
-			Track::Block *b=song->get_track( cursor.track )->get_block( idx );
-			EditCommands::get_singleton()->track_block_toggle_repeat( b, !b->is_repeat_enabled() );
-			
+			toggle_block_repeat_at_cursor();
+						
 		CASE( KEYBIND("editor/bar_length_at_pos" ) )
 		
 			UpdateNotify::get_singleton()->editor_change_bar_len_request();
 		CASE( KEYBIND("editor/edit_marker" ) )
 		
 			UpdateNotify::get_singleton()->editor_change_marker_request();
+			
+		CASE( KEYBIND("editor/edit_marker" ) )
+			
+		CASE( KEYBIND("editor/set_loop_begin" ) )
+			set_loop_begin_at_cursor();
+			
+		CASE( KEYBIND("editor/set_loop_end" ) )
+			set_loop_end_at_cursor();
+			
+		CASE( KEYBIND("editor/selection_to_loop" ) )
+		
+			selection_make_loop();
+		CASE( KEYBIND("editor/selection_create_blocks" ) )
+		
+			selection_create_blocks();
+		CASE( KEYBIND("editor/delete_block" ) )
+					
+			delete_block_at_cursor();
+		CASE( KEYBIND("editor/resize_block" ) )
+					
+			resize_block_at_cursor();
 		DEFAULT
 		
 			handled=false;

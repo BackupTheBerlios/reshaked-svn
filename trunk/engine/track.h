@@ -69,7 +69,6 @@ public:
 	/* common to all tracks block handling functions */
 
 	int insert_block(Block* p_block, Tick p_at_pos);
-	Block * take_block(int p_index); // remove block from track, but don't unref it (taker should)
 	void remove_block(int p_index); // remove block from track, and unref it
 	
 	int get_block_count() const;
@@ -79,7 +78,7 @@ public:
 	int find_block_at_pos( Tick p_pos ) const;
 	int get_block_at_pos( Tick p_pos ) const;
 	
-	bool get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) const;
+	bool get_blocks_in_range(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) const;
 	bool block_fits(Tick p_at_pos, Tick p_len,const std::list<int>& p_ignore_blocks=std::list<int>()) const; // helper
 	
 	virtual void clear();

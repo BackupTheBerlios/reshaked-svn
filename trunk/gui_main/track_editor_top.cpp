@@ -127,9 +127,11 @@ void TrackEditorTop::menu_callback(int p_option) {
 		} break;
 		case SELECTION_CREATE_BLOCKS: {
 		
+			Editor::get_singleton()->selection_create_blocks();
 		} break;
 		case SELECTION_MAKE_LOOP: {
 		
+			Editor::get_singleton()->selection_make_loop();
 		} break;
 		case SELECTION_SCALE_VOLUMES: {
 		
@@ -181,15 +183,24 @@ void TrackEditorTop::menu_callback(int p_option) {
 		} break;
 		case EDIT_SET_LOOP_BEGIN: {
 		
+			Editor::get_singleton()->set_loop_begin_at_cursor();
 		} break;
 		case EDIT_SET_LOOP_END: {
+		
+			Editor::get_singleton()->set_loop_end_at_cursor();
 		
 		} break;
 		case EDIT_TOGGLE_REPEAT: {
 		
+			Editor::get_singleton()->toggle_block_repeat_at_cursor();
 		} break;
 		case EDIT_DELETE_BLOCK: {
 		
+			Editor::get_singleton()->delete_block_at_cursor();
+		} break;
+		case EDIT_RESIZE_BLOCK: {
+		
+			Editor::get_singleton()->resize_block_at_cursor();
 		} break;
 		case EDIT_TRANSPOSE_UP_SEMITONE: {
 		
@@ -227,11 +238,7 @@ void TrackEditorTop::edit_menu_about_to_show() {
 	edit_menu->add_separator();
 	edit_menu->add_item("Toggle Block Repeat",EDIT_TOGGLE_REPEAT,KEYBIND("editor/toggle_block_repeat"),false);
 	edit_menu->add_item("Delete Block",EDIT_DELETE_BLOCK,KEYBIND("editor/delete_block"),false);
-	edit_menu->add_separator();
-	edit_menu->add_item("Transpose Up Semitone",EDIT_TRANSPOSE_UP_SEMITONE,KEYBIND("editor/transpose_up"),false);
-	edit_menu->add_item("Transpose Down Semitone",EDIT_TRANSPOSE_DOWN_SEMITONE,KEYBIND("editor/transpose_down"),false);
-	edit_menu->add_item("Transpose Up Octave",EDIT_TRANSPOSE_UP_OCTAVE,KEYBIND("editor/transpose_up_octave"),false);
-	edit_menu->add_item("Transpose Down Octave",EDIT_TRANSPOSE_DOWN_OCTAVE,KEYBIND("editor/transpose_down_octave"),false);
+	edit_menu->add_item("Resize Block",EDIT_RESIZE_BLOCK,KEYBIND("editor/resize_block"),false);
 
 }
 void TrackEditorTop::selection_menu_about_to_show() {
@@ -242,7 +249,7 @@ void TrackEditorTop::selection_menu_about_to_show() {
 	selection_menu->add_item("Block/Column",SELECTION_BLOCK_COLUMN,KEYBIND("editor/select_column_block"),false);
 	selection_menu->add_item("Clear",SELECTION_CLEAR,KEYBIND("editor/selection_disable"),false);
 	selection_menu->add_separator();
-	selection_menu->add_item("Create Block",SELECTION_CREATE_BLOCKS,KEYBIND("editor/selection_create_blocks"),false);
+	selection_menu->add_item("Create Blocks",SELECTION_CREATE_BLOCKS,KEYBIND("editor/selection_create_blocks"),false);
 	selection_menu->add_item("Set to Loop Begin/End",SELECTION_MAKE_LOOP,KEYBIND("editor/selection_to_loop"),false);
 	selection_menu->add_separator();
 	selection_menu->add_item("Scale Volumes",SELECTION_SCALE_VOLUMES,KEYBIND("editor/scale_volumes"),false);
@@ -251,6 +258,11 @@ void TrackEditorTop::selection_menu_about_to_show() {
 	selection_menu->add_item("Quantize Up",SELECTION_QUANTIZE_UP,KEYBIND("editor/quantize_up"),false);
 	selection_menu->add_item("Quantize Nearest",SELECTION_QUANTIZE_NEAREST,KEYBIND("editor/quantize_nearest"),false);
 	selection_menu->add_item("Quantize Down",SELECTION_QUANTIZE_DOWN,KEYBIND("editor/quantize_down"),false);
+	selection_menu->add_separator();
+	selection_menu->add_item("Transpose Up Semitone",EDIT_TRANSPOSE_UP_SEMITONE,KEYBIND("editor/transpose_up"),false);
+	selection_menu->add_item("Transpose Down Semitone",EDIT_TRANSPOSE_DOWN_SEMITONE,KEYBIND("editor/transpose_down"),false);
+	selection_menu->add_item("Transpose Up Octave",EDIT_TRANSPOSE_UP_OCTAVE,KEYBIND("editor/transpose_up_octave"),false);
+	selection_menu->add_item("Transpose Down Octave",EDIT_TRANSPOSE_DOWN_OCTAVE,KEYBIND("editor/transpose_down_octave"),false);
 	
 }
 

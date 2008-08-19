@@ -28,6 +28,13 @@ class Song {
 	
 	ValueStream<int,String> marker_map;
 	BarMap bar_map;
+	
+	
+	struct Loop {
+	
+		int begin,end;
+	} loop;
+	
 public:
 
 	void add_track(Track* p_track,int p_at_idx=-1);
@@ -35,11 +42,19 @@ public:
 	int get_track_count() const;
 	Track *get_track(int p_index) const;
 	int find_track_pos(Track *p_track) const;
+	void swap_tracks(int p_track, int p_with_track);
 	
 	BarMap& get_bar_map();
 	ValueStream<int,String>& get_marker_map();
 
 	int process(int p_frames);
+
+
+	void set_loop_begin(int p_loop_begin);
+	int get_loop_begin() const;
+
+	void set_loop_end(int p_loop_end);
+	int get_loop_end() const;
 
 	static Song *get_singleton();
 	

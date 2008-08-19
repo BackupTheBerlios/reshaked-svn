@@ -127,11 +127,12 @@ void MainWindow::init_key_bindings() {
 	
 	key_bindings.add_key_bind("editor/edit_marker","Edit Marker",GUI::KEY_MASK_CTRL+GUI::KEY_k);
 	key_bindings.add_key_bind("editor/set_loop_begin","Set Loop Begin",GUI::KEY_MASK_CTRL+GUI::KEY_b);
-	key_bindings.add_key_bind("editor/set_loop_end","Set Loop End",GUI::KEY_MASK_CTRL+GUI::KEY_r);
+	key_bindings.add_key_bind("editor/set_loop_end","Set Loop End",GUI::KEY_MASK_CTRL+GUI::KEY_e);
 	key_bindings.add_key_bind("editor/selection_to_loop","Selection -> Loop",GUI::KEY_MASK_CTRL+GUI::KEY_l);
 	key_bindings.add_key_bind("editor/selection_create_blocks","Selection -> Create Blocks",GUI::KEY_MASK_CTRL+GUI::KEY_a);
 	key_bindings.add_key_bind("editor/toggle_block_repeat","Toggle Block Repeat",GUI::KEY_MASK_ALT+GUI::KEY_r);
 	key_bindings.add_key_bind("editor/delete_block","Delete Block",GUI::KEY_MASK_CTRL+GUI::KEY_MASK_SHIFT+GUI::KEY_d);
+	key_bindings.add_key_bind("editor/resize_block","Resize Block",GUI::KEY_MASK_CTRL+GUI::KEY_r);
 	
 	
 	key_bindings.add_key_bind("global/raise_octave","Raise Octave",GUI::KEY_ASTERISK);

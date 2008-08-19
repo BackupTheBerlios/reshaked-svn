@@ -99,6 +99,11 @@ void TrackEditorBarBeat::draw(const GUI::Point& p_pos,const GUI::Size& p_size,co
 		p.draw_text( font( FONT_TRACK_EDITOR ), text_ofs, text, font_color );
 		//p.drawGUI::Rect(0,i*row_size,size.width,0);
 
+		if (beat>=Editor::get_singleton()->get_song()->get_loop_begin() && beat<Editor::get_singleton()->get_song()->get_loop_end()) {
+		
+		
+			p.draw_fill_rect( GUI::Point( p_size.width - get_font_width(),i*get_row_height() ), GUI::Size( get_font_width(), get_row_height() ), color( COLOR_BARBEAT_LOOP ));
+		}
 		 
 
 	}

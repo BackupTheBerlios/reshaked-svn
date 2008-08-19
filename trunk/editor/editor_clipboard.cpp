@@ -43,7 +43,7 @@ void Editor::clipboard_copy() {
 				
 				int fromblock,toblock;
 				
-				if (t->get_blocks_in_rage(selection.begin.tick,selection.end.tick,&fromblock,&toblock)) {
+				if (t->get_blocks_in_range(selection.begin.tick,selection.end.tick,&fromblock,&toblock)) {
 					
 					for (int j=fromblock;j<=toblock;j++) {
 					
@@ -116,7 +116,7 @@ void Editor::clipboard_zap_area(const Selection& p_selection) {
 			
 			int fromblock,toblock;
 			
-			if (t->get_blocks_in_rage(p_selection.begin.tick,p_selection.end.tick,&fromblock,&toblock)) {
+			if (t->get_blocks_in_range(p_selection.begin.tick,p_selection.end.tick,&fromblock,&toblock)) {
 				
 				for (int j=fromblock;j<=toblock;j++) {
 				

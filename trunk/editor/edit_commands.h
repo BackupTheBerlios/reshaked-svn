@@ -34,6 +34,8 @@ class EditCommands : public UndoRedo {
 	void _audio_graph_add_node_helper(AudioGraph* p_graph, AudioNode* p_node,int p_at_pos);
 	void _audio_graph_remove_node_helper(AudioGraph* p_graph, int p_node_idx);
 	void _control_port_set_visibility_helper( ControlPort *p_port, bool p_visible);
+	void _audio_node_set_name_helper(AudioNode *p_node, String p_name);
+		
 	void _audio_node_set_layer_helper(AudioNode *p_node,int p_layer);
 	
 	void _song_add_track_helper(Song *p_song,Track *p_track,int p_at_index);
@@ -41,7 +43,14 @@ class EditCommands : public UndoRedo {
 	void _track_collapse_helper(Track *p_track,bool p_collapsed);
 	void _pattern_set_note_helper( PatternTrack::PatternBlock *p_block, PatternTrack::Position p_pos,PatternTrack::Note p_note );
 	void _pattern_set_visible_columns_helper( PatternTrack *p_pattern, int p_visible );
+	
+	void _song_swap_tracks_helper(Song *p_song, int p_track, int p_with_track);
+	
 	void _track_block_toggle_repeat_helper( Track::Block *p_block, bool p_repeat );
+	void _track_add_block_helper(Track *p_track,Track::Block *p_block, Tick p_at_pos);
+	void _track_resize_block_helper(Track *p_track, int p_block_idx, Tick p_new_size);	
+	void _track_remove_block_helper(Track *p_track,Track::Block *p_block);	
+	
 	void _barbeat_set_barlen_helper( Song *p_song, int p_beat,int p_barlen );
 	void _marker_set_helper( Song *p_song, int p_beat, String p_marker );
 	
@@ -66,8 +75,14 @@ public:
 	
 	void audio_node_set_name(AudioNode *p_node, String p_name);
 
+	void song_swap_tracks(Song *p_song, int p_track, int p_with_track);
+
 	void track_collapse(Track *p_track,bool p_collapsed);
 	void track_block_toggle_repeat( Track::Block *p_block, bool p_repeat );
+	void track_add_block(Track *p_track,Track::Block *p_block, Tick p_at_pos);
+	void track_resize_block(Track *p_track, int p_block_idx, Tick p_new_size);
+	void track_remove_block(Track *p_track,Track::Block *p_block);
+	
 	
 	void pattern_set_note( PatternTrack *p_pattern, int p_column, Tick p_tick, const PatternTrack::Note &p_note );
 	void pattern_set_visible_columns( PatternTrack *p_pattern, int p_visible );

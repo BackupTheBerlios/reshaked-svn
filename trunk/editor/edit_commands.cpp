@@ -283,9 +283,18 @@ void  EditCommands::audio_graph_set_control_port_visibility( AudioGraph *p_graph
 
 }
 
+void EditCommands::_audio_node_set_name_helper(AudioNode *p_node, String p_name) {
+
+	p_node->set_name( p_name );
+	UpdateNotify::get_singleton()->track_list_repaint();
+}	
 
 void EditCommands::audio_node_set_name(AudioNode *p_node, String p_name) {
 
+	CommandBase *cmd_do=command( this, &EditCommands::_audio_node_set_name_helper, p_node, p_name);
+	CommandBase *cmd_undo=command( this, &EditCommands::_audio_node_set_name_helper, p_node, p_node->get_name());
+			
+	add_action("AudioNode - Set Name",cmd_do,cmd_undo);
 
 }
 void EditCommands::_audio_node_set_layer_helper(AudioNode *p_node,int p_layer) {
@@ -365,6 +374,36 @@ void EditCommands::_song_remove_track_helper(Song *p_song, int p_track) {
 	Editor::get_singleton()->validate_cursor_pos();
 }
 
+
+/****** SONG ******/
+
+void EditCommands::_song_swap_tracks_helper(Song *p_song, int p_track, int p_with_track) {
+
+	p_song->swap_tracks( p_track, p_with_track );
+	
+	UpdateNotify::get_singleton()->track_list_changed();
+}
+
+void EditCommands::song_swap_tracks(Song *p_song, int p_track, int p_with_track) {
+
+
+	if (p_track==p_with_track)
+		return;
+		
+	if (p_track<0 || p_track>=p_song->get_track_count())
+		return;
+		
+	if (p_with_track<0 || p_with_track>=p_song->get_track_count())
+		return;
+		
+	CommandBase *cmd_do=command( this, &EditCommands::_song_swap_tracks_helper, p_song, p_track, p_with_track );
+	CommandBase *cmd_undo=command( this, &EditCommands::_song_swap_tracks_helper, p_song, p_with_track, p_track );
+
+	add_action(String("Song - Swap Tracks"),cmd_do,cmd_undo);
+		
+		
+}
+
 /******* TRACK ********/
 
 void EditCommands::_track_collapse_helper(Track *p_track,bool p_collapsed) {
@@ -403,6 +442,154 @@ void EditCommands::track_block_toggle_repeat( Track::Block *p_block, bool p_repe
 
 	add_action(String("Track Block - ")+(p_repeat?"Enable Repeat":"Disable Repeat"),cmd_do,cmd_undo);
 }
+
+struct _BlockRef {
+
+	Track::Block *block;
+	
+	_BlockRef(Track::Block *p_block) {
+	
+		block=p_block;
+	}
+	
+	~_BlockRef() {
+	
+		if (block->get_refcount() == 0 ) // block is not in use
+			delete block;
+	}
+};
+
+
+void EditCommands::_track_add_block_helper(Track *p_track,Track::Block *p_block, Tick p_at_pos) {
+
+	int pos = p_track->insert_block(p_block,p_at_pos);
+	
+	ERR_FAIL_COND(pos < 0 );
+	
+	UpdateNotify::get_singleton()->track_list_repaint();
+}
+
+void EditCommands::_track_remove_block_helper(Track *p_track,Track::Block *p_block) {
+
+	int idx=-1;
+	
+	for (int i=0;i<p_track->get_block_count();i++) {
+	
+		if (p_track->get_block( i ) == p_block) {
+		
+			idx=i;
+			break;
+		}	
+	}
+	
+	ERR_FAIL_COND( idx < 0 );
+	
+	p_track->remove_block( idx );
+		
+	UpdateNotify::get_singleton()->track_list_repaint();
+}
+
+void EditCommands::track_add_block(Track *p_track,Track::Block *p_block, Tick p_at_pos) {
+
+	if (!p_track->block_fits(p_at_pos,p_block->get_length()))
+		return;
+
+	CommandBase *cmd_do=command( this, &EditCommands::_track_add_block_helper, p_track, p_block,p_at_pos);
+	CommandBase *cmd_undo=command( this, &EditCommands::_track_remove_block_helper, p_track, p_block );
+	
+	cmd_do->add_data( new _BlockRef( p_block) );
+	
+	add_action("Track - Add Block",cmd_do,cmd_undo);
+}
+
+
+void EditCommands::track_remove_block(Track *p_track,Track::Block *p_block) {
+
+	int idx=-1;
+	
+	for (int i=0;i<p_track->get_block_count();i++) {
+	
+		if (p_track->get_block( i ) == p_block) {
+		
+			idx=i;
+			break;
+		}	
+	}
+	
+	ERR_FAIL_COND( idx < 0);
+	
+	Tick pos = p_track->get_block_pos( idx );
+
+	CommandBase *cmd_do=command( this, &EditCommands::_track_remove_block_helper,p_track,  p_block );
+	CommandBase *cmd_undo=command( this, &EditCommands::_track_add_block_helper, p_track, p_block,pos );
+	
+	cmd_undo->add_data( new _BlockRef( p_block) );
+	
+	add_action("Track - Remove Block",cmd_do,cmd_undo);
+}
+
+
+void EditCommands::_track_resize_block_helper(Track *p_track, int p_block_idx, Tick p_new_size) {
+
+	ERR_FAIL_INDEX( p_block_idx, p_track->get_block_count() );
+	
+	p_track->get_block(p_block_idx)->set_length(p_new_size);
+	
+	UpdateNotify::get_singleton()->track_block_changed( p_track->get_block( p_block_idx ) );
+	
+}
+
+void EditCommands::track_resize_block(Track *p_track, int p_block_idx, Tick p_new_size) {
+
+	ERR_FAIL_INDEX( p_block_idx, p_track->get_block_count() );
+	
+	std::list<int> exclude_list;
+	exclude_list.push_back(p_block_idx);
+	
+	if (!p_track->block_fits( p_track->get_block_pos( p_block_idx), p_new_size, exclude_list ))
+		return; // doesn't fit, nothing to do
+		
+	Tick previous_len = p_track->get_block(p_block_idx)->get_length();
+		
+	begin_group("Track - Resize Block");
+		
+	if (previous_len > p_new_size ) {
+		// must erase notes when shrinking
+		PatternTrack *pt = dynamic_cast<PatternTrack*>( p_track );
+		
+		if (pt) {
+			std::list<PatternTrack::Position> to_erase;
+			PatternTrack::PatternBlock *block = dynamic_cast<PatternTrack::PatternBlock*>(p_track->get_block(p_block_idx));
+				
+			for (int j=0;j<block->get_note_count();j++) {
+			
+				PatternTrack::Position pos = block->get_note_pos( j );
+				
+				if (pos.tick<p_new_size)
+					continue;
+				
+				pos.tick += pt->get_block_pos( p_block_idx );
+				to_erase.push_back(pos);
+			}
+			
+			// erase them
+			std::list<PatternTrack::Position>::iterator I;
+			
+			for( I = to_erase.begin() ; I != to_erase.end() ; I++ ) {
+			
+				pattern_set_note( pt, I->column, I->tick , PatternTrack::Note() );
+			}
+		}
+	}
+		
+	CommandBase *cmd_do=command( this, &EditCommands::_track_resize_block_helper,p_track,  p_block_idx, p_new_size );
+	CommandBase *cmd_undo=command( this, &EditCommands::_track_resize_block_helper, p_track, p_block_idx, previous_len );
+	
+	add_action("track_remove_block",cmd_do,cmd_undo);	
+		
+	end_group();
+}
+
 
 /*******PATTERN*******/
 

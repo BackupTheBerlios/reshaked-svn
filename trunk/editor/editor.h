@@ -175,7 +175,9 @@ public:
 	TrackEditMode get_track_edit_mode() const;
 
 	void validate_cursor_pos();
-
+	void delete_block_at_cursor();
+	void toggle_block_repeat_at_cursor();
+	void resize_block_at_cursor();
 	/* selection */
 	
 	
@@ -198,7 +200,8 @@ public:
 	void select_column_block_all();
 
 	void selection_command(SelectionCommand p_command,int p_param=0);
-
+	void selection_create_blocks();
+	void selection_make_loop();
 	/* clipboard */
 	
 	void clipboard_copy();
@@ -210,6 +213,8 @@ public:
 	
 	bool track_editor_keypress( unsigned int p_code ); // return true if event must be handled
 	
+	void set_loop_begin_at_cursor();
+	void set_loop_end_at_cursor();
 	
 	void set_bar_len_at_beat(int p_beat,int p_len);
 	void set_marker_at_beat(int p_beat,String p_marker);

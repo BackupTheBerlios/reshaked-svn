@@ -28,8 +28,7 @@ void Track::Block::reference() {
 void Track::Block::unreference() {
 
 	_refcount--;
-	if (_refcount==0)
-		delete this;
+	ERR_FAIL_COND(_refcount<0);
 
 }
 
@@ -39,26 +38,34 @@ int Track::Block::get_refcount() {
 }
 Track::Block::Block() {
 
-	_refcount=1;
+	_refcount=0;
 	_repeat=false;
 }
 
 Track::Block::~Block() {
 
-
+	ERR_FAIL_COND( _refcount > 0 );
 }
 
 
 void Track::remove_block(int p_index) {
 
-	Block *b = take_block(p_index);
+	ERR_FAIL_INDEX( p_index, blocks.size());
+	
+	Track::Block *b = blocks[p_index];
 	ERR_FAIL_COND(!b);
+	blocks.erase(p_index);
 	
 	b->unreference();	
 }
 
 
 int Track::insert_block(Block* p_block, Tick p_at_pos) {
+
+	if (is_block_motion_snapped()) {
+	
+		p_at_pos-=p_at_pos%TICKS_PER_BEAT;
+	}
 
 	Block *pb = dynamic_cast<Block*>(p_block);
 	
@@ -68,19 +75,6 @@ int Track::insert_block(Block* p_block, Tick p_at_pos) {
 	pb->reference();
 	return blocks.insert(p_at_pos,pb);			
 }
-
-Track::Block * Track::take_block(int p_index) {
-
-	ERR_FAIL_INDEX_V( p_index, blocks.size(), NULL );
-	
-	Track::Block *b = blocks[p_index];
-	blocks.erase(p_index);
-	
-	
-	return b;
-}
-
-
 
 
 int Track::get_block_count() const {
@@ -130,41 +124,41 @@ int Track::get_block_at_pos( Tick p_pos ) const {
 	return block;
 }
 
-bool Track::get_blocks_in_rage(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) const {
+bool Track::get_blocks_in_range(Tick p_from, Tick p_to,int *p_from_res, int *p_to_res) const {
 
-	int idx = blocks.find(p_from);
-	int c=blocks.size();
-	
-	// invalidate by default
-	*p_from_res=-1;
-	*p_to_res=-1;
-	
-	while(idx<c) {
-	
-		if (idx>=0) {
+	if( p_to<p_from )
+		return false;
 		
-			if ( *p_from_res==-1 && (blocks.get_pos(idx) + blocks[idx]->get_length()) > p_from ) {
-				*p_from_res=idx;
-			}
-			
-			if (blocks.get_pos(idx) <=p_to )
-				*p_to_res=idx;
-			else
-				break;
-				
-		}
-		idx++;
-	}
+
+	int from = blocks.find(p_from);
+	int to = blocks.find(p_to); // to is final
 	
-	return ((*p_from_res)!=-1);
+	if (from<0 || p_from >= (blocks.get_pos(from)+blocks[from]->get_length()))
+		from++;
+		
+	*p_from_res=from;
+	*p_to_res=to;
+		
+	return from <= to;
+
 }
 
 bool Track::block_fits(Tick p_at_pos, Tick p_len,const std::list<int>& p_ignore_blocks) const {
 
+	if (is_block_motion_snapped()) {
+	
+		p_at_pos-=p_at_pos%TICKS_PER_BEAT;
+		if (p_len%TICKS_PER_BEAT) {
+		
+			p_len-=p_len%TICKS_PER_BEAT;
+			p_len+=TICKS_PER_BEAT;
+		}
+	}
 
 	int block_from,block_to;
 	
-	get_blocks_in_rage(p_at_pos,p_at_pos+p_len-1,&block_from,&block_to);
+	if (!get_blocks_in_range(p_at_pos,p_at_pos+p_len-1,&block_from,&block_to))
+		return true; // just fits
 	
 	if (block_from==-1)
 		return true; // nothing inbetween

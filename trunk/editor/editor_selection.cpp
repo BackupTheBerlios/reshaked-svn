@@ -166,7 +166,7 @@ void Editor::select_column_block_all() {
 	if (selection.active && selection.begin.tick==track->get_block_pos(block) && selection.begin.track==cursor.track && 				selection.begin.col==0 && 
 		selection.end.tick==(track->get_block_pos(block)+track->get_block(block)->get_length()-1) && selection.end.track==cursor.track && selection.end.col==(track->get_visible_columns()-1)) {
 		// select block	
-		printf("detected it must select all\n");
+		
 		selection.begin.track=0;
 		selection.begin.col=0;
 		selection.begin.tick=track->get_block_pos(block);
@@ -178,7 +178,7 @@ void Editor::select_column_block_all() {
 	} else if (selection.active && selection.begin.tick==track->get_block_pos(block) && selection.begin.track==cursor.track && 		selection.begin.col==cursor.col && 
 		selection.end.tick==(track->get_block_pos(block)+track->get_block(block)->get_length()-1) && selection.end.track==cursor.track && selection.end.col==cursor.col) {
 		
-		printf("detected it must select all\n");
+		
 		// select block	
 		selection.begin.track=cursor.track;
 		selection.begin.col=0;
@@ -190,7 +190,7 @@ void Editor::select_column_block_all() {
 		
 	  } else {	  
 		// select column
-		printf("detected it must select column\n");
+		
 		selection.active=true;
 		selection.begin.track=cursor.track;
 		selection.begin.col=cursor.col;
@@ -325,7 +325,7 @@ void Editor::selection_command(SelectionCommand p_command,int p_param) {
 			
 			int fromblock,toblock;
 			
-			if (t->get_blocks_in_rage(s.begin.tick,s.end.tick,&fromblock,&toblock)) {
+			if (t->get_blocks_in_range(s.begin.tick,s.end.tick,&fromblock,&toblock)) {
 				
 				for (int j=fromblock;j<=toblock;j++) {
 				
@@ -461,4 +461,98 @@ void Editor::selection_command(SelectionCommand p_command,int p_param) {
 	EditCommands::get_singleton()->end_group();
 
 
+}
+
+
+void Editor::selection_make_loop() {
+
+	if (!selection.active)
+		return;
+		
+	song->set_loop_begin( selection.begin.tick / TICKS_PER_BEAT );
+	song->set_loop_end( (selection.end.tick+1) / TICKS_PER_BEAT );
+	
+	UpdateNotify::get_singleton()->track_list_repaint();
+
+}
+
+
+void Editor::selection_create_blocks() {
+
+	if (!selection.active)
+		return;
+		
+	bool validate=true;
+		
+	for(int i=selection.begin.track;i<=selection.end.track;i++) {
+	
+		if (i<0 || i>=song->get_track_count())
+			continue;
+	
+		Track *t = song->get_track(i);
+		if (t->is_collapsed()) // don't work in collapsed tracks
+			continue;
+			
+		Tick block_begin = selection.begin.tick;
+		Tick block_end = selection.end.tick+1;
+		
+		if (t->is_block_motion_snapped()) {
+		
+			block_begin-=block_begin%TICKS_PER_BEAT;
+			if (block_end%TICKS_PER_BEAT) {
+			
+				block_end-=block_end%TICKS_PER_BEAT;
+				block_end+=TICKS_PER_BEAT;
+			}
+		}
+			
+		if (!t->block_fits( block_begin , block_end-block_begin )) {
+						
+			validate=false;
+			break;
+		}
+	}
+		
+	if (!validate)
+		return;
+	
+	EditCommands::get_singleton()->begin_group("Selection - Create Blocks");
+	
+	for(int i=selection.begin.track;i<=selection.end.track;i++) {
+	
+		if (i<0 || i>=song->get_track_count())
+			continue;
+	
+		Track *t = song->get_track(i);
+		if (t->is_collapsed()) // don't work in collapsed tracks
+			continue;
+	
+		
+		Track::Block *new_block = t->create_block(NULL);
+		
+		if (new_block==NULL)
+			continue; // probably can't create this way
+		
+		Tick block_begin = selection.begin.tick;
+		Tick block_end = selection.end.tick +1;
+		
+		if (t->is_block_motion_snapped()) {
+		
+			block_begin-=block_begin%TICKS_PER_BEAT;
+			if (block_end%TICKS_PER_BEAT) {
+			
+				block_end-=block_end%TICKS_PER_BEAT;
+				block_end+=TICKS_PER_BEAT;
+			}
+		}
+		 
+		
+		new_block->set_length( block_end - block_begin );
+
+			
+		EditCommands::get_singleton()->track_add_block( t, new_block, block_begin );
+	}
+	
+	EditCommands::get_singleton()->end_group();
+	
 }

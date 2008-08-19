@@ -37,6 +37,13 @@ Track *Song::get_track(int p_index) const {
 	return tracks[p_index];
 }
 
+void Song::swap_tracks(int p_track, int p_with_track) {
+
+	ERR_FAIL_INDEX(p_track,tracks.size());
+	ERR_FAIL_INDEX(p_with_track,tracks.size());
+	
+	SWAP( tracks[p_track], tracks[p_with_track] );
+}
 
 int Song::find_track_pos(Track *p_track) const {
 
@@ -69,7 +76,25 @@ ValueStream<int,String>& Song::get_marker_map() {
 	return marker_map;
 }
 
+void Song::set_loop_begin(int p_loop_begin) {
+
+	loop.begin=p_loop_begin;
+}
+int Song::get_loop_begin() const  {
+
+	return loop.begin;
+}
+void Song::set_loop_end(int p_loop_end) {
+
+	loop.end=p_loop_end;
+}
+int Song::get_loop_end() const  {
+
+	return loop.end;
+}
+
 int Song::process(int p_frames) {
+
 
 	return audio_graph.process(p_frames);
 }
@@ -79,6 +104,8 @@ Song::Song() {
 	ERR_FAIL_COND( singleton );
 	singleton=this;
 	marker_map.insert(0,"Markers");
+	loop.begin=0;
+	loop.end=0;
 }
 
 

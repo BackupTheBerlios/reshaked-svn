@@ -29,6 +29,7 @@ public:
 private:
 
 	int visible_columns;
+	bool mute;
 
 	virtual void process(const ProcessInfo& p_info);
 
@@ -153,7 +154,7 @@ public:
 		void set_length(Tick p_length) { 
 		
 			p_length/=TICKS_PER_BEAT;
-			if (p_length==0)
+			if (p_length<=0)
 				return;
 			beats_len=p_length;
 		}
@@ -173,6 +174,10 @@ public:
 	virtual bool is_block_motion_snapped() const; 
 	void set_visible_columns(int p_visible);
 	virtual int get_visible_columns() const;
+	
+	void set_mute(bool p_mute);
+	bool is_mute() const;
+	
 
 	static AudioNode *creation_func(int p_channels,const AudioNodeInfo *p_info);
 	static const AudioNodeInfo *get_creation_info();
