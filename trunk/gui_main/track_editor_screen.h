@@ -42,6 +42,7 @@ class TrackEditorScreen : public GUI::VBoxContainer {
 	std::vector< TrackEditor * > track_editors;
 	std::vector< TrackEditorTrackName * > track_editor_names;
 	
+	void ensure_cursor_track_visible();
 	void track_block_changed(Track::Block *p_block);
 	void mouse_selection_update_callback(GUI::Point p_pos);
 	void cursor_track_changed_callback(int p_from,int p_to);

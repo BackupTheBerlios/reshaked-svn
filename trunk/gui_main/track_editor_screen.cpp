@@ -29,9 +29,44 @@ public:
 	}
 };
 	
+void TrackEditorScreen::ensure_cursor_track_visible() {
+
+	if (!hb)
+		return;
+
+	GUI::Rect cursor_track_rect;
+	TrackEditor * cursor_track;
+	
+	if ( Editor::get_singleton()->get_cursor_track() < 0 || Editor::get_singleton()->get_cursor_track() >=track_editor_names.size() )
+		return;
+		
+	cursor_track = track_editors[ Editor::get_singleton()->get_cursor_track() ];
+	GUI::Widget* track_editor_name = track_editor_names[ Editor::get_singleton()->get_cursor_track() ];
+	
+	cursor_track_rect = GUI::Rect( cursor_track->get_global_pos(), cursor_track->get_size_cache() );
+	
+	cursor_track_rect = cursor_track_rect.merge( GUI::Rect( track_editor_name->get_global_pos(), track_editor_name->get_size_cache() ) );
+	
+	GUI::Rect scrollcontainer_rect=GUI::Rect( scroll->get_global_pos(), scroll->get_size_cache() );
+	
+	GUI::Rect hb_rect=GUI::Rect( hb->get_global_pos(), hb->get_size_cache() );
+	
+	if ( cursor_track_rect.pos.x < scrollcontainer_rect.pos.x) {
+	
+		scroll->get_h_range()->set( cursor_track_rect.pos.x - hb_rect.pos.x );
+	}
+	
+	if ( cursor_track_rect.pos.x+cursor_track_rect.size.x > scrollcontainer_rect.pos.x + scrollcontainer_rect.size.x) {
+	
+		scroll->get_h_range()->set(cursor_track_rect.pos.x - hb_rect.pos.x - scrollcontainer_rect.size.x + cursor_track_rect.size.x );
+	}
+	
+}
+	
 void TrackEditorScreen::track_block_changed(Track::Block *p_block) {
 
 
+	ensure_cursor_track_visible();
 	repaint(); // todo optimize later
 }
 
@@ -100,6 +135,7 @@ void TrackEditorScreen::rebuild() {
 	
 	hb->add( new _BlackWidget, 1 );
 	
+	ensure_cursor_track_visible();
 }
 
 void TrackEditorScreen::mouse_selection_update_callback(GUI::Point p_pos) {
@@ -144,6 +180,7 @@ void TrackEditorScreen::cursor_track_changed_callback(int p_from,int p_to) {
 	track_editors[p_to]->get_focus();
 	track_editors[p_to]->update();
 
+	ensure_cursor_track_visible();
 }
 
 void TrackEditorScreen::notify_enter() {
@@ -168,7 +205,13 @@ TrackEditorScreen::TrackEditorScreen(Editor *p_editor,GUI_UpdateNotify *p_update
 	
 	hbc->set_separation(0);
 	barbeat = hbc->add( new TrackEditorBarBeat );
-	scroll = hbc->add( new GUI::ScrollContainer, 1 );
+	
+	GUI::GridContainer *gc = hbc->add( new GUI::GridContainer(2),1 );
+	scroll = gc->add( new GUI::ScrollContainer, true, true );
+	gc->add( new GUI::Widget, false, true ); 
+	GUI::ScrollBar *hsbar = gc->add( new GUI::HScrollBar, true, false );
+	hsbar->set_range( scroll->get_h_range() );
+	hsbar->set_auto_hide( true );
 	
 	
 	vb_holder = scroll->set( new GUI::VBoxContainer );
